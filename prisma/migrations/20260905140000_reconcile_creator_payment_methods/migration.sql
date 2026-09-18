@@ -1,0 +1,3 @@
+-- Reconciliation migration.
+-- These changes already exist in the development database.
+-- No SQL is executed intentionally.

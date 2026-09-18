@@ -1,0 +1,124 @@
+import Image from "next/image";
+import Link from "next/link";
+
+import FavoriteButton from "@/components/FavoriteButton";
+import { getPriceDisplay, formatPrice } from "@/lib/pricing";
+
+export type ProductCardData = {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  price: number;
+  /**
+   * Precio anterior real. Hoy la base de datos no lo tiene,
+   * así que llega undefined y no se muestra promoción.
+   */
+  compareAtPrice?: number | null;
+  coverUrl: string | null;
+  image?: { url: string; alt?: string | null } | null;
+  category?: { name: string; slug: string } | null;
+};
+
+/**
+ * Tarjeta de recurso compartida por la home, la tienda, las
+ * categorías y los perfiles de creador.
+ *
+ * El contenido visual del producto es vertical 9:16
+ * (1080 × 1920). La imagen se muestra SIEMPRE nítida y con
+ * `object-cover`, sin deformarse; el desenfoque se aplica
+ * únicamente a los controles de vidrio que flotan encima.
+ *
+ * La tarjeta es compacta a propósito: prioriza ver muchos
+ * recursos a la vez sobre el tamaño de cada uno.
+ */
+export default function ProductCard({
+  product,
+  showFavorite = true,
+}: {
+  product: ProductCardData;
+  showFavorite?: boolean;
+}) {
+  // Si el recurso no tiene portada, se usa la primera
+  // imagen de la galería.
+  const image = product.coverUrl || product.image?.url || null;
+  const imageAlt = product.image?.alt || product.name;
+
+  const pricing = getPriceDisplay(
+    product.price,
+    product.compareAtPrice
+  );
+
+  return (
+    <article className="rk-card rk-card-hover group relative overflow-hidden !rounded-[1.1rem]">
+
+      {/* CONTENIDO VISUAL 9:16 */}
+      <Link
+        href={`/tienda/${product.slug}`}
+        className="relative block overflow-hidden rounded-t-[1.05rem]"
+        aria-label={product.name}
+      >
+        <div className="rk-media rk-aspect-product relative w-full overflow-hidden">
+          {image ? (
+            <Image
+              src={image}
+              alt={imageAlt}
+              fill
+              /* El contenido es 9:16; `cover` recorta sin deformar. */
+              className="object-cover transition-transform duration-700 ease-rk group-hover:scale-[1.04]"
+              sizes="(max-width: 480px) 45vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 15vw"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <span className="text-[9px] uppercase tracking-[0.3em] text-ink/20">
+                RCKTDMG
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* CATEGORÍA: vidrio sobre la imagen, imagen nítida */}
+        {product.category && (
+          <span className="rk-glass-on-image pointer-events-none absolute left-2 top-2 max-w-[calc(100%-3.25rem)] truncate rounded-full px-2.5 py-1 text-[10px] font-medium">
+            {product.category.name}
+          </span>
+        )}
+
+        {/* DESCUENTO REAL: solo si existe promoción */}
+        {pricing.hasPromotion && (
+          <span className="rk-glass-on-image pointer-events-none absolute bottom-2 right-2 rounded-full px-2 py-1 text-[10px] font-bold text-danger">
+            {pricing.discountPercent}% OFF
+          </span>
+        )}
+      </Link>
+
+      {/* FAVORITO: control de vidrio flotante */}
+      {showFavorite && (
+        <div className="absolute right-2 top-2 z-10">
+          <FavoriteButton productId={product.id} onImage size="xs" />
+        </div>
+      )}
+
+      {/* INFORMACIÓN */}
+      <div className="p-2.5 sm:p-3">
+        <Link href={`/tienda/${product.slug}`}>
+          <h3 className="line-clamp-2 min-h-[2.25rem] text-[13px] font-semibold leading-[1.15rem] transition-opacity group-hover:opacity-70">
+            {product.name}
+          </h3>
+        </Link>
+
+        <div className="mt-1.5 flex items-baseline gap-1.5">
+          <p className="text-[15px] font-semibold tracking-tight">
+            {formatPrice(pricing.price)}
+          </p>
+
+          {pricing.compareAtPrice !== null && (
+            <p className="text-[11px] text-ink/40 line-through">
+              {formatPrice(pricing.compareAtPrice)}
+            </p>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}

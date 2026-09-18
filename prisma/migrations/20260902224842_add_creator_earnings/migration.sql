@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "OrderItem" ADD COLUMN     "commissionRate" DECIMAL(5,2) NOT NULL DEFAULT 20,
+ADD COLUMN     "creatorAmount" DECIMAL(10,2) NOT NULL DEFAULT 0,
+ADD COLUMN     "platformFee" DECIMAL(10,2) NOT NULL DEFAULT 0;

@@ -1,0 +1,193 @@
+"use client";
+
+import Image from "next/image";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+
+type ProductImage = {
+  id: string;
+  productId: string;
+  url: string;
+  alt: string | null;
+  sortOrder: number;
+  createdAt: Date | string;
+};
+
+type ProductGalleryProps = {
+  name: string;
+  coverUrl: string | null;
+  previewUrl: string | null;
+  images: ProductImage[];
+};
+
+/**
+ * Galería del recurso.
+ *
+ * El contenido visual es vertical 9:16 (1080 × 1920).
+ * La imagen se muestra SIEMPRE nítida; el desenfoque se
+ * aplica únicamente a los controles de vidrio que flotan
+ * encima de ella.
+ */
+export default function ProductGallery({
+  name,
+  coverUrl,
+  previewUrl,
+  images: additionalImages,
+}: ProductGalleryProps) {
+  const images = [
+    coverUrl
+      ? { key: "cover", url: coverUrl, label: "Portada" }
+      : null,
+
+    previewUrl
+      ? { key: "preview", url: previewUrl, label: "Preview" }
+      : null,
+
+    ...additionalImages.map((image, index) => ({
+      key: image.id,
+      url: image.url,
+      label: image.alt?.trim() || `Imagen ${index + 1}`,
+    })),
+  ].filter(Boolean) as {
+    key: string;
+    url: string;
+    label: string;
+  }[];
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const total = images.length;
+
+  const goTo = useCallback(
+    (index: number) => {
+      if (total === 0) return;
+
+      setSelectedIndex(((index % total) + total) % total);
+    },
+    [total]
+  );
+
+  // Navegación con teclado entre imágenes.
+  useEffect(() => {
+    if (total < 2) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "ArrowLeft") {
+        setSelectedIndex((i) => ((i - 1 + total) % total));
+      }
+
+      if (event.key === "ArrowRight") {
+        setSelectedIndex((i) => (i + 1) % total);
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [total]);
+
+  if (total === 0) {
+    return (
+      <div className="rk-card mx-auto w-full max-w-sm overflow-hidden rounded-[1.75rem] p-2 lg:max-w-none">
+        <div className="rk-media rk-aspect-product flex w-full items-center justify-center rounded-[1.4rem]">
+          <span className="text-[10px] uppercase tracking-[0.3em] text-ink/20">
+            RCKTDMG
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  const selectedImage = images[selectedIndex] || images[0];
+
+  return (
+    <div className="w-full min-w-0">
+
+      {/* IMAGEN PRINCIPAL 9:16 */}
+      <div className="rk-card mx-auto w-full max-w-sm overflow-hidden rounded-[1.75rem] p-2 sm:rounded-[2rem] lg:max-w-none">
+        <div className="rk-media rk-aspect-product relative overflow-hidden rounded-[1.4rem] sm:rounded-[1.6rem]">
+          <Image
+            key={selectedImage.key}
+            src={selectedImage.url}
+            alt={`${selectedImage.label} de ${name}`}
+            fill
+            priority
+            /* El contenido es 9:16; `cover` recorta sin deformar. */
+            className="animate-scale-in object-cover"
+            sizes="(max-width: 1024px) 90vw, 45vw"
+          />
+
+          {/* CONTROLES: vidrio sobre imagen nítida */}
+          {total > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={() => goTo(selectedIndex - 1)}
+                aria-label="Imagen anterior"
+                className="rk-press rk-glass-on-image absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full"
+              >
+                <ChevronLeft size={18} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => goTo(selectedIndex + 1)}
+                aria-label="Imagen siguiente"
+                className="rk-press rk-glass-on-image absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full"
+              >
+                <ChevronRight size={18} />
+              </button>
+
+              {/* CONTADOR */}
+              <span className="rk-glass-on-image absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1.5 text-[11px] font-medium tabular-nums">
+                {selectedIndex + 1} / {total}
+              </span>
+            </>
+          )}
+
+          {/* ETIQUETA DE LA IMAGEN */}
+          <span className="rk-glass-on-image absolute left-3 top-3 rounded-full px-3 py-1.5 text-[11px] font-medium">
+            {selectedImage.label}
+          </span>
+        </div>
+      </div>
+
+      {/* MINIATURAS */}
+      {total > 1 && (
+        <div
+          role="tablist"
+          aria-label="Imágenes del recurso"
+          className="mx-auto mt-3 flex max-w-sm gap-2.5 overflow-x-auto pb-1 lg:max-w-none"
+        >
+          {images.map((image, index) => {
+            const active = index === selectedIndex;
+
+            return (
+              <button
+                key={image.key}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                aria-label={`Ver ${image.label}`}
+                onClick={() => setSelectedIndex(index)}
+                className={`rk-press rk-media rk-aspect-product relative w-16 shrink-0 overflow-hidden rounded-[0.9rem] transition-all duration-300 ease-rk sm:w-20 ${
+                  active
+                    ? "ring-2 ring-primary ring-offset-2 ring-offset-transparent"
+                    : "opacity-55 hover:opacity-100"
+                }`}
+              >
+                <Image
+                  src={image.url}
+                  alt={image.label}
+                  fill
+                  className="object-cover"
+                  sizes="80px"
+                />
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

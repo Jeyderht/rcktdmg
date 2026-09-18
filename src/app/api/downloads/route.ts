@@ -1,0 +1,68 @@
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
+import { verifySessionToken } from "@/lib/auth";
+
+export async function GET() {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("rcktdmg_session")?.value;
+
+    if (!token) {
+      return NextResponse.json(
+        { error: "Debes iniciar sesión." },
+        { status: 401 }
+      );
+    }
+
+    const session = await verifySessionToken(token);
+
+    if (!session || typeof session.userId !== "string") {
+      return NextResponse.json(
+        { error: "Sesión inválida o expirada." },
+        { status: 401 }
+      );
+    }
+
+    const downloads = await prisma.download.findMany({
+      where: {
+        userId: session.userId,
+      },
+      include: {
+        product: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            coverUrl: true,
+            description: true,
+            fileUrl: true,
+          },
+        },
+        order: {
+          select: {
+            id: true,
+            createdAt: true,
+            status: true,
+          },
+        },
+      },
+      orderBy: {
+        order: {
+          createdAt: "desc",
+        },
+      },
+    });
+
+    return NextResponse.json({
+      downloads,
+    });
+  } catch (error) {
+    console.error("Error obteniendo descargas:", error);
+
+    return NextResponse.json(
+      { error: "No se pudieron cargar las descargas." },
+      { status: 500 }
+    );
+  }
+}
