@@ -1,6 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
+import { CreditCard, Wallet } from "lucide-react";
+
+import EmptyState from "@/components/EmptyState";
+import Footer from "@/components/Footer";
 
 type WithdrawalStatus = "REQUESTED" | "APPROVED" | "REJECTED" | "PAID";
 type PaymentMethodType = "BANK" | "YAPE" | "PLIN";
@@ -36,6 +41,9 @@ type FinancialData = {
   withdrawals: Withdrawal[];
 };
 
+/** Mínimo real que valida el formulario. */
+const MINIMUM_WITHDRAWAL = 50;
+
 function formatMoney(value: number) {
   return `S/ ${value.toFixed(2)}`;
 }
@@ -63,19 +71,27 @@ function getStatusLabel(status: WithdrawalStatus) {
   }
 }
 
-function getStatusClass(status: WithdrawalStatus) {
+function getStatusBadge(status: WithdrawalStatus) {
   switch (status) {
     case "REQUESTED":
-      return "bg-warning/12 text-warning";
+      return "rk-badge-warning";
     case "APPROVED":
-      return "bg-accent/12 text-accent";
+      return "rk-badge-accent";
     case "REJECTED":
-      return "bg-danger/10 text-danger";
+      return "rk-badge-danger";
     case "PAID":
-      return "bg-success/12 text-success";
+      return "rk-badge-success";
     default:
-      return "bg-ink/[0.05] text-ink";
+      return "rk-badge-neutral";
   }
+}
+
+function getMethodLabel(type: PaymentMethodType) {
+  return type === "BANK"
+    ? "Cuenta bancaria"
+    : type === "YAPE"
+      ? "Yape"
+      : "Plin";
 }
 
 export default function RetirosPage() {
@@ -85,8 +101,11 @@ export default function RetirosPage() {
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState("");
+  const [paymentMethods, setPaymentMethods] = useState<
+    PaymentMethod[]
+  >([]);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] =
+    useState("");
 
   async function loadWithdrawals() {
     try {
@@ -100,10 +119,13 @@ export default function RetirosPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "No se pudieron cargar los retiros");
+        throw new Error(
+          result.error || "No se pudieron cargar los retiros"
+        );
       }
 
       setData(result);
+
       const paymentResponse = await fetch(
         "/api/creadores/metodos-pago",
         {
@@ -116,7 +138,7 @@ export default function RetirosPage() {
       if (!paymentResponse.ok) {
         throw new Error(
           paymentResult.error ||
-          "No se pudieron cargar los métodos de pago"
+            "No se pudieron cargar los métodos de pago"
         );
       }
 
@@ -162,14 +184,16 @@ export default function RetirosPage() {
       return;
     }
 
-    if (numericAmount < 50) {
+    if (numericAmount < MINIMUM_WITHDRAWAL) {
       setError("El retiro mínimo es de S/ 50.00.");
       return;
     }
+
     if (!selectedPaymentMethodId) {
       setError("Selecciona un método de pago.");
       return;
     }
+
     try {
       setSubmitting(true);
 
@@ -187,7 +211,9 @@ export default function RetirosPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "No se pudo solicitar el retiro");
+        throw new Error(
+          result.error || "No se pudo solicitar el retiro"
+        );
       }
 
       setAmount("");
@@ -207,13 +233,20 @@ export default function RetirosPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-ink/[0.05] p-6">
-        <div className="mx-auto max-w-6xl">
-          <div className="rk-card p-8">
-            <p className="text-sm text-ink/50">
-              Cargando información de retiros...
-            </p>
-          </div>
+      <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
+        <div className="h-4 w-28 animate-pulse rounded-full bg-ink/[0.06]" />
+        <div className="mt-5 h-9 w-56 animate-pulse rounded-full bg-ink/[0.06]" />
+
+        <div
+          className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+          aria-busy="true"
+        >
+          {[0, 1, 2, 3].map((index) => (
+            <div key={index} className="rk-card p-5">
+              <div className="h-3 w-24 animate-pulse rounded-full bg-ink/[0.06]" />
+              <div className="mt-4 h-7 w-24 animate-pulse rounded-full bg-ink/[0.07]" />
+            </div>
+          ))}
         </div>
       </main>
     );
@@ -221,13 +254,22 @@ export default function RetirosPage() {
 
   if (!data) {
     return (
-      <main className="min-h-screen bg-ink/[0.05] p-6">
-        <div className="mx-auto max-w-6xl">
-          <div className="rk-card p-8">
-            <p className="text-danger">
-              {error || "No se pudo cargar la información."}
-            </p>
-          </div>
+      <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
+        <div
+          role="alert"
+          className="rk-fade rounded-rk-md border border-danger/25 bg-danger/10 p-6"
+        >
+          <p className="text-sm text-danger">
+            {error || "No se pudo cargar la información."}
+          </p>
+
+          <button
+            type="button"
+            onClick={loadWithdrawals}
+            className="rk-btn rk-btn-primary mt-5 !min-h-0 !px-4 !py-2.5 !text-sm"
+          >
+            Intentar nuevamente
+          </button>
         </div>
       </main>
     );
@@ -235,285 +277,346 @@ export default function RetirosPage() {
 
   const { summary, withdrawals } = data;
 
+  const canRequest =
+    summary.availableBalance >= MINIMUM_WITHDRAWAL &&
+    paymentMethods.length > 0;
+
   return (
-    <main className="min-h-screen bg-ink/[0.05] p-4 md:p-6">
-      <div className="mx-auto max-w-6xl space-y-6">
-        {/* Encabezado */}
-        <div>
-          <h1 className="text-2xl font-bold text-ink">
-            Retiros y ganancias
+    <>
+      <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
+
+        {/* ========== CABECERA ========== */}
+        <header className="rk-fade-up">
+          <p className="rk-eyebrow">Creator Studio</p>
+
+          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
+            Retiros
           </h1>
 
-          <p className="mt-1 text-sm text-ink/50">
-            Administra tus ganancias y solicita el retiro de tu saldo disponible.
+          <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
+            Consulta tu saldo y solicita el retiro de tus
+            ganancias.
           </p>
-        </div>
+        </header>
 
-        {/* Resumen */}
-        <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <div className="rk-card p-5">
-            <p className="text-sm text-ink/50">Ganancias totales</p>
-            <p className="mt-2 text-2xl font-bold text-ink">
-              {formatMoney(summary.totalEarnings)}
+        {/* ========== SALDO ========== */}
+        <section className="rk-fade-up rk-enter-1 mt-7 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
+          <div className="rk-card border-accent/25 bg-accent/[0.06] p-5">
+            <p className="rk-eyebrow !text-accent">
+              Saldo disponible
             </p>
-          </div>
 
-          <div className="rk-card p-5">
-            <p className="text-sm text-ink/50">Total retirado</p>
-            <p className="mt-2 text-2xl font-bold text-ink">
-              {formatMoney(summary.withdrawnAmount)}
-            </p>
-          </div>
-
-          <div className="rk-card p-5">
-            <p className="text-sm text-ink/50">Pendiente de retiro</p>
-            <p className="mt-2 text-2xl font-bold text-warning">
-              {formatMoney(summary.pendingAmount)}
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-success/25 bg-success/12 p-5 shadow-sm">
-            <p className="text-sm text-success">Saldo disponible</p>
-            <p className="mt-2 text-2xl font-bold text-success">
+            <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight text-accent">
               {formatMoney(summary.availableBalance)}
             </p>
-          </div>
-        </section>
 
-        {/* Solicitar retiro */}
-        <section className="rk-card p-6">
-          <div className="mb-5">
-            <h2 className="text-lg font-semibold text-ink">
-              Solicitar retiro
-            </h2>
-
-            <p className="mt-1 text-sm text-ink/50">
-              El monto mínimo para solicitar un retiro es de S/ 50.00.
+            <p className="mt-2 text-xs text-ink/60">
+              Listo para retirar
             </p>
           </div>
 
-          {message && (
-            <div className="mb-4 rounded-xl border border-success/25 bg-success/12 px-4 py-3 text-sm text-success">
-              {message}
-            </div>
-          )}
+          <div className="rk-card p-5">
+            <p className="rk-eyebrow">Ganancias totales</p>
 
-          {error && (
-            <div className="mb-4 rounded-xl border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger">
-              {error}
-            </div>
-          )}
+            <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight">
+              {formatMoney(summary.totalEarnings)}
+            </p>
 
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-5"
-          >
+            <p className="mt-2 text-xs text-ink/60">
+              Desde el inicio
+            </p>
+          </div>
+
+          <div className="rk-card p-5">
+            <p className="rk-eyebrow">Pendiente</p>
+
+            <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight text-warning">
+              {formatMoney(summary.pendingAmount)}
+            </p>
+
+            <p className="mt-2 text-xs text-ink/60">
+              Solicitudes en proceso
+            </p>
+          </div>
+
+          <div className="rk-card p-5">
+            <p className="rk-eyebrow">Retirado</p>
+
+            <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight">
+              {formatMoney(summary.withdrawnAmount)}
+            </p>
+
+            <p className="mt-2 text-xs text-ink/60">
+              Pagos completados
+            </p>
+          </div>
+        </section>
+
+        {/* ========== SOLICITAR RETIRO ========== */}
+        <section className="rk-fade-up rk-enter-2 mt-10">
+          <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <label
-                htmlFor="paymentMethod"
-                className="mb-2 block text-sm font-medium text-ink/70"
-              >
-                Método para recibir el pago
-              </label>
+              <p className="rk-eyebrow">Solicitud</p>
 
-              {paymentMethods.length === 0 ? (
-                <div className="rounded-xl border border-warning/25 bg-warning/12 px-4 py-3 text-sm text-warning">
-                  No tienes métodos de pago registrados. Registra uno antes de
-                  solicitar un retiro.
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {paymentMethods.map((method) => (
-                    <label
-                      key={method.id}
-                      className={`block cursor-pointer rounded-xl border p-4 transition ${selectedPaymentMethodId === method.id
-                          ? "border-primary bg-ink/[0.05]"
-                          : "border-ink/10 bg-surface hover:border-ink/25"
-                        }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value={method.id}
-                          checked={selectedPaymentMethodId === method.id}
-                          onChange={() =>
-                            setSelectedPaymentMethodId(method.id)
-                          }
-                          disabled={submitting}
-                          className="mt-1"
-                        />
-
-                        <div className="flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <p className="font-semibold text-ink">
-                              {method.type === "BANK"
-                                ? "Cuenta bancaria"
-                                : method.type === "YAPE"
-                                  ? "Yape"
-                                  : "Plin"}
-                            </p>
-
-                            {method.isDefault && (
-                              <span className="rounded-full bg-primary px-2.5 py-1 text-[11px] font-medium text-onprimary">
-                                Predeterminado
-                              </span>
-                            )}
-                          </div>
-
-                          <p className="mt-1 text-sm text-ink/70">
-                            {method.holderName}
-                          </p>
-
-                          <p className="mt-1 text-xs text-ink/50">
-                            DNI/RUC: {method.documentNumber}
-                          </p>
-
-                          {method.type === "BANK" ? (
-                            <div className="mt-2 text-xs text-ink/50">
-                              <p>Banco: {method.bankName}</p>
-                              <p>Cuenta: {method.accountNumber}</p>
-                              <p>CCI: {method.cci}</p>
-                            </div>
-                          ) : (
-                            <p className="mt-2 text-xs text-ink/50">
-                              Celular: {method.phone}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              )}
+              <h2 className="rk-title mt-2 text-2xl">
+                Solicitar retiro
+              </h2>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-              <div className="w-full sm:max-w-xs">
-                <label
-                  htmlFor="amount"
-                  className="mb-2 block text-sm font-medium text-ink/70"
-                >
-                  Monto a retirar
-                </label>
+            <p className="text-sm text-ink/60">
+              Mínimo {formatMoney(MINIMUM_WITHDRAWAL)}
+            </p>
+          </div>
 
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink/40">
-                    S/
-                  </span>
+          <div className="rk-divider mt-4" />
 
-                  <input
-                    id="amount"
-                    type="number"
-                    min="50"
-                    step="0.01"
-                    value={amount}
-                    onChange={(event) => setAmount(event.target.value)}
-                    placeholder="50.00"
-                    disabled={
-                      submitting ||
-                      summary.availableBalance < 50 ||
-                      paymentMethods.length === 0
-                    }
-                    className="w-full rounded-xl border border-ink/10 py-3 pl-10 pr-3 outline-none transition focus:border-accent/45 focus:ring-2 focus:ring-accent/20 disabled:bg-ink/[0.05]"
-                  />
-                </div>
+          <div className="rk-card mt-5 p-5 sm:p-6">
+            {message && (
+              <div
+                role="status"
+                className="rk-fade mb-5 rounded-rk-sm border border-success/25 bg-success/10 px-4 py-3 text-sm text-success"
+              >
+                {message}
+              </div>
+            )}
+
+            {error && (
+              <div
+                role="alert"
+                className="rk-fade mb-5 rounded-rk-sm border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
+              >
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* MÉTODO DE PAGO */}
+              <div>
+                <p className="mb-2.5 text-sm font-medium">
+                  Método para recibir el pago
+                </p>
+
+                {paymentMethods.length === 0 ? (
+                  <div className="rounded-rk-md border border-dashed border-line/20 p-5 text-center">
+                    <span
+                      aria-hidden
+                      className="mx-auto flex h-11 w-11 items-center justify-center rounded-rk-sm bg-warning/12 text-warning"
+                    >
+                      <CreditCard size={19} />
+                    </span>
+
+                    <p className="mt-3 text-sm text-ink/60">
+                      Necesitas un método de pago registrado
+                      antes de solicitar un retiro.
+                    </p>
+
+                    <Link
+                      href="/creadores/panel/metodos-pago"
+                      className="rk-btn rk-btn-primary mt-4 !min-h-0 !px-4 !py-2.5 !text-sm"
+                    >
+                      Registrar método de pago
+                    </Link>
+                  </div>
+                ) : (
+                  <div
+                    role="radiogroup"
+                    aria-label="Método para recibir el pago"
+                    className="space-y-2.5"
+                  >
+                    {paymentMethods.map((method) => {
+                      const selected =
+                        selectedPaymentMethodId === method.id;
+
+                      return (
+                        <label
+                          key={method.id}
+                          className={`block cursor-pointer rounded-rk-md border p-4 transition-colors duration-fast ease-rk ${
+                            selected
+                              ? "border-accent/55 bg-accent/[0.06]"
+                              : "border-line/10 hover:border-line/25"
+                          }`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <input
+                              type="radio"
+                              name="paymentMethod"
+                              value={method.id}
+                              checked={selected}
+                              onChange={() =>
+                                setSelectedPaymentMethodId(
+                                  method.id
+                                )
+                              }
+                              disabled={submitting}
+                              className="mt-1 accent-accent"
+                            />
+
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <p className="text-sm font-semibold">
+                                  {getMethodLabel(method.type)}
+                                </p>
+
+                                {method.isDefault && (
+                                  <span className="rk-badge rk-badge-accent">
+                                    Predeterminado
+                                  </span>
+                                )}
+                              </div>
+
+                              <p className="mt-1 text-sm text-ink/60">
+                                {method.holderName}
+                              </p>
+
+                              <p className="mt-0.5 text-xs text-ink/60">
+                                DNI/RUC: {method.documentNumber}
+                              </p>
+
+                              {method.type === "BANK" ? (
+                                <div className="mt-2 space-y-0.5 text-xs text-ink/60">
+                                  <p>Banco: {method.bankName}</p>
+                                  <p>
+                                    Cuenta: {method.accountNumber}
+                                  </p>
+                                  <p>CCI: {method.cci}</p>
+                                </div>
+                              ) : (
+                                <p className="mt-2 text-xs text-ink/60">
+                                  Celular: {method.phone}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
-              <button
-                type="submit"
-                disabled={
-                  submitting ||
-                  summary.availableBalance < 50 ||
-                  !amount ||
-                  !selectedPaymentMethodId ||
-                  paymentMethods.length === 0
-                }
-                className="rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-onprimary transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {submitting ? "Enviando..." : "Solicitar retiro"}
-              </button>
-            </div>
-          </form>
+              {/* MONTO */}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <div className="w-full sm:max-w-xs">
+                  <label
+                    htmlFor="amount"
+                    className="mb-2 block text-sm font-medium"
+                  >
+                    Monto a retirar
+                  </label>
 
-          {summary.availableBalance < 50 && (
-            <p className="mt-3 text-sm text-ink/50">
-              Necesitas tener al menos S/ 50.00 disponibles para solicitar un
-              retiro.
-            </p>
-          )}
+                  <div className="relative">
+                    <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-ink/60">
+                      S/
+                    </span>
+
+                    <input
+                      id="amount"
+                      type="number"
+                      min={MINIMUM_WITHDRAWAL}
+                      step="0.01"
+                      value={amount}
+                      onChange={(event) =>
+                        setAmount(event.target.value)
+                      }
+                      placeholder="50.00"
+                      disabled={submitting || !canRequest}
+                      className="rk-input w-full !pl-10 tabular-nums"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={
+                    submitting || !canRequest || !amount ||
+                    !selectedPaymentMethodId
+                  }
+                  className="rk-btn rk-btn-primary w-full sm:w-auto"
+                >
+                  <Wallet size={16} />
+                  {submitting ? "Enviando..." : "Solicitar retiro"}
+                </button>
+              </div>
+
+              {summary.availableBalance < MINIMUM_WITHDRAWAL && (
+                <p className="text-sm text-ink/60">
+                  Necesitas al menos{" "}
+                  {formatMoney(MINIMUM_WITHDRAWAL)} disponibles
+                  para solicitar un retiro.
+                </p>
+              )}
+            </form>
+          </div>
         </section>
 
-        {/* Historial */}
-        <section className="rk-card">
-          <div className="border-b px-6 py-5">
-            <h2 className="text-lg font-semibold text-ink">
-              Historial de retiros
-            </h2>
-          </div>
+        {/* ========== HISTORIAL ========== */}
+        <section className="rk-fade-up mt-10">
+          <p className="rk-eyebrow">Historial</p>
+
+          <h2 className="rk-title mt-2 text-2xl">
+            Tus solicitudes
+          </h2>
+
+          <div className="rk-divider mt-4" />
 
           {withdrawals.length === 0 ? (
-            <div className="px-6 py-10 text-center">
-              <p className="text-sm text-ink/50">
-                Todavía no tienes solicitudes de retiro.
-              </p>
+            <div className="mt-5">
+              <EmptyState
+                icon={Wallet}
+                title="Todavía no tienes retiros"
+                description="Cuando solicites un retiro verás aquí su estado y su fecha de proceso."
+              />
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[650px]">
-                <thead>
-                  <tr className="border-b bg-ink/[0.05] text-left text-xs uppercase tracking-wide text-ink/50">
-                    <th className="px-6 py-4 font-semibold">Fecha</th>
-                    <th className="px-6 py-4 font-semibold">Monto</th>
-                    <th className="px-6 py-4 font-semibold">Estado</th>
-                    <th className="px-6 py-4 font-semibold">Nota</th>
-                    <th className="px-6 py-4 font-semibold">
-                      Procesado
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {withdrawals.map((withdrawal) => (
-                    <tr
-                      key={withdrawal.id}
-                      className="border-b last:border-b-0"
-                    >
-                      <td className="px-6 py-4 text-sm text-ink/70">
-                        {formatDate(withdrawal.createdAt)}
-                      </td>
-
-                      <td className="px-6 py-4 text-sm font-semibold text-ink">
+            <div className="rk-card rk-divider-y mt-5 px-4 sm:px-6">
+              {withdrawals.map((withdrawal) => (
+                <div
+                  key={withdrawal.id}
+                  className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-4"
+                >
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-base font-semibold tabular-nums">
                         {formatMoney(withdrawal.amount)}
-                      </td>
+                      </p>
 
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getStatusClass(
-                            withdrawal.status
-                          )}`}
-                        >
-                          {getStatusLabel(withdrawal.status)}
-                        </span>
-                      </td>
+                      <span
+                        className={`rk-badge ${getStatusBadge(
+                          withdrawal.status
+                        )}`}
+                      >
+                        {getStatusLabel(withdrawal.status)}
+                      </span>
+                    </div>
 
-                      <td className="max-w-xs px-6 py-4 text-sm text-ink/50">
-                        {withdrawal.note || "—"}
-                      </td>
+                    <p className="mt-1 text-xs text-ink/60">
+                      Solicitado el{" "}
+                      {formatDate(withdrawal.createdAt)}
 
-                      <td className="px-6 py-4 text-sm text-ink/50">
-                        {withdrawal.processedAt
-                          ? formatDate(withdrawal.processedAt)
-                          : "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      {/* Solo si el registro tiene fecha real. */}
+                      {withdrawal.processedAt && (
+                        <>
+                          {" · Procesado el "}
+                          {formatDate(withdrawal.processedAt)}
+                        </>
+                      )}
+                    </p>
+
+                    {/* La nota solo existe si el admin la escribió. */}
+                    {withdrawal.note && (
+                      <p className="mt-1.5 max-w-xl text-xs leading-5 text-ink/60">
+                        {withdrawal.note}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </section>
-      </div>
-    </main>
+      </main>
+
+      <Footer />
+    </>
   );
 }

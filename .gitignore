@@ -6,6 +6,8 @@ node_modules
 
 pswrd.txt
 reset-admin.js
-storage/
+/storage/
 
 rcktdmg-backup.dump
+.vercel
+.env*

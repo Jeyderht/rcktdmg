@@ -1,6 +1,7 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { olvidarObjeto } from "@/lib/storage";
 import { verifySessionToken } from "@/lib/auth";
 
 type RouteContext = {
@@ -461,6 +462,15 @@ export async function DELETE(
         id: image.id,
       },
     });
+
+    /*
+      El objeto se borra DESPUÉS de la base de datos y solo si
+      es del almacén público. Si fallara, quedaría huérfano en
+      Blob, que es preferible a un registro apuntando a un
+      objeto inexistente. La imagen ya se comprobó que
+      pertenece a este producto.
+    */
+    await olvidarObjeto(image.url, "publico");
 
     return NextResponse.json({
       success: true,

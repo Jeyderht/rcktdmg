@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -12,7 +11,9 @@ import {
 } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import EmptyState from "@/components/EmptyState";
 import ProductCard from "@/components/ProductCard";
 
 export const dynamic = "force-dynamic";
@@ -145,7 +146,7 @@ export default async function CreatorPublicProfile({
 
         {/* PERFIL */}
         <section className="rk-enter">
-          <div className="rk-glass overflow-hidden rounded-[2rem] sm:rounded-[2.5rem]">
+          <div className="rk-glass overflow-hidden rounded-rk-xl">
 
             {/* PORTADA */}
             <div className="relative h-32 overflow-hidden sm:h-48 lg:h-56">
@@ -179,7 +180,7 @@ export default async function CreatorPublicProfile({
 
                 {/* FOTO */}
                 <div className="-mt-16 shrink-0 sm:-mt-20">
-                  <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-[1.8rem] border-4 border-surface bg-primary shadow-rk-float sm:h-36 sm:w-36 sm:rounded-[2rem]">
+                  <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rk-media rounded-rk-lg border-4 border-surface shadow-rk-float sm:h-36 sm:w-36 sm:rounded-rk-xl">
                     {creator.avatarUrl ? (
                       <Image
                         src={creator.avatarUrl}
@@ -189,7 +190,7 @@ export default async function CreatorPublicProfile({
                         sizes="(max-width: 640px) 112px, 144px"
                       />
                     ) : (
-                      <span className="text-4xl font-semibold text-onprimary sm:text-5xl">
+                      <span className="text-4xl font-semibold text-ink/60 sm:text-5xl">
                         {initials}
                       </span>
                     )}
@@ -201,14 +202,14 @@ export default async function CreatorPublicProfile({
 
                   {/* NOMBRE + VERIFICACIÓN */}
                   <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                    <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                    <h1 className="rk-title text-2xl sm:text-3xl">
                       {displayName}
                     </h1>
 
                     {creator.isVerified && (
                       <span
                         title="Creador verificado"
-                        className="inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[11px] font-medium text-onprimary"
+                        className="rk-badge rk-badge-accent"
                       >
                         <BadgeCheck size={13} />
                         Verificado
@@ -217,14 +218,14 @@ export default async function CreatorPublicProfile({
                   </div>
 
                   {creator.username && (
-                    <p className="mt-1 text-sm text-ink/45">
+                    <p className="mt-1 text-sm text-ink/60">
                       @{creator.username}
                     </p>
                   )}
 
                   {/* BIO: solo si existe realmente */}
                   {creator.bio && (
-                    <p className="mx-auto mt-4 max-w-2xl whitespace-pre-line text-[15px] leading-7 text-ink/55 sm:mx-0">
+                    <p className="mx-auto mt-4 max-w-2xl whitespace-pre-line text-[15px] leading-7 text-ink/60 sm:mx-0">
                       {creator.bio}
                     </p>
                   )}
@@ -264,7 +265,7 @@ export default async function CreatorPublicProfile({
                   <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
                     <span className="rk-card px-4 py-2 text-sm font-medium">
                       {creator.products.length}{" "}
-                      <span className="text-ink/50">
+                      <span className="text-ink/60">
                         {creator.products.length === 1
                           ? "recurso publicado"
                           : "recursos publicados"}
@@ -298,23 +299,21 @@ export default async function CreatorPublicProfile({
         >
           <p className="rk-eyebrow">Portafolio</p>
 
-          <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">
+          <h2 className="rk-title mt-2 text-2xl sm:text-3xl">
             Recursos de {displayName}
           </h2>
 
           {creator.products.length === 0 ? (
-            <div className="rk-card mt-6 px-6 py-14 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.1rem] bg-ink/[0.05]">
-                <PackageOpen size={22} className="text-ink/35" />
-              </div>
-
-              <p className="mt-4 text-sm text-ink/50">
-                Este creador todavía no tiene recursos publicados.
-              </p>
-
-              <Link href="/tienda" className="rk-btn rk-btn-glass mt-6">
-                Explorar el marketplace
-              </Link>
+            <div className="mt-6">
+              <EmptyState
+                icon={PackageOpen}
+                title="Todavía no hay recursos publicados"
+                description={`Cuando ${displayName} publique un recurso aparecerá aquí.`}
+                action={{
+                  href: "/tienda",
+                  label: "Explorar el marketplace",
+                }}
+              />
             </div>
           ) : (
             <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
@@ -337,6 +336,8 @@ export default async function CreatorPublicProfile({
           )}
         </section>
       </main>
+
+      <Footer />
     </>
   );
 }

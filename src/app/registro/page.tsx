@@ -55,14 +55,14 @@ export default function RegistroPage() {
 
         <Link
           href="/"
-          className="rk-press mb-6 inline-flex items-center gap-1.5 text-sm text-ink/50 transition-colors hover:text-ink"
+          className="rk-press mb-6 inline-flex items-center gap-1.5 text-sm text-ink/60 transition-colors hover:text-ink"
         >
           <ArrowLeft size={15} />
           Volver al inicio
         </Link>
 
         <div className="rk-enter mb-7 text-center">
-          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-[1rem] bg-primary text-sm font-bold text-onprimary shadow-rk">
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-primary text-sm font-bold text-onprimary shadow-rk">
             R
           </span>
 
@@ -70,17 +70,17 @@ export default function RegistroPage() {
             RCKTDMG
           </h1>
 
-          <p className="mt-1.5 text-sm text-ink/45">
+          <p className="mt-1.5 text-sm text-ink/60">
             Recursos creativos para profesionales
           </p>
         </div>
 
-        <div className="rk-glass rk-enter rk-enter-1 rounded-[1.75rem] p-6 sm:p-8">
+        <div className="rk-glass rk-enter rk-enter-1 rounded-rk-lg p-6 sm:p-8">
           <h2 className="text-2xl font-semibold tracking-tight">
             Crear cuenta
           </h2>
 
-          <p className="mt-1.5 text-sm text-ink/50">
+          <p className="mt-1.5 text-sm text-ink/60">
             Únete y empieza a descargar recursos.
           </p>
 
@@ -145,7 +145,7 @@ export default function RegistroPage() {
                 className="rk-input"
               />
 
-              <p className="mt-2 text-xs text-ink/40">
+              <p className="mt-2 text-xs text-ink/60">
                 Usa al menos 8 caracteres.
               </p>
             </div>
@@ -153,7 +153,7 @@ export default function RegistroPage() {
             {error && (
               <div
                 role="alert"
-                className="animate-scale-in rounded-[1rem] border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
+                className="animate-scale-in rounded-rk-sm border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
               >
                 {error}
               </div>
@@ -168,8 +168,8 @@ export default function RegistroPage() {
             </button>
           </form>
 
-          <div className="mt-7 border-t border-ink/[0.07] pt-6 text-center">
-            <p className="text-sm text-ink/45">
+          <div className="mt-7 border-t border-line/10 pt-6 text-center">
+            <p className="text-sm text-ink/60">
               ¿Ya tienes una cuenta?
             </p>
 
@@ -182,7 +182,7 @@ export default function RegistroPage() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-ink/35">
+        <p className="mt-6 text-center text-xs text-ink/60">
           © RCKTDMG
         </p>
       </div>

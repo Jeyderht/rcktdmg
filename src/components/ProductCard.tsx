@@ -17,7 +17,10 @@ export type ProductCardData = {
   compareAtPrice?: number | null;
   coverUrl: string | null;
   image?: { url: string; alt?: string | null } | null;
-  category?: { name: string; slug: string } | null;
+  /** El slug es opcional: la tarjeta solo pinta el nombre. */
+  category?: { name: string; slug?: string } | null;
+  /** Autor real del recurso. Opcional: solo se pinta si llega. */
+  creator?: { name: string; username: string | null } | null;
 };
 
 /**
@@ -50,12 +53,12 @@ export default function ProductCard({
   );
 
   return (
-    <article className="rk-card rk-card-hover group relative overflow-hidden !rounded-[1.1rem]">
+    <article className="rk-card rk-card-hover group relative overflow-hidden !rounded-rk-md">
 
       {/* CONTENIDO VISUAL 9:16 */}
       <Link
         href={`/tienda/${product.slug}`}
-        className="relative block overflow-hidden rounded-t-[1.05rem]"
+        className="relative block overflow-hidden rounded-t-rk-md"
         aria-label={product.name}
       >
         <div className="rk-media rk-aspect-product relative w-full overflow-hidden">
@@ -65,12 +68,12 @@ export default function ProductCard({
               alt={imageAlt}
               fill
               /* El contenido es 9:16; `cover` recorta sin deformar. */
-              className="object-cover transition-transform duration-700 ease-rk group-hover:scale-[1.04]"
+              className="object-cover transition-transform duration-slow ease-rk group-hover:scale-[1.02]"
               sizes="(max-width: 480px) 45vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 15vw"
             />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <span className="text-[9px] uppercase tracking-[0.3em] text-ink/20">
+              <span className="text-[9px] uppercase tracking-[0.3em] text-ink/45">
                 RCKTDMG
               </span>
             </div>
@@ -107,13 +110,29 @@ export default function ProductCard({
           </h3>
         </Link>
 
+        {/* CREADOR: solo si se pasa el dato real. */}
+        {product.creator && (
+          <p className="mt-1 truncate text-[11px] text-ink/60">
+            {product.creator.username ? (
+              <Link
+                href={`/creadores/${product.creator.username}`}
+                className="transition-colors hover:text-accent"
+              >
+                {product.creator.name}
+              </Link>
+            ) : (
+              product.creator.name
+            )}
+          </p>
+        )}
+
         <div className="mt-1.5 flex items-baseline gap-1.5">
           <p className="text-[15px] font-semibold tracking-tight">
             {formatPrice(pricing.price)}
           </p>
 
           {pricing.compareAtPrice !== null && (
-            <p className="text-[11px] text-ink/40 line-through">
+            <p className="text-[11px] text-ink/60 line-through">
               {formatPrice(pricing.compareAtPrice)}
             </p>
           )}

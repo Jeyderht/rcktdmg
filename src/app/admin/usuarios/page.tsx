@@ -1,6 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { BadgeCheck, UserPlus, Users } from "lucide-react";
 
+import EmptyState from "@/components/EmptyState";
 import { prisma } from "@/lib/prisma";
 import UserActions from "./UserActions";
 
@@ -17,11 +20,17 @@ const CREATOR_STATUS_LABEL: Record<string, string> = {
   REJECTED: "Rechazado",
 };
 
-const CREATOR_STATUS_STYLE: Record<string, string> = {
-  PENDING: "bg-warning/12 text-warning",
-  APPROVED: "bg-success/12 text-success",
-  SUSPENDED: "bg-danger/10 text-danger",
-  REJECTED: "bg-ink/[0.09] text-ink/70",
+const CREATOR_STATUS_BADGE: Record<string, string> = {
+  PENDING: "rk-badge-warning",
+  APPROVED: "rk-badge-success",
+  SUSPENDED: "rk-badge-danger",
+  REJECTED: "rk-badge-neutral",
+};
+
+const ROLE_BADGE: Record<string, string> = {
+  ADMIN: "rk-badge-accent",
+  CREATOR: "rk-badge-accent",
+  CLIENT: "rk-badge-neutral",
 };
 
 type UsuariosPageProps = {
@@ -84,6 +93,7 @@ export default async function UsuariosPage({
     0
   );
 
+  // Los contadores salen de la base: ninguno es estimado.
   const filters = [
     { value: null, label: "Todos", count: total },
     {
@@ -103,201 +113,214 @@ export default async function UsuariosPage({
     },
   ];
 
+  // La vista de creadores tiene su propia entrada en el menú:
+  // cuando el filtro está activo, la página lo refleja.
+  const isCreatorsView = roleFilter === "CREATOR";
+
   return (
-    <>
+    <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
 
+      {/* ========== CABECERA ========== */}
+      <header className="rk-fade-up flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+        <div className="min-w-0">
+          <p className="rk-eyebrow">Admin Center</p>
 
-      <main className="min-h-screen">
-        <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-5 lg:px-8 lg:py-12">
+          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
+            {isCreatorsView ? "Creadores" : "Usuarios"}
+          </h1>
 
-          {/* ENCABEZADO */}
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-sm font-medium uppercase tracking-wider text-ink/40">
-                Admin Center
-              </p>
-
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
-                Usuarios
-              </h1>
-
-              <p className="mt-2 text-sm text-ink/50">
-                Gestiona clientes, creadores, verificación y
-                estados.
-              </p>
-            </div>
-
-            <Link
-              href="/admin/usuarios/nuevo"
-              className="inline-flex w-fit rounded-full bg-primary px-5 py-3 text-sm font-medium text-onprimary transition hover:opacity-80"
-            >
-              + Crear creador
-            </Link>
-          </div>
-
-          {/* FILTROS */}
-          <div className="mt-8 flex flex-wrap gap-2">
-            {filters.map((filter) => {
-              const active = roleFilter === filter.value;
-
-              return (
-                <Link
-                  key={filter.label}
-                  href={
-                    filter.value
-                      ? `/admin/usuarios?rol=${filter.value}`
-                      : "/admin/usuarios"
-                  }
-                  className={`rounded-full border px-4 py-2 text-sm transition ${
-                    active
-                      ? "border-ink bg-primary text-onprimary"
-                      : "border-ink/10 bg-surface text-ink/60 hover:border-ink/30"
-                  }`}
-                >
-                  {filter.label}
-                  <span className="ml-2 text-xs opacity-60">
-                    {filter.count}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* LISTA */}
-          <section className="mt-6 overflow-hidden rk-card">
-
-            <div className="border-b border-ink/[0.07] px-5 py-4 sm:px-6">
-              <h2 className="font-semibold">
-                {users.length}{" "}
-                {users.length === 1 ? "usuario" : "usuarios"}
-              </h2>
-            </div>
-
-            {users.length === 0 ? (
-              <p className="px-6 py-16 text-center text-sm text-ink/40">
-                No hay usuarios con este filtro.
-              </p>
-            ) : (
-              <ul className="divide-y divide-ink/[0.07]">
-                {users.map((user) => {
-                  const displayName =
-                    user.publicName || user.name || "Sin nombre";
-
-                  return (
-                    <li
-                      key={user.id}
-                      className="flex flex-col gap-4 px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between"
-                    >
-                      {/* DATOS */}
-                      <div className="flex min-w-0 items-center gap-4">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary">
-                          {user.avatarUrl ? (
-                            <img
-                              src={user.avatarUrl}
-                              alt={displayName}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-sm font-semibold text-onprimary">
-                              {displayName.charAt(0).toUpperCase()}
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <p className="truncate font-medium">
-                              {displayName}
-                            </p>
-
-                            {user.isVerified && (
-                              <span
-                                title="Creador verificado"
-                                className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-onprimary"
-                              >
-                                ✓
-                              </span>
-                            )}
-                          </div>
-
-                          <p className="truncate text-sm text-ink/50">
-                            {user.email}
-                          </p>
-
-                          <div className="mt-2 flex flex-wrap items-center gap-2">
-                            <span
-                              className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                                user.role === "ADMIN"
-                                  ? "bg-primary text-onprimary"
-                                  : user.role === "CREATOR"
-                                  ? "bg-accent/12 text-accent"
-                                  : "bg-ink/[0.05] text-ink/70"
-                              }`}
-                            >
-                              {user.role}
-                            </span>
-
-                            {user.creatorStatus && (
-                              <span
-                                className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                                  CREATOR_STATUS_STYLE[
-                                    user.creatorStatus
-                                  ]
-                                }`}
-                              >
-                                {
-                                  CREATOR_STATUS_LABEL[
-                                    user.creatorStatus
-                                  ]
-                                }
-                              </span>
-                            )}
-
-                            {user.role === "CREATOR" && (
-                              <span className="text-xs text-ink/40">
-                                {user._count.products}{" "}
-                                {user._count.products === 1
-                                  ? "recurso"
-                                  : "recursos"}
-                              </span>
-                            )}
-
-                            {user.username &&
-                              user.creatorStatus === "APPROVED" && (
-                                <Link
-                                  href={`/creadores/${user.username}`}
-                                  className="text-xs text-ink/50 underline underline-offset-2 transition hover:text-ink"
-                                >
-                                  @{user.username}
-                                </Link>
-                              )}
-
-                            <span className="text-xs text-ink/35">
-                              {new Date(
-                                user.createdAt
-                              ).toLocaleDateString("es-PE")}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* ACCIONES */}
-                      <div className="lg:shrink-0">
-                        <UserActions
-                          userId={user.id}
-                          role={user.role}
-                          creatorStatus={user.creatorStatus}
-                          isVerified={user.isVerified}
-                        />
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
+          <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
+            {isCreatorsView
+              ? "Estados, verificación y catálogo de cada creador."
+              : "Gestiona clientes, creadores, verificación y estados."}
+          </p>
         </div>
-      </main>
-    </>
+
+        <Link
+          href="/admin/usuarios/nuevo"
+          className="rk-btn rk-btn-primary shrink-0"
+        >
+          <UserPlus size={16} />
+          Crear creador
+        </Link>
+      </header>
+
+      {/* ========== FILTROS ========== */}
+      <section className="rk-fade-up rk-enter-1 mt-7">
+        <div
+          role="group"
+          aria-label="Filtrar por rol"
+          className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+        >
+          {filters.map((filter) => {
+            const active = roleFilter === filter.value;
+
+            return (
+              <Link
+                key={filter.label}
+                href={
+                  filter.value
+                    ? `/admin/usuarios?rol=${filter.value}`
+                    : "/admin/usuarios"
+                }
+                aria-current={active ? "true" : undefined}
+                className={`rk-chip shrink-0 ${
+                  active ? "rk-chip-active" : ""
+                }`}
+              >
+                {filter.label}
+                <span className="tabular-nums opacity-50">
+                  {filter.count}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ========== CONTADOR ========== */}
+      <div className="rk-fade-up mt-6 flex items-baseline justify-between gap-4">
+        <p className="text-[15px] text-ink/60">
+          {isCreatorsView ? "Creadores" : "Cuentas"}
+        </p>
+
+        <span className="text-sm font-medium tabular-nums text-ink/60">
+          {users.length}{" "}
+          {users.length === 1 ? "usuario" : "usuarios"}
+        </span>
+      </div>
+
+      <div className="rk-divider mt-4" />
+
+      {/* ========== LISTA ========== */}
+      {users.length === 0 ? (
+        <div className="mt-5">
+          <EmptyState
+            icon={Users}
+            title="No hay usuarios con este filtro"
+            description="Cambia de filtro para ver otras cuentas registradas."
+            action={{ href: "/admin/usuarios", label: "Ver todos" }}
+          />
+        </div>
+      ) : (
+        <section className="rk-fade-up rk-enter-2 mt-5 space-y-2.5">
+          {users.map((user) => {
+            const displayName =
+              user.publicName || user.name || "Sin nombre";
+
+            return (
+              <article
+                key={user.id}
+                className="rk-card flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between"
+              >
+                {/* DATOS */}
+                <div className="flex min-w-0 items-start gap-3.5">
+                  <span className="rk-media relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-ink/70">
+                    {user.avatarUrl ? (
+                      <Image
+                        src={user.avatarUrl}
+                        alt={displayName}
+                        fill
+                        className="object-cover"
+                        sizes="44px"
+                      />
+                    ) : (
+                      displayName.charAt(0).toUpperCase()
+                    )}
+                  </span>
+
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="truncate text-[15px] font-semibold">
+                        {displayName}
+                      </p>
+
+                      {/* Verificación real del registro. */}
+                      {user.isVerified && (
+                        <span
+                          title="Creador verificado"
+                          className="rk-badge rk-badge-accent"
+                        >
+                          <BadgeCheck size={12} />
+                          Verificado
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="mt-0.5 truncate text-sm text-ink/60">
+                      {user.email}
+                    </p>
+
+                    <div className="mt-2.5 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+                      <span
+                        className={`rk-badge ${
+                          ROLE_BADGE[user.role] ||
+                          "rk-badge-neutral"
+                        }`}
+                      >
+                        {user.role}
+                      </span>
+
+                      {user.creatorStatus && (
+                        <span
+                          className={`rk-badge ${
+                            CREATOR_STATUS_BADGE[
+                              user.creatorStatus
+                            ] || "rk-badge-neutral"
+                          }`}
+                        >
+                          {
+                            CREATOR_STATUS_LABEL[
+                              user.creatorStatus
+                            ]
+                          }
+                        </span>
+                      )}
+
+                      {user.role === "CREATOR" && (
+                        <span className="text-xs text-ink/60">
+                          {user._count.products}{" "}
+                          {user._count.products === 1
+                            ? "recurso"
+                            : "recursos"}
+                        </span>
+                      )}
+
+                      {/* El perfil público solo existe si hay
+                          username y el creador está aprobado. */}
+                      {user.username &&
+                        user.creatorStatus === "APPROVED" && (
+                          <Link
+                            href={`/creadores/${user.username}`}
+                            className="rk-press text-xs font-medium text-accent transition-opacity hover:opacity-75"
+                          >
+                            @{user.username}
+                          </Link>
+                        )}
+
+                      <span className="text-xs text-ink/60">
+                        {new Intl.DateTimeFormat("es-PE", {
+                          dateStyle: "medium",
+                        }).format(user.createdAt)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ACCIONES */}
+                <div className="lg:shrink-0">
+                  <UserActions
+                    userId={user.id}
+                    role={user.role}
+                    creatorStatus={user.creatorStatus}
+                    isVerified={user.isVerified}
+                  />
+                </div>
+              </article>
+            );
+          })}
+        </section>
+      )}
+    </main>
   );
 }

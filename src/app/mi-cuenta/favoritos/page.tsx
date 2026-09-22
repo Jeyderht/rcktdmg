@@ -1,8 +1,13 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Heart, X } from "lucide-react";
+
+import AccountPageHeader from "@/components/AccountPageHeader";
+import EmptyState from "@/components/EmptyState";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import ProductCard from "@/components/ProductCard";
 
 type Favorite = {
   userId: string;
@@ -105,171 +110,129 @@ export default function FavoritosPage() {
     <>
       <Navbar />
 
-      <main className="mx-auto max-w-6xl px-4 sm:px-5 py-10 sm:py-16">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-ink/40">
-              RCKTDMG
-            </p>
+      <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
+        <AccountPageHeader
+          title="Favoritos"
+          subtitle="Recursos que guardaste para volver después."
+        />
 
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight">
-              Mis favoritos
-            </h1>
-
-            <p className="mt-3 max-w-2xl text-ink/50">
-              Guarda los recursos digitales que quieres revisar
-              más adelante.
-            </p>
-          </div>
-
-          <div className="flex gap-3">
-            <Link
-              href="/mi-cuenta"
-              className="rk-btn rk-btn-glass"
-            >
-              Mi cuenta
-            </Link>
-
-            <Link
-              href="/tienda"
-              className="rounded-full bg-primary px-5 py-3 text-sm font-medium text-onprimary transition hover:opacity-80"
-            >
-              Explorar tienda
-            </Link>
-          </div>
-        </div>
-
-        {loading && (
-          <div className="mt-10 rk-card p-10 text-center text-ink/50">
-            Cargando favoritos...
-          </div>
-        )}
-
-        {!loading && error && (
-          <div className="mt-10 rounded-3xl border border-danger/25 bg-danger/10 p-6 text-sm text-danger">
-            {error}
+        {/* ERROR */}
+        {error && (
+          <div
+            role="alert"
+            className="rk-fade mt-6 rounded-rk-md border border-danger/25 bg-danger/10 p-5"
+          >
+            <p className="text-sm text-danger">{error}</p>
 
             <button
               type="button"
               onClick={loadFavorites}
-              className="ml-4 rounded-full bg-primary px-4 py-2 text-xs text-onprimary"
+              className="rk-btn rk-btn-primary mt-4 !min-h-0 !px-4 !py-2.5 !text-sm"
             >
-              Reintentar
+              Intentar nuevamente
             </button>
           </div>
         )}
 
-        {!loading && !error && favorites.length === 0 && (
-          <div className="mt-10 rk-card p-12 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary text-2xl text-onprimary">
-              ♡
-            </div>
+        {/* CARGANDO */}
+        {loading && (
+          <div
+            className="mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 xl:grid-cols-6"
+            aria-busy="true"
+          >
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={index}
+                className="rk-card overflow-hidden !rounded-rk-md"
+              >
+                <div className="rk-aspect-product w-full animate-pulse bg-ink/[0.06]" />
 
-            <h2 className="mt-5 text-2xl font-semibold">
-              Todavía no tienes favoritos
-            </h2>
-
-            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink/50">
-              Cuando encuentres un recurso que te interese,
-              agrégalo a favoritos para encontrarlo fácilmente
-              después.
-            </p>
-
-            <Link
-              href="/tienda"
-              className="mt-7 inline-block rounded-full bg-primary px-6 py-3 text-sm font-medium text-onprimary transition hover:opacity-80"
-            >
-              Explorar recursos
-            </Link>
+                <div className="p-2.5 sm:p-3">
+                  <div className="h-3 w-full animate-pulse rounded-full bg-ink/[0.06]" />
+                  <div className="mt-2 h-3 w-2/3 animate-pulse rounded-full bg-ink/[0.05]" />
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
-        {!loading && !error && favorites.length > 0 && (
+        {/* VACÍO */}
+        {!loading && !error && favorites.length === 0 && (
+          <div className="mt-8">
+            <EmptyState
+              icon={Heart}
+              title="Todavía no tienes favoritos"
+              description="Guarda recursos que quieras revisar más adelante."
+              action={{ href: "/tienda", label: "Explorar recursos" }}
+            />
+          </div>
+        )}
+
+        {/* BIBLIOTECA */}
+        {!loading && favorites.length > 0 && (
           <>
-            <div className="mt-10 flex items-center justify-between">
-              <p className="text-sm text-ink/50">
+            <div className="rk-fade-up mt-8 flex items-baseline justify-between gap-4">
+              <p className="text-[15px] text-ink/60">
+                Tu biblioteca
+              </p>
+
+              <span className="text-sm font-medium text-ink/60">
                 {favorites.length}{" "}
                 {favorites.length === 1
                   ? "recurso guardado"
                   : "recursos guardados"}
-              </p>
+              </span>
             </div>
 
-            <section className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="rk-divider mt-4" />
+
+            <section className="rk-fade-up rk-enter-1 mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 xl:grid-cols-6">
               {favorites.map((favorite) => (
-                <article
-                  key={favorite.productId}
-                  className="overflow-hidden rk-card"
-                >
-                  <Link
-                    href={`/tienda/${favorite.product.slug}`}
-                    className="block"
+                <div key={favorite.productId} className="relative">
+                  {/*
+                    Se reutiliza la tarjeta compartida en vez de
+                    duplicar una variante: misma proporción 9:16,
+                    mismo hover y mismo precio en toda la web.
+
+                    El corazón propio de la tarjeta se desactiva
+                    aquí: en esta página quitar el favorito debe
+                    actualizar la lista al instante, y así se
+                    evita una consulta por tarjeta.
+                  */}
+                  <ProductCard
+                    showFavorite={false}
+                    product={{
+                      id: favorite.product.id,
+                      name: favorite.product.name,
+                      slug: favorite.product.slug,
+                      price: Number(favorite.product.price),
+                      coverUrl: favorite.product.coverUrl,
+                      category: favorite.product.category
+                        ? { name: favorite.product.category.name }
+                        : null,
+                    }}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      removeFavorite(favorite.productId)
+                    }
+                    disabled={removingId === favorite.productId}
+                    aria-label={`Quitar ${favorite.product.name} de favoritos`}
+                    title="Quitar de favoritos"
+                    className="rk-press rk-glass-on-image absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full disabled:cursor-wait disabled:opacity-60"
                   >
-                    <div className="aspect-[4/3] overflow-hidden bg-ink/[0.05]">
-                      {favorite.product.coverUrl ? (
-                        <img
-                          src={favorite.product.coverUrl}
-                          alt={favorite.product.name}
-                          className="h-full w-full object-cover transition duration-300 hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.2em] text-ink/25">
-                          RCKTDMG
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-
-                  <div className="p-6">
-                    {favorite.product.category && (
-                      <p className="text-xs uppercase tracking-wider text-ink/40">
-                        {favorite.product.category.name}
-                      </p>
-                    )}
-
-                    <Link
-                      href={`/tienda/${favorite.product.slug}`}
-                      className="mt-2 block text-lg font-semibold hover:underline"
-                    >
-                      {favorite.product.name}
-                    </Link>
-
-                    <p className="mt-4 text-lg font-semibold">
-                      S/{" "}
-                      {Number(favorite.product.price).toFixed(2)}
-                    </p>
-
-                    <div className="mt-5 flex gap-3">
-                      <Link
-                        href={`/tienda/${favorite.product.slug}`}
-                        className="flex-1 rounded-full bg-primary px-4 py-3 text-center text-sm font-medium text-onprimary transition hover:opacity-80"
-                      >
-                        Ver recurso
-                      </Link>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          removeFavorite(favorite.productId)
-                        }
-                        disabled={
-                          removingId === favorite.productId
-                        }
-                        className="rounded-full border border-danger/25 px-4 py-3 text-sm font-medium text-danger transition hover:bg-danger/10 disabled:opacity-50"
-                        title="Eliminar de favoritos"
-                      >
-                        {removingId === favorite.productId
-                          ? "..."
-                          : "♡"}
-                      </button>
-                    </div>
-                  </div>
-                </article>
+                    <X size={13} />
+                  </button>
+                </div>
               ))}
             </section>
           </>
         )}
       </main>
+
+      <Footer />
     </>
   );
 }

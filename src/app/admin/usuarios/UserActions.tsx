@@ -35,7 +35,7 @@ export default function UserActions({
 
   if (role === "ADMIN") {
     return (
-      <span className="text-xs text-ink/35">
+      <span className="text-xs text-ink/60">
         Sin acciones
       </span>
     );
@@ -146,10 +146,10 @@ export default function UserActions({
             type="button"
             disabled={pending !== null}
             onClick={() => runAction(item)}
-            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`rk-btn !min-h-0 !px-3.5 !py-2 !text-xs ${
               item.tone === "danger"
-                ? "border-danger/25 text-danger hover:bg-danger hover:text-white"
-                : "border-ink/10 hover:bg-primary hover:text-onprimary"
+                ? "border border-danger/25 text-danger hover:bg-danger/10"
+                : "rk-btn-glass"
             }`}
           >
             {pending === item.action ? "Guardando..." : item.label}

@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { BadgeCheck, ShieldCheck } from "lucide-react";
 import {
   ChangeEvent,
   FormEvent,
@@ -8,6 +10,9 @@ import {
   useRef,
   useState,
 } from "react";
+
+import Footer from "@/components/Footer";
+import { subirImagen } from "@/lib/storage/client-upload";
 
 type Profile = {
   id: string;
@@ -117,34 +122,21 @@ export default function CreatorProfilePage() {
     }
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const endpoint =
-        type === "avatar"
-          ? "/api/uploads/creator-avatar"
-          : "/api/uploads/creator-cover";
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.error || "No se pudo subir la imagen."
-        );
-      }
+      // Con Blob activo la imagen va directa al almacén y el
+      // servidor la confirma; en local sigue el envío de antes.
+      const subida = await subirImagen(
+        type === "avatar" ? "creator-avatar" : "creator-cover",
+        file,
+        profile?.id
+      );
 
       setProfile((current) =>
         current
           ? {
               ...current,
               ...(type === "avatar"
-                ? { avatarUrl: data.avatarUrl }
-                : { coverUrl: data.coverUrl }),
+                ? { avatarUrl: subida.url }
+                : { coverUrl: subida.url }),
             }
           : current
       );
@@ -240,10 +232,10 @@ export default function CreatorProfilePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen px-4 sm:px-5 py-8 sm:py-12">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
         <div className="mx-auto max-w-5xl">
           <div className="rk-card p-10">
-            <p className="text-sm text-ink/50">
+            <p className="text-sm text-ink/60">
               Cargando perfil...
             </p>
           </div>
@@ -254,9 +246,9 @@ export default function CreatorProfilePage() {
 
   if (!profile) {
     return (
-      <main className="min-h-screen px-4 sm:px-5 py-8 sm:py-12">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
         <div className="mx-auto max-w-5xl">
-          <div className="rounded-3xl border border-danger/25 bg-danger/10 p-8">
+          <div className="rounded-rk-lg border border-danger/25 bg-danger/10 p-8">
             <p className="font-medium text-danger">
               {error || "No se pudo cargar el perfil."}
             </p>
@@ -275,51 +267,64 @@ export default function CreatorProfilePage() {
     displayName.charAt(0).toUpperCase();
 
   return (
-    <main className="min-h-screen px-4 sm:px-5 py-10">
+    <>
+    <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
       <div className="mx-auto max-w-5xl">
 
         {/* ENCABEZADO */}
 
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-ink/40">
+            <p className="rk-eyebrow">
               Creator Studio
             </p>
 
-            <h1 className="mt-2 text-4xl font-semibold tracking-tight">
+            <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
               Mi perfil
             </h1>
 
-            <p className="mt-3 text-ink/50">
-              Administra la información pública de tu perfil de creador.
+            <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
+              Administra la información pública de tu perfil de
+              creador.
             </p>
           </div>
 
-          <Link
-            href="/creadores/panel"
-            className="inline-flex w-fit rk-btn rk-btn-glass"
-          >
-            Volver al panel
-          </Link>
+          {/* El perfil público solo existe si hay username y
+              el creador está aprobado. */}
+          {profile.username &&
+            profile.creatorStatus === "APPROVED" && (
+              <Link
+                href={`/creadores/${profile.username}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rk-btn rk-btn-glass !min-h-0 w-fit !px-4 !py-2.5 !text-sm"
+              >
+                Ver perfil público
+              </Link>
+            )}
         </div>
 
         {/* PERFIL / PORTADA */}
 
-        <section className="mt-8 overflow-hidden rounded-[2rem] border border-ink/[0.07] bg-surface shadow-sm">
+        <section className="rk-card mt-7 overflow-hidden !p-0">
 
           {/* PORTADA */}
 
           <div className="relative h-64 overflow-hidden bg-ink/[0.05] sm:h-72">
 
             {profile.coverUrl ? (
-              <img
+              /* La portada se muestra nítida: el vidrio va en
+                 el botón que flota encima, nunca en la imagen. */
+              <Image
                 src={profile.coverUrl}
                 alt={`Portada de ${displayName}`}
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 64rem"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-900 via-neutral-700 to-neutral-400">
-                <span className="text-xs font-medium uppercase tracking-[0.35em] text-onprimary/60">
+              <div className="rk-media flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/25 via-accent/10 to-transparent">
+                <span className="text-[10px] font-medium uppercase tracking-[0.35em] text-ink/60">
                   RCKTDMG CREATOR
                 </span>
               </div>
@@ -362,16 +367,18 @@ export default function CreatorProfilePage() {
               {/* FOTO */}
 
               <div className="relative shrink-0">
-                <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-[5px] border-surface bg-primary shadow-xl">
+                <div className="rk-media relative flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-[5px] border-surface shadow-rk">
 
                   {profile.avatarUrl ? (
-                    <img
+                    <Image
                       src={profile.avatarUrl}
                       alt={displayName}
-                      className="h-full w-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="128px"
                     />
                   ) : (
-                    <span className="text-4xl font-semibold text-onprimary">
+                    <span className="text-4xl font-semibold text-ink/60">
                       {initials}
                     </span>
                   )}
@@ -383,7 +390,7 @@ export default function CreatorProfilePage() {
                     avatarInputRef.current?.click()
                   }
                   disabled={uploadingAvatar}
-                  className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-ink/10 bg-surface px-4 py-2 text-xs font-medium shadow-sm transition hover:bg-primary hover:text-onprimary disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rk-press rk-glass-strong absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-4 py-2 text-xs font-medium shadow-rk-sm transition-colors duration-fast ease-rk hover:text-accent disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {uploadingAvatar
                     ? "Subiendo..."
@@ -408,31 +415,33 @@ export default function CreatorProfilePage() {
              <div className="min-w-0 flex-1 pb-1 pt-10 sm:pb-2 sm:pt-0">
                 <div className="flex flex-wrap items-center gap-2">
 
-                  <h2 className="text-2xl font-semibold">
+                  <h2 className="rk-title text-2xl">
                     {displayName}
                   </h2>
 
+                  {/* Verificación real: solo si el registro lo dice. */}
                   {profile.isVerified && (
                     <span
                       title="Creador verificado"
-                      className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-onprimary"
+                      className="rk-badge rk-badge-accent"
                     >
-                      ✓
+                      <BadgeCheck size={13} />
+                      Verificado
                     </span>
                   )}
 
                 </div>
 
-                <p className="mt-1 text-sm text-ink/45">
+                <p className="mt-1 text-sm text-ink/60">
                   @{profile.username || "tuusuario"}
                 </p>
 
                 {bio ? (
-                  <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/55">
+                  <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/60">
                     {bio}
                   </p>
                 ) : (
-                  <p className="mt-3 text-sm text-ink/40">
+                  <p className="mt-3 text-sm text-ink/60">
                     Completa tu biografía para presentar tu perfil a los clientes.
                   </p>
                 )}
@@ -446,13 +455,13 @@ export default function CreatorProfilePage() {
         {(message || error) && (
           <div className="mt-6">
             {message && (
-              <div className="rounded-2xl border border-success/25 bg-success/12 px-5 py-4 text-sm text-success">
+              <div className="rk-fade rounded-rk-md border border-success/25 bg-success/10 px-5 py-4 text-sm text-success">
                 {message}
               </div>
             )}
 
             {error && (
-              <div className="rounded-2xl border border-danger/25 bg-danger/10 px-5 py-4 text-sm text-danger">
+              <div className="rk-fade rounded-rk-md border border-danger/25 bg-danger/10 px-5 py-4 text-sm text-danger">
                 {error}
               </div>
             )}
@@ -466,13 +475,13 @@ export default function CreatorProfilePage() {
           className="mt-6 space-y-6"
         >
 
-          <section className="rounded-[2rem] border border-ink/[0.07] bg-surface p-7 shadow-sm sm:p-8">
+          <section className="rk-card p-5 sm:p-6">
 
-            <p className="text-xs uppercase tracking-[0.2em] text-ink/40">
+            <p className="rk-eyebrow">
               Identidad
             </p>
 
-            <h2 className="mt-2 text-2xl font-semibold">
+            <h2 className="rk-title mt-2 text-xl">
               Información del perfil
             </h2>
 
@@ -494,7 +503,7 @@ export default function CreatorProfilePage() {
                   onChange={(event) =>
                     setName(event.target.value)
                   }
-                  className="w-full rounded-2xl border border-ink/10 bg-ink/[0.04] px-4 py-3 outline-none transition focus:border-accent/45"
+                  className="rk-input w-full"
                   placeholder="Tu nombre"
                 />
               </div>
@@ -509,8 +518,8 @@ export default function CreatorProfilePage() {
                   Nombre de usuario
                 </label>
 
-                <div className="flex items-center rounded-2xl border border-ink/10 bg-ink/[0.04]">
-                  <span className="pl-4 text-ink/35">
+                <div className="rk-input flex items-center !px-0 !py-0">
+                  <span className="pl-4 text-ink/60">
                     @
                   </span>
 
@@ -529,7 +538,7 @@ export default function CreatorProfilePage() {
                   />
                 </div>
 
-                <p className="mt-2 text-xs text-ink/40">
+                <p className="mt-2 text-xs text-ink/60">
                   Será tu identificador público en RCKTDMG.
                 </p>
               </div>
@@ -550,7 +559,7 @@ export default function CreatorProfilePage() {
                   onChange={(event) =>
                     setPublicName(event.target.value)
                   }
-                  className="w-full rounded-2xl border border-ink/10 bg-ink/[0.04] px-4 py-3 outline-none transition focus:border-accent/45"
+                  className="rk-input w-full"
                   placeholder="Nombre que verán los clientes"
                 />
               </div>
@@ -569,10 +578,10 @@ export default function CreatorProfilePage() {
                   id="email"
                   value={profile.email}
                   disabled
-                  className="w-full cursor-not-allowed rounded-2xl border border-ink/10 bg-ink/[0.05] px-4 py-3 text-ink/45 outline-none"
+                  className="rk-input w-full !cursor-not-allowed !text-ink/60"
                 />
 
-                <p className="mt-2 text-xs text-ink/40">
+                <p className="mt-2 text-xs text-ink/60">
                   El correo se administra desde tu cuenta.
                 </p>
               </div>
@@ -598,11 +607,11 @@ export default function CreatorProfilePage() {
                   setBio(event.target.value)
                 }
                 rows={6}
-                className="w-full resize-y rounded-2xl border border-ink/10 bg-ink/[0.04] px-4 py-3 outline-none transition focus:border-accent/45"
+                className="rk-textarea w-full resize-y"
                 placeholder="Cuéntale a los clientes quién eres y qué tipo de recursos creas..."
               />
 
-              <div className="mt-2 text-right text-xs text-ink/40">
+              <div className="mt-2 text-right text-xs text-ink/60">
                 {bio.length}/500
               </div>
 
@@ -612,13 +621,13 @@ export default function CreatorProfilePage() {
 
           {/* REDES */}
 
-          <section className="rounded-[2rem] border border-ink/[0.07] bg-surface p-7 shadow-sm sm:p-8">
+          <section className="rk-card p-5 sm:p-6">
 
-            <p className="text-xs uppercase tracking-[0.2em] text-ink/40">
+            <p className="rk-eyebrow">
               Presencia digital
             </p>
 
-            <h2 className="mt-2 text-2xl font-semibold">
+            <h2 className="rk-title mt-2 text-xl">
               Redes y enlaces
             </h2>
 
@@ -639,7 +648,7 @@ export default function CreatorProfilePage() {
                     setWebsiteUrl(event.target.value)
                   }
                   placeholder="https://tusitio.com"
-                  className="w-full rounded-2xl border border-ink/10 bg-ink/[0.04] px-4 py-3 outline-none transition focus:border-accent/45"
+                  className="rk-input w-full"
                 />
               </div>
 
@@ -658,7 +667,7 @@ export default function CreatorProfilePage() {
                     setInstagramUrl(event.target.value)
                   }
                   placeholder="https://instagram.com/..."
-                  className="w-full rounded-2xl border border-ink/10 bg-ink/[0.04] px-4 py-3 outline-none transition focus:border-accent/45"
+                  className="rk-input w-full"
                 />
               </div>
 
@@ -677,7 +686,7 @@ export default function CreatorProfilePage() {
                     setFacebookUrl(event.target.value)
                   }
                   placeholder="https://facebook.com/..."
-                  className="w-full rounded-2xl border border-ink/10 bg-ink/[0.04] px-4 py-3 outline-none transition focus:border-accent/45"
+                  className="rk-input w-full"
                 />
               </div>
 
@@ -696,7 +705,7 @@ export default function CreatorProfilePage() {
                     setTiktokUrl(event.target.value)
                   }
                   placeholder="https://tiktok.com/@..."
-                  className="w-full rounded-2xl border border-ink/10 bg-ink/[0.04] px-4 py-3 outline-none transition focus:border-accent/45"
+                  className="rk-input w-full"
                 />
               </div>
 
@@ -706,9 +715,9 @@ export default function CreatorProfilePage() {
 
           {/* VERIFICACIÓN */}
 
-          <section className="rounded-[2rem] border border-ink/[0.07] bg-surface p-7 shadow-sm sm:p-8">
+          <section className="rk-card p-5 sm:p-6">
 
-            <p className="text-xs uppercase tracking-[0.2em] text-ink/40">
+            <p className="rk-eyebrow">
               Estado de creador
             </p>
 
@@ -719,7 +728,7 @@ export default function CreatorProfilePage() {
                   Verificación
                 </h2>
 
-                <p className="mt-1 text-sm text-ink/50">
+                <p className="mt-1 text-sm text-ink/60">
                   {profile.isVerified
                     ? "Tu perfil está verificado."
                     : "Tu perfil todavía no está verificado."}
@@ -729,13 +738,11 @@ export default function CreatorProfilePage() {
               <div
                 className={`inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${
                   profile.isVerified
-                    ? "bg-primary text-onprimary"
-                    : "bg-ink/[0.05] text-ink/50"
+                    ? "bg-accent/12 text-accent"
+                    : "bg-ink/[0.05] text-ink/60"
                 }`}
               >
-                <span>
-                  {profile.isVerified ? "✓" : "○"}
-                </span>
+                <ShieldCheck size={15} aria-hidden />
 
                 {profile.isVerified
                   ? "Creador verificado"
@@ -744,7 +751,7 @@ export default function CreatorProfilePage() {
 
             </div>
 
-            <p className="mt-5 text-xs leading-5 text-ink/40">
+            <p className="mt-5 text-xs leading-5 text-ink/60">
               La verificación es administrada por RCKTDMG y no puede modificarse desde este formulario.
             </p>
 
@@ -761,7 +768,7 @@ export default function CreatorProfilePage() {
                 uploadingAvatar ||
                 uploadingCover
               }
-              className="rounded-full bg-primary px-7 py-3 text-sm font-medium text-onprimary transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rk-btn rk-btn-primary"
             >
               {saving
                 ? "Guardando..."
@@ -781,5 +788,8 @@ export default function CreatorProfilePage() {
 
       </div>
     </main>
+
+    <Footer />
+    </>
   );
 }

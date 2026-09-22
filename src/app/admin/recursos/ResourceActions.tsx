@@ -142,7 +142,7 @@ export default function ResourceActions({
             type="button"
             disabled={loading}
             onClick={() => handleAction("rechazar")}
-            className="rk-btn flex-1 border border-danger/25 bg-surface/70 !px-4 !py-2.5 !text-xs text-danger backdrop-blur-xl hover:bg-danger hover:text-white lg:flex-none"
+            className="rk-btn flex-1 border border-danger/25 !px-4 !py-2.5 !text-xs text-danger hover:bg-danger/10 lg:flex-none"
           >
             Rechazar
           </button>

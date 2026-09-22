@@ -1,12 +1,16 @@
-﻿"use client";
+"use client";
 
 import {
   useEffect,
   useState,
   type ChangeEvent,
 } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { ArrowLeft, ArrowRight, ImagePlus, Trash2 } from "lucide-react";
+
+import { subirImagen } from "@/lib/storage/client-upload";
 
 type Product = {
   id: string;
@@ -151,26 +155,10 @@ export default function EditarImagenesPage() {
     setMessage("");
 
     try {
-      const formData = new FormData();
+      // Con Blob activo la imagen va directa al almacén.
+      const subida = await subirImagen("product-image", file);
 
-      formData.append("file", file);
-
-      const response = await fetch(
-        "/api/uploads/product-image",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.error ||
-            "No se pudo subir la imagen."
-        );
-      }
+      const data = { imageUrl: subida.url };
 
       if (type === "cover") {
         setCoverUrl(data.imageUrl);
@@ -238,27 +226,12 @@ export default function EditarImagenesPage() {
       const uploadedImages: ProductImage[] = [];
 
       for (const file of filesToUpload) {
-        const formData = new FormData();
-
-        formData.append("file", file);
-
-        const uploadResponse = await fetch(
-          "/api/uploads/product-image",
-          {
-            method: "POST",
-            body: formData,
-          }
+        const subida = await subirImagen(
+          "product-image",
+          file
         );
 
-        const uploadData =
-          await uploadResponse.json();
-
-        if (!uploadResponse.ok) {
-          throw new Error(
-            uploadData.error ||
-              `No se pudo subir ${file.name}.`
-          );
-        }
+        const uploadData = { imageUrl: subida.url };
 
         const currentSortOrder =
           images.length +
@@ -547,9 +520,9 @@ export default function EditarImagenesPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen px-4 sm:px-6 py-10">
-        <div className="mx-auto max-w-5xl rounded-3xl bg-surface p-10">
-          <p className="text-ink/50">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
+        <div className="rk-card p-8">
+          <p className="text-ink/60">
             Cargando recurso...
           </p>
         </div>
@@ -563,8 +536,8 @@ export default function EditarImagenesPage() {
 
   if (error && !product) {
     return (
-      <main className="min-h-screen px-4 sm:px-6 py-10">
-        <div className="mx-auto max-w-5xl rounded-3xl bg-surface p-10">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
+        <div className="rk-card p-8">
           <p className="text-danger">
             {error}
           </p>
@@ -578,34 +551,34 @@ export default function EditarImagenesPage() {
   // =========================================
 
   return (
-    <main className="min-h-screen px-4 sm:px-6 py-10">
+    <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
       <div className="mx-auto max-w-5xl">
 
         {/* CABECERA */}
         <div className="mb-8">
           <Link
             href={`/creadores/productos/${id}`}
-            className="text-sm text-ink/45 transition hover:text-ink"
+            className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
           >
             ← Volver a gestionar
           </Link>
 
-          <p className="mt-6 text-xs uppercase tracking-[0.2em] text-ink/40">
+          <p className="rk-eyebrow mt-6">
             Gestión de imágenes
           </p>
 
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight">
+          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
             {product?.name}
           </h1>
 
-          <p className="mt-3 text-ink/50">
+          <p className="mt-3 text-ink/60">
             Administra la portada, el preview y
             las imágenes adicionales de tu
             publicación.
           </p>
         </div>
 
-        <section className="rounded-[2rem] border border-ink/[0.07] bg-surface p-6 shadow-sm md:p-8">
+        <section className="rk-card p-5 sm:p-6">
 
           {/* ================================= */}
           {/* PORTADA */}
@@ -613,40 +586,42 @@ export default function EditarImagenesPage() {
 
           <div>
             <div>
-              <p className="text-xs uppercase tracking-[0.15em] text-ink/40">
+              <p className="rk-eyebrow">
                 Portada
               </p>
 
-              <h2 className="mt-1 text-xl font-semibold">
+              <h2 className="rk-title mt-2 text-xl">
                 Imagen principal
               </h2>
 
-              <p className="mt-2 text-sm text-ink/45">
+              <p className="mt-2 text-sm text-ink/60">
                 Esta será la imagen principal
                 de tu publicación.
               </p>
             </div>
 
-            <div className="mt-5 overflow-hidden rounded-3xl bg-ink/[0.05]">
+            <div className="rk-media rk-aspect-product relative mx-auto mt-5 w-full max-w-[14rem] overflow-hidden rounded-rk-md">
               {coverUrl ? (
-                <img
+                <Image
                   src={coverUrl}
                   alt={`Portada de ${
                     product?.name ||
                     "recurso"
                   }`}
-                  className="aspect-[4/3] w-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="224px"
                 />
               ) : (
-                <div className="flex aspect-[4/3] items-center justify-center">
-                  <span className="text-xs uppercase tracking-[0.25em] text-ink/25">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs uppercase tracking-[0.25em] text-ink/45">
                     Sin portada
                   </span>
                 </div>
               )}
             </div>
 
-            <label className="mt-4 flex cursor-pointer items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-medium text-onprimary transition hover:opacity-80">
+            <label className="rk-btn rk-btn-primary mx-auto mt-4 !min-h-0 cursor-pointer !px-5 !py-2.5 !text-sm">
               {uploadingCover
                 ? "Subiendo portada..."
                 : coverUrl
@@ -677,42 +652,44 @@ export default function EditarImagenesPage() {
           {/* PREVIEW */}
           {/* ================================= */}
 
-          <div className="mt-10 border-t border-ink/[0.07] pt-10">
+          <div className="mt-10 border-t border-line/10 pt-10">
             <div>
-              <p className="text-xs uppercase tracking-[0.15em] text-ink/40">
+              <p className="rk-eyebrow">
                 Preview
               </p>
 
-              <h2 className="mt-1 text-xl font-semibold">
+              <h2 className="rk-title mt-2 text-xl">
                 Imagen de vista previa
               </h2>
 
-              <p className="mt-2 text-sm text-ink/45">
+              <p className="mt-2 text-sm text-ink/60">
                 Se mostrará como imagen de
                 vista previa de tu producto.
               </p>
             </div>
 
-            <div className="mt-5 overflow-hidden rounded-3xl bg-ink/[0.05]">
+            <div className="rk-media rk-aspect-product relative mx-auto mt-5 w-full max-w-[14rem] overflow-hidden rounded-rk-md">
               {previewUrl ? (
-                <img
+                <Image
                   src={previewUrl}
                   alt={`Preview de ${
                     product?.name ||
                     "recurso"
                   }`}
-                  className="aspect-[4/3] w-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="224px"
                 />
               ) : (
-                <div className="flex aspect-[4/3] items-center justify-center">
-                  <span className="text-xs uppercase tracking-[0.25em] text-ink/25">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs uppercase tracking-[0.25em] text-ink/45">
                     Sin preview
                   </span>
                 </div>
               )}
             </div>
 
-            <label className="mt-4 flex cursor-pointer items-center justify-center rounded-full border border-ink/10 px-5 py-3 text-sm font-medium transition hover:bg-ink/[0.06]">
+            <label className="mt-4 flex cursor-pointer items-center justify-center rounded-full border border-line/10 px-5 py-3 text-sm font-medium transition hover:bg-ink/[0.06]">
               {uploadingPreview
                 ? "Subiendo preview..."
                 : previewUrl
@@ -743,19 +720,19 @@ export default function EditarImagenesPage() {
           {/* GALERÍA ADICIONAL */}
           {/* ================================= */}
 
-          <div className="mt-10 border-t border-ink/[0.07] pt-10">
+          <div className="mt-10 border-t border-line/10 pt-10">
 
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.15em] text-ink/40">
+                <p className="rk-eyebrow">
                   Galería
                 </p>
 
-                <h2 className="mt-1 text-xl font-semibold">
+                <h2 className="rk-title mt-2 text-xl">
                   Imágenes adicionales
                 </h2>
 
-                <p className="mt-2 max-w-2xl text-sm text-ink/45">
+                <p className="mt-2 max-w-2xl text-sm text-ink/60">
                   Agrega más imágenes para
                   mostrar tu producto con mayor
                   detalle. Puedes seleccionar varias
@@ -763,31 +740,34 @@ export default function EditarImagenesPage() {
                 </p>
               </div>
 
-              <div className="shrink-0 rounded-full bg-ink/[0.06] px-4 py-2 text-sm font-medium">
+              <div className="rk-chip shrink-0 tabular-nums">
                 {images.length} / 10
               </div>
             </div>
 
             {/* BOTÓN SUBIR */}
             <label
-              className={`mt-6 flex cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-ink/10 px-6 py-8 text-center transition ${
+              className={`mt-6 flex cursor-pointer items-center justify-center rounded-rk-md border border-dashed border-line/20 px-6 py-8 text-center transition-colors duration-normal ease-rk ${
                 uploadingImages
                   ? "cursor-wait opacity-50"
-                  : "hover:border-ink/25 hover:bg-ink/[0.02]"
+                  : "hover:border-accent/40 hover:bg-ink/[0.02]"
               }`}
             >
               <div>
-                <div className="text-3xl">
-                  +
-                </div>
+                <span
+                  aria-hidden
+                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-accent/10 text-accent"
+                >
+                  <ImagePlus size={22} />
+                </span>
 
-                <p className="mt-2 text-sm font-medium">
+                <p className="mt-3 text-sm font-medium">
                   {uploadingImages
                     ? "Subiendo imágenes..."
                     : "Agregar imágenes"}
                 </p>
 
-                <p className="mt-1 text-xs text-ink/40">
+                <p className="mt-1 text-xs text-ink/60">
                   PNG, JPG o WEBP · máximo
                   10 imágenes adicionales
                 </p>
@@ -813,16 +793,16 @@ export default function EditarImagenesPage() {
 
             {/* GALERÍA */}
             {images.length > 0 ? (
-              <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {images.map(
                   (image, index) => (
                     <div
                       key={image.id}
-                      className="overflow-hidden rounded-3xl border border-ink/[0.07] bg-ink/[0.05]"
+                      className="rk-card group relative overflow-hidden !rounded-rk-md !p-0"
                     >
-                      {/* IMAGEN */}
-                      <div className="relative">
-                        <img
+                      {/* IMAGEN: 9:16 y siempre nítida */}
+                      <div className="rk-media rk-aspect-product relative">
+                        <Image
                           src={image.url}
                           alt={
                             image.alt ||
@@ -830,7 +810,9 @@ export default function EditarImagenesPage() {
                               index + 1
                             }`
                           }
-                          className="aspect-[4/3] w-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 45vw, 22vw"
                         />
 
                         <div className="rk-glass-on-image absolute left-3 top-3 rounded-full px-3 py-1.5 text-xs font-medium">
@@ -838,81 +820,53 @@ export default function EditarImagenesPage() {
                         </div>
                       </div>
 
-                      {/* CONTROLES */}
-                      <div className="p-4">
+                      {/* CONTROLES: vidrio sobre imagen nítida */}
+                      <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 p-2">
+                        <button
+                          type="button"
+                          onClick={() => moveImage(image.id, "up")}
+                          disabled={index === 0}
+                          aria-label="Mover imagen antes"
+                          title="Mover antes"
+                          className="rk-press rk-glass-on-image flex h-8 w-8 items-center justify-center rounded-full disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          <ArrowLeft size={14} />
+                        </button>
 
-                        <p className="truncate text-sm font-medium">
-                          {image.alt ||
-                            `Imagen ${
-                              index + 1
-                            }`}
-                        </p>
+                        <button
+                          type="button"
+                          onClick={() => moveImage(image.id, "down")}
+                          disabled={index === images.length - 1}
+                          aria-label="Mover imagen después"
+                          title="Mover después"
+                          className="rk-press rk-glass-on-image flex h-8 w-8 items-center justify-center rounded-full disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          <ArrowRight size={14} />
+                        </button>
 
-                        <div className="mt-4 flex gap-2">
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              moveImage(
-                                image.id,
-                                "up"
-                              )
-                            }
-                            disabled={
-                              index === 0
-                            }
-                            className="flex-1 rounded-full border border-ink/10 px-3 py-2 text-sm transition hover:bg-ink/[0.06] disabled:cursor-not-allowed disabled:opacity-30"
-                          >
-                            ↑
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              moveImage(
-                                image.id,
-                                "down"
-                              )
-                            }
-                            disabled={
-                              index ===
-                              images.length - 1
-                            }
-                            className="flex-1 rounded-full border border-ink/10 px-3 py-2 text-sm transition hover:bg-ink/[0.06] disabled:cursor-not-allowed disabled:opacity-30"
-                          >
-                            ↓
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleDeleteImage(
-                                image.id
-                              )
-                            }
-                            disabled={
-                              uploadingImages ||
-                              saving
-                            }
-                            className="flex-1 rounded-full border border-danger/25 px-3 py-2 text-sm text-danger transition hover:bg-danger/10 disabled:opacity-40"
-                          >
-                            Eliminar
-                          </button>
-
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteImage(image.id)}
+                          disabled={uploadingImages || saving}
+                          aria-label={`Eliminar imagen ${index + 1}`}
+                          title="Eliminar imagen"
+                          className="rk-press rk-glass-on-image flex h-8 w-8 items-center justify-center rounded-full text-danger disabled:opacity-40"
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                     </div>
                   )
                 )}
               </div>
             ) : (
-              <div className="mt-6 rounded-3xl bg-ink/[0.05] px-6 py-12 text-center">
-                <p className="text-sm font-medium text-ink/50">
+              <div className="mt-6 rounded-rk-md border border-dashed border-line/20 px-6 py-12 text-center">
+                <p className="text-sm font-medium text-ink/60">
                   Todavía no tienes imágenes
                   adicionales.
                 </p>
 
-                <p className="mt-1 text-xs text-ink/30">
+                <p className="mt-1 text-xs text-ink/60">
                   Agrega imágenes para
                   enriquecer la presentación de
                   tu producto.
@@ -928,13 +882,13 @@ export default function EditarImagenesPage() {
           {(message || error) && (
             <div className="mt-8 space-y-3">
               {message && (
-                <p className="rounded-2xl bg-success/12 px-4 py-3 text-sm text-success">
+                <p className="rk-fade rounded-rk-md border border-success/25 bg-success/10 px-4 py-3 text-sm text-success">
                   {message}
                 </p>
               )}
 
               {error && (
-                <p className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
+                <p className="rk-fade rounded-rk-md border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger">
                   {error}
                 </p>
               )}
@@ -945,7 +899,7 @@ export default function EditarImagenesPage() {
           {/* ACCIONES */}
           {/* ================================= */}
 
-          <div className="mt-8 flex flex-wrap gap-3 border-t border-ink/[0.07] pt-6">
+          <div className="mt-8 flex flex-wrap gap-2.5 border-t border-line/10 pt-6">
 
             <button
               type="button"
@@ -956,7 +910,7 @@ export default function EditarImagenesPage() {
                 uploadingPreview ||
                 uploadingImages
               }
-              className="rounded-full bg-primary px-6 py-3 text-sm font-medium text-onprimary transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rk-btn rk-btn-primary"
             >
               {saving
                 ? "Guardando..."
@@ -965,7 +919,7 @@ export default function EditarImagenesPage() {
 
             <Link
               href={`/creadores/productos/${id}`}
-              className="rounded-full border border-ink/10 px-6 py-3 text-sm font-medium transition hover:bg-ink/[0.06]"
+              className="rk-btn rk-btn-glass"
             >
               Cancelar
             </Link>

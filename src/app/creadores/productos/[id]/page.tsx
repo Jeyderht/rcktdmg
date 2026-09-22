@@ -1,6 +1,15 @@
-﻿import Link from "next/link";
+import Image from "next/image";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import {
+  BarChart3,
+  ChevronLeft,
+  ExternalLink,
+  ImageIcon,
+  Pencil,
+} from "lucide-react";
+
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
 
@@ -11,23 +20,23 @@ type PageProps = {
 const statusInfo = {
   DRAFT: {
     label: "Borrador",
-    className: "bg-ink/[0.05] text-ink/70",
+    badge: "rk-badge-neutral",
   },
   PENDING_REVIEW: {
-    label: "Pendiente de revisiÃ³n",
-    className: "bg-warning/12 text-warning",
+    label: "Pendiente de revisión",
+    badge: "rk-badge-warning",
   },
   PUBLISHED: {
     label: "Publicado",
-    className: "bg-success/12 text-success",
+    badge: "rk-badge-success",
   },
   REJECTED: {
     label: "Rechazado",
-    className: "bg-danger/10 text-danger",
+    badge: "rk-badge-danger",
   },
   ARCHIVED: {
     label: "Archivado",
-    className: "bg-ink/[0.09] text-ink/60",
+    badge: "rk-badge-neutral",
   },
 } as const;
 
@@ -72,6 +81,7 @@ export default async function CreatorProductPage({
       price: true,
       accessType: true,
       status: true,
+      rejectionReason: true,
       coverUrl: true,
       previewUrl: true,
       fileUrl: true,
@@ -84,9 +94,11 @@ export default async function CreatorProductPage({
   if (!product) {
     notFound();
   }
+
   if (!product.slug) {
     throw new Error("Este recurso no tiene un slug configurado.");
   }
+
   // Un creador solamente puede gestionar sus propios recursos.
   if (
     session.role !== "ADMIN" &&
@@ -97,226 +109,237 @@ export default async function CreatorProductPage({
 
   const status = statusInfo[product.status];
 
+  const specs = [
+    {
+      label: "Categoría",
+      value: product.category?.name || "Sin categoría",
+    },
+    {
+      label: "Precio",
+      value: `S/ ${Number(product.price).toFixed(2)}`,
+    },
+    {
+      label: "Acceso",
+      value: accessLabels[product.accessType],
+    },
+    {
+      label: "Creado",
+      value: new Intl.DateTimeFormat("es-PE", {
+        dateStyle: "medium",
+      }).format(product.createdAt),
+    },
+  ];
+
+  // Estado real de cada archivo: nada se da por hecho.
+  const files = [
+    {
+      label: "Archivo principal",
+      ready: Boolean(product.fileUrl),
+      readyText: "Cargado y listo para entregar",
+      pendingText: "Todavía sin archivo",
+    },
+    {
+      label: "Portada",
+      ready: Boolean(product.coverUrl),
+      readyText: "Portada configurada",
+      pendingText: "Sin portada",
+    },
+    {
+      label: "Vista previa",
+      ready: Boolean(product.previewUrl),
+      readyText: "Vista previa configurada",
+      pendingText: "Sin vista previa",
+    },
+  ];
+
   return (
-    <main className="min-h-screen px-4 sm:px-6 py-10">
-      <div className="mx-auto max-w-5xl">
-        {/* ENCABEZADO */}
-        <div className="mb-8">
-          <Link
-            href="/creadores/panel/recursos"
-            className="text-sm text-ink/45 transition hover:text-ink"
-          >
-            â† Volver a mis recursos
-          </Link>
+    <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
 
-          <div className="mt-5 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div>
-              <p className="text-sm uppercase tracking-[0.15em] text-ink/40">
-                Creator Studio
-              </p>
+      {/* ========== CABECERA ========== */}
+      <header className="rk-fade-up">
+        <Link
+          href="/creadores/panel/recursos"
+          className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
+        >
+          <ChevronLeft size={15} />
+          Mis recursos
+        </Link>
 
-              <h1 className="mt-2 text-4xl font-semibold tracking-tight">
-                Gestionar recurso
+        <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 gap-4">
+            {/* Contenido visual 9:16, siempre nítido. */}
+            <div className="rk-media rk-aspect-product relative w-20 shrink-0 overflow-hidden rounded-rk-md sm:w-24">
+              {product.coverUrl ? (
+                <Image
+                  src={product.coverUrl}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  sizes="96px"
+                />
+              ) : (
+                <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
+                  RCKTDMG
+                </span>
+              )}
+            </div>
+
+            <div className="min-w-0">
+              <p className="rk-eyebrow">Recurso</p>
+
+              <h1 className="rk-title mt-2 text-2xl sm:text-3xl">
+                {product.name}
               </h1>
 
-              <p className="mt-2 text-ink/50">
-                Consulta y administra la informaciÃ³n de tu recurso.
-              </p>
+              <span className={`rk-badge mt-3 ${status.badge}`}>
+                {status.label}
+              </span>
             </div>
+          </div>
 
-            <span
-              className={`w-fit rounded-full px-4 py-2 text-sm font-medium ${status.className}`}
+          <div className="flex shrink-0 flex-wrap gap-2">
+            {product.status === "PUBLISHED" && (
+              <Link
+                href={`/tienda/${product.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2.5 !text-sm"
+              >
+                <ExternalLink size={15} />
+                Ver publicación
+              </Link>
+            )}
+
+            <Link
+              href={`/creadores/productos/${product.id}/estadisticas`}
+              className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
             >
-              {status.label}
-            </span>
+              <BarChart3 size={15} />
+              Estadísticas
+            </Link>
           </div>
         </div>
+      </header>
 
-        {/* INFORMACIÃ“N PRINCIPAL */}
-        <section className="overflow-hidden rk-card">
-          <div className="p-7">
-            <div className="flex flex-col gap-8">
-              {/* TÃTULO */}
-              <div>
-                <p className="text-xs uppercase tracking-[0.15em] text-ink/35">
-                  Nombre del recurso
-                </p>
+      {/* ========== MOTIVO REAL DEL RECHAZO ========== */}
+      {product.status === "REJECTED" && product.rejectionReason && (
+        <div className="rk-fade mt-6 rounded-rk-md border border-danger/25 bg-danger/10 p-5">
+          <p className="text-sm font-semibold text-danger">
+            Recurso rechazado
+          </p>
 
-                <h2 className="mt-2 text-3xl font-semibold">
-                  {product.name}
-                </h2>
-              </div>
+          <p className="mt-1.5 text-sm leading-6 text-danger">
+            <span className="font-medium">Motivo:</span>{" "}
+            {product.rejectionReason}
+          </p>
+        </div>
+      )}
 
-              {/* DATOS */}
-              <div className="grid grid-cols-1 gap-5 border-y border-ink/[0.07] py-6 sm:grid-cols-2 lg:grid-cols-4">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-ink/35">
-                    CategorÃ­a
-                  </p>
-                  <p className="mt-2 font-medium">
-                    {product.category?.name || "Sin categorÃ­a"}
-                  </p>
-                </div>
+      {/* ========== DATOS ========== */}
+      <section className="rk-fade-up rk-enter-1 mt-7">
+        <p className="rk-eyebrow">Información</p>
 
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-ink/35">
-                    Precio
-                  </p>
-                  <p className="mt-2 font-medium">
-                    S/ {Number(product.price).toFixed(2)}
-                  </p>
-                </div>
+        <div className="rk-divider mt-3" />
 
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-ink/35">
-                    Acceso
-                  </p>
-                  <p className="mt-2 font-medium">
-                    {accessLabels[product.accessType]}
-                  </p>
-                </div>
+        <dl className="mt-4 grid grid-cols-2 gap-x-5 gap-y-4 sm:grid-cols-4">
+          {specs.map((spec) => (
+            <div key={spec.label}>
+              <dt className="text-xs text-ink/60">{spec.label}</dt>
 
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-ink/35">
-                    Creado
-                  </p>
-                  <p className="mt-2 font-medium">
-                    {new Date(product.createdAt).toLocaleDateString("es-PE")}
-                  </p>
-                </div>
-              </div>
-
-              {/* DESCRIPCIÃ“N */}
-              <div>
-                <p className="text-xs uppercase tracking-[0.15em] text-ink/35">
-                  DescripciÃ³n
-                </p>
-
-                <div className="mt-3 rounded-2xl bg-ink/[0.05] p-5">
-                  <p className="whitespace-pre-wrap leading-7 text-ink/65">
-                    {product.description}
-                  </p>
-                </div>
-              </div>
-
-              {/* ARCHIVOS */}
-              <div>
-                <p className="text-xs uppercase tracking-[0.15em] text-ink/35">
-                  Archivos
-                </p>
-
-                <div className="mt-3 space-y-3">
-                  <div className="flex items-center justify-between rounded-2xl border border-ink/[0.07] p-4">
-                    <div>
-                      <p className="font-medium">
-                        Archivo principal
-                      </p>
-                      <p className="mt-1 text-sm text-ink/40">
-                        {product.fileUrl
-                          ? "Archivo cargado correctamente"
-                          : "Archivo pendiente"}
-                      </p>
-                    </div>
-
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${product.fileUrl
-                        ? "bg-success/12 text-success"
-                        : "bg-warning/12 text-warning"
-                        }`}
-                    >
-                      {product.fileUrl ? "Cargado" : "Pendiente"}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-2xl border border-ink/[0.07] p-4">
-                    <div>
-                      <p className="font-medium">
-                        Portada
-                      </p>
-                      <p className="mt-1 text-sm text-ink/40">
-                        {product.coverUrl
-                          ? "Portada configurada"
-                          : "Sin portada"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-2xl border border-ink/[0.07] p-4">
-                    <div>
-                      <p className="font-medium">
-                        Preview
-                      </p>
-                      <p className="mt-1 text-sm text-ink/40">
-                        {product.previewUrl
-                          ? "Preview configurado"
-                          : "Sin preview"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* CREADOR */}
-              <div>
-                <p className="text-xs uppercase tracking-[0.15em] text-ink/35">
-                  Creador
-                </p>
-
-                <p className="mt-2 font-medium">
-                  {product.creator.name || "Creador RCKTDMG"}
-                </p>
-
-                <p className="mt-1 text-sm text-ink/40">
-                  {product.creator.email}
-                </p>
-              </div>
+              <dd className="mt-1.5 text-sm font-medium">
+                {spec.value}
+              </dd>
             </div>
-          </div>
+          ))}
+        </dl>
+      </section>
 
-          {/* ACCIONES */}
-          <div className="border-t border-ink/[0.07] bg-ink/[0.04] p-6">
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href={`/creadores/productos/${product.id}/imagenes`}
-                className="rounded-full border border-ink/10 px-5 py-2.5 text-sm font-medium transition hover:bg-ink/[0.06]"
-              >
-                Editar imágenes
-              </Link>
-              {product.status === "PUBLISHED" && (
-                <Link
-                  href={`/tienda/${product.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-onprimary transition hover:opacity-80"
+      {/* ========== DESCRIPCIÓN ========== */}
+      <section className="rk-fade-up rk-enter-2 mt-8">
+        <p className="rk-eyebrow">Descripción</p>
+
+        <div className="rk-divider mt-3" />
+
+        <div className="rk-card mt-4 p-5">
+          <p className="whitespace-pre-line text-[15px] leading-7 text-ink/65">
+            {product.description}
+          </p>
+        </div>
+      </section>
+
+      {/* ========== ARCHIVOS ========== */}
+      <section className="rk-fade-up rk-enter-3 mt-8">
+        <p className="rk-eyebrow">Archivos</p>
+
+        <div className="rk-divider mt-3" />
+
+        <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
+          {files.map((file) => (
+            <div key={file.label} className="rk-card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-medium">{file.label}</p>
+
+                <span
+                  className={`rk-badge shrink-0 ${
+                    file.ready
+                      ? "rk-badge-success"
+                      : "rk-badge-warning"
+                  }`}
                 >
-                  Ver publicaciÃ³n
-                </Link>
-              )}
+                  {file.ready ? "Listo" : "Pendiente"}
+                </span>
+              </div>
 
-              {product.status === "DRAFT" && (
-                <form
-                  action={`/api/creadores/productos/${product.id}/enviar-revision`}
-                  method="POST"
-                >
-                  <button
-                    type="submit"
-                    className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-onprimary transition hover:opacity-80"
-                  >
-                    Enviar a revisiÃ³n
-                  </button>
-                </form>
-              )}
-
-              <Link
-                href="/creadores/panel/recursos"
-                className="rounded-full border border-ink/10 px-5 py-2.5 text-sm font-medium transition hover:bg-ink/[0.06]"
-              >
-                Volver
-              </Link>
+              <p className="mt-2 text-xs leading-5 text-ink/60">
+                {file.ready ? file.readyText : file.pendingText}
+              </p>
             </div>
-          </div>
-        </section>
-      </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ========== ACCIONES ========== */}
+      <section className="rk-fade-up mt-8">
+        <p className="rk-eyebrow">Gestionar</p>
+
+        <div className="rk-divider mt-3" />
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link
+            href={`/creadores/productos/${product.id}/imagenes`}
+            className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
+          >
+            <ImageIcon size={15} />
+            Imágenes
+          </Link>
+
+          {(product.status === "DRAFT" ||
+            product.status === "REJECTED") && (
+            <Link
+              href={`/creadores/productos/${product.id}/editar`}
+              className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
+            >
+              <Pencil size={15} />
+              Editar recurso
+            </Link>
+          )}
+
+          {/* Mismo envío a revisión que antes: POST al endpoint. */}
+          {product.status === "DRAFT" && (
+            <form
+              action={`/api/creadores/productos/${product.id}/enviar-revision`}
+              method="POST"
+            >
+              <button
+                type="submit"
+                className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2.5 !text-sm"
+              >
+                Enviar a revisión
+              </button>
+            </form>
+          )}
+        </div>
+      </section>
     </main>
   );
 }

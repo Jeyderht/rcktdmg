@@ -192,7 +192,7 @@ export default function AddToCollectionButton({
           />
 
           {/* PANEL: hoja inferior en móvil, diálogo en desktop */}
-          <div className="rk-glass-strong rk-float animate-fade-up relative w-full max-w-md rounded-t-[1.75rem] p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:rounded-[1.75rem] sm:p-6 sm:pb-6">
+          <div className="rk-glass-strong rk-float animate-fade-up relative w-full max-w-md rounded-t-rk-xl p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:rounded-rk-xl sm:p-6 sm:pb-6">
 
             {/* Asa de arrastre, solo móvil */}
             <div
@@ -220,20 +220,20 @@ export default function AddToCollectionButton({
             </div>
 
             {loading && (
-              <div className="mt-5 rounded-[1.25rem] bg-ink/[0.04] p-5 text-center text-sm text-ink/50">
+              <div className="mt-5 rounded-rk-md bg-ink/[0.04] p-5 text-center text-sm text-ink/60">
                 Cargando...
               </div>
             )}
 
             {!loading && message && (
-              <div className="mt-5 rounded-[1.25rem] bg-ink/[0.04] p-4 text-sm text-ink/60">
+              <div className="mt-5 rounded-rk-md bg-ink/[0.04] p-4 text-sm text-ink/60">
                 {message}
               </div>
             )}
 
             {!loading && collections.length === 0 && (
-              <div className="mt-5 rounded-[1.25rem] bg-ink/[0.04] p-6 text-center">
-                <p className="text-sm text-ink/50">
+              <div className="mt-5 rounded-rk-md bg-ink/[0.04] p-6 text-center">
+                <p className="text-sm text-ink/60">
                   Todavía no tienes colecciones.
                 </p>
 
@@ -259,14 +259,14 @@ export default function AddToCollectionButton({
                       type="button"
                       disabled={alreadyAdded}
                       onClick={() => addToCollection(collection.id)}
-                      className="rk-press-sm flex w-full items-center justify-between gap-3 rounded-[1.1rem] border border-ink/[0.07] bg-surface/70 p-4 text-left transition-colors hover:bg-surface disabled:cursor-default disabled:opacity-60"
+                      className="rk-press-sm flex w-full items-center justify-between gap-3 rounded-rk-md border border-line/10 bg-surface/70 p-4 text-left transition-colors hover:bg-surface disabled:cursor-default disabled:opacity-60"
                     >
                       <div className="min-w-0">
                         <p className="truncate font-medium">
                           {collection.name}
                         </p>
 
-                        <p className="mt-0.5 text-xs text-ink/40">
+                        <p className="mt-0.5 text-xs text-ink/60">
                           {collection.items.length}{" "}
                           {collection.items.length === 1
                             ? "recurso"

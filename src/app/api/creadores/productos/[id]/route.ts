@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { olvidarObjeto } from "@/lib/storage";
 import { verifySessionToken } from "@/lib/auth";
 
 type RouteContext = {
@@ -274,6 +275,56 @@ export async function PATCH(
             : product.rejectionReason,
       },
     });
+
+    /*
+      Limpieza del almacén, ya con la base de datos guardada.
+
+      Mismo criterio que el borrado de imágenes: primero la
+      base, después el objeto. Si esto fallara quedaría un
+      huérfano en Blob, que es preferible a un registro
+      apuntando a un objeto que ya no existe.
+
+      Solo se olvidan portada y preview, que viven en el
+      almacén público. El archivo vendible no se toca aquí.
+    */
+    const candidatas = [
+      product.coverUrl !== updatedProduct.coverUrl
+        ? product.coverUrl
+        : null,
+
+      product.previewUrl !== updatedProduct.previewUrl
+        ? product.previewUrl
+        : null,
+    ].filter((url): url is string => Boolean(url));
+
+    if (candidatas.length > 0) {
+      // Una misma URL puede seguir usándose en el otro campo
+      // o en la galería: en ese caso no se borra nada.
+      const siguenEnUso = new Set(
+        [
+          updatedProduct.coverUrl,
+          updatedProduct.previewUrl,
+          updatedProduct.fileUrl,
+        ].filter((url): url is string => Boolean(url))
+      );
+
+      const enGaleria = await prisma.productImage.findMany({
+        where: {
+          url: { in: candidatas },
+        },
+        select: { url: true },
+      });
+
+      for (const imagen of enGaleria) {
+        siguenEnUso.add(imagen.url);
+      }
+
+      for (const anterior of candidatas) {
+        if (siguenEnUso.has(anterior)) continue;
+
+        await olvidarObjeto(anterior, "publico");
+      }
+    }
 
     return NextResponse.json({
       success: true,

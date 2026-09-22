@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, BadgeCheck } from "lucide-react";
 
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
@@ -66,7 +68,7 @@ export default async function CreatorsPage() {
 
         {/* ENCABEZADO */}
         <section className="rk-enter">
-          <div className="rk-glass relative overflow-hidden rounded-[2rem] px-6 py-12 text-center sm:rounded-[2.5rem] sm:px-10 sm:py-16">
+          <div className="rk-glass relative overflow-hidden rounded-rk-xl px-6 py-12 text-center sm:rounded-rk-xl sm:px-10 sm:py-16">
             <div
               aria-hidden
               className="pointer-events-none absolute -top-28 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/20 blur-3xl"
@@ -79,7 +81,7 @@ export default async function CreatorsPage() {
                 Publica. Crece. Vende.
               </h1>
 
-              <p className="mx-auto mt-5 max-w-xl text-[15px] leading-7 text-ink/50">
+              <p className="mx-auto mt-5 max-w-xl text-[15px] leading-7 text-ink/60">
                 Sube tus recursos, gestiona tus ventas y cobra tus
                 ganancias desde un único panel.
               </p>
@@ -109,7 +111,7 @@ export default async function CreatorsPage() {
               </div>
 
               {!isCreator && (
-                <p className="mx-auto mt-5 max-w-lg text-xs text-ink/40">
+                <p className="mx-auto mt-5 max-w-lg text-xs text-ink/60">
                   Las cuentas de creador las habilita el equipo de
                   RCKTDMG desde administración.
                 </p>
@@ -123,7 +125,7 @@ export default async function CreatorsPage() {
           <section className="rk-enter rk-enter-1 mt-10 sm:mt-14">
             <p className="rk-eyebrow">Comunidad</p>
 
-            <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">
+            <h2 className="rk-title mt-2 text-2xl sm:text-3xl">
               Creadores en RCKTDMG
             </h2>
 
@@ -139,30 +141,33 @@ export default async function CreatorsPage() {
                     className="rk-card rk-card-hover rk-press group overflow-hidden"
                   >
                     {/* PORTADA */}
-                    <div className="h-24 overflow-hidden rounded-t-[1.5rem]">
+                    <div className="rk-media relative h-24 overflow-hidden rounded-t-rk-lg">
                       {creator.coverUrl ? (
-                        <img
+                        <Image
                           src={creator.coverUrl}
                           alt={`Portada de ${displayName}`}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition-transform duration-700 ease-rk group-hover:scale-105"
+                          fill
+                          className="object-cover transition-transform duration-slow ease-rk group-hover:scale-105"
+                          sizes="(max-width: 1024px) 100vw, 22rem"
                         />
                       ) : (
-                        <div className="h-full w-full bg-gradient-to-br from-ink via-ink/70 to-accent/60" />
+                        <div className="h-full w-full bg-gradient-to-br from-accent/25 via-accent/10 to-transparent" />
                       )}
                     </div>
 
                     <div className="px-5 pb-5">
                       {/* AVATAR */}
-                      <div className="-mt-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-[1.1rem] border-[3px] border-surface bg-primary shadow-rk">
+                      <div className="rk-media relative -mt-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-rk-md border-[3px] border-surface shadow-rk">
                         {creator.avatarUrl ? (
-                          <img
+                          <Image
                             src={creator.avatarUrl}
                             alt={displayName}
-                            className="h-full w-full object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="64px"
                           />
                         ) : (
-                          <span className="text-xl font-semibold text-onprimary">
+                          <span className="text-xl font-semibold text-ink/60">
                             {displayName.charAt(0).toUpperCase()}
                           </span>
                         )}
@@ -176,22 +181,23 @@ export default async function CreatorsPage() {
                         {creator.isVerified && (
                           <BadgeCheck
                             size={15}
-                            className="shrink-0 fill-ink text-background"
+                            aria-label="Creador verificado"
+                            className="shrink-0 text-accent"
                           />
                         )}
                       </div>
 
-                      <p className="mt-0.5 text-sm text-ink/40">
+                      <p className="mt-0.5 text-sm text-ink/60">
                         @{creator.username}
                       </p>
 
                       {creator.bio && (
-                        <p className="mt-3 line-clamp-2 text-sm leading-6 text-ink/50">
+                        <p className="mt-3 line-clamp-2 text-sm leading-6 text-ink/60">
                           {creator.bio}
                         </p>
                       )}
 
-                      <p className="mt-4 text-xs font-medium text-ink/40">
+                      <p className="mt-4 text-xs font-medium text-ink/60">
                         {creator._count.products}{" "}
                         {creator._count.products === 1
                           ? "recurso publicado"
@@ -205,6 +211,8 @@ export default async function CreatorsPage() {
           </section>
         )}
       </main>
+
+      <Footer />
     </>
   );
 }

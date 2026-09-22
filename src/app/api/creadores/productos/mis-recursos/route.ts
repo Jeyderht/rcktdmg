@@ -1,17 +1,17 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifySessionToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    // Obtener la sesiÃ³n
+    // Obtener la sesión
     const cookieStore = await cookies();
     const token = cookieStore.get("rcktdmg_session")?.value;
 
     if (!token) {
       return NextResponse.json(
-        { error: "No hay una sesiÃ³n activa." },
+        { error: "No hay una sesión activa." },
         { status: 401 }
       );
     }
@@ -21,7 +21,7 @@ export async function GET() {
 
     if (!session) {
       return NextResponse.json(
-        { error: "La sesiÃ³n no es vÃ¡lida o ha expirado." },
+        { error: "La sesión no es válida o ha expirado." },
         { status: 401 }
       );
     }

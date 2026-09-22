@@ -1,10 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import type { Prisma } from "@prisma/client";
-import { Search, SearchX, X } from "lucide-react";
+import { Suspense } from "react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
-import ProductCard from "@/components/ProductCard";
+import Footer from "@/components/Footer";
+import StoreResults, {
+  StoreResultsSkeleton,
+} from "./StoreResults";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -33,92 +36,29 @@ export default async function Store({ searchParams }: StoreProps) {
       ? params.categoria.trim()
       : "";
 
-  // Solo se muestran recursos PUBLISHED: los estados
-  // DRAFT, PENDING_REVIEW, REJECTED y ARCHIVED nunca
-  // deben aparecer públicamente.
-  const where: Prisma.ProductWhereInput = {
-    status: "PUBLISHED",
-  };
-
-  if (categorySlug) {
-    where.category = {
-      slug: categorySlug,
-    };
-  }
-
-  if (query) {
-    where.OR = [
-      {
-        name: {
-          contains: query,
-          mode: "insensitive",
+  // Las categorías se necesitan para pintar los filtros, que
+  // van por encima de los resultados.
+  const categories = await prisma.category.findMany({
+    where: {
+      products: {
+        some: {
+          status: "PUBLISHED",
         },
       },
-      {
-        description: {
-          contains: query,
-          mode: "insensitive",
-        },
-      },
-      {
-        category: {
-          name: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-      },
-    ];
-  }
-
-  const [products, categories] = await Promise.all([
-    prisma.product.findMany({
-      where,
-
-      include: {
-        category: true,
-
-        images: {
-          orderBy: {
-            sortOrder: "asc",
-          },
-          take: 1,
-          select: {
-            url: true,
-            alt: true,
-          },
-        },
-      },
-
-      orderBy: {
-        createdAt: "desc",
-      },
-    }),
-
-    prisma.category.findMany({
-      where: {
-        products: {
-          some: {
-            status: "PUBLISHED",
-          },
-        },
-      },
-      orderBy: {
-        name: "asc",
-      },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-      },
-    }),
-  ]);
+    },
+    orderBy: {
+      name: "asc",
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+  });
 
   const activeCategory = categories.find(
     (category) => category.slug === categorySlug
   );
-
-  const hasFilters = Boolean(query || categorySlug);
 
   // Conserva el otro filtro al cambiar de categoría.
   function categoryHref(slug?: string) {
@@ -137,175 +77,158 @@ export default async function Store({ searchParams }: StoreProps) {
     return queryString ? `/tienda?${queryString}` : "/tienda";
   }
 
+  // Quitar solo la búsqueda, conservando la categoría activa.
+  const clearQueryHref = categorySlug
+    ? `/tienda?categoria=${categorySlug}`
+    : "/tienda";
+
   return (
     <>
       <Navbar />
 
-      <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-8 sm:px-5 lg:px-8 lg:pb-24 lg:pt-12">
+      <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
 
-        {/* ENCABEZADO + BUSCADOR */}
-        <section className="rk-enter">
-          <div className="rk-glass rounded-[2rem] px-5 py-8 sm:rounded-[2.5rem] sm:px-9 sm:py-10">
-            <p className="rk-eyebrow">RCKTDMG</p>
+        {/* ══════════ CABECERA ══════════ */}
+        <section className="rk-fade-up relative overflow-hidden">
+          {/* Decoración CSS sutil: un halo y nada más. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-accent/12 blur-[90px]"
+          />
 
-            <h1 className="mt-2.5 text-[2rem] font-semibold leading-tight sm:text-4xl lg:text-5xl">
-              {activeCategory ? activeCategory.name : "Recursos"}
-            </h1>
+          <p className="rk-eyebrow">RCKTDMG Store</p>
 
-            <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/50">
-              Explora recursos digitales para potenciar tus proyectos.
-            </p>
+          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl lg:text-5xl">
+            Explora recursos digitales
+          </h1>
 
-            {/* BUSCADOR */}
-            <form action="/tienda" method="GET" className="mt-7">
-              {categorySlug && (
-                <input
-                  type="hidden"
-                  name="categoria"
-                  value={categorySlug}
-                />
-              )}
+          <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
+            Plantillas y packs creados por diseñadores, listos
+            para descargar y usar en tus proyectos.
+          </p>
+        </section>
 
-              <div className="relative max-w-2xl">
-                <Search
-                  size={18}
-                  className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-ink/35"
-                />
+        {/* ══════════ BUSCADOR ══════════ */}
+        <section className="rk-fade-up rk-enter-1 mt-7">
+          <form action="/tienda" method="GET">
+            {/* Mantiene la categoría activa al buscar. */}
+            {categorySlug && (
+              <input
+                type="hidden"
+                name="categoria"
+                value={categorySlug}
+              />
+            )}
 
-                <input
-                  type="search"
-                  name="q"
-                  defaultValue={query}
-                  placeholder="Buscar recursos..."
-                  aria-label="Buscar recursos"
-                  autoComplete="off"
-                  className="h-14 w-full rounded-[1.25rem] border border-ink/[0.07] bg-surface/75 pl-14 pr-28 text-[15px] outline-none backdrop-blur-xl transition duration-300 ease-rk placeholder:text-ink/35 focus:border-accent/40 focus:bg-surface focus:shadow-[0_0_0_4px_var(--rk-accent-soft)]"
-                />
+            <div className="relative max-w-2xl">
+              <Search
+                size={18}
+                className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-ink/60"
+              />
+
+              <input
+                type="search"
+                name="q"
+                defaultValue={query}
+                placeholder="Buscar recursos..."
+                aria-label="Buscar recursos"
+                autoComplete="off"
+                className="h-14 w-full rounded-rk-md border border-line/10 bg-surface/70 pl-14 pr-[6.5rem] text-[15px] outline-none backdrop-blur-rk transition-colors duration-normal ease-rk placeholder:text-ink/60 hover:border-line/20 focus:border-accent/55 focus:bg-surface focus:shadow-[0_0_0_4px_var(--rk-accent-soft)]"
+              />
+
+              <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
+                {/* Limpiar: navegación real, conserva la categoría. */}
+                {query && (
+                  <Link
+                    href={clearQueryHref}
+                    aria-label="Limpiar búsqueda"
+                    title="Limpiar búsqueda"
+                    className="rk-press flex h-9 w-9 items-center justify-center rounded-full text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
+                  >
+                    <X size={15} />
+                  </Link>
+                )}
 
                 <button
                   type="submit"
-                  className="rk-press absolute right-2 top-1/2 -translate-y-1/2 rounded-[0.9rem] bg-primary px-5 py-2.5 text-sm font-medium text-onprimary shadow-rk-sm"
+                  className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2.5 !text-sm"
                 >
                   Buscar
                 </button>
               </div>
-            </form>
+            </div>
+          </form>
+        </section>
 
-            {/* CATEGORÍAS */}
-            {categories.length > 0 && (
-              <div className="mt-5 flex flex-wrap gap-2">
+        {/* ══════════ FILTROS ══════════ */}
+        {categories.length > 0 && (
+          <section className="rk-fade-up rk-enter-2 mt-4">
+            <div className="flex items-center gap-2.5">
+              <SlidersHorizontal
+                size={15}
+                className="hidden shrink-0 text-ink/60 sm:block"
+                aria-hidden
+              />
+
+              {/*
+                Scroll horizontal: los filtros nunca ganan alto
+                ni desbordan la página, por muchos que haya.
+              */}
+              <div
+                role="group"
+                aria-label="Filtrar por categoría"
+                className="-mx-4 flex flex-1 gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+              >
                 <Link
                   href={categoryHref()}
-                  className={`rk-chip ${
+                  aria-current={!categorySlug ? "true" : undefined}
+                  className={`rk-chip shrink-0 ${
                     categorySlug ? "" : "rk-chip-active"
                   }`}
                 >
-                  Todas
+                  Todos
                 </Link>
 
-                {categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={categoryHref(category.slug)}
-                    className={`rk-chip ${
-                      category.slug === categorySlug
-                        ? "rk-chip-active"
-                        : ""
-                    }`}
-                  >
-                    {category.name}
-                  </Link>
-                ))}
+                {categories.map((category) => {
+                  const active = category.slug === categorySlug;
+
+                  return (
+                    <Link
+                      key={category.id}
+                      href={categoryHref(category.slug)}
+                      aria-current={active ? "true" : undefined}
+                      className={`rk-chip shrink-0 ${
+                        active ? "rk-chip-active" : ""
+                      }`}
+                    >
+                      {category.name}
+                    </Link>
+                  );
+                })}
               </div>
-            )}
-          </div>
-        </section>
-
-        {/* RESUMEN DE BÚSQUEDA */}
-        {hasFilters && (
-          <div className="rk-enter rk-enter-1 mt-5 flex flex-wrap items-center gap-3">
-            <p className="text-sm text-ink/50">
-              {query && (
-                <>
-                  Resultados para{" "}
-                  <span className="font-medium text-ink">
-                    “{query}”
-                  </span>
-                  {activeCategory && " "}
-                </>
-              )}
-
-              {activeCategory && (
-                <>
-                  en{" "}
-                  <span className="font-medium text-ink">
-                    {activeCategory.name}
-                  </span>
-                </>
-              )}
-
-              {" · "}
-              {products.length}{" "}
-              {products.length === 1
-                ? "recurso encontrado"
-                : "recursos encontrados"}
-            </p>
-
-            <Link href="/tienda" className="rk-chip">
-              <X size={13} />
-              Limpiar búsqueda
-            </Link>
-          </div>
-        )}
-
-        {/* PRODUCTOS */}
-        {products.length > 0 ? (
-          <div className="rk-enter rk-enter-2 mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 xl:grid-cols-6">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={{
-                  id: product.id,
-                  name: product.name,
-                  slug: product.slug,
-                  price: Number(product.price),
-                  coverUrl: product.coverUrl,
-                  image: product.images[0] ?? null,
-                  category: product.category,
-                }}
-              />
-            ))}
-          </div>
-        ) : (
-          /* SIN RESULTADOS */
-          <div className="rk-enter rk-enter-1 rk-card mt-6 px-6 py-16 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-ink/[0.05]">
-              <SearchX size={26} className="text-ink/35" />
             </div>
-
-            <h2 className="mt-5 text-xl font-semibold">
-              {hasFilters
-                ? "No encontramos recursos"
-                : "Todavía no hay recursos publicados"}
-            </h2>
-
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-ink/45">
-              {hasFilters
-                ? "No hay recursos publicados que coincidan con tu búsqueda. Prueba con otro término."
-                : "Vuelve pronto: los creadores están preparando sus recursos."}
-            </p>
-
-            {hasFilters && (
-              <Link
-                href="/tienda"
-                className="rk-btn rk-btn-primary mt-7"
-              >
-                Ver todos los recursos
-              </Link>
-            )}
-          </div>
+          </section>
         )}
+
+        {/*
+          ══════════ RESULTADOS ══════════
+          El límite de carga vive aquí, no en un loading.tsx de
+          segmento: así no afecta a /tienda/[slug], que necesita
+          poder devolver un 404 real.
+        */}
+        <Suspense
+          key={`${query}|${categorySlug}`}
+          fallback={<StoreResultsSkeleton />}
+        >
+          <StoreResults
+            query={query}
+            categorySlug={categorySlug}
+            activeCategoryName={activeCategory?.name ?? null}
+          />
+        </Suspense>
       </main>
+
+      <Footer />
     </>
   );
 }

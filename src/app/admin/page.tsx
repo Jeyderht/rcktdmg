@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import {
   ArrowRight,
   Banknote,
@@ -7,12 +9,16 @@ import {
   Percent,
   Sparkles,
   TrendingUp,
+  Package,
+  UserPlus,
   UserRound,
   Users,
   Wallet,
 } from "lucide-react";
 
 import { getAdminStats } from "@/lib/admin-stats";
+import { prisma } from "@/lib/prisma";
+import { verifySessionToken } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Administración",
@@ -81,7 +87,7 @@ function BarChart({
 
   if (max === 0) {
     return (
-      <p className="py-10 text-center text-sm text-ink/45">
+      <p className="py-10 text-center text-sm text-ink/60">
         Todavía no hay datos en este periodo.
       </p>
     );
@@ -98,7 +104,7 @@ function BarChart({
             key={point.key}
             className="flex min-w-[2.1rem] flex-1 flex-col items-center gap-1.5"
           >
-            <span className="text-[9px] font-medium text-ink/45">
+            <span className="text-[9px] font-medium text-ink/60">
               {value > 0 ? format(value) : ""}
             </span>
 
@@ -107,12 +113,12 @@ function BarChart({
               title={`${point.label}: ${format(value)}`}
             >
               <div
-                className="w-full rounded-t-[0.4rem] bg-primary/85 transition-all"
+                className="w-full rounded-t-rk-sm bg-accent/85 transition-[height] duration-slow ease-rk"
                 style={{ height: `${Math.max(height, value > 0 ? 4 : 0)}%` }}
               />
             </div>
 
-            <span className="text-[10px] capitalize text-ink/40">
+            <span className="text-[10px] capitalize text-ink/60">
               {point.label.replace(".", "")}
             </span>
           </div>
@@ -124,6 +130,31 @@ function BarChart({
 
 export default async function Admin() {
   const stats = await getAdminStats();
+
+  // Identidad real del administrador en sesión. El middleware
+  // ya garantiza el rol: esto solo lee sus datos para mostrarlos.
+  const cookieStore = await cookies();
+  const token = cookieStore.get("rcktdmg_session")?.value;
+
+  const session = token
+    ? await verifySessionToken(token)
+    : null;
+
+  const adminUser =
+    session && typeof session.userId === "string"
+      ? await prisma.user.findUnique({
+          where: { id: session.userId },
+          select: {
+            name: true,
+            publicName: true,
+            email: true,
+            avatarUrl: true,
+          },
+        })
+      : null;
+
+  const adminName =
+    adminUser?.publicName || adminUser?.name || "Administrador";
 
   const summary = [
     {
@@ -191,40 +222,76 @@ export default async function Admin() {
     <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
 
       {/* ENCABEZADO */}
-      <section className="rk-enter">
-        <div className="rk-glass relative overflow-hidden rounded-[1.75rem] px-5 py-7 sm:px-8 sm:py-8">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-accent/15 blur-3xl"
-          />
+      <section className="rk-fade-up relative overflow-hidden">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-accent/12 blur-[90px]"
+        />
 
-          <div className="relative flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="rk-eyebrow">Admin Center</p>
+        <p className="rk-eyebrow">Admin Center</p>
 
-              <h1 className="mt-2 text-[1.75rem] font-semibold leading-tight sm:text-3xl">
-                Dashboard
-              </h1>
+        <div className="mt-2.5 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+          <div className="min-w-0">
+            <h1 className="rk-title text-[2rem] sm:text-4xl">
+              Panel administrativo
+            </h1>
 
-              <p className="mt-2 text-sm text-ink/50">
-                Estado real de la plataforma.
-              </p>
-            </div>
-
-            {pendingTasks > 0 && (
-              <span className="rk-badge rk-badge-warning">
-                {pendingTasks}{" "}
-                {pendingTasks === 1
-                  ? "tarea pendiente"
-                  : "tareas pendientes"}
-              </span>
-            )}
+            <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
+              Gestiona el contenido, usuarios y operaciones de
+              RCKTDMG.
+            </p>
           </div>
+
+          {pendingTasks > 0 && (
+            <span className="rk-badge rk-badge-warning shrink-0">
+              {pendingTasks}{" "}
+              {pendingTasks === 1
+                ? "tarea pendiente"
+                : "tareas pendientes"}
+            </span>
+          )}
+        </div>
+      </section>
+
+      {/* IDENTIDAD DEL ADMINISTRADOR */}
+      <section className="rk-fade-up rk-enter-1 mt-6">
+        <div className="rk-card flex flex-wrap items-center justify-between gap-4 p-4">
+          <div className="flex min-w-0 items-center gap-3.5">
+            <span className="rk-media relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-rk-sm text-base font-semibold text-ink/70">
+              {adminUser?.avatarUrl ? (
+                <Image
+                  src={adminUser.avatarUrl}
+                  alt={adminName}
+                  fill
+                  className="object-cover"
+                  sizes="48px"
+                />
+              ) : (
+                adminName.charAt(0).toUpperCase()
+              )}
+            </span>
+
+            <div className="min-w-0">
+              <p className="truncate text-[15px] font-semibold leading-tight">
+                {adminName}
+              </p>
+
+              {adminUser?.email && (
+                <p className="mt-0.5 truncate text-xs text-ink/60">
+                  {adminUser.email}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <span className="rk-badge rk-badge-accent shrink-0">
+            ADMIN
+          </span>
         </div>
       </section>
 
       {/* RESUMEN */}
-      <section className="rk-enter rk-enter-1 mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="rk-enter rk-enter-1 mt-4 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
         {summary.map((item) => {
           const Icon = item.icon;
 
@@ -235,7 +302,7 @@ export default async function Admin() {
                   {item.label}
                 </p>
 
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.7rem] bg-ink/[0.06] text-ink/55">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent">
                   <Icon size={15} />
                 </span>
               </div>
@@ -244,7 +311,7 @@ export default async function Admin() {
                 {item.value}
               </p>
 
-              <p className="mt-1 text-[11px] text-ink/45">
+              <p className="mt-1 text-[11px] text-ink/60">
                 {item.hint}
               </p>
             </>
@@ -271,7 +338,7 @@ export default async function Admin() {
         <div className="rk-card p-5">
           <h2 className="text-sm font-semibold">Ventas por mes</h2>
 
-          <p className="mt-0.5 text-xs text-ink/45">
+          <p className="mt-0.5 text-xs text-ink/60">
             Pedidos pagados en los últimos 12 meses
           </p>
 
@@ -289,7 +356,7 @@ export default async function Admin() {
             Ingresos mensuales
           </h2>
 
-          <p className="mt-0.5 text-xs text-ink/45">
+          <p className="mt-0.5 text-xs text-ink/60">
             Importe bruto de los pedidos pagados
           </p>
 
@@ -302,9 +369,9 @@ export default async function Admin() {
           </div>
 
           {/* Desglose real: bruto = comisión + creadores */}
-          <div className="mt-4 grid grid-cols-3 gap-2 border-t border-ink/[0.07] pt-4 text-center">
+          <div className="mt-4 grid grid-cols-3 gap-2 border-t border-line/10 pt-4 text-center">
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-ink/40">
+              <p className="text-[10px] uppercase tracking-wider text-ink/60">
                 Bruto
               </p>
               <p className="mt-1 text-sm font-semibold">
@@ -313,7 +380,7 @@ export default async function Admin() {
             </div>
 
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-ink/40">
+              <p className="text-[10px] uppercase tracking-wider text-ink/60">
                 Comisión
               </p>
               <p className="mt-1 text-sm font-semibold">
@@ -322,7 +389,7 @@ export default async function Admin() {
             </div>
 
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-ink/40">
+              <p className="text-[10px] uppercase tracking-wider text-ink/60">
                 Creadores
               </p>
               <p className="mt-1 text-sm font-semibold">
@@ -336,19 +403,19 @@ export default async function Admin() {
       {/* ÚLTIMAS VENTAS */}
       <section className="rk-enter rk-enter-3 mt-4">
         <div className="rk-card overflow-hidden">
-          <div className="flex items-center justify-between gap-3 border-b border-ink/[0.07] px-5 py-4">
+          <div className="flex items-center justify-between gap-3 border-b border-line/10 px-5 py-4">
             <h2 className="text-sm font-semibold">Últimas ventas</h2>
 
             <Link
               href="/admin/recursos"
-              className="rk-press text-xs font-medium text-ink/50 hover:text-ink"
+              className="rk-press text-xs font-medium text-ink/60 hover:text-ink"
             >
               Ver recursos
             </Link>
           </div>
 
           {stats.recentSales.length === 0 ? (
-            <p className="px-5 py-12 text-center text-sm text-ink/45">
+            <p className="px-5 py-12 text-center text-sm text-ink/60">
               Todavía no hay ventas registradas.
             </p>
           ) : (
@@ -356,8 +423,8 @@ export default async function Admin() {
               {/* ESCRITORIO: tabla */}
               <div className="hidden overflow-x-auto lg:block">
                 <table className="w-full text-left text-sm">
-                  <thead className="border-b border-ink/[0.07]">
-                    <tr className="text-[11px] uppercase tracking-wider text-ink/40">
+                  <thead className="border-b border-line/10">
+                    <tr className="text-[11px] uppercase tracking-wider text-ink/60">
                       <th className="px-5 py-3 font-medium">
                         Producto
                       </th>
@@ -376,7 +443,7 @@ export default async function Admin() {
                     </tr>
                   </thead>
 
-                  <tbody className="divide-y divide-ink/[0.07]">
+                  <tbody className="divide-y divide-line/10">
                     {stats.recentSales.map((sale) => (
                       <tr key={sale.id}>
                         <td className="max-w-[16rem] truncate px-5 py-3 font-medium">
@@ -388,7 +455,7 @@ export default async function Admin() {
                         <td className="px-5 py-3 text-ink/60">
                           {sale.creator}
                         </td>
-                        <td className="whitespace-nowrap px-5 py-3 text-ink/50">
+                        <td className="whitespace-nowrap px-5 py-3 text-ink/60">
                           {shortDate(sale.createdAt)}
                         </td>
                         <td className="whitespace-nowrap px-5 py-3 font-semibold">
@@ -414,7 +481,7 @@ export default async function Admin() {
               </div>
 
               {/* MÓVIL: tarjetas compactas */}
-              <ul className="divide-y divide-ink/[0.07] lg:hidden">
+              <ul className="divide-y divide-line/10 lg:hidden">
                 {stats.recentSales.map((sale) => (
                   <li key={sale.id} className="px-4 py-3.5">
                     <div className="flex items-start justify-between gap-3">
@@ -426,7 +493,7 @@ export default async function Admin() {
                           {sale.productName}
                         </p>
 
-                        <p className="mt-0.5 truncate text-[11px] text-ink/45">
+                        <p className="mt-0.5 truncate text-[11px] text-ink/60">
                           {sale.buyer} · {sale.creator}
                         </p>
                       </Link>
@@ -436,7 +503,7 @@ export default async function Admin() {
                           {money(sale.amount)}
                         </p>
 
-                        <p className="mt-0.5 text-[10px] text-ink/40">
+                        <p className="mt-0.5 text-[10px] text-ink/60">
                           {shortDate(sale.createdAt)}
                         </p>
                       </div>
@@ -476,7 +543,7 @@ export default async function Admin() {
                   <span className="text-right">
                     <span className="font-semibold">{row.count}</span>
 
-                    <span className="ml-1.5 text-[11px] text-ink/40">
+                    <span className="ml-1.5 text-[11px] text-ink/60">
                       {money(row.total)}
                     </span>
                   </span>
@@ -493,7 +560,8 @@ export default async function Admin() {
 
             <Link
               href="/admin/recursos"
-              className="rk-press text-ink/40 hover:text-ink"
+              aria-label="Ver todos los recursos"
+              className="rk-press text-ink/60 hover:text-ink"
             >
               <ArrowRight size={14} />
             </Link>
@@ -515,7 +583,7 @@ export default async function Admin() {
                 key={String(label)}
                 className="flex items-center justify-between"
               >
-                <span className="text-ink/50">{label}</span>
+                <span className="text-ink/60">{label}</span>
                 <span className="font-medium">{value}</span>
               </li>
             ))}
@@ -529,7 +597,8 @@ export default async function Admin() {
 
             <Link
               href="/admin/usuarios"
-              className="rk-press text-ink/40 hover:text-ink"
+              aria-label="Ver todos los usuarios"
+              className="rk-press text-ink/60 hover:text-ink"
             >
               <ArrowRight size={14} />
             </Link>
@@ -549,14 +618,14 @@ export default async function Admin() {
                 key={String(label)}
                 className="flex items-center justify-between"
               >
-                <span className="text-ink/50">{label}</span>
+                <span className="text-ink/60">{label}</span>
                 <span className="font-medium">{value}</span>
               </li>
             ))}
           </ul>
 
-          <div className="mt-4 border-t border-ink/[0.07] pt-3">
-            <p className="text-[10px] uppercase tracking-wider text-ink/40">
+          <div className="mt-4 border-t border-line/10 pt-3">
+            <p className="text-[10px] uppercase tracking-wider text-ink/60">
               Nuevos por mes
             </p>
 
@@ -593,7 +662,8 @@ export default async function Admin() {
 
             <Link
               href="/admin/usuarios?rol=CREATOR"
-              className="rk-press text-ink/40 hover:text-ink"
+              aria-label="Ver todos los creadores"
+              className="rk-press text-ink/60 hover:text-ink"
             >
               <ArrowRight size={14} />
             </Link>
@@ -610,7 +680,7 @@ export default async function Admin() {
                 key={String(label)}
                 className="flex items-center justify-between"
               >
-                <span className="text-ink/50">{label}</span>
+                <span className="text-ink/60">{label}</span>
                 <span className="font-medium">{value}</span>
               </li>
             ))}
@@ -628,11 +698,11 @@ export default async function Admin() {
           </h2>
 
           {stats.products.bestSellers.length === 0 ? (
-            <p className="py-8 text-center text-sm text-ink/45">
+            <p className="py-8 text-center text-sm text-ink/60">
               Todavía no hay ventas.
             </p>
           ) : (
-            <ul className="mt-3 divide-y divide-ink/[0.07]">
+            <ul className="mt-3 divide-y divide-line/10">
               {stats.products.bestSellers.map((product) => (
                 <li
                   key={product.id}
@@ -650,7 +720,7 @@ export default async function Admin() {
                       {product.sales}
                     </span>
 
-                    <span className="block text-[10px] text-ink/40">
+                    <span className="block text-[10px] text-ink/60">
                       {money(product.revenue)}
                     </span>
                   </span>
@@ -667,18 +737,18 @@ export default async function Admin() {
           </h2>
 
           {stats.creators.byVolume.length === 0 ? (
-            <p className="py-8 text-center text-sm text-ink/45">
+            <p className="py-8 text-center text-sm text-ink/60">
               Todavía no hay ventas.
             </p>
           ) : (
-            <ul className="mt-3 divide-y divide-ink/[0.07]">
+            <ul className="mt-3 divide-y divide-line/10">
               {stats.creators.byVolume.map((creator) => (
                 <li
                   key={creator.id}
                   className="flex items-center justify-between gap-3 py-2.5"
                 >
                   <span className="flex min-w-0 flex-1 items-center gap-2">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-ink/55">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-ink/60">
                       <UserRound size={13} />
                     </span>
 
@@ -692,7 +762,7 @@ export default async function Admin() {
                       {creator.sales}
                     </span>
 
-                    <span className="block text-[10px] text-ink/40">
+                    <span className="block text-[10px] text-ink/60">
                       {money(creator.revenue)}
                     </span>
                   </span>
@@ -709,11 +779,11 @@ export default async function Admin() {
           </h2>
 
           {stats.activity.length === 0 ? (
-            <p className="py-8 text-center text-sm text-ink/45">
+            <p className="py-8 text-center text-sm text-ink/60">
               Sin actividad todavía.
             </p>
           ) : (
-            <ul className="mt-3 divide-y divide-ink/[0.07]">
+            <ul className="mt-3 divide-y divide-line/10">
               {stats.activity.map((item) => (
                 <li key={item.id} className="flex gap-2.5 py-2.5">
                   <span
@@ -729,12 +799,12 @@ export default async function Admin() {
                         {item.title}
                       </span>
 
-                      <span className="shrink-0 text-[10px] text-ink/40">
+                      <span className="shrink-0 text-[10px] text-ink/60">
                         {timeAgo(item.createdAt)}
                       </span>
                     </span>
 
-                    <span className="mt-0.5 block truncate text-[11px] text-ink/45">
+                    <span className="mt-0.5 block truncate text-[11px] text-ink/60">
                       {item.description}
                     </span>
                   </span>
@@ -745,50 +815,95 @@ export default async function Admin() {
         </div>
       </section>
 
-      {/* ACCESOS */}
-      <section className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          {
-            href: "/admin/recursos?estado=PENDING_REVIEW",
-            label: "Revisar recursos",
-            icon: ClipboardCheck,
-          },
-          {
-            href: "/admin/usuarios",
-            label: "Usuarios",
-            icon: Users,
-          },
-          {
-            href: "/admin/usuarios?rol=CREATOR",
-            label: "Creadores",
-            icon: UserRound,
-          },
-          {
-            href: "/admin/retiros",
-            label: "Retiros",
-            icon: Wallet,
-          },
-        ].map((item) => {
-          const Icon = item.icon;
+      {/* ACCIONES RÁPIDAS */}
+      <section className="rk-fade-up mt-10">
+        <p className="rk-eyebrow">Acciones rápidas</p>
 
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="rk-card rk-card-hover rk-press flex items-center gap-3 p-4"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.75rem] bg-primary text-onprimary">
-                <Icon size={16} />
-              </span>
+        <h2 className="rk-title mt-2 text-2xl">
+          Operaciones del día
+        </h2>
 
-              <span className="min-w-0 flex-1 truncate text-[13px] font-medium">
-                {item.label}
-              </span>
+        <div className="rk-divider mt-4" />
 
-              <ArrowRight size={14} className="shrink-0 text-ink/35" />
-            </Link>
-          );
-        })}
+        <div className="mt-5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              href: "/admin/recursos?estado=PENDING_REVIEW",
+              label: "Revisiones",
+              description: `${stats.products.pending} ${
+                stats.products.pending === 1
+                  ? "recurso esperando"
+                  : "recursos esperando"
+              }`,
+              icon: ClipboardCheck,
+            },
+            {
+              href: "/admin/retiros",
+              label: "Retiros",
+              description: `${stats.withdrawals.pendingCount} ${
+                stats.withdrawals.pendingCount === 1
+                  ? "solicitud por revisar"
+                  : "solicitudes por revisar"
+              }`,
+              icon: Wallet,
+            },
+            {
+              href: "/admin/recursos",
+              label: "Recursos",
+              description: "Todo el catálogo de la plataforma",
+              icon: Package,
+            },
+            {
+              href: "/admin/usuarios",
+              label: "Usuarios",
+              description: "Clientes, creadores y administradores",
+              icon: Users,
+            },
+            {
+              href: "/admin/usuarios?rol=CREATOR",
+              label: "Creadores",
+              description: "Estados, verificación y catálogo",
+              icon: UserRound,
+            },
+            {
+              href: "/admin/usuarios/nuevo",
+              label: "Crear creador",
+              description: "Alta manual de una cuenta",
+              icon: UserPlus,
+            },
+          ].map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="rk-card rk-card-hover rk-press group flex items-center gap-3.5 p-3.5 sm:p-4"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent transition-transform duration-normal ease-rk group-hover:scale-105">
+                  <Icon size={18} />
+                </span>
+
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold">
+                    {item.label}
+                  </span>
+
+                  {/* Cifras reales, no estimaciones. */}
+                  <span className="mt-0.5 block truncate text-xs text-ink/60">
+                    {item.description}
+                  </span>
+                </span>
+
+                <ArrowRight
+                  size={16}
+                  aria-hidden
+                  className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-accent"
+                />
+              </Link>
+            );
+          })}
+        </div>
       </section>
     </main>
   );

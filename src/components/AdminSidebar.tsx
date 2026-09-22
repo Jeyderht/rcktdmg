@@ -105,7 +105,7 @@ function AdminSidebarContent() {
       <div className="sticky top-24">
         <nav
           aria-label="Secciones de administración"
-          className="rk-glass rounded-[1.25rem] p-2"
+          className="rk-glass rounded-rk-lg p-2"
         >
           <p className="rk-eyebrow px-3 pb-1.5 pt-2">
             Admin Center
@@ -121,9 +121,9 @@ function AdminSidebarContent() {
                   <Link
                     href={section.href}
                     aria-current={active ? "page" : undefined}
-                    className={`rk-press flex items-center gap-2.5 rounded-[0.9rem] px-3 py-2.5 text-[13px] font-medium transition-colors ${
+                    className={`rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors duration-fast ease-rk ${
                       active
-                        ? "bg-primary text-onprimary shadow-rk-sm"
+                        ? "bg-accent/12 text-accent"
                         : "text-ink/60 hover:bg-ink/[0.05] hover:text-ink"
                     }`}
                   >
@@ -145,7 +145,7 @@ export default function AdminSidebar() {
     <Suspense
       fallback={
         <aside className="hidden w-56 shrink-0 lg:block">
-          <div className="rk-glass sticky top-24 h-80 rounded-[1.25rem]" />
+          <div className="rk-glass sticky top-24 h-80 rounded-rk-lg" />
         </aside>
       }
     >

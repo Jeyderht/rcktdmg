@@ -117,8 +117,14 @@ export default function FavoriteButton({
     }
   }
 
+  // El cuadro visible se mantiene compacto, pero el área que
+  // responde al dedo se amplía con un pseudo-elemento: en móvil
+  // 28 px era un objetivo demasiado pequeño.
   const box =
-    size === "xs" ? "h-7 w-7" : size === "sm" ? "h-9 w-9" : "h-10 w-10";
+    size === "xs" ? "h-8 w-8" : size === "sm" ? "h-9 w-9" : "h-10 w-10";
+
+  const hitArea =
+    "after:absolute after:left-1/2 after:top-1/2 after:h-11 after:w-11 after:-translate-x-1/2 after:-translate-y-1/2 after:content-['']";
 
   const icon = size === "xs" ? 13 : size === "sm" ? 15 : 17;
 
@@ -137,7 +143,7 @@ export default function FavoriteButton({
         }
         className={`rk-press ${
           onImage ? "rk-glass-on-image" : "rk-glass-strong shadow-rk-sm"
-        } flex ${box} items-center justify-center rounded-full disabled:cursor-wait disabled:opacity-60`}
+        } ${hitArea} relative flex ${box} items-center justify-center rounded-full disabled:cursor-wait disabled:opacity-60`}
       >
         <Heart
           size={icon}

@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { RefreshCw, Wallet } from "lucide-react";
+
+import EmptyState from "@/components/EmptyState";
+
 type PaymentMethod = {
   id: string;
   type: "BANK" | "YAPE" | "PLIN";
@@ -36,11 +40,11 @@ const statusLabels: Record<Withdrawal["status"], string> = {
   PAID: "Pagado",
 };
 
-const statusClasses: Record<Withdrawal["status"], string> = {
-  REQUESTED: "bg-warning/12 text-warning",
-  APPROVED: "bg-accent/12 text-accent",
-  REJECTED: "bg-danger/10 text-danger",
-  PAID: "bg-success/12 text-success",
+const statusBadges: Record<Withdrawal["status"], string> = {
+  REQUESTED: "rk-badge-warning",
+  APPROVED: "rk-badge-accent",
+  REJECTED: "rk-badge-danger",
+  PAID: "rk-badge-success",
 };
 
 function getPaymentMethodLabel(type: PaymentMethod["type"]) {
@@ -53,10 +57,83 @@ function getPaymentMethodLabel(type: PaymentMethod["type"]) {
   return labels[type];
 }
 
+function formatMoney(value: number) {
+  return `S/ ${value.toFixed(2)}`;
+}
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString("es-PE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+/** Datos del método de pago, tal como los entrega la API. */
+function PaymentMethodDetails({
+  method,
+}: {
+  method: PaymentMethod | null;
+}) {
+  if (!method) {
+    return (
+      <span className="text-xs text-ink/60">
+        Sin método registrado
+      </span>
+    );
+  }
+
+  return (
+    <div className="min-w-0">
+      <p className="text-sm font-semibold">
+        {getPaymentMethodLabel(method.type)}
+      </p>
+
+      <p className="mt-1 text-xs text-ink/60">
+        Titular: {method.holderName}
+      </p>
+
+      <p className="text-xs text-ink/60">
+        DNI/RUC: {method.documentNumber}
+      </p>
+
+      {method.type === "BANK" ? (
+        <>
+          {method.bankName && (
+            <p className="text-xs text-ink/60">
+              Banco: {method.bankName}
+            </p>
+          )}
+
+          {method.accountNumber && (
+            <p className="text-xs tabular-nums text-ink/60">
+              Cuenta: {method.accountNumber}
+            </p>
+          )}
+
+          {method.cci && (
+            <p className="text-xs tabular-nums text-ink/60">
+              CCI: {method.cci}
+            </p>
+          )}
+        </>
+      ) : (
+        method.phone && (
+          <p className="text-xs tabular-nums text-ink/60">
+            Celular: {method.phone}
+          </p>
+        )
+      )}
+    </div>
+  );
+}
+
 export default function AdminRetirosPage() {
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [processingId, setProcessingId] = useState<string | null>(
+    null
+  );
   const [error, setError] = useState("");
 
   async function loadWithdrawals() {
@@ -71,7 +148,9 @@ export default function AdminRetirosPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "No se pudieron cargar los retiros");
+        throw new Error(
+          data.error || "No se pudieron cargar los retiros"
+        );
       }
 
       setWithdrawals(data.withdrawals || []);
@@ -104,7 +183,9 @@ export default function AdminRetirosPage() {
       }
 
       if (!reason.trim()) {
-        window.alert("Debes indicar un motivo para rechazar el retiro.");
+        window.alert(
+          "Debes indicar un motivo para rechazar el retiro."
+        );
         return;
       }
 
@@ -139,7 +220,9 @@ export default function AdminRetirosPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "No se pudo actualizar el retiro");
+        throw new Error(
+          data.error || "No se pudo actualizar el retiro"
+        );
       }
 
       await loadWithdrawals();
@@ -166,294 +249,361 @@ export default function AdminRetirosPage() {
     (withdrawal) => withdrawal.status === "PAID"
   );
 
-  const totalPending = pending.reduce(
-    (total, withdrawal) => total + Number(withdrawal.amount),
-    0
-  );
+  const sumOf = (rows: Withdrawal[]) =>
+    rows.reduce(
+      (total, withdrawal) => total + Number(withdrawal.amount),
+      0
+    );
 
-  const totalApproved = approved.reduce(
-    (total, withdrawal) => total + Number(withdrawal.amount),
-    0
-  );
+  const totals = [
+    {
+      label: "Solicitudes",
+      value: String(withdrawals.length),
+      hint: "Total registradas",
+      accent: false,
+    },
+    {
+      label: "Pendiente",
+      value: formatMoney(sumOf(pending)),
+      hint: `${pending.length} ${
+        pending.length === 1 ? "solicitud" : "solicitudes"
+      }`,
+      accent: true,
+    },
+    {
+      label: "Aprobado",
+      value: formatMoney(sumOf(approved)),
+      hint: `${approved.length} ${
+        approved.length === 1 ? "solicitud" : "solicitudes"
+      }`,
+      accent: false,
+    },
+    {
+      label: "Pagado",
+      value: formatMoney(sumOf(paid)),
+      hint: `${paid.length} ${
+        paid.length === 1 ? "solicitud" : "solicitudes"
+      }`,
+      accent: false,
+    },
+  ];
 
-  const totalPaid = paid.reduce(
-    (total, withdrawal) => total + Number(withdrawal.amount),
-    0
-  );
+  /** Mismos botones y mismas acciones en escritorio y móvil. */
+  function Actions({ withdrawal }: { withdrawal: Withdrawal }) {
+    const isProcessing = processingId === withdrawal.id;
 
-  return (
-    <main className="min-h-screen bg-ink/[0.05] px-4 sm:px-6 py-10">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-          <div>
-            <p className="mb-2 text-sm font-medium text-ink/50">
-              Administración
-            </p>
-
-            <h1 className="text-3xl font-bold tracking-tight text-ink">
-              Retiros de creadores
-            </h1>
-
-            <p className="mt-2 text-ink/60">
-              Gestiona las solicitudes de retiro de los creadores.
-            </p>
-          </div>
+    if (withdrawal.status === "REQUESTED") {
+      return (
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            disabled={isProcessing}
+            onClick={() => handleAction(withdrawal.id, "APPROVE")}
+            className="rk-btn rk-btn-primary !min-h-0 !px-3.5 !py-2 !text-xs"
+          >
+            {isProcessing ? "Procesando..." : "Aprobar"}
+          </button>
 
           <button
             type="button"
-            onClick={loadWithdrawals}
-            disabled={loading}
-            className="rk-btn rk-btn-glass disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={isProcessing}
+            onClick={() => handleAction(withdrawal.id, "REJECT")}
+            className="rk-btn !min-h-0 border border-danger/25 !px-3.5 !py-2 !text-xs text-danger hover:bg-danger/10"
           >
-            {loading ? "Actualizando..." : "Actualizar"}
+            Rechazar
           </button>
         </div>
+      );
+    }
 
-        {error && (
-          <div className="mb-6 rounded-2xl border border-danger/25 bg-danger/10 px-5 py-4 text-sm text-danger">
-            {error}
-          </div>
-        )}
+    if (withdrawal.status === "APPROVED") {
+      return (
+        <button
+          type="button"
+          disabled={isProcessing}
+          onClick={() => handleAction(withdrawal.id, "PAY")}
+          className="rk-btn rk-btn-success !min-h-0 !px-3.5 !py-2 !text-xs"
+        >
+          {isProcessing ? "Procesando..." : "Marcar pagado"}
+        </button>
+      );
+    }
 
-        <div className="mb-8 grid gap-4 md:grid-cols-4">
-          <div className="rk-card p-5">
-            <p className="text-sm text-ink/50">Solicitudes</p>
-            <p className="mt-2 text-3xl font-bold">{withdrawals.length}</p>
-          </div>
+    if (withdrawal.status === "PAID") {
+      return (
+        <span className="text-xs font-medium text-success">
+          Completado
+        </span>
+      );
+    }
 
-          <div className="rk-card p-5">
-            <p className="text-sm text-ink/50">Pendiente</p>
-            <p className="mt-2 text-3xl font-bold">
-              S/ {totalPending.toFixed(2)}
-            </p>
-            <p className="mt-1 text-xs text-ink/50">
-              {pending.length} solicitud(es)
-            </p>
-          </div>
+    return (
+      <span className="text-xs text-ink/60">Sin acciones</span>
+    );
+  }
 
-          <div className="rk-card p-5">
-            <p className="text-sm text-ink/50">Aprobado</p>
-            <p className="mt-2 text-3xl font-bold">
-              S/ {totalApproved.toFixed(2)}
-            </p>
-            <p className="mt-1 text-xs text-ink/50">
-              {approved.length} solicitud(es)
-            </p>
-          </div>
+  return (
+    <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
 
-          <div className="rk-card p-5">
-            <p className="text-sm text-ink/50">Pagado</p>
-            <p className="mt-2 text-3xl font-bold">
-              S/ {totalPaid.toFixed(2)}
-            </p>
-            <p className="mt-1 text-xs text-ink/50">
-              {paid.length} solicitud(es)
-            </p>
-          </div>
+      {/* ========== CABECERA ========== */}
+      <header className="rk-fade-up flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+        <div className="min-w-0">
+          <p className="rk-eyebrow">Admin Center</p>
+
+          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
+            Retiros
+          </h1>
+
+          <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
+            Gestiona las solicitudes de retiro de los creadores.
+          </p>
         </div>
 
-        <div className="overflow-hidden rk-card">
-          <div className="border-b border-ink/10 px-6 py-5">
-            <h2 className="text-lg font-semibold text-ink">
-              Solicitudes de retiro
-            </h2>
+        <button
+          type="button"
+          onClick={loadWithdrawals}
+          disabled={loading}
+          className="rk-btn rk-btn-glass shrink-0"
+        >
+          <RefreshCw size={15} />
+          {loading ? "Actualizando..." : "Actualizar"}
+        </button>
+      </header>
+
+      {error && (
+        <div
+          role="alert"
+          className="rk-fade mt-6 rounded-rk-md border border-danger/25 bg-danger/10 px-5 py-4 text-sm text-danger"
+        >
+          {error}
+        </div>
+      )}
+
+      {/* ========== TOTALES REALES ========== */}
+      <section className="rk-fade-up rk-enter-1 mt-7 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
+        {totals.map((item) => (
+          <div
+            key={item.label}
+            className={`rk-card p-4 sm:p-5 ${
+              item.accent
+                ? "border-accent/25 bg-accent/[0.06]"
+                : ""
+            }`}
+          >
+            <p
+              className={`rk-eyebrow ${
+                item.accent ? "!text-accent" : ""
+              }`}
+            >
+              {item.label}
+            </p>
+
+            <p
+              className={`mt-3 text-[1.6rem] font-semibold tabular-nums leading-tight tracking-tight ${
+                item.accent ? "text-accent" : ""
+              }`}
+            >
+              {loading ? (
+                <span className="inline-block h-7 w-24 animate-pulse rounded-full bg-ink/[0.07] align-middle" />
+              ) : (
+                item.value
+              )}
+            </p>
+
+            <p className="mt-1.5 text-xs text-ink/60">
+              {item.hint}
+            </p>
           </div>
+        ))}
+      </section>
 
-          {loading ? (
-            <div className="px-6 py-12 text-center text-sm text-ink/50">
-              Cargando solicitudes...
-            </div>
-          ) : withdrawals.length === 0 ? (
-            <div className="px-6 py-12 text-center">
-              <p className="text-ink/50">
-                No existen solicitudes de retiro.
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[1300px] text-left text-sm">
-                <thead className="border-b border-ink/10 bg-ink/[0.05]">
-                  <tr>
-                    <th className="px-6 py-4 font-semibold">Creador</th>
-                    <th className="px-6 py-4 font-semibold">Monto</th>
-                    <th className="px-6 py-4 font-semibold">Método de pago</th>
-                    <th className="px-6 py-4 font-semibold">Estado</th>
-                    <th className="px-6 py-4 font-semibold">Fecha</th>
-                    <th className="px-6 py-4 font-semibold">Nota</th>
-                    <th className="px-6 py-4 text-right font-semibold">
-                      Acción
-                    </th>
-                  </tr>
-                </thead>
+      {/* ========== SOLICITUDES ========== */}
+      <section className="rk-fade-up rk-enter-2 mt-10">
+        <p className="rk-eyebrow">Solicitudes</p>
 
-                <tbody className="divide-y divide-ink/10">
-                  {withdrawals.map((withdrawal) => {
-                    const isProcessing =
-                      processingId === withdrawal.id;
+        <h2 className="rk-title mt-2 text-2xl">
+          Historial de retiros
+        </h2>
 
-                    return (
-                      <tr
-                        key={withdrawal.id}
-                        className="transition hover:bg-ink/[0.05]"
-                      >
-                        <td className="px-6 py-5">
-                          <div className="font-medium text-ink">
-                            {withdrawal.creator.name || "Sin nombre"}
-                          </div>
+        <div className="rk-divider mt-4" />
 
-                          <div className="mt-1 text-xs text-ink/50">
+        {loading ? (
+          <div className="mt-5 space-y-2.5" aria-busy="true">
+            {[0, 1, 2].map((index) => (
+              <div key={index} className="rk-card p-5">
+                <div className="h-4 w-40 animate-pulse rounded-full bg-ink/[0.06]" />
+                <div className="mt-3 h-3 w-24 animate-pulse rounded-full bg-ink/[0.05]" />
+              </div>
+            ))}
+          </div>
+        ) : withdrawals.length === 0 ? (
+          <div className="mt-5">
+            <EmptyState
+              icon={Wallet}
+              title="No hay solicitudes de retiro"
+              description="Cuando un creador solicite un retiro aparecerá aquí para su revisión."
+            />
+          </div>
+        ) : (
+          <>
+            {/* ESCRITORIO: tabla */}
+            <div className="rk-card mt-5 hidden overflow-hidden !p-0 xl:block">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="border-b border-line/10">
+                    <tr className="text-[11px] uppercase tracking-wider text-ink/60">
+                      <th className="px-5 py-3 font-medium">
+                        Creador
+                      </th>
+                      <th className="px-5 py-3 font-medium">
+                        Monto
+                      </th>
+                      <th className="px-5 py-3 font-medium">
+                        Método de pago
+                      </th>
+                      <th className="px-5 py-3 font-medium">
+                        Estado
+                      </th>
+                      <th className="px-5 py-3 font-medium">
+                        Fecha
+                      </th>
+                      <th className="px-5 py-3 font-medium">
+                        Nota
+                      </th>
+                      <th className="px-5 py-3 text-right font-medium">
+                        Acción
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-line/10">
+                    {withdrawals.map((withdrawal) => (
+                      <tr key={withdrawal.id}>
+                        <td className="px-5 py-4 align-top">
+                          <p className="font-medium">
+                            {withdrawal.creator.name ||
+                              "Sin nombre"}
+                          </p>
+
+                          <p className="mt-1 text-xs text-ink/60">
                             {withdrawal.creator.email}
-                          </div>
+                          </p>
                         </td>
 
-                        <td className="px-6 py-5">
-                          <span className="font-semibold text-ink">
-                            S/ {Number(withdrawal.amount).toFixed(2)}
-                          </span>
+                        <td className="whitespace-nowrap px-5 py-4 align-top font-semibold tabular-nums">
+                          {formatMoney(Number(withdrawal.amount))}
                         </td>
-                        <td className="px-6 py-5">
-                          {withdrawal.paymentMethod ? (
-                            <div className="min-w-[220px]">
-                              <div className="font-semibold text-ink">
-                                {getPaymentMethodLabel(withdrawal.paymentMethod.type)}
-                              </div>
 
-                              <div className="mt-1 text-xs text-ink/50">
-                                Titular: {withdrawal.paymentMethod.holderName}
-                              </div>
-
-                              <div className="text-xs text-ink/50">
-                                DNI/RUC: {withdrawal.paymentMethod.documentNumber}
-                              </div>
-
-                              {withdrawal.paymentMethod.type === "BANK" ? (
-                                <>
-                                  {withdrawal.paymentMethod.bankName && (
-                                    <div className="text-xs text-ink/50">
-                                      Banco: {withdrawal.paymentMethod.bankName}
-                                    </div>
-                                  )}
-
-                                  {withdrawal.paymentMethod.accountNumber && (
-                                    <div className="text-xs text-ink/50">
-                                      Cuenta: {withdrawal.paymentMethod.accountNumber}
-                                    </div>
-                                  )}
-
-                                  {withdrawal.paymentMethod.cci && (
-                                    <div className="text-xs text-ink/50">
-                                      CCI: {withdrawal.paymentMethod.cci}
-                                    </div>
-                                  )}
-                                </>
-                              ) : (
-                                withdrawal.paymentMethod.phone && (
-                                  <div className="text-xs text-ink/50">
-                                    Celular: {withdrawal.paymentMethod.phone}
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-xs text-ink/40">
-                              Sin método registrado
-                            </span>
-                          )}
+                        <td className="px-5 py-4 align-top">
+                          <PaymentMethodDetails
+                            method={withdrawal.paymentMethod}
+                          />
                         </td>
-                        <td className="px-6 py-5">
+
+                        <td className="px-5 py-4 align-top">
                           <span
-                            className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${statusClasses[withdrawal.status]}`}
+                            className={`rk-badge ${
+                              statusBadges[withdrawal.status]
+                            }`}
                           >
                             {statusLabels[withdrawal.status]}
                           </span>
                         </td>
 
-                        <td className="px-6 py-5 text-ink/60">
-                          {new Date(
-                            withdrawal.createdAt
-                          ).toLocaleString("es-PE")}
+                        <td className="whitespace-nowrap px-5 py-4 align-top text-ink/60">
+                          {formatDate(withdrawal.createdAt)}
+
+                          {/* Solo si el registro tiene fecha real. */}
+                          {withdrawal.processedAt && (
+                            <span className="mt-1 block text-xs text-ink/60">
+                              Procesado{" "}
+                              {formatDate(withdrawal.processedAt)}
+                            </span>
+                          )}
                         </td>
 
-                        <td className="max-w-[220px] px-6 py-5 text-ink/60">
+                        <td className="max-w-[16rem] px-5 py-4 align-top text-ink/60">
                           {withdrawal.note || "—"}
                         </td>
 
-                        <td className="px-6 py-5">
-                          <div className="flex justify-end gap-2">
-                            {withdrawal.status === "REQUESTED" && (
-                              <>
-                                <button
-                                  type="button"
-                                  disabled={isProcessing}
-                                  onClick={() =>
-                                    handleAction(
-                                      withdrawal.id,
-                                      "APPROVE"
-                                    )
-                                  }
-                                  className="rounded-full bg-primary px-4 py-2 text-xs font-medium text-onprimary transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                  {isProcessing
-                                    ? "Procesando..."
-                                    : "Aprobar"}
-                                </button>
-
-                                <button
-                                  type="button"
-                                  disabled={isProcessing}
-                                  onClick={() =>
-                                    handleAction(
-                                      withdrawal.id,
-                                      "REJECT"
-                                    )
-                                  }
-                                  className="rounded-full border border-danger/25 bg-surface px-4 py-2 text-xs font-medium text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                  Rechazar
-                                </button>
-                              </>
-                            )}
-
-                            {withdrawal.status === "APPROVED" && (
-                              <button
-                                type="button"
-                                disabled={isProcessing}
-                                onClick={() =>
-                                  handleAction(
-                                    withdrawal.id,
-                                    "PAY"
-                                  )
-                                }
-                                className="rounded-full bg-success px-4 py-2 text-xs font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                              >
-                                {isProcessing
-                                  ? "Procesando..."
-                                  : "Marcar pagado"}
-                              </button>
-                            )}
-
-                            {withdrawal.status === "REJECTED" && (
-                              <span className="text-xs text-ink/40">
-                                Sin acciones
-                              </span>
-                            )}
-
-                            {withdrawal.status === "PAID" && (
-                              <span className="text-xs font-medium text-success">
-                                ✓ Completado
-                              </span>
-                            )}
+                        <td className="px-5 py-4 align-top">
+                          <div className="flex justify-end">
+                            <Actions withdrawal={withdrawal} />
                           </div>
                         </td>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          )}
-        </div>
-      </div>
+
+            {/*
+              MÓVIL Y TABLET: la misma información en tarjetas.
+              La tabla llegaba a 1300 px y desbordaba la pantalla.
+            */}
+            <div className="mt-5 space-y-2.5 xl:hidden">
+              {withdrawals.map((withdrawal) => (
+                <article key={withdrawal.id} className="rk-card p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-[15px] font-semibold">
+                        {withdrawal.creator.name || "Sin nombre"}
+                      </p>
+
+                      <p className="mt-0.5 truncate text-xs text-ink/60">
+                        {withdrawal.creator.email}
+                      </p>
+                    </div>
+
+                    <div className="shrink-0 text-right">
+                      <p className="text-lg font-semibold tabular-nums">
+                        {formatMoney(Number(withdrawal.amount))}
+                      </p>
+
+                      <span
+                        className={`rk-badge mt-1 ${
+                          statusBadges[withdrawal.status]
+                        }`}
+                      >
+                        {statusLabels[withdrawal.status]}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 rounded-rk-sm bg-ink/[0.03] p-3.5">
+                    <PaymentMethodDetails
+                      method={withdrawal.paymentMethod}
+                    />
+                  </div>
+
+                  <p className="mt-3 text-xs text-ink/60">
+                    Solicitado el{" "}
+                    {formatDate(withdrawal.createdAt)}
+
+                    {withdrawal.processedAt && (
+                      <>
+                        {" · Procesado el "}
+                        {formatDate(withdrawal.processedAt)}
+                      </>
+                    )}
+                  </p>
+
+                  {withdrawal.note && (
+                    <p className="mt-2 text-xs leading-5 text-ink/60">
+                      {withdrawal.note}
+                    </p>
+                  )}
+
+                  <div className="mt-4 border-t border-line/10 pt-3.5">
+                    <Actions withdrawal={withdrawal} />
+                  </div>
+                </article>
+              ))}
+            </div>
+          </>
+        )}
+      </section>
     </main>
   );
 }

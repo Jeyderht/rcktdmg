@@ -1,7 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Download as DownloadIcon, Receipt } from "lucide-react";
+
+import AccountPageHeader from "@/components/AccountPageHeader";
+import EmptyState from "@/components/EmptyState";
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 
 type Product = {
@@ -57,15 +63,15 @@ function getOrderStatusLabel(status: string) {
     return labels[status] || status;
 }
 
-function getOrderStatusClass(status: string) {
+function getOrderStatusBadge(status: string) {
     const classes: Record<string, string> = {
-        PENDING: "bg-warning/12 text-warning",
-        PAID: "bg-success/12 text-success",
-        CANCELED: "bg-danger/10 text-danger",
-        REFUNDED: "bg-ink/[0.05] text-ink/60",
+        PENDING: "rk-badge-warning",
+        PAID: "rk-badge-success",
+        CANCELED: "rk-badge-danger",
+        REFUNDED: "rk-badge-neutral",
     };
 
-    return classes[status] || "bg-ink/[0.05] text-ink/60";
+    return classes[status] || "rk-badge-neutral";
 }
 
 export default function MisComprasPage() {
@@ -110,134 +116,130 @@ export default function MisComprasPage() {
         <>
             <Navbar />
 
-            <main className="mx-auto max-w-6xl px-4 sm:px-5 py-10 sm:py-16">
-                <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <p className="text-xs uppercase tracking-[0.25em] text-ink/40">
-                            RCKTDMG
-                        </p>
+            <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
+                <AccountPageHeader
+                    title="Mis compras"
+                    subtitle="Recursos que adquiriste."
+                >
+                    {orders.length > 0 && (
+                        <Link
+                            href="/mi-cuenta/descargas"
+                            className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
+                        >
+                            <DownloadIcon size={15} />
+                            Mis descargas
+                        </Link>
+                    )}
+                </AccountPageHeader>
 
-                        <h1 className="mt-2 text-4xl font-semibold tracking-tight">
-                            Mis compras
-                        </h1>
-
-                        <p className="mt-3 max-w-2xl text-ink/50">
-                            Consulta tus pedidos, recursos adquiridos y estado
-                            de tus compras.
-                        </p>
-                    </div>
-
-                    <Link
-                        href="/tienda"
-                        className="w-fit rounded-full bg-primary px-6 py-3 text-sm font-medium text-onprimary transition hover:opacity-80"
-                    >
-                        Explorar recursos
-                    </Link>
-                </div>
-
+                {/* CARGANDO */}
                 {loading && (
-                    <div className="mt-10 rk-card p-10">
-                        <p className="text-sm text-ink/50">
-                            Cargando tus compras...
-                        </p>
+                    <div className="mt-8 space-y-3" aria-busy="true">
+                        {[0, 1].map((index) => (
+                            <div key={index} className="rk-card p-5">
+                                <div className="h-3.5 w-32 animate-pulse rounded-full bg-ink/[0.06]" />
+
+                                <div className="mt-5 flex items-center gap-4">
+                                    <div className="rk-aspect-product w-14 animate-pulse rounded-rk-sm bg-ink/[0.06]" />
+
+                                    <div className="min-w-0 flex-1">
+                                        <div className="h-3.5 w-2/3 animate-pulse rounded-full bg-ink/[0.06]" />
+                                        <div className="mt-2 h-3 w-24 animate-pulse rounded-full bg-ink/[0.05]" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 )}
 
+                {/* ERROR */}
                 {!loading && error && (
-                    <div className="mt-10 rounded-3xl border border-danger/25 bg-danger/10 p-6">
+                    <div
+                        role="alert"
+                        className="rk-fade mt-8 rounded-rk-md border border-danger/25 bg-danger/10 p-5"
+                    >
                         <p className="text-sm text-danger">{error}</p>
 
                         <button
                             type="button"
                             onClick={loadOrders}
-                            className="mt-4 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-onprimary"
+                            className="rk-btn rk-btn-primary mt-4 !min-h-0 !px-4 !py-2.5 !text-sm"
                         >
                             Intentar nuevamente
                         </button>
                     </div>
                 )}
 
+                {/* VACÍO */}
                 {!loading && !error && orders.length === 0 && (
-                    <div className="mt-10 rk-card p-12 text-center">
-                        <p className="text-xs uppercase tracking-[0.2em] text-ink/30">
-                            Todavía no tienes compras
-                        </p>
-
-                        <h2 className="mt-3 text-2xl font-semibold">
-                            Empieza a explorar recursos
-                        </h2>
-
-                        <p className="mx-auto mt-3 max-w-md text-sm text-ink/50">
-                            Cuando realices una compra, tus pedidos aparecerán
-                            aquí.
-                        </p>
-
-                        <Link
-                            href="/tienda"
-                            className="mt-7 inline-block rounded-full bg-primary px-6 py-3 text-sm font-medium text-onprimary"
-                        >
-                            Ir a la tienda
-                        </Link>
+                    <div className="mt-8">
+                        <EmptyState
+                            icon={Receipt}
+                            title="Todavía no tienes compras"
+                            description="Cuando compres un recurso, tu pedido aparecerá aquí con su estado y su descarga."
+                            action={{
+                                href: "/tienda",
+                                label: "Explorar recursos",
+                            }}
+                        />
                     </div>
                 )}
 
+                {/* PEDIDOS */}
                 {!loading && !error && orders.length > 0 && (
-                    <section className="mt-10 space-y-5">
+                    <section className="mt-8 space-y-4">
                         {orders.map((order) => (
                             <article
                                 key={order.id}
-                                className="overflow-hidden rk-card"
+                                className="rk-fade-up rk-card overflow-hidden"
                             >
-                                <div className="border-b border-ink/[0.07] p-6">
-                                    <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                                        <div>
-                                            <p className="text-xs uppercase tracking-[0.2em] text-ink/35">
-                                                Pedido
-                                            </p>
+                                {/* CABECERA DEL PEDIDO */}
+                                <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-3 p-4 sm:p-5">
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-medium">
+                                            {formatDate(order.createdAt)}
+                                        </p>
 
-                                            <p className="mt-1 break-all font-mono text-sm">
-                                                #{order.id}
-                                            </p>
+                                        <p className="mt-1 truncate font-mono text-[11px] text-ink/60">
+                                            #{order.id}
+                                        </p>
+                                    </div>
 
-                                            <p className="mt-2 text-sm text-ink/45">
-                                                {formatDate(order.createdAt)}
-                                            </p>
-                                        </div>
+                                    <div className="flex items-center gap-3">
+                                        <span
+                                            className={`rk-badge ${getOrderStatusBadge(
+                                                order.status
+                                            )}`}
+                                        >
+                                            {getOrderStatusLabel(
+                                                order.status
+                                            )}
+                                        </span>
 
-                                        <div className="flex items-center gap-4">
-                                            <div className="text-right">
-                                                <p className="text-xs text-ink/40">
-                                                    Total
-                                                </p>
-
-                                                <p className="mt-1 text-xl font-semibold">
-                                                    {formatMoney(order.total)}
-                                                </p>
-                                            </div>
-
-                                            <span
-                                                className={`rounded-full px-3 py-1.5 text-xs font-medium ${getOrderStatusClass(
-                                                    order.status
-                                                )}`}
-                                            >
-                                                {getOrderStatusLabel(
-                                                    order.status
-                                                )}
-                                            </span>
-                                        </div>
+                                        <p className="text-lg font-semibold tabular-nums tracking-tight">
+                                            {formatMoney(order.total)}
+                                        </p>
                                     </div>
                                 </div>
 
-                                <div className="divide-y divide-ink/[0.07]">
+                                <div className="rk-divider" />
+
+                                {/* RECURSOS DEL PEDIDO */}
+                                <div className="rk-divider-y">
                                     {order.items.map((item) => (
                                         <div
                                             key={item.id}
-                                            className="flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between"
+                                            className="flex flex-wrap items-center gap-4 p-4 sm:p-5"
                                         >
-                                            <div className="flex min-w-0 items-center gap-4">
-                                                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-ink/[0.05]">
+                                            {/* Contenido visual 9:16, sin desenfoque. */}
+                                            <Link
+                                                href={`/tienda/${item.product.slug}`}
+                                                className="rk-press-sm shrink-0"
+                                                aria-label={item.product.name}
+                                            >
+                                                <div className="rk-media rk-aspect-product relative w-14 overflow-hidden rounded-rk-sm sm:w-16">
                                                     {item.product.coverUrl ? (
-                                                        <img
+                                                        <Image
                                                             src={
                                                                 item.product
                                                                     .coverUrl
@@ -246,48 +248,58 @@ export default function MisComprasPage() {
                                                                 item.product
                                                                     .name
                                                             }
-                                                            className="h-full w-full object-cover"
+                                                            fill
+                                                            className="object-cover"
+                                                            sizes="64px"
                                                         />
                                                     ) : (
-                                                        <div className="flex h-full items-center justify-center text-[9px] tracking-widest text-ink/25">
-                                                            RCKTDMG
-                                                        </div>
+                                                        <span className="flex h-full items-center justify-center text-[8px] uppercase tracking-[0.2em] text-ink/45">
+                                                            RK
+                                                        </span>
                                                     )}
                                                 </div>
+                                            </Link>
 
-                                                <div className="min-w-0">
-                                                    <p className="font-semibold">
-                                                        {item.product.name}
-                                                    </p>
-
-                                                    <p className="mt-1 text-sm text-ink/45">
-                                                        Cantidad:{" "}
-                                                        {item.quantity}
-                                                    </p>
-
-                                                    <p className="mt-1 text-sm text-ink/45">
-                                                        Precio:{" "}
-                                                        {formatMoney(
-                                                            item.price
-                                                        )}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex items-center gap-3">
+                                            <div className="min-w-0 flex-1">
                                                 <Link
                                                     href={`/tienda/${item.product.slug}`}
-                                                    className="rounded-full border border-ink/10 px-4 py-2.5 text-sm font-medium transition hover:bg-primary hover:text-onprimary"
+                                                    className="block truncate text-[15px] font-semibold transition-opacity hover:opacity-70"
                                                 >
-                                                    Ver recurso
+                                                    {item.product.name}
                                                 </Link>
 
-                                                {order.status === "PAID" && (
+                                                <p className="mt-1 text-sm text-ink/60">
+                                                    {formatMoney(item.price)}
+
+                                                    {item.quantity > 1 && (
+                                                        <span>
+                                                            {" · "}
+                                                            {item.quantity}{" "}
+                                                            unidades
+                                                        </span>
+                                                    )}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto">
+                                                {/* La descarga vive en su página: la
+                                                    entrega el mismo registro real. */}
+                                                {order.status === "PAID" ? (
                                                     <Link
-                                                        href="/mi-cuenta"
-                                                        className="rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-onprimary transition hover:opacity-80"
+                                                        href="/mi-cuenta/descargas"
+                                                        className="rk-btn rk-btn-primary !min-h-0 flex-1 !px-4 !py-2.5 !text-sm sm:flex-none"
                                                     >
-                                                        Mis recursos
+                                                        <DownloadIcon
+                                                            size={15}
+                                                        />
+                                                        Descargar
+                                                    </Link>
+                                                ) : (
+                                                    <Link
+                                                        href={`/tienda/${item.product.slug}`}
+                                                        className="rk-btn rk-btn-glass !min-h-0 flex-1 !px-4 !py-2.5 !text-sm sm:flex-none"
+                                                    >
+                                                        Ver recurso
                                                     </Link>
                                                 )}
                                             </div>
@@ -295,19 +307,17 @@ export default function MisComprasPage() {
                                     ))}
                                 </div>
 
+                                {/* PAGO REAL, SOLO SI EXISTE */}
                                 {order.payment && (
-                                    <div className="border-t border-ink/[0.07] bg-ink/[0.05] px-6 py-4">
-                                        <div className="flex flex-col gap-2 text-xs text-ink/45 sm:flex-row sm:items-center sm:justify-between">
-                                            <span>
-                                                Pago:{" "}
-                                                {order.payment.provider}
-                                            </span>
+                                    <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-1 border-t border-line/10 bg-ink/[0.02] px-4 py-3 text-xs text-ink/60 sm:px-5">
+                                        <span>
+                                            Pago: {order.payment.provider}
+                                        </span>
 
-                                            <span>
-                                                Estado del pago:{" "}
-                                                {order.payment.status}
-                                            </span>
-                                        </div>
+                                        <span>
+                                            Estado del pago:{" "}
+                                            {order.payment.status}
+                                        </span>
                                     </div>
                                 )}
                             </article>
@@ -315,6 +325,8 @@ export default function MisComprasPage() {
                     </section>
                 )}
             </main>
+
+            <Footer />
         </>
     );
 }

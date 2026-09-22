@@ -1,9 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowLeft, BadgeCheck, Download, ShieldCheck } from "lucide-react";
+import {
+    BadgeCheck,
+    ChevronRight,
+    Download,
+    ShieldCheck,
+} from "lucide-react";
 
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { prisma } from "@/lib/prisma";
 import AddToCartButton from "./AddToCartButton";
 import FavoriteButton from "@/components/FavoriteButton";
@@ -140,6 +147,28 @@ export default async function ProductPage({
      * completa con otros publicados. Si no hay ninguno, la
      * sección no se muestra.
      */
+    const suggestionSelect = {
+        id: true,
+        name: true,
+        slug: true,
+        price: true,
+        coverUrl: true,
+        category: { select: { name: true, slug: true } },
+        creator: {
+            select: {
+                name: true,
+                publicName: true,
+                username: true,
+                creatorStatus: true,
+            },
+        },
+        images: {
+            orderBy: { sortOrder: "asc" as const },
+            take: 1,
+            select: { url: true, alt: true },
+        },
+    };
+
     const sameCategory = await prisma.product.findMany({
         where: {
             status: "PUBLISHED",
@@ -147,24 +176,12 @@ export default async function ProductPage({
             id: { not: product.id },
         },
         orderBy: { createdAt: "desc" },
-        take: 4,
-        select: {
-            id: true,
-            name: true,
-            slug: true,
-            price: true,
-            coverUrl: true,
-            category: { select: { name: true, slug: true } },
-            images: {
-                orderBy: { sortOrder: "asc" },
-                take: 1,
-                select: { url: true, alt: true },
-            },
-        },
+        take: 6,
+        select: suggestionSelect,
     });
 
     const others =
-        sameCategory.length < 4
+        sameCategory.length < 6
             ? await prisma.product.findMany({
                   where: {
                       status: "PUBLISHED",
@@ -176,20 +193,8 @@ export default async function ProductPage({
                       },
                   },
                   orderBy: { createdAt: "desc" },
-                  take: 4 - sameCategory.length,
-                  select: {
-                      id: true,
-                      name: true,
-                      slug: true,
-                      price: true,
-                      coverUrl: true,
-                      category: { select: { name: true, slug: true } },
-                      images: {
-                          orderBy: { sortOrder: "asc" },
-                          take: 1,
-                          select: { url: true, alt: true },
-                      },
-                  },
+                  take: 6 - sameCategory.length,
+                  select: suggestionSelect,
               })
             : [];
 
@@ -207,26 +212,49 @@ export default async function ProductPage({
         <>
             <Navbar />
 
-            {/*
-                Ficha centrada y con ancho acotado: en pantallas
-                grandes deja aire a los lados en lugar de ocupar
-                todo el ancho disponible.
-            */}
-            <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:pb-20 lg:pt-8">
+            <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-5 sm:px-5 lg:pb-20 lg:pt-8">
 
-                {/* VOLVER */}
-                <Link
-                    href="/tienda"
-                    className="rk-press mb-5 inline-flex items-center gap-1.5 text-sm text-ink/50 transition-colors hover:text-ink"
+                {/* ══════════ BREADCRUMBS ══════════ */}
+                <nav
+                    aria-label="Ruta de navegación"
+                    className="rk-fade-up mb-6 flex items-center gap-1.5 overflow-x-auto text-[13px] text-ink/60"
                 >
-                    <ArrowLeft size={15} />
-                    Volver a recursos
-                </Link>
+                    <Link
+                        href="/tienda"
+                        className="rk-press shrink-0 transition-colors hover:text-accent"
+                    >
+                        Tienda
+                    </Link>
 
-                <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(320px,1fr)] lg:gap-7">
+                    <ChevronRight size={13} className="shrink-0 text-ink/45" />
 
-                    {/* GALERÍA */}
-                    <div className="rk-enter w-full min-w-0">
+                    <Link
+                        href={`/tienda?categoria=${product.category.slug}`}
+                        className="rk-press shrink-0 transition-colors hover:text-accent"
+                    >
+                        {product.category.name}
+                    </Link>
+
+                    <ChevronRight size={13} className="shrink-0 text-ink/45" />
+
+                    <span
+                        aria-current="page"
+                        className="truncate font-medium text-ink/70"
+                    >
+                        {product.name}
+                    </span>
+                </nav>
+
+                {/*
+                    La galería lleva el peso visual, pero con un
+                    ancho acotado: el contenido es 9:16 y una
+                    columna ancha lo volvería desproporcionadamente
+                    alto en escritorio.
+                */}
+                <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,23rem)_minmax(0,1fr)] lg:gap-10">
+
+                    {/* ══════════ GALERÍA ══════════ */}
+                    <div className="rk-fade-up w-full min-w-0">
                         <ProductGallery
                             name={product.name}
                             coverUrl={product.coverUrl}
@@ -235,32 +263,44 @@ export default async function ProductPage({
                         />
                     </div>
 
-                    {/* INFORMACIÓN */}
-                    <div className="rk-enter rk-enter-1 min-w-0 space-y-4">
+                    {/* ══════════ INFORMACIÓN ══════════ */}
+                    <div className="rk-fade-up rk-enter-1 min-w-0">
 
-                        <div className="rk-glass rounded-[1.5rem] p-4 sm:p-5">
+                        <p className="rk-eyebrow">Recurso digital</p>
+
+                        <h1 className="rk-title mt-2.5 text-[1.6rem] sm:text-3xl lg:text-[2.1rem]">
+                            {product.name}
+                        </h1>
+
+                        {/* CATEGORÍA Y ACCESO: datos reales */}
+                        <div className="mt-3.5 flex flex-wrap items-center gap-2">
                             <Link
                                 href={`/tienda?categoria=${product.category.slug}`}
-                                className="rk-eyebrow !tracking-[0.18em] transition-colors hover:text-ink"
+                                className="rk-chip !py-1.5 !text-[12px]"
                             >
                                 {product.category.name}
                             </Link>
 
-                            <h1 className="mt-2 text-[1.45rem] font-semibold leading-tight sm:text-2xl lg:text-[1.75rem]">
-                                {product.name}
-                            </h1>
+                            {accessTypeLabel[product.accessType] && (
+                                <span className="rk-badge rk-badge-accent">
+                                    {accessTypeLabel[product.accessType]}
+                                </span>
+                            )}
+                        </div>
 
-                            <div className="mt-4 flex items-end justify-between gap-4">
-                                <div>
+                        {/* ── PRECIO Y COMPRA ── */}
+                        <div className="rk-glass mt-6 rounded-rk-lg p-4 sm:p-5">
+                            <div className="flex items-end justify-between gap-4">
+                                <div className="min-w-0">
                                     {pricing.hasPromotion ? (
                                         <>
-                                            {/* PRECIO ANTERIOR: secundario y tachado */}
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xs text-ink/40">
+                                            {/* Precio anterior: secundario y tachado */}
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="text-xs text-ink/60">
                                                     Antes
                                                 </span>
 
-                                                <span className="text-sm text-ink/40 line-through">
+                                                <span className="text-sm text-ink/60 line-through">
                                                     {formatPrice(
                                                         pricing.compareAtPrice as number
                                                     )}
@@ -271,18 +311,17 @@ export default async function ProductPage({
                                                 </span>
                                             </div>
 
-                                            {/* PRECIO ACTUAL: el que paga el cliente */}
-                                            <p className="mt-1 text-[1.7rem] font-semibold tracking-tight">
+                                            <p className="mt-1 text-[2rem] font-semibold leading-none tracking-tight">
                                                 {formatPrice(pricing.price)}
                                             </p>
                                         </>
                                     ) : (
                                         <>
-                                            <p className="text-xs text-ink/40">
+                                            <p className="rk-eyebrow !tracking-[0.16em]">
                                                 Precio
                                             </p>
 
-                                            <p className="text-[1.7rem] font-semibold tracking-tight">
+                                            <p className="mt-2 text-[2rem] font-semibold leading-none tracking-tight">
                                                 {formatPrice(pricing.price)}
                                             </p>
                                         </>
@@ -292,7 +331,7 @@ export default async function ProductPage({
                                 <FavoriteButton productId={product.id} />
                             </div>
 
-                            <div className="mt-4 space-y-2">
+                            <div className="mt-5 space-y-2">
                                 <AddToCartButton
                                     product={{
                                         id: product.id,
@@ -309,126 +348,152 @@ export default async function ProductPage({
                                 <AddToCollectionButton productId={product.id} />
                             </div>
 
-                            {/* GARANTÍAS */}
-                            <div className="mt-4 grid grid-cols-2 gap-2 border-t border-ink/[0.07] pt-4">
-                                <div className="flex items-start gap-2">
+                            {/* Condiciones reales del marketplace */}
+                            <div className="rk-divider my-4" />
+
+                            <ul className="grid gap-2.5 sm:grid-cols-2">
+                                <li className="flex items-start gap-2">
                                     <Download
-                                        size={15}
-                                        className="mt-0.5 shrink-0 text-ink/40"
+                                        size={14}
+                                        className="mt-0.5 shrink-0 text-accent"
                                     />
-                                    <span className="text-xs leading-5 text-ink/50">
+                                    <span className="text-xs leading-5 text-ink/60">
                                         Descarga inmediata tras el pago
                                     </span>
-                                </div>
+                                </li>
 
-                                <div className="flex items-start gap-2">
+                                <li className="flex items-start gap-2">
                                     <ShieldCheck
-                                        size={15}
-                                        className="mt-0.5 shrink-0 text-ink/40"
+                                        size={14}
+                                        className="mt-0.5 shrink-0 text-accent"
                                     />
-                                    <span className="text-xs leading-5 text-ink/50">
+                                    <span className="text-xs leading-5 text-ink/60">
                                         Acceso permanente desde tu cuenta
                                     </span>
-                                </div>
-                            </div>
+                                </li>
+                            </ul>
                         </div>
 
-                        {/* CREADOR */}
-                        <div className="rk-card flex items-center gap-3 p-3.5 sm:p-4">
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[0.9rem] bg-primary shadow-rk-sm">
+                        {/* ── CREADOR ── */}
+                        <div className="rk-card rk-hover-lift mt-4 flex items-center gap-3.5 p-3.5 sm:p-4">
+                            <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-rk-sm bg-primary text-lg font-semibold text-onprimary">
                                 {product.creator.avatarUrl ? (
-                                    <img
+                                    <Image
                                         src={product.creator.avatarUrl}
                                         alt={creatorName}
-                                        className="h-full w-full object-cover"
+                                        fill
+                                        className="object-cover"
+                                        sizes="48px"
                                     />
                                 ) : (
-                                    <span className="text-lg font-semibold text-onprimary">
-                                        {creatorName.charAt(0).toUpperCase()}
-                                    </span>
+                                    creatorName.charAt(0).toUpperCase()
                                 )}
-                            </div>
+                            </span>
 
                             <div className="min-w-0 flex-1">
                                 <p className="rk-eyebrow !tracking-[0.16em]">
                                     Creador
                                 </p>
 
-                                <p className="mt-1 flex items-center gap-1.5 truncate font-medium">
-                                    <span className="truncate">{creatorName}</span>
+                                <p className="mt-1 flex items-center gap-1.5">
+                                    <span className="truncate text-[14px] font-semibold">
+                                        {creatorName}
+                                    </span>
 
                                     {product.creator.isVerified && (
                                         <BadgeCheck
-                                            size={15}
-                                            className="shrink-0 fill-ink text-background"
+                                            size={14}
+                                            className="shrink-0 text-accent"
+                                            aria-label="Creador verificado"
                                         />
                                     )}
                                 </p>
+
+                                {product.creator.username && (
+                                    <p className="truncate text-[11px] text-ink/60">
+                                        @{product.creator.username}
+                                    </p>
+                                )}
                             </div>
 
                             {creatorProfileUrl && (
                                 <Link
                                     href={creatorProfileUrl}
-                                    className="rk-btn rk-btn-glass shrink-0 !px-4 !py-2 !text-xs"
+                                    className="rk-btn rk-btn-glass shrink-0 !min-h-0 !px-4 !py-2 !text-xs"
                                 >
                                     Ver perfil
                                 </Link>
                             )}
                         </div>
 
-                        {/* DESCRIPCIÓN */}
-                        <div className="rk-card p-4 sm:p-5">
+                        {/* ── DESCRIPCIÓN ── */}
+                        <section className="rk-card mt-4 p-4 sm:p-5">
                             <h2 className="text-sm font-semibold">
                                 Sobre este recurso
                             </h2>
 
-                            <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-ink/55">
+                            <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-ink/60">
                                 {product.description}
                             </p>
-                        </div>
+                        </section>
 
                         {/*
-                            FICHA TÉCNICA
-                            Solo se muestran los datos que existen
-                            realmente: formato y tamaño salen del
-                            archivo en disco, el resto de la base
-                            de datos. Nada se inventa.
+                            ── DETALLES DEL ARCHIVO ──
+                            Solo datos que existen de verdad: formato y
+                            tamaño salen del archivo en disco, el resto
+                            de la base de datos. Lo que no se conoce,
+                            no se muestra.
                         */}
                         {specs.length > 0 && (
-                            <div className="rk-card p-4 sm:p-5">
+                            <section className="rk-card mt-4 p-4 sm:p-5">
                                 <h2 className="text-sm font-semibold">
                                     Detalles del recurso
                                 </h2>
 
-                                <dl className="mt-3 divide-y divide-ink/[0.07]">
+                                <dl className="rk-divider-y mt-3">
                                     {specs.map((spec) => (
                                         <div
                                             key={spec.label}
                                             className="flex items-center justify-between gap-4 py-2.5"
                                         >
-                                            <dt className="text-sm text-ink/45">
+                                            <dt className="text-sm text-ink/60">
                                                 {spec.label}
                                             </dt>
 
-                                            <dd className="text-sm font-medium">
+                                            <dd className="text-right text-sm font-medium">
                                                 {spec.value}
                                             </dd>
                                         </div>
                                     ))}
                                 </dl>
-                            </div>
+                            </section>
                         )}
                     </div>
                 </div>
 
-                {/* TAMBIÉN TE PUEDE INTERESAR */}
+                {/* ══════════ MÁS RECURSOS ══════════ */}
                 {suggestions.length > 0 && (
-                    <section className="rk-enter rk-enter-2 mt-12">
-                        <h2 className="text-xl font-semibold sm:text-2xl">
-                            También te puede interesar
-                        </h2>
+                    <section className="rk-fade-up rk-enter-2 mt-14 lg:mt-20">
+                        <div className="flex flex-wrap items-end justify-between gap-3">
+                            <div>
+                                <p className="rk-eyebrow">Sigue explorando</p>
 
-                        <div className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
+                                <h2 className="rk-title mt-2 text-xl sm:text-2xl">
+                                    También te puede interesar
+                                </h2>
+                            </div>
+
+                            <Link
+                                href="/tienda"
+                                className="rk-press text-sm font-medium text-ink/60 transition-colors hover:text-accent"
+                            >
+                                Ver todos
+                            </Link>
+                        </div>
+
+                        <div className="rk-divider mt-4" />
+
+                        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-6">
                             {suggestions.map((item) => (
                                 <ProductCard
                                     key={item.id}
@@ -440,6 +505,17 @@ export default async function ProductPage({
                                         coverUrl: item.coverUrl,
                                         image: item.images[0] ?? null,
                                         category: item.category,
+                                        creator: {
+                                            name:
+                                                item.creator.publicName ||
+                                                item.creator.name ||
+                                                "Creador",
+                                            username:
+                                                item.creator.creatorStatus ===
+                                                "APPROVED"
+                                                    ? item.creator.username
+                                                    : null,
+                                        },
                                     }}
                                 />
                             ))}
@@ -447,6 +523,8 @@ export default async function ProductPage({
                     </section>
                 )}
             </main>
+
+            <Footer />
         </>
     );
 }

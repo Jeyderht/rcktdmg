@@ -1,142 +1,52 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { promises as fs } from "fs";
-import path from "path";
-import { randomUUID } from "crypto";
-import { verifySessionToken } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024;
+/**
+ * Endpoint retirado.
+ *
+ * Escribía el archivo directamente en `storage/` del servidor y
+ * devolvía una ruta `/api/download-file/…` que nunca existió
+ * como página. Sobre Vercel el sistema de archivos es efímero,
+ * así que ese camino no podía funcionar en producción.
+ *
+ * Se comprobó en todo el repositorio que no tenía ni un solo
+ * consumidor antes de retirarlo.
+ *
+ * Los reemplazos vigentes son:
+ *
+ *   - archivos vendibles : POST /api/uploads/product
+ *                          (o subida directa al almacén privado
+ *                          con /api/uploads/product/client-token)
+ *
+ *   - imágenes públicas  : POST /api/uploads/product-image,
+ *                          /api/uploads/creator-avatar,
+ *                          /api/uploads/creator-cover
+ *                          (o subida directa con
+ *                          /api/uploads/imagenes/client-token)
+ *
+ * Se responde 410 Gone en vez de borrar la ruta: si algún
+ * cliente antiguo siguiera llamándola, recibe una respuesta
+ * explícita en lugar de un 404 que parecería un fallo de
+ * enrutado.
+ */
 
-const ALLOWED_EXTENSIONS = [
-  ".zip",
-  ".rar",
-  ".7z",
-  ".pdf",
-  ".psd",
-  ".ai",
-  ".eps",
-  ".svg",
-  ".png",
-  ".jpg",
-  ".jpeg",
-  ".webp",
-  ".mp4",
-  ".mov",
-  ".mp3",
-  ".wav",
-  ".doc",
-  ".docx",
-  ".xls",
-  ".xlsx",
-  ".ppt",
-  ".pptx",
-];
+const RESPUESTA = {
+  error: "Este endpoint fue retirado.",
+  usar: {
+    archivoVendible: "/api/uploads/product",
+    imagenes: [
+      "/api/uploads/product-image",
+      "/api/uploads/creator-avatar",
+      "/api/uploads/creator-cover",
+    ],
+  },
+} as const;
 
-export async function POST(request: Request) {
-  try {
-    const cookieStore = await cookies();
+export async function POST() {
+  return NextResponse.json(RESPUESTA, { status: 410 });
+}
 
-    const token = cookieStore.get("rcktdmg_session")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "No has iniciado sesión." },
-        { status: 401 }
-      );
-    }
-
-    const session = await verifySessionToken(token);
-
-    if (!session || !session.userId) {
-      return NextResponse.json(
-        { error: "Sesión inválida o expirada." },
-        { status: 401 }
-      );
-    }
-
-    if (session.role !== "CREATOR" && session.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "No tienes permisos para subir archivos." },
-        { status: 403 }
-      );
-    }
-
-    const formData = await request.formData();
-
-    const file = formData.get("file");
-
-    if (!(file instanceof File)) {
-      return NextResponse.json(
-        { error: "No se recibió ningún archivo." },
-        { status: 400 }
-      );
-    }
-
-    if (file.size === 0) {
-      return NextResponse.json(
-        { error: "El archivo está vacío." },
-        { status: 400 }
-      );
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json(
-        { error: "El archivo no puede superar los 100 MB." },
-        { status: 400 }
-      );
-    }
-
-    const originalName = file.name || "archivo";
-    const extension = path.extname(originalName).toLowerCase();
-
-    if (!ALLOWED_EXTENSIONS.includes(extension)) {
-      return NextResponse.json(
-        {
-          error:
-            "Tipo de archivo no permitido. Usa ZIP, RAR, 7Z, PDF, PSD, AI, EPS, imágenes, videos, audio u Office.",
-        },
-        { status: 400 }
-      );
-    }
-
-    const safeFileName = `${randomUUID()}${extension}`;
-
-    const storageDirectory = path.join(
-      process.cwd(),
-      "storage",
-      "products"
-    );
-
-    await fs.mkdir(storageDirectory, {
-      recursive: true,
-    });
-
-    const filePath = path.join(
-      storageDirectory,
-      safeFileName
-    );
-
-    const arrayBuffer = await file.arrayBuffer();
-
-    await fs.writeFile(
-      filePath,
-      Buffer.from(arrayBuffer)
-    );
-
-    return NextResponse.json({
-      success: true,
-      fileUrl: `/api/download-file/${safeFileName}`,
-      fileName: originalName,
-      size: file.size,
-    });
-  } catch (error) {
-    console.error("ERROR SUBIENDO ARCHIVO:", error);
-
-    return NextResponse.json(
-      { error: "No se pudo subir el archivo." },
-      { status: 500 }
-    );
-  }
+export async function GET() {
+  return NextResponse.json(RESPUESTA, { status: 410 });
 }

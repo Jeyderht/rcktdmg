@@ -1,5 +1,8 @@
 import { stat } from "fs/promises";
 import path from "path";
+import { head } from "@vercel/blob";
+
+import { esReferenciaBlob } from "@/lib/storage";
 
 /**
  * Datos técnicos reales del archivo de un recurso.
@@ -72,6 +75,31 @@ export async function getProductFileInfo(
 
   if (!fileUrl) {
     return empty;
+  }
+
+  // Archivo ya migrado al almacén privado: el tamaño real lo
+  // da la metadata del objeto, sin descargarlo ni exponerlo.
+  if (esReferenciaBlob(fileUrl)) {
+    const nombreRemoto = decodeURIComponent(
+      new URL(fileUrl).pathname.split("/").pop() || ""
+    );
+
+    const formatoRemoto =
+      path.extname(nombreRemoto).replace(".", "").toUpperCase() ||
+      null;
+
+    try {
+      const meta = await head(fileUrl, {
+        token: process.env.BLOB_FILES_READ_WRITE_TOKEN,
+      });
+
+      return {
+        format: formatoRemoto,
+        size: formatBytes(meta.size),
+      };
+    } catch {
+      return { format: formatoRemoto, size: null };
+    }
   }
 
   const fileName = resolveStoredFileName(fileUrl);

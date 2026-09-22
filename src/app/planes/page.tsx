@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
 
+import EmptyState from "@/components/EmptyState";
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { prisma } from "@/lib/prisma";
 
@@ -31,14 +33,14 @@ export default async function PlansPage() {
 
         {/* ENCABEZADO */}
         <section className="rk-enter">
-          <div className="rk-glass rounded-[2rem] px-6 py-10 text-center sm:rounded-[2.5rem] sm:px-10 sm:py-12">
+          <div className="rk-glass rounded-rk-xl px-6 py-10 text-center sm:px-10 sm:py-12">
             <p className="rk-eyebrow">RCKTDMG</p>
 
             <h1 className="mt-2.5 text-[2rem] font-semibold leading-tight sm:text-4xl lg:text-5xl">
               Planes
             </h1>
 
-            <p className="mx-auto mt-4 max-w-lg text-[15px] leading-7 text-ink/50">
+            <p className="mx-auto mt-4 max-w-lg text-[15px] leading-7 text-ink/60">
               Las suscripciones estarán disponibles próximamente.
               Mientras tanto puedes comprar cualquier recurso de
               forma individual.
@@ -48,21 +50,16 @@ export default async function PlansPage() {
 
         {/* PLANES */}
         {plans.length === 0 ? (
-          <div className="rk-enter rk-enter-1 rk-card mt-5 px-6 py-16 text-center">
-            <h2 className="text-lg font-semibold">
-              Todavía no hay planes configurados
-            </h2>
-
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-ink/45">
-              Los planes se configuran desde administración.
-            </p>
-
-            <Link href="/tienda" className="rk-btn rk-btn-primary mt-7">
-              Explorar recursos
-            </Link>
+          <div className="mt-8">
+            <EmptyState
+              icon={Sparkles}
+              title="Todavía no hay planes configurados"
+              description="Los planes se configuran desde administración. Mientras tanto puedes comprar recursos por separado."
+              action={{ href: "/tienda", label: "Explorar recursos" }}
+            />
           </div>
         ) : (
-          <div className="rk-enter rk-enter-1 mt-5 grid gap-4 md:grid-cols-3">
+          <div className="rk-fade-up rk-enter-1 mt-8 grid gap-3 md:grid-cols-3">
             {plans.map((plan, index) => {
               const featured =
                 plans.length > 1 &&
@@ -71,7 +68,7 @@ export default async function PlansPage() {
               return (
                 <div
                   key={plan.id}
-                  className={`relative flex flex-col overflow-hidden rounded-[1.75rem] p-6 sm:p-7 ${
+                  className={`relative flex flex-col overflow-hidden rounded-rk-lg p-6 sm:p-7 ${
                     featured
                       ? "rk-float bg-primary text-onprimary"
                       : "rk-card"
@@ -91,14 +88,14 @@ export default async function PlansPage() {
                   )}
 
                   <div className="relative">
-                    <h2 className="text-lg font-semibold">
+                    <h2 className="rk-title text-lg">
                       {plan.name}
                     </h2>
 
                     {plan.description && (
                       <p
                         className={`mt-2 text-sm leading-6 ${
-                          featured ? "text-onprimary/60" : "text-ink/50"
+                          featured ? "text-onprimary/60" : "text-ink/60"
                         }`}
                       >
                         {plan.description}
@@ -109,7 +106,7 @@ export default async function PlansPage() {
                       S/ {Number(plan.monthlyPrice).toFixed(0)}
                       <span
                         className={`text-base font-normal ${
-                          featured ? "text-onprimary/50" : "text-ink/40"
+                          featured ? "text-onprimary/50" : "text-ink/60"
                         }`}
                       >
                         /mes
@@ -118,7 +115,7 @@ export default async function PlansPage() {
 
                     <p
                       className={`mt-1 text-sm ${
-                        featured ? "text-onprimary/50" : "text-ink/45"
+                        featured ? "text-onprimary/50" : "text-ink/60"
                       }`}
                     >
                       S/ {Number(plan.yearlyPrice).toFixed(0)} al año
@@ -127,7 +124,7 @@ export default async function PlansPage() {
                     {plan.downloadLimit !== null && (
                       <p
                         className={`mt-5 flex items-center gap-2 text-sm ${
-                          featured ? "text-onprimary/70" : "text-ink/55"
+                          featured ? "text-onprimary/70" : "text-ink/60"
                         }`}
                       >
                         <Check size={15} className="shrink-0" />
@@ -142,8 +139,8 @@ export default async function PlansPage() {
                     title="Las suscripciones estarán disponibles próximamente"
                     className={`rk-btn relative mt-8 w-full !py-3 ${
                       featured
-                        ? "bg-onprimary text-primary"
-                        : "bg-primary text-onprimary"
+                        ? "bg-onprimary/15 text-onprimary"
+                        : "rk-btn-glass"
                     }`}
                   >
                     Próximamente
@@ -155,12 +152,12 @@ export default async function PlansPage() {
         )}
 
         {/* ALTERNATIVA DISPONIBLE HOY */}
-        <div className="rk-enter rk-enter-2 rk-card mt-5 p-7 text-center sm:p-9">
+        <div className="rk-fade-up rk-enter-2 rk-card mt-10 p-6 text-center sm:p-8">
           <h2 className="text-lg font-semibold">
             Compra recursos de forma individual
           </h2>
 
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-ink/45">
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-ink/60">
             Paga solo por lo que necesitas y descárgalo al instante
             desde tu cuenta.
           </p>
@@ -171,6 +168,8 @@ export default async function PlansPage() {
           </Link>
         </div>
       </main>
+
+      <Footer />
     </>
   );
 }

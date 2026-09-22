@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { promises as fs } from "fs";
 import path from "path";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
+import { getPrivate, esReferenciaBlob, esRutaPrivadaLocal } from "@/lib/storage";
+import { nombreDeArchivoLocal } from "@/lib/storage/local";
 
 export const runtime = "nodejs";
 
@@ -88,24 +89,34 @@ export async function GET(
 
     const fileUrl = download.product.fileUrl;
 
+    /*
+      Tres formatos conviven a propósito durante la migración:
+
+        /storage/products/…   archivo en disco (formato actual)
+        /api/download-file/…  formato antiguo, aún en un producto
+        https://…blob.vercel-storage.com/…  almacén privado
+
+      El adaptador elige el origen según la forma de la
+      referencia, no según el driver activo: así los archivos
+      anteriores a la migración se siguen entregando.
+    */
+    const esBlob = esReferenciaBlob(fileUrl);
+
     let filename = "";
 
-    // Formato antiguo
-    if (fileUrl.startsWith("/api/download-file/")) {
-      filename = decodeURIComponent(
-        fileUrl.replace("/api/download-file/", "")
-      );
-    }
-
-    // Formato nuevo
-    else if (fileUrl.startsWith("/storage/products/")) {
-      filename = decodeURIComponent(
-        fileUrl.replace("/storage/products/", "")
-      );
-    }
-
-    // Formato desconocido
-    else {
+    if (esBlob) {
+      // Nombre visible para el usuario, tomado del pathname.
+      try {
+        filename = decodeURIComponent(
+          new URL(fileUrl).pathname.split("/").pop() || ""
+        );
+      } catch {
+        filename = "";
+      }
+    } else if (esRutaPrivadaLocal(fileUrl)) {
+      // Mantiene la protección contra path traversal.
+      filename = nombreDeArchivoLocal(fileUrl) ?? "";
+    } else {
       return NextResponse.json(
         {
           error:
@@ -115,37 +126,22 @@ export async function GET(
       );
     }
 
-    // Validación de seguridad
-    if (
-      !filename ||
-      filename.includes("..") ||
-      filename.includes("/") ||
-      filename.includes("\\")
-    ) {
+    if (!filename) {
       return NextResponse.json(
         { error: "Archivo inválido." },
         { status: 400 }
       );
     }
 
-    const filePath = path.join(
-      process.cwd(),
-      "storage",
-      "products",
-      filename
-    );
+    const objeto = await getPrivate(fileUrl);
 
-    // Comprobar que el archivo exista
-    try {
-      await fs.access(filePath);
-    } catch {
+    if (!objeto) {
       return NextResponse.json(
         { error: "El archivo no existe en el servidor." },
         { status: 404 }
       );
     }
 
-    const fileBuffer = await fs.readFile(filePath);
 
     // Registrar descarga
     await prisma.download.update({
@@ -199,7 +195,7 @@ export async function GET(
       ".fig": "application/octet-stream",
     };
 
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(objeto.body as BodyInit, {
       status: 200,
       headers: {
         "Content-Type":

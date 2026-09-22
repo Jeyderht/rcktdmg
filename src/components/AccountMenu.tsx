@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -120,13 +121,15 @@ export default function AccountMenu({
   const menuBody = user ? (
     <>
       {/* IDENTIDAD */}
-      <div className="flex items-center gap-3 border-b border-ink/[0.07] px-4 py-4">
-        <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-[0.9rem] bg-primary text-sm font-semibold text-onprimary">
+      <div className="flex items-center gap-3 rk-divider-b px-4 py-4">
+        <span className="rk-media relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-rk-sm text-sm font-semibold text-ink/70">
           {user.avatarUrl ? (
-            <img
+            <Image
               src={user.avatarUrl}
               alt={displayName || "Avatar"}
-              className="h-full w-full object-cover"
+              fill
+              className="object-cover"
+              sizes="44px"
             />
           ) : (
             initials
@@ -138,7 +141,7 @@ export default function AccountMenu({
             {displayName || "Mi cuenta"}
           </span>
 
-          <span className="block truncate text-[11px] text-ink/45">
+          <span className="block truncate text-[11px] text-ink/60">
             {user.email}
           </span>
         </span>
@@ -149,25 +152,25 @@ export default function AccountMenu({
         <Link
           href="/mi-cuenta"
           onClick={() => setOpen(false)}
-          className="rk-press flex items-center gap-2.5 rounded-[0.8rem] px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
+          className="rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
         >
-          <UserRound size={15} className="shrink-0 text-ink/55" />
+          <UserRound size={15} className="shrink-0 text-ink/60" />
           Ver perfil
         </Link>
 
         <Link
           href="/mi-cuenta"
           onClick={() => setOpen(false)}
-          className="rk-press flex items-center gap-2.5 rounded-[0.8rem] px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
+          className="rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
         >
-          <Settings size={15} className="shrink-0 text-ink/55" />
+          <Settings size={15} className="shrink-0 text-ink/60" />
           Ajustes
         </Link>
 
         <button
           type="button"
           onClick={handleLogout}
-          className="rk-press flex w-full items-center gap-2.5 rounded-[0.8rem] px-3 py-2.5 text-left text-[13px] font-medium text-danger transition-colors hover:bg-danger/10"
+          className="rk-press flex w-full items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-left text-[13px] font-medium text-danger transition-colors hover:bg-danger/10"
         >
           <LogOut size={15} className="shrink-0" />
           Salir
@@ -176,10 +179,10 @@ export default function AccountMenu({
     </>
   ) : (
     <>
-      <div className="border-b border-ink/[0.07] px-4 py-4">
+      <div className="rk-divider-b px-4 py-4">
         <p className="text-[13px] font-semibold">Mi cuenta</p>
 
-        <p className="mt-0.5 text-[11px] text-ink/45">
+        <p className="mt-0.5 text-[11px] text-ink/60">
           Accede para comprar y descargar recursos.
         </p>
       </div>
@@ -188,18 +191,18 @@ export default function AccountMenu({
         <Link
           href="/login"
           onClick={() => setOpen(false)}
-          className="rk-press flex items-center gap-2.5 rounded-[0.8rem] px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
+          className="rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
         >
-          <LogIn size={15} className="shrink-0 text-ink/55" />
+          <LogIn size={15} className="shrink-0 text-ink/60" />
           Iniciar sesión
         </Link>
 
         <Link
           href="/registro"
           onClick={() => setOpen(false)}
-          className="rk-press flex items-center gap-2.5 rounded-[0.8rem] px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
+          className="rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
         >
-          <UserPlus size={15} className="shrink-0 text-ink/55" />
+          <UserPlus size={15} className="shrink-0 text-ink/60" />
           Crear cuenta
         </Link>
       </div>
@@ -222,7 +225,7 @@ export default function AccountMenu({
               role="dialog"
               aria-modal="true"
               aria-label="Menú de cuenta"
-              className="rk-glass-strong rk-float animate-fade-up absolute inset-x-3 bottom-[calc(var(--rk-dock-h)+env(safe-area-inset-bottom)+0.75rem)] max-h-[70vh] overflow-y-auto overscroll-contain rounded-[1.5rem]"
+              className="rk-glass-strong rk-float animate-fade-up absolute inset-x-3 bottom-[calc(var(--rk-dock-h)+env(safe-area-inset-bottom)+0.75rem)] max-h-[70vh] overflow-y-auto overscroll-contain rounded-rk-lg"
             >
               <div
                 aria-hidden
@@ -261,11 +264,15 @@ export default function AccountMenu({
         }`}
       >
         {user?.avatarUrl ? (
-          <img
-            src={user.avatarUrl}
-            alt={displayName || "Mi cuenta"}
-            className="h-8 w-8 rounded-full object-cover"
-          />
+          <span className="rk-media relative block h-8 w-8 overflow-hidden rounded-full">
+            <Image
+              src={user.avatarUrl}
+              alt={displayName || "Mi cuenta"}
+              fill
+              className="object-cover"
+              sizes="32px"
+            />
+          </span>
         ) : (
           <UserRound size={18} />
         )}
@@ -276,7 +283,7 @@ export default function AccountMenu({
         <div
           role="dialog"
           aria-label="Menú de cuenta"
-          className="rk-glass-strong rk-float animate-fade-up absolute right-0 top-[calc(100%+0.6rem)] z-[80] w-64 overflow-hidden rounded-[1.25rem]"
+          className="rk-glass-strong rk-float animate-fade-up absolute right-0 top-[calc(100%+0.6rem)] z-[80] w-64 overflow-hidden rounded-rk-md"
         >
           {menuBody}
         </div>

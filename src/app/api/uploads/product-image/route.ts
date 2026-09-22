@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifySessionToken } from "@/lib/auth";
+import { putPublic } from "@/lib/storage";
+import {
+  confirmarImagenSubida,
+  esErrorDeConfirmacion,
+} from "@/lib/storage/confirmar-imagen";
 import crypto from "crypto";
-import fs from "fs/promises";
 import path from "path";
 
 export const runtime = "nodejs";
@@ -50,6 +54,40 @@ export async function POST(request: Request) {
       );
     }
 
+    /*
+      Subida directa: el navegador ya dejó la imagen en el
+      almacén público y aquí solo llega su URL para verificarla.
+      La imagen se asocia después al recurso, desde la API de
+      imágenes, que es la que comprueba la propiedad del
+      producto igual que antes.
+    */
+    const esConfirmacion = (request.headers.get("content-type") || "")
+      .includes("application/json");
+
+    if (esConfirmacion) {
+      const cuerpo = await request.json();
+
+      const confirmada = await confirmarImagenSubida({
+        tipoEsperado: "product-image",
+        blobUrl: cuerpo?.blobUrl,
+        userId: String(session.userId),
+      });
+
+      if (esErrorDeConfirmacion(confirmada)) {
+        return NextResponse.json(
+          { error: confirmada.error },
+          { status: confirmada.status }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        imageUrl: confirmada.url,
+        fileName: confirmada.pathname.split("/").pop(),
+        size: confirmada.size,
+      });
+    }
+
     const formData = await request.formData();
     const file = formData.get("file");
 
@@ -94,30 +132,22 @@ export async function POST(request: Request) {
 
     const uniqueName = `${crypto.randomUUID()}${extension}`;
 
-    const storageDirectory = path.join(
-      process.cwd(),
-      "public",
-      "product-images"
-    );
-
-    await fs.mkdir(storageDirectory, {
-      recursive: true,
-    });
-
-    const filePath = path.join(
-      storageDirectory,
-      uniqueName
-    );
-
     const buffer = Buffer.from(
       await file.arrayBuffer()
     );
 
-    await fs.writeFile(filePath, buffer);
+    // El destino lo decide el adaptador: disco en desarrollo,
+    // almacén público de Blob en producción.
+    const guardado = await putPublic({
+      folder: "product-images",
+      fileName: uniqueName,
+      data: buffer,
+      contentType: file.type || undefined,
+    });
 
     return NextResponse.json({
       success: true,
-      imageUrl: `/product-images/${uniqueName}`,
+      imageUrl: guardado.url,
       fileName: originalName,
       size: file.size,
     });

@@ -1,6 +1,12 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import Image from "next/image";
+
+import {
+  subirArchivoDeProducto,
+  subirImagen,
+} from "@/lib/storage/client-upload";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
@@ -129,28 +135,12 @@ export default function EditarRecursoPage() {
     setMessage("");
 
     try {
-      const formData = new FormData();
+      // Con Blob activo el archivo va directo al almacén
+      // privado; en local sigue pasando por el endpoint.
+      const subido = await subirArchivoDeProducto(file);
 
-      formData.append("file", file);
-
-      const response = await fetch(
-        "/api/uploads/product",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.error || "No se pudo subir el archivo."
-        );
-      }
-
-      setFileUrl(data.fileUrl);
-      setFileName(data.fileName);
+      setFileUrl(subido.fileUrl);
+      setFileName(subido.fileName);
 
       setMessage("Nuevo archivo cargado correctamente.");
     } catch (err) {
@@ -183,24 +173,10 @@ export default function EditarRecursoPage() {
     setMessage("");
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      // Con Blob activo la imagen va directa al almacén.
+      const subida = await subirImagen("product-image", file);
 
-      const response = await fetch(
-        "/api/uploads/product-image",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.error || "No se pudo subir la imagen."
-        );
-      }
+      const data = { imageUrl: subida.url };
 
       if (type === "cover") {
         setCoverUrl(data.imageUrl);
@@ -312,10 +288,10 @@ export default function EditarRecursoPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen px-4 sm:px-5 py-8 sm:py-12">
+      <main className="mx-auto w-full max-w-4xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
         <div className="mx-auto max-w-4xl">
           <div className="rk-card p-8">
-            <p className="text-ink/50">
+            <p className="text-ink/60">
               Cargando recurso...
             </p>
           </div>
@@ -326,16 +302,16 @@ export default function EditarRecursoPage() {
 
   if (error && !product) {
     return (
-      <main className="min-h-screen px-4 sm:px-5 py-8 sm:py-12">
+      <main className="mx-auto w-full max-w-4xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
         <div className="mx-auto max-w-4xl">
           <Link
             href="/creadores/panel/recursos"
-            className="text-sm text-ink/45 hover:text-ink"
+            className="text-sm text-ink/60 hover:text-ink"
           >
             ← Volver a mis recursos
           </Link>
 
-          <div className="mt-6 rounded-3xl border border-danger/25 bg-danger/10 p-6">
+          <div className="mt-6 rounded-rk-lg border border-danger/25 bg-danger/10 p-6">
             <p className="font-medium text-danger">
               {error}
             </p>
@@ -355,11 +331,11 @@ export default function EditarRecursoPage() {
 
   if (!canEdit) {
     return (
-      <main className="min-h-screen px-4 sm:px-5 py-8 sm:py-12">
+      <main className="mx-auto w-full max-w-4xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
         <div className="mx-auto max-w-4xl">
           <Link
             href={`/creadores/productos/${id}`}
-            className="text-sm text-ink/45 hover:text-ink"
+            className="text-sm text-ink/60 hover:text-ink"
           >
             ← Volver al recurso
           </Link>
@@ -369,7 +345,7 @@ export default function EditarRecursoPage() {
               Este recurso no puede editarse
             </h1>
 
-            <p className="mt-3 text-ink/50">
+            <p className="mt-3 text-ink/60">
               Los recursos publicados o pendientes de
               revisión no pueden modificarse en este momento.
             </p>
@@ -380,31 +356,31 @@ export default function EditarRecursoPage() {
   }
 
   return (
-    <main className="min-h-screen px-4 sm:px-5 py-8 sm:py-12">
+    <main className="mx-auto w-full max-w-4xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
       <div className="mx-auto max-w-4xl">
         <Link
           href={`/creadores/productos/${id}`}
-          className="text-sm text-ink/45 transition hover:text-ink"
+          className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
         >
           ← Volver al recurso
         </Link>
 
         <div className="mt-5">
-          <p className="text-xs uppercase tracking-[0.2em] text-ink/40">
+          <p className="rk-eyebrow">
             Creator Studio
           </p>
 
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight">
+          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
             Editar recurso
           </h1>
 
-          <p className="mt-2 text-ink/50">
+          <p className="mt-2 text-ink/60">
             Actualiza la información de tu recurso antes
             de enviarlo a revisión.
           </p>
 
           {product.status === "REJECTED" && product.rejectionReason && (
-            <div className="mt-5 rounded-2xl border border-danger/25 bg-danger/10 p-5">
+            <div className="mt-5 rounded-rk-md border border-danger/25 bg-danger/10 p-5">
               <p className="text-sm font-semibold text-danger">
                 Recurso rechazado
               </p>
@@ -426,10 +402,14 @@ export default function EditarRecursoPage() {
           className="mt-8 space-y-6"
         >
           {/* INFORMACIÓN BÁSICA */}
-          <section className="rk-card p-7">
-            <h2 className="text-xl font-semibold">
+          <section className="rk-card p-5 sm:p-6">
+            <p className="rk-eyebrow">Información</p>
+
+            <h2 className="rk-title mt-2 text-xl">
               Información básica
             </h2>
+
+            <div className="rk-divider mt-4" />
 
             <div className="mt-6 space-y-5">
               <div>
@@ -447,7 +427,7 @@ export default function EditarRecursoPage() {
                     setName(e.target.value)
                   }
                   required
-                  className="w-full rk-card px-4 py-3 outline-none transition focus:border-accent/45"
+                  className="rk-select w-full"
                 />
               </div>
 
@@ -474,10 +454,14 @@ export default function EditarRecursoPage() {
           </section>
 
           {/* PRECIO Y ACCESO */}
-          <section className="rk-card p-7">
-            <h2 className="text-xl font-semibold">
+          <section className="rk-card p-5 sm:p-6">
+            <p className="rk-eyebrow">Precio y acceso</p>
+
+            <h2 className="rk-title mt-2 text-xl">
               Precio y acceso
             </h2>
+
+            <div className="rk-divider mt-4" />
 
             <div className="mt-6 grid gap-5 md:grid-cols-2">
               <div>
@@ -488,8 +472,8 @@ export default function EditarRecursoPage() {
                   Precio
                 </label>
 
-                <div className="flex items-center overflow-hidden rounded-2xl border border-ink/10">
-                  <span className="px-4 text-ink/40">
+                <div className="flex items-center overflow-hidden rounded-rk-md border border-line/10">
+                  <span className="px-4 text-ink/60">
                     S/
                   </span>
 
@@ -527,7 +511,7 @@ export default function EditarRecursoPage() {
                       | "BOTH"
                     )
                   }
-                  className="w-full rk-card px-4 py-3 outline-none"
+                  className="rk-select w-full"
                 >
                   {accessOptions.map((option) => (
                     <option
@@ -543,10 +527,14 @@ export default function EditarRecursoPage() {
           </section>
 
           {/* CATEGORÍA */}
-          <section className="rk-card p-7">
-            <h2 className="text-xl font-semibold">
+          <section className="rk-card p-5 sm:p-6">
+            <p className="rk-eyebrow">Clasificación</p>
+
+            <h2 className="rk-title mt-2 text-xl">
               Categoría
             </h2>
+
+            <div className="rk-divider mt-4" />
 
             <div className="mt-6">
               <label
@@ -563,7 +551,7 @@ export default function EditarRecursoPage() {
                   setCategoryId(e.target.value)
                 }
                 required
-                className="w-full rk-card px-4 py-3 outline-none"
+                className="rk-select w-full"
               >
                 {product.category && (
                   <option value={product.category.id}>
@@ -572,25 +560,29 @@ export default function EditarRecursoPage() {
                 )}
               </select>
 
-              <p className="mt-2 text-xs text-ink/40">
+              <p className="mt-2 text-xs text-ink/60">
                 Por ahora se mantiene la categoría actual.
               </p>
             </div>
           </section>
 
           {/* ARCHIVO */}
-          <section className="rk-card p-7">
-            <h2 className="text-xl font-semibold">
+          <section className="rk-card p-5 sm:p-6">
+            <p className="rk-eyebrow">Archivos</p>
+
+            <h2 className="rk-title mt-2 text-xl">
               Archivo principal
             </h2>
 
-            <p className="mt-2 text-sm text-ink/45">
+            <div className="rk-divider mt-4" />
+
+            <p className="mt-2 text-sm text-ink/60">
               Puedes reemplazar el archivo actual.
               Máximo 100 MB.
             </p>
 
             {fileUrl && (
-              <div className="mt-5 rounded-2xl bg-success/12 p-4">
+              <div className="mt-5 rounded-rk-md bg-success/12 p-4">
                 <p className="text-sm font-medium text-success">
                   Archivo actualmente configurado
                 </p>
@@ -609,7 +601,7 @@ export default function EditarRecursoPage() {
               </div>
             )}
 
-            <div className="mt-5 rounded-2xl border-2 border-dashed border-ink/10 bg-ink/[0.05] p-8 text-center">
+            <div className="mt-5 rounded-rk-md border-2 border-dashed border-line/10 bg-ink/[0.05] p-8 text-center">
               <input
                 id="product-file-edit"
                 type="file"
@@ -620,14 +612,14 @@ export default function EditarRecursoPage() {
 
               <label
                 htmlFor="product-file-edit"
-                className="inline-flex cursor-pointer rounded-full bg-primary px-6 py-3 text-sm font-medium text-onprimary transition hover:opacity-90"
+                className="rk-btn rk-btn-primary cursor-pointer !min-h-0 !px-5 !py-2.5 !text-sm"
               >
                 {uploadingFile
                   ? "Subiendo archivo..."
                   : "Reemplazar archivo"}
               </label>
 
-              <p className="mt-4 text-sm text-ink/40">
+              <p className="mt-4 text-sm text-ink/60">
                 ZIP, RAR, 7Z, PDF, Office, PSD, AI,
                 imágenes, videos y otros formatos compatibles.
               </p>
@@ -636,12 +628,16 @@ export default function EditarRecursoPage() {
 
           {/* PORTADA Y PREVIEW */}
           {/* PORTADA Y PREVIEW */}
-          <section className="rk-card p-7">
-            <h2 className="text-xl font-semibold">
+          <section className="rk-card p-5 sm:p-6">
+            <p className="rk-eyebrow">Imágenes</p>
+
+            <h2 className="rk-title mt-2 text-xl">
               Portada y preview
             </h2>
 
-            <p className="mt-2 text-sm text-ink/45">
+            <div className="rk-divider mt-4" />
+
+            <p className="mt-2 text-sm text-ink/60">
               Sube imágenes desde tu computadora o utiliza una URL externa.
               Formatos permitidos: PNG, JPG, JPEG y WEBP.
             </p>
@@ -654,22 +650,24 @@ export default function EditarRecursoPage() {
                     Portada del recurso
                   </p>
 
-                  <p className="mt-1 text-xs text-ink/40">
+                  <p className="mt-1 text-xs text-ink/60">
                     Esta imagen aparecerá en la tienda, colecciones y tarjetas del recurso.
                   </p>
                 </div>
 
                 {coverUrl ? (
-                  <div className="mb-5 overflow-hidden rounded-2xl border border-ink/10 bg-ink/[0.05]">
-                    <img
+                  <div className="rk-media relative mb-5 h-56 overflow-hidden rounded-rk-md border border-line/10">
+                    <Image
                       src={coverUrl}
                       alt={`Portada de ${name}`}
-                      className="h-56 w-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 32rem"
                     />
                   </div>
                 ) : (
-                  <div className="mb-5 flex h-56 items-center justify-center rounded-2xl border-2 border-dashed border-ink/10 bg-ink/[0.05]">
-                    <span className="text-xs uppercase tracking-[0.2em] text-ink/25">
+                  <div className="mb-5 flex h-56 items-center justify-center rounded-rk-md border border-dashed border-line/20">
+                    <span className="text-xs uppercase tracking-[0.2em] text-ink/45">
                       Sin portada
                     </span>
                   </div>
@@ -688,7 +686,7 @@ export default function EditarRecursoPage() {
 
                 <label
                   htmlFor="cover-upload"
-                  className="inline-flex cursor-pointer rounded-full bg-primary px-6 py-3 text-sm font-medium text-onprimary transition hover:opacity-90"
+                  className="rk-btn rk-btn-primary cursor-pointer !min-h-0 !px-5 !py-2.5 !text-sm"
                 >
                   {uploadingCover
                     ? "Subiendo portada..."
@@ -700,7 +698,7 @@ export default function EditarRecursoPage() {
                 <div className="mt-5">
                   <label
                     htmlFor="coverUrl"
-                    className="mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-ink/40"
+                    className="rk-eyebrow mb-2 block"
                   >
                     O usa una URL
                   </label>
@@ -712,12 +710,12 @@ export default function EditarRecursoPage() {
                       setCoverUrl(e.target.value)
                     }
                     placeholder="https://..."
-                    className="w-full rounded-2xl border border-ink/10 px-4 py-3 outline-none transition focus:border-accent/45"
+                    className="rk-input w-full"
                   />
                 </div>
               </div>
 
-              <div className="border-t border-ink/[0.07]" />
+              <div className="border-t border-line/10" />
 
               {/* PREVIEW */}
               <div>
@@ -726,22 +724,24 @@ export default function EditarRecursoPage() {
                     Preview del recurso
                   </p>
 
-                  <p className="mt-1 text-xs text-ink/40">
+                  <p className="mt-1 text-xs text-ink/60">
                     Esta imagen se mostrará como vista previa dentro de la página del producto.
                   </p>
                 </div>
 
                 {previewUrl ? (
-                  <div className="mb-5 overflow-hidden rounded-2xl border border-ink/10 bg-ink/[0.05]">
-                    <img
+                  <div className="rk-media relative mb-5 h-56 overflow-hidden rounded-rk-md border border-line/10">
+                    <Image
                       src={previewUrl}
                       alt={`Preview de ${name}`}
-                      className="h-56 w-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 32rem"
                     />
                   </div>
                 ) : (
-                  <div className="mb-5 flex h-56 items-center justify-center rounded-2xl border-2 border-dashed border-ink/10 bg-ink/[0.05]">
-                    <span className="text-xs uppercase tracking-[0.2em] text-ink/25">
+                  <div className="mb-5 flex h-56 items-center justify-center rounded-rk-md border border-dashed border-line/20">
+                    <span className="text-xs uppercase tracking-[0.2em] text-ink/45">
                       Sin preview
                     </span>
                   </div>
@@ -772,7 +772,7 @@ export default function EditarRecursoPage() {
                 <div className="mt-5">
                   <label
                     htmlFor="previewUrl"
-                    className="mb-2 block text-xs font-medium uppercase tracking-[0.15em] text-ink/40"
+                    className="rk-eyebrow mb-2 block"
                   >
                     O usa una URL
                   </label>
@@ -784,7 +784,7 @@ export default function EditarRecursoPage() {
                       setPreviewUrl(e.target.value)
                     }
                     placeholder="https://..."
-                    className="w-full rounded-2xl border border-ink/10 px-4 py-3 outline-none transition focus:border-accent/45"
+                    className="rk-input w-full"
                   />
                 </div>
               </div>
@@ -793,7 +793,7 @@ export default function EditarRecursoPage() {
 
           {/* MENSAJES */}
           {error && (
-            <div className="rounded-2xl border border-danger/25 bg-danger/10 p-4">
+            <div className="rk-fade rounded-rk-md border border-danger/25 bg-danger/10 p-4">
               <p className="text-sm font-medium text-danger">
                 {error}
               </p>
@@ -801,7 +801,7 @@ export default function EditarRecursoPage() {
           )}
 
           {message && (
-            <div className="rounded-2xl border border-success/25 bg-success/12 p-4">
+            <div className="rk-fade rounded-rk-md border border-success/25 bg-success/10 p-4">
               <p className="text-sm font-medium text-success">
                 {message}
               </p>
@@ -818,7 +818,7 @@ export default function EditarRecursoPage() {
                 uploadingCover ||
                 uploadingPreview
               }
-              className="rounded-full bg-primary px-7 py-3 text-sm font-medium text-onprimary transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rk-btn rk-btn-primary"
             >
               {saving
                 ? "Guardando..."
@@ -827,7 +827,7 @@ export default function EditarRecursoPage() {
 
             <Link
               href={`/creadores/productos/${id}`}
-              className="rounded-full border border-ink/10 px-7 py-3 text-sm font-medium transition hover:bg-ink/[0.06]"
+              className="rk-btn rk-btn-glass"
             >
               Cancelar
             </Link>

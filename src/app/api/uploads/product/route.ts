@@ -1,9 +1,9 @@
 ﻿import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifySessionToken } from "@/lib/auth";
-import crypto from "crypto";
-import fs from "fs/promises";
+import { putPrivate } from "@/lib/storage";
 import path from "path";
+import crypto from "crypto";
 
 export const runtime = "nodejs";
 
@@ -100,23 +100,18 @@ export async function POST(request: Request) {
 
     const uniqueName = `${crypto.randomUUID()}${extension}`;
 
-    const storageDirectory = path.join(
-      process.cwd(),
-      "storage",
-      "products"
-    );
-
-    await fs.mkdir(storageDirectory, { recursive: true });
-
-    const filePath = path.join(storageDirectory, uniqueName);
-
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    await fs.writeFile(filePath, buffer);
+    // Almacén privado: el archivo nunca recibe una URL pública.
+    const guardado = await putPrivate({
+      fileName: uniqueName,
+      data: buffer,
+      contentType: file.type || undefined,
+    });
 
     return NextResponse.json({
       success: true,
-      fileUrl: `/storage/products/${uniqueName}`,
+      fileUrl: guardado.url,
       fileName: originalName,
       size: file.size,
     });

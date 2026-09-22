@@ -1,8 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { BarChart3, ChevronLeft, ExternalLink } from "lucide-react";
+
+import EmptyState from "@/components/EmptyState";
+import Footer from "@/components/Footer";
 
 type StatsData = {
     product: {
@@ -78,18 +83,29 @@ function getStatusLabel(status: string) {
     }
 }
 
+function getStatusBadge(status: string) {
+    switch (status) {
+        case "PUBLISHED":
+            return "rk-badge-success";
+
+        case "PENDING_REVIEW":
+            return "rk-badge-warning";
+
+        case "REJECTED":
+            return "rk-badge-danger";
+
+        default:
+            return "rk-badge-neutral";
+    }
+}
+
 export default function ProductStatisticsPage() {
     const params = useParams();
     const id = params.id as string;
 
-    const [data, setData] =
-        useState<StatsData | null>(null);
-
-    const [loading, setLoading] =
-        useState(true);
-
-    const [error, setError] =
-        useState("");
+    const [data, setData] = useState<StatsData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         async function loadStats() {
@@ -108,7 +124,7 @@ export default function ProductStatisticsPage() {
                 if (!response.ok) {
                     throw new Error(
                         result.error ||
-                        "No se pudieron cargar las estadísticas."
+                            "No se pudieron cargar las estadísticas."
                     );
                 }
 
@@ -133,13 +149,20 @@ export default function ProductStatisticsPage() {
 
     if (loading) {
         return (
-            <main className="min-h-screen px-4 sm:px-5 py-8 sm:py-12">
-                <div className="mx-auto max-w-6xl">
-                    <div className="rk-card p-12 text-center">
-                        <p className="text-sm text-ink/40">
-                            Cargando estadísticas...
-                        </p>
-                    </div>
+            <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
+                <div className="h-4 w-28 animate-pulse rounded-full bg-ink/[0.06]" />
+                <div className="mt-5 h-9 w-64 animate-pulse rounded-full bg-ink/[0.06]" />
+
+                <div
+                    className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+                    aria-busy="true"
+                >
+                    {[0, 1, 2, 3].map((index) => (
+                        <div key={index} className="rk-card p-5">
+                            <div className="h-3 w-20 animate-pulse rounded-full bg-ink/[0.06]" />
+                            <div className="mt-4 h-8 w-24 animate-pulse rounded-full bg-ink/[0.07]" />
+                        </div>
+                    ))}
                 </div>
             </main>
         );
@@ -147,21 +170,21 @@ export default function ProductStatisticsPage() {
 
     if (error || !data) {
         return (
-            <main className="min-h-screen px-4 sm:px-5 py-8 sm:py-12">
-                <div className="mx-auto max-w-6xl">
-                    <div className="rounded-3xl border border-danger/25 bg-danger/10 p-8">
-                        <p className="text-sm text-danger">
-                            {error ||
-                                "No se pudo cargar el recurso."}
-                        </p>
+            <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
+                <div
+                    role="alert"
+                    className="rk-fade rounded-rk-md border border-danger/25 bg-danger/10 p-6"
+                >
+                    <p className="text-sm text-danger">
+                        {error || "No se pudo cargar el recurso."}
+                    </p>
 
-                        <Link
-                            href="/creadores/panel/recursos"
-                            className="mt-5 inline-block rounded-full bg-primary px-5 py-2.5 text-sm text-onprimary"
-                        >
-                            Volver a mis recursos
-                        </Link>
-                    </div>
+                    <Link
+                        href="/creadores/panel/recursos"
+                        className="rk-btn rk-btn-primary mt-5 !min-h-0 !px-4 !py-2.5 !text-sm"
+                    >
+                        Volver a mis recursos
+                    </Link>
                 </div>
             </main>
         );
@@ -170,360 +193,340 @@ export default function ProductStatisticsPage() {
     const { product, stats } = data;
 
     const maxRevenue = Math.max(
-        ...data.monthlyStats.map(
-            (month) => month.revenue
-        ),
+        ...data.monthlyStats.map((month) => month.revenue),
+        1
+    );
+
+    // Sin ventas ni descargas no se dibuja un gráfico vacío.
+    const hasChartData = data.monthlyStats.some(
+        (month) =>
+            month.revenue > 0 || month.sales > 0 || month.downloads > 0
+    );
+
+    const maxDownloads = Math.max(
+        ...data.monthlyStats.map((month) => month.downloads),
         1
     );
 
     return (
-        <main className="min-h-screen px-4 sm:px-5 py-10">
-            <div className="mx-auto max-w-6xl">
+        <>
+            <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
 
-                {/* HEADER */}
+                {/* ========== CABECERA ========== */}
+                <header className="rk-fade-up">
+                    <Link
+                        href="/creadores/panel/recursos"
+                        className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
+                    >
+                        <ChevronLeft size={15} />
+                        Mis recursos
+                    </Link>
 
-                <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+                    <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex min-w-0 gap-4">
+                            {/* Contenido visual 9:16, siempre nítido. */}
+                            <div className="rk-media rk-aspect-product relative w-16 shrink-0 overflow-hidden rounded-rk-md sm:w-20">
+                                {product.coverUrl ? (
+                                    <Image
+                                        src={product.coverUrl}
+                                        alt={product.name}
+                                        fill
+                                        className="object-cover"
+                                        sizes="80px"
+                                    />
+                                ) : (
+                                    <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
+                                        RCKTDMG
+                                    </span>
+                                )}
+                            </div>
 
-                    <div className="flex items-center gap-4">
+                            <div className="min-w-0">
+                                <p className="rk-eyebrow">
+                                    Estadísticas
+                                </p>
 
-                        <div className="h-16 w-16 overflow-hidden rounded-2xl bg-ink/[0.05]">
-                            {product.coverUrl ? (
-                                <img
-                                    src={product.coverUrl}
-                                    alt={product.name}
-                                    className="h-full w-full object-cover"
-                                />
-                            ) : (
-                                <div className="flex h-full items-center justify-center text-[9px] tracking-widest text-ink/25">
-                                    RCKTDMG
-                                </div>
+                                <h1 className="rk-title mt-2 text-2xl sm:text-3xl">
+                                    {product.name}
+                                </h1>
+
+                                <span
+                                    className={`rk-badge mt-3 ${getStatusBadge(
+                                        product.status
+                                    )}`}
+                                >
+                                    {getStatusLabel(product.status)}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex shrink-0 flex-wrap gap-2">
+                            <Link
+                                href={`/creadores/productos/${product.id}`}
+                                className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
+                            >
+                                Gestionar
+                            </Link>
+
+                            {product.status === "PUBLISHED" && (
+                                <Link
+                                    href={`/tienda/${product.slug}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2.5 !text-sm"
+                                >
+                                    <ExternalLink size={15} />
+                                    Ver publicación
+                                </Link>
                             )}
                         </div>
-
-                        <div>
-                            <p className="text-xs uppercase tracking-[0.22em] text-ink/35">
-                                Estadísticas del recurso
-                            </p>
-
-                            <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-                                {product.name}
-                            </h1>
-
-                            <p className="mt-1 text-sm text-ink/40">
-                                {getStatusLabel(product.status)}
-                            </p>
-                        </div>
-
                     </div>
+                </header>
 
-                    <div className="flex gap-3">
-
-                        <Link
-                            href={`/creadores/productos/${product.id}`}
-                            className="rounded-full border border-ink/10 bg-surface px-5 py-3 text-sm font-medium hover:bg-primary hover:text-onprimary"
-                        >
-                            Gestionar
-                        </Link>
-
-                        {product.status === "PUBLISHED" && (
-                            <Link
-                                href={`/tienda/${product.slug}`}
-                                className="rounded-full bg-primary px-5 py-3 text-sm font-medium text-onprimary hover:opacity-80"
-                            >
-                                Ver recurso
-                            </Link>
-                        )}
-
-                    </div>
-                </div>
-
-                {/* KPIs */}
-
-                <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
-                    <div className="rounded-3xl bg-primary p-6 text-onprimary">
-                        <p className="text-sm text-onprimary/50">
+                {/* ========== MÉTRICAS REALES ========== */}
+                <section className="rk-fade-up rk-enter-1 mt-8 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
+                    <div className="rk-card border-accent/25 bg-accent/[0.06] p-5">
+                        <p className="rk-eyebrow !text-accent">
                             Ingresos
                         </p>
 
-                        <p className="mt-3 text-3xl font-semibold">
+                        <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight text-accent">
                             {formatMoney(stats.revenue)}
                         </p>
 
-                        <p className="mt-2 text-xs text-onprimary/40">
+                        <p className="mt-2 text-xs text-ink/60">
                             Ventas pagadas
                         </p>
                     </div>
 
-                    <div className="rk-card p-6">
-                        <p className="text-sm text-ink/45">
-                            Ventas
-                        </p>
+                    {[
+                        {
+                            label: "Ventas",
+                            value: stats.sales,
+                            hint: "Unidades vendidas",
+                        },
+                        {
+                            label: "Descargas",
+                            value: stats.downloads,
+                            hint: "Descargas realizadas",
+                        },
+                        {
+                            label: "Favoritos",
+                            value: stats.favorites,
+                            hint: "Veces guardado",
+                        },
+                    ].map((item) => (
+                        <div key={item.label} className="rk-card p-5">
+                            <p className="rk-eyebrow">{item.label}</p>
 
-                        <p className="mt-3 text-3xl font-semibold">
-                            {stats.sales}
-                        </p>
-
-                        <p className="mt-2 text-xs text-ink/40">
-                            Unidades vendidas
-                        </p>
-                    </div>
-
-                    <div className="rk-card p-6">
-                        <p className="text-sm text-ink/45">
-                            Descargas
-                        </p>
-
-                        <p className="mt-3 text-3xl font-semibold">
-                            {stats.downloads}
-                        </p>
-
-                        <p className="mt-2 text-xs text-ink/40">
-                            Descargas realizadas
-                        </p>
-                    </div>
-
-                    <div className="rk-card p-6">
-                        <p className="text-sm text-ink/45">
-                            Favoritos
-                        </p>
-
-                        <p className="mt-3 text-3xl font-semibold">
-                            {stats.favorites}
-                        </p>
-
-                        <p className="mt-2 text-xs text-ink/40">
-                            Veces guardado
-                        </p>
-                    </div>
-
-                </section>
-
-                {/* GRÁFICO */}
-
-                {/* GRÁFICO */}
-                <section className="mt-5 rk-card p-6 md:p-8">
-
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-
-                        <div>
-                            <p className="text-xs uppercase tracking-[0.2em] text-ink/35">
-                                Rendimiento
+                            <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight">
+                                {item.value}
                             </p>
 
-                            <h2 className="mt-1 text-xl font-semibold">
-                                Rendimiento mensual
-                            </h2>
-
-                            <p className="mt-1 text-sm text-ink/40">
-                                Evolución de ingresos y ventas
+                            <p className="mt-2 text-xs text-ink/60">
+                                {item.hint}
                             </p>
                         </div>
+                    ))}
+                </section>
 
-                        <p className="text-xs text-ink/35">
+                {/* ========== EVOLUCIÓN ========== */}
+                <section className="rk-fade-up rk-enter-2 mt-10">
+                    <div className="flex flex-wrap items-end justify-between gap-3">
+                        <div>
+                            <p className="rk-eyebrow">Evolución</p>
+
+                            <h2 className="rk-title mt-2 text-2xl">
+                                Ingresos y descargas
+                            </h2>
+                        </div>
+
+                        <p className="text-sm text-ink/60">
                             Últimos 6 meses
                         </p>
-
                     </div>
 
-                    {/* LEYENDA */}
+                    <div className="rk-divider mt-4" />
 
-                    <div className="mt-6 flex gap-5 text-xs text-ink/50">
+                    {hasChartData ? (
+                        <div className="rk-card mt-5 p-5 sm:p-6">
+                            {/* LEYENDA */}
+                            <div className="flex flex-wrap gap-5 text-xs text-ink/60">
+                                <span className="flex items-center gap-2">
+                                    <span
+                                        aria-hidden
+                                        className="h-2.5 w-2.5 rounded-full bg-accent"
+                                    />
+                                    Ingresos
+                                </span>
 
-                        <div className="flex items-center gap-2">
-                            <span className="h-2.5 w-2.5 rounded-full bg-primary" />
-                            Ingresos
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <span className="h-2.5 w-2.5 rounded-full border border-ink/30 bg-surface" />
-                            Ventas
-                        </div>
-
-                    </div>
-
-                    {/* GRÁFICO */}
-
-                    <div className="mt-8 overflow-x-auto">
-                        <div className="flex min-w-[620px] items-end gap-4 sm:gap-6">
-
-                            {data.monthlyStats.map((month) => {
-
-                                const revenueHeight =
-                                    month.revenue > 0
-                                        ? Math.max(
-                                            (month.revenue / maxRevenue) * 100,
-                                            8
-                                        )
-                                        : 3;
-
-                                const salesHeight =
-                                    month.sales > 0
-                                        ? Math.max(
-                                            (month.sales /
-                                                Math.max(
-                                                    ...data.monthlyStats.map(
-                                                        (item) => item.sales
-                                                    ),
-                                                    1
-                                                )) *
-                                            100,
-                                            8
-                                        )
-                                        : 3;
-
-                                return (
-                                    <div
-                                        key={month.month}
-                                        className="flex min-w-[80px] flex-1 flex-col items-center"
-                                    >
-
-                                        {/* DATOS */}
-
-                                        <div className="mb-3 text-center">
-
-                                            <p className="text-xs font-semibold">
-                                                {formatMoney(month.revenue)}
-                                            </p>
-
-                                            <p className="mt-1 text-[10px] text-ink/40">
-                                                {month.sales}{" "}
-                                                {month.sales === 1
-                                                    ? "venta"
-                                                    : "ventas"}
-                                            </p>
-
-                                        </div>
-
-                                        {/* BARRAS */}
-
-                                        <div className="flex h-52 w-full items-end justify-center gap-1.5">
-
-                                            {/* INGRESOS */}
-
-                                            <div className="flex h-full w-[42%] items-end">
-                                                <div
-                                                    className="w-full rounded-t-xl bg-primary transition-all"
-                                                    style={{
-                                                        height: `${revenueHeight}%`,
-                                                    }}
-                                                />
-                                            </div>
-
-                                            {/* VENTAS */}
-
-                                            <div className="flex h-full w-[42%] items-end">
-                                                <div
-                                                    className="w-full rounded-t-xl border border-ink/20 bg-surface transition-all"
-                                                    style={{
-                                                        height: `${salesHeight}%`,
-                                                    }}
-                                                />
-                                            </div>
-
-                                        </div>
-
-                                        {/* MES */}
-
-                                        <p className="mt-3 text-xs text-ink/40">
-                                            {month.label}
-                                        </p>
-
-                                    </div>
-                                );
-                            })}
-
-                        </div>
-                    </div>
-
-                </section>
-                {/* RESUMEN */}
-
-                <div className="mt-5 grid gap-4 md:grid-cols-3">
-
-                    <div className="rk-card p-6">
-                        <p className="text-xs uppercase tracking-[0.18em] text-ink/35">
-                            Precio actual
-                        </p>
-
-                        <p className="mt-3 text-2xl font-semibold">
-                            {formatMoney(product.price)}
-                        </p>
-
-                        <p className="mt-2 text-xs text-ink/40">
-                            Precio de venta del recurso
-                        </p>
-                    </div>
-
-                    <div className="rk-card p-6">
-                        <p className="text-xs uppercase tracking-[0.18em] text-ink/35">
-                            Ingreso promedio
-                        </p>
-
-                        <p className="mt-3 text-2xl font-semibold">
-                            {stats.sales > 0
-                                ? formatMoney(stats.revenue / stats.sales)
-                                : formatMoney(0)}
-                        </p>
-
-                        <p className="mt-2 text-xs text-ink/40">
-                            Ingreso promedio por unidad
-                        </p>
-                    </div>
-
-                    <div className="rk-card p-6">
-                        <p className="text-xs uppercase tracking-[0.18em] text-ink/35">
-                            Descargas por venta
-                        </p>
-
-                        <p className="mt-3 text-2xl font-semibold">
-                            {stats.sales > 0
-                                ? (stats.downloads / stats.sales).toFixed(1)
-                                : "0.0"}
-                        </p>
-
-                        <p className="mt-2 text-xs text-ink/40">
-                            Promedio de descargas
-                        </p>
-                    </div>
-
-                </div>
-
-                {/* VENTAS RECIENTES */}
-
-                <section className="mt-5 rk-card p-6 md:p-8">
-
-                    <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-ink/35">
-                            Actividad
-                        </p>
-
-                        <h2 className="mt-1 text-xl font-semibold">
-                            Últimas ventas
-                        </h2>
-                    </div>
-
-                    <div className="mt-6 divide-y divide-ink/[0.07]">
-
-                        {data.recentSales.length === 0 ? (
-                            <div className="py-10 text-center">
-                                <p className="text-sm text-ink/40">
-                                    Todavía no hay ventas para este recurso.
-                                </p>
+                                <span className="flex items-center gap-2">
+                                    <span
+                                        aria-hidden
+                                        className="h-2.5 w-2.5 rounded-full border border-line/25 bg-ink/[0.08]"
+                                    />
+                                    Descargas
+                                </span>
                             </div>
-                        ) : (
-                            data.recentSales.map((sale) => (
+
+                            <div className="mt-6 overflow-x-auto">
+                                <div className="flex min-w-[520px] items-end gap-4 sm:gap-6">
+                                    {data.monthlyStats.map((month) => {
+                                        const revenueHeight =
+                                            month.revenue > 0
+                                                ? Math.max(
+                                                      (month.revenue /
+                                                          maxRevenue) *
+                                                          100,
+                                                      8
+                                                  )
+                                                : 3;
+
+                                        const downloadsHeight =
+                                            month.downloads > 0
+                                                ? Math.max(
+                                                      (month.downloads /
+                                                          maxDownloads) *
+                                                          100,
+                                                      8
+                                                  )
+                                                : 3;
+
+                                        return (
+                                            <div
+                                                key={month.month}
+                                                className="flex min-w-0 flex-1 flex-col items-center"
+                                            >
+                                                <p className="truncate text-[11px] font-semibold tabular-nums">
+                                                    {formatMoney(
+                                                        month.revenue
+                                                    )}
+                                                </p>
+
+                                                <p className="mt-0.5 text-[10px] text-ink/60">
+                                                    {month.sales}{" "}
+                                                    {month.sales === 1
+                                                        ? "venta"
+                                                        : "ventas"}
+                                                </p>
+
+                                                <div className="mt-2 flex h-44 w-full items-end justify-center gap-1.5">
+                                                    <div className="flex h-full w-[42%] items-end">
+                                                        <div
+                                                            className="w-full rounded-t-rk-sm bg-accent/85 transition-[height] duration-slow ease-rk"
+                                                            style={{
+                                                                height: `${revenueHeight}%`,
+                                                            }}
+                                                        />
+                                                    </div>
+
+                                                    <div className="flex h-full w-[42%] items-end">
+                                                        <div
+                                                            className="w-full rounded-t-rk-sm border border-line/20 bg-ink/[0.08] transition-[height] duration-slow ease-rk"
+                                                            style={{
+                                                                height: `${downloadsHeight}%`,
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <p className="mt-3 truncate text-[11px] font-medium text-ink/60">
+                                                    {month.label}
+                                                </p>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="mt-5">
+                            <EmptyState
+                                icon={BarChart3}
+                                title="Todavía no hay datos suficientes"
+                                description="Cuando este recurso registre ventas o descargas verás aquí su evolución."
+                            />
+                        </div>
+                    )}
+                </section>
+
+                {/* ========== PROMEDIOS REALES ========== */}
+                <section className="rk-fade-up mt-10">
+                    <p className="rk-eyebrow">Resumen</p>
+
+                    <div className="rk-divider mt-3" />
+
+                    <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                        <div className="rk-card p-5">
+                            <p className="rk-eyebrow">Precio actual</p>
+
+                            <p className="mt-3 text-xl font-semibold tabular-nums">
+                                {formatMoney(product.price)}
+                            </p>
+                        </div>
+
+                        {/* Promedios calculados sobre ventas reales. */}
+                        {stats.sales > 0 && (
+                            <>
+                                <div className="rk-card p-5">
+                                    <p className="rk-eyebrow">
+                                        Ingreso por venta
+                                    </p>
+
+                                    <p className="mt-3 text-xl font-semibold tabular-nums">
+                                        {formatMoney(
+                                            stats.revenue / stats.sales
+                                        )}
+                                    </p>
+                                </div>
+
+                                <div className="rk-card p-5">
+                                    <p className="rk-eyebrow">
+                                        Descargas por venta
+                                    </p>
+
+                                    <p className="mt-3 text-xl font-semibold tabular-nums">
+                                        {(
+                                            stats.downloads / stats.sales
+                                        ).toFixed(1)}
+                                    </p>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </section>
+
+                {/* ========== ÚLTIMAS VENTAS ========== */}
+                <section className="rk-fade-up mt-10">
+                    <p className="rk-eyebrow">Actividad</p>
+
+                    <h2 className="rk-title mt-2 text-2xl">
+                        Últimas ventas
+                    </h2>
+
+                    <div className="rk-divider mt-4" />
+
+                    {data.recentSales.length === 0 ? (
+                        <div className="mt-5">
+                            <EmptyState
+                                icon={BarChart3}
+                                title="Todavía no hay ventas de este recurso"
+                                description="Aquí aparecerá cada compra en cuanto se registre."
+                            />
+                        </div>
+                    ) : (
+                        <div className="rk-card rk-divider-y mt-5 px-4 sm:px-6">
+                            {data.recentSales.map((sale) => (
                                 <div
                                     key={sale.id}
-                                    className="flex items-center justify-between gap-4 py-5"
+                                    className="flex items-center justify-between gap-4 py-4"
                                 >
-
-                                    <div>
-                                        <p className="text-sm font-semibold">
+                                    <div className="min-w-0">
+                                        <p className="truncate text-sm font-semibold">
                                             {sale.buyerName}
                                         </p>
 
-                                        <p className="mt-1 text-xs text-ink/40">
+                                        <p className="mt-1 text-xs text-ink/60">
                                             {formatDate(sale.createdAt)}
                                             {" · "}
                                             {sale.quantity}{" "}
@@ -533,29 +536,17 @@ export default function ProductStatisticsPage() {
                                         </p>
                                     </div>
 
-                                    <p className="text-sm font-semibold">
+                                    <p className="shrink-0 text-sm font-semibold tabular-nums">
                                         {formatMoney(sale.amount)}
                                     </p>
-
                                 </div>
-                            ))
-                        )}
-
-                    </div>
+                            ))}
+                        </div>
+                    )}
                 </section>
+            </main>
 
-                {/* VOLVER */}
-
-                <div className="mt-6">
-                    <Link
-                        href="/creadores/panel/recursos"
-                        className="text-sm text-ink/45 hover:text-ink"
-                    >
-                        ← Volver a mis recursos
-                    </Link>
-                </div>
-
-            </div>
-        </main>
+            <Footer />
+        </>
     );
 }

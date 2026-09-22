@@ -8,6 +8,64 @@ const config: Config = {
   // la media query: así funcionan light, dark y system.
   darkMode: ["selector", '[data-theme="dark"]'],
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+
+  /*
+   * El Design System debe estar SIEMPRE disponible, aunque
+   * una utilidad todavía no se use en ningún componente:
+   * Tailwind purga las clases de @layer components que no
+   * encuentra en el contenido y el sistema quedaría a medias.
+   */
+  safelist: [
+    "rk-btn",
+    "rk-btn-primary",
+    "rk-btn-secondary",
+    "rk-btn-ghost",
+    "rk-btn-glass",
+    "rk-btn-danger",
+    "rk-btn-success",
+    "rk-input",
+    "rk-select",
+    "rk-textarea",
+    "rk-input-error",
+    "rk-card",
+    "rk-card-elevated",
+    "rk-card-glass",
+    "rk-card-hover",
+    "rk-surface",
+    "rk-glass",
+    "rk-glass-strong",
+    "rk-glass-on-image",
+    "rk-float",
+    "rk-badge",
+    "rk-badge-accent",
+    "rk-badge-neutral",
+    "rk-badge-success",
+    "rk-badge-warning",
+    "rk-badge-danger",
+    "rk-chip",
+    "rk-chip-active",
+    "rk-eyebrow",
+    "rk-title",
+    "rk-subtitle",
+    "rk-muted",
+    "rk-media",
+    "rk-divider",
+    "rk-divider-b",
+    "rk-divider-y",
+    "rk-press",
+    "rk-press-sm",
+    "rk-fade",
+    "rk-fade-up",
+    "rk-scale",
+    "rk-enter",
+    "rk-enter-1",
+    "rk-enter-2",
+    "rk-enter-3",
+    "rk-enter-4",
+    "rk-hover-lift",
+    "rk-aspect-product",
+    "rk-dock-pad",
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -27,14 +85,24 @@ const config: Config = {
         foreground: token("foreground"),
         primary: token("primary"),
         onprimary: token("on-primary"),
+
+        // Azul eléctrico: color de firma.
         accent: token("accent"),
+        "accent-hover": token("accent-hover"),
+        "accent-contrast": token("accent-contrast"),
+
         success: token("success"),
         warning: token("warning"),
         danger: token("danger"),
+        "danger-contrast": token("danger-contrast"),
       },
 
-      // Bordes muy redondeados, escala propia.
+      // Escala de radios del Design System.
       borderRadius: {
+        "rk-sm": "var(--rk-radius-sm)",
+        "rk-md": "var(--rk-radius-md)",
+        "rk-lg": "var(--rk-radius-lg)",
+        "rk-xl": "var(--rk-radius-xl)",
         xl2: "1.25rem",
         "2xl2": "1.5rem",
         "3xl2": "1.75rem",
@@ -45,12 +113,24 @@ const config: Config = {
       boxShadow: {
         rk: "var(--rk-shadow)",
         "rk-sm": "var(--rk-shadow-sm)",
+        "rk-md": "var(--rk-shadow)",
         "rk-lg": "var(--rk-shadow-lg)",
         "rk-float": "var(--rk-shadow-float)",
       },
 
+      backdropBlur: {
+        rk: "var(--rk-glass-blur)",
+      },
+
+      transitionDuration: {
+        fast: "var(--rk-transition-fast)",
+        normal: "var(--rk-transition-normal)",
+        slow: "var(--rk-transition-slow)",
+      },
+
       transitionTimingFunction: {
         rk: "cubic-bezier(0.32, 0.72, 0, 1)",
+        "rk-soft": "cubic-bezier(0.4, 0, 0.2, 1)",
       },
 
       aspectRatio: {
@@ -58,6 +138,10 @@ const config: Config = {
       },
 
       keyframes: {
+        fade: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
         "fade-up": {
           from: { opacity: "0", transform: "translateY(14px)" },
           to: { opacity: "1", transform: "translateY(0)" },
@@ -69,6 +153,7 @@ const config: Config = {
       },
 
       animation: {
+        fade: "fade 0.28s cubic-bezier(0.32,0.72,0,1) both",
         "fade-up": "fade-up 0.5s cubic-bezier(0.32,0.72,0,1) both",
         "scale-in": "scale-in 0.35s cubic-bezier(0.32,0.72,0,1) both",
       },

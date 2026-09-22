@@ -76,7 +76,7 @@ export default function MobileBottomNav({
       aria-label="Navegación principal"
       className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(env(safe-area-inset-bottom)+0.625rem)] md:hidden"
     >
-      <div className="rk-glass rk-float mx-auto flex max-w-md items-stretch gap-0.5 rounded-[1.5rem] p-1.5">
+      <div className="rk-glass rk-float mx-auto flex max-w-md items-stretch gap-0.5 rounded-rk-lg p-1.5">
         {items.map((item) => {
           const active = isActive(item.href);
           const Icon = item.icon;
@@ -86,17 +86,17 @@ export default function MobileBottomNav({
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`rk-press relative flex flex-1 flex-col items-center justify-center gap-1 rounded-[1.1rem] py-2 ${
+              className={`rk-press relative flex flex-1 flex-col items-center justify-center gap-1 rounded-rk-md py-2 ${
                 active
-                  ? "bg-surface/90 text-ink shadow-rk-sm"
-                  : "text-ink/45"
+                  ? "bg-accent/10 text-accent"
+                  : "text-ink/60 hover:text-ink/70"
               }`}
             >
               <span className="relative">
-                <Icon size={20} strokeWidth={active ? 2.3 : 1.8} />
+                <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
 
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -right-2 -top-1.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-none text-onprimary ring-2 ring-surface/90">
+                  <span className="absolute -right-2 -top-1.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold leading-none text-accent-contrast ring-2 ring-surface/90">
                     {item.badge > 9 ? "9+" : item.badge}
                   </span>
                 )}
@@ -109,6 +109,14 @@ export default function MobileBottomNav({
               >
                 {item.label}
               </span>
+
+              {/* Indicador de pestaña activa, en azul de firma. */}
+              {active && (
+                <span
+                  aria-hidden
+                  className="absolute inset-x-4 bottom-0.5 h-[2px] rounded-full bg-accent"
+                />
+              )}
             </Link>
           );
         })}

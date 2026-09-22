@@ -221,7 +221,7 @@ export default function CulqiCheckout({
             />
 
             {error && (
-                <div className="mb-4 rounded-2xl bg-danger/10 p-4 text-sm text-danger">
+                <div className="mb-4 rounded-rk-md bg-danger/10 p-4 text-sm text-danger">
                     {error}
                 </div>
             )}

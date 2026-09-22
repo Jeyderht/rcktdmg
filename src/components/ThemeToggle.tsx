@@ -36,7 +36,7 @@ export default function ThemeToggle({
       <div
         role="radiogroup"
         aria-label="Tema de la interfaz"
-        className="grid grid-cols-3 gap-1.5 rounded-[1.1rem] border border-line/10 bg-ink/[0.04] p-1.5"
+        className="grid grid-cols-3 gap-1.5 rounded-rk-md border border-line/10 bg-ink/[0.04] p-1.5"
       >
         {OPTIONS.map((option) => {
           const Icon = option.icon;
@@ -49,7 +49,7 @@ export default function ThemeToggle({
               role="radio"
               aria-checked={active}
               onClick={() => setPreference(option.value)}
-              className={`rk-press flex flex-col items-center gap-1.5 rounded-[0.8rem] px-2 py-3 text-xs font-medium transition-colors ${
+              className={`rk-press flex flex-col items-center gap-1.5 rounded-rk-sm px-2 py-3 text-xs font-medium transition-colors ${
                 active
                   ? "bg-surface text-foreground shadow-rk-sm"
                   : "text-muted/55 hover:text-foreground"

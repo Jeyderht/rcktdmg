@@ -202,7 +202,7 @@ export default function NotificationsBell() {
   const panelBody = (
     <>
       {/* CABECERA */}
-      <div className="flex items-center justify-between gap-2 border-b border-ink/[0.07] px-4 py-3">
+      <div className="flex items-center justify-between gap-2 border-b border-line/10 px-4 py-3">
         <div className="flex min-w-0 items-center gap-2">
           <h2 className="truncate text-sm font-semibold">
             Notificaciones
@@ -220,7 +220,7 @@ export default function NotificationsBell() {
             <button
               type="button"
               onClick={markAllAsRead}
-              className="rk-press rounded-full px-2.5 py-2 text-[11px] font-medium text-ink/55 hover:bg-ink/[0.06] hover:text-ink"
+              className="rk-btn rk-btn-ghost !min-h-0 !px-2.5 !py-2 !text-[11px]"
             >
               Marcar todas
             </button>
@@ -230,7 +230,7 @@ export default function NotificationsBell() {
             type="button"
             onClick={() => setOpen(false)}
             aria-label="Cerrar notificaciones"
-            className="rk-press flex h-9 w-9 items-center justify-center rounded-full text-ink/45 hover:bg-ink/[0.06] hover:text-ink"
+            className="rk-press flex h-9 w-9 items-center justify-center rounded-full text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
           >
             <X size={16} />
           </button>
@@ -240,21 +240,21 @@ export default function NotificationsBell() {
       {/* LISTA */}
       <div className="flex-1 overflow-y-auto overscroll-contain">
         {loading ? (
-          <p className="px-4 py-10 text-center text-sm text-ink/45">
+          <p className="px-4 py-10 text-center text-sm text-ink/60">
             Cargando...
           </p>
         ) : items.length === 0 ? (
           <div className="px-4 py-10 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[1rem] bg-ink/[0.05]">
-              <BellOff size={20} className="text-ink/35" />
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-md bg-ink/[0.05]">
+              <BellOff size={20} className="text-ink/60" />
             </div>
 
-            <p className="mt-3 text-sm text-ink/45">
+            <p className="mt-3 text-sm text-ink/60">
               Sin notificaciones
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-ink/[0.07]">
+          <ul className="divide-y divide-line/10">
             {items.map((item) => {
               const isUnread = !dismissed.includes(item.id);
 
@@ -269,7 +269,7 @@ export default function NotificationsBell() {
                       markAsRead(item.id);
                       setOpen(false);
                     }}
-                    className={`flex min-w-0 flex-1 gap-2.5 rounded-[0.9rem] px-1 py-2.5 ${
+                    className={`flex min-w-0 flex-1 gap-2.5 rounded-rk-sm px-1 py-2.5 ${
                       isUnread ? "" : "opacity-55"
                     }`}
                   >
@@ -285,11 +285,11 @@ export default function NotificationsBell() {
                         {item.title}
                       </span>
 
-                      <span className="mt-0.5 block break-words text-xs leading-5 text-ink/50">
+                      <span className="mt-0.5 block break-words text-xs leading-5 text-ink/60">
                         {item.description}
                       </span>
 
-                      <span className="mt-1 block text-[10px] text-ink/40">
+                      <span className="mt-1 block text-[10px] text-ink/60">
                         {timeAgo(item.createdAt)}
                       </span>
                     </span>
@@ -301,7 +301,7 @@ export default function NotificationsBell() {
                       onClick={() => markAsRead(item.id)}
                       aria-label={`Marcar "${item.title}" como leída`}
                       title="Marcar como leída"
-                      className="rk-press mt-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-ink/50 transition-opacity hover:bg-ink/10 hover:text-ink focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                      className="rk-press mt-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-ink/60 transition-opacity hover:bg-ink/10 hover:text-ink focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                     >
                       <Check size={13} />
                     </button>
@@ -342,7 +342,7 @@ export default function NotificationsBell() {
               role="dialog"
               aria-modal="true"
               aria-label="Centro de notificaciones"
-              className="rk-glass-strong rk-float animate-fade-up absolute inset-x-3 bottom-[calc(var(--rk-dock-h)+env(safe-area-inset-bottom)+0.75rem)] flex max-h-[65vh] flex-col overflow-hidden rounded-[1.5rem]"
+              className="rk-glass-strong rk-float animate-fade-up absolute inset-x-3 bottom-[calc(var(--rk-dock-h)+env(safe-area-inset-bottom)+0.75rem)] flex max-h-[65vh] flex-col overflow-hidden rounded-rk-lg"
             >
               {/* Asa de arrastre */}
               <div
@@ -383,7 +383,7 @@ export default function NotificationsBell() {
         <Bell size={18} />
 
         {unread.length > 0 && (
-          <span className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold leading-none text-white ring-2 ring-surface/80">
+          <span className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold leading-none text-danger-contrast ring-2 ring-surface/80">
             {unread.length > 9 ? "9+" : unread.length}
           </span>
         )}
@@ -394,7 +394,7 @@ export default function NotificationsBell() {
         <div
           role="dialog"
           aria-label="Centro de notificaciones"
-          className="rk-glass-strong rk-float animate-fade-up absolute right-0 top-[calc(100%+0.6rem)] z-[80] flex max-h-[26rem] w-[22rem] flex-col overflow-hidden rounded-[1.5rem]"
+          className="rk-glass-strong rk-float animate-fade-up absolute right-0 top-[calc(100%+0.6rem)] z-[80] flex max-h-[26rem] w-[22rem] flex-col overflow-hidden rounded-rk-lg"
         >
           {panelBody}
         </div>

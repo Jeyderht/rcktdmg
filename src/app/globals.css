@@ -3,135 +3,191 @@
 @tailwind utilities;
 
 /* ==========================================================
-   RCKTDMG — SISTEMA VISUAL
+   RCKTDMG — DESIGN SYSTEM
    ----------------------------------------------------------
-   Identidad propia inspirada en interfaces móviles modernas:
-   superficies de vidrio, profundidad por capas, bordes muy
-   redondeados y feedback táctil.
+   Identidad: digital, premium, futurista, minimalista.
+   Base negra profunda · contraste blanco · azul eléctrico
+   como color de firma (CTAs, foco, estados activos, badges).
 
-   Todos los colores son tokens en formato "R G B" para poder
+   El azul NUNCA baña la interfaz: es acento, no fondo.
+
+   Los colores se declaran en formato "R G B" para poder
    usarlos con opacidad desde Tailwind (text-ink/60).
-   El tema se controla con [data-theme] en <html>.
+
+   El tema se controla con [data-theme] en <html>:
+   light · dark · system (system resuelve a uno de los dos).
    ========================================================== */
 
 :root,
 [data-theme="light"] {
   color-scheme: light;
 
-  /* JERARQUÍA DE SUPERFICIES */
-  --rk-background: 238 240 244;
-  --rk-background-2: 230 233 240;
+  /* ---- SUPERFICIES ---- */
+  --rk-background: 244 246 250;
+  --rk-background-2: 236 239 245;
   --rk-surface: 255 255 255;
   --rk-surface-elevated: 255 255 255;
   --rk-card: 255 255 255;
-  --rk-card-alpha: 0.85;
+  --rk-card-alpha: 0.86;
 
-  /* TEXTO */
-  --rk-foreground: 17 17 19;
-  --rk-ink: 17 17 19; /* alias de foreground */
-  --rk-muted: 17 17 19;
-  --rk-muted-alpha: 0.5;
+  /* ---- TEXTO ---- */
+  --rk-foreground: 10 11 14;
+  --rk-ink: 10 11 14; /* alias histórico de foreground */
+  --rk-muted: 10 11 14;
+  --rk-muted-alpha: 0.62;
 
-  /* LÍNEAS */
-  --rk-border: 17 17 19;
-  --rk-border-alpha: 0.07;
+  /* ---- LÍNEAS ---- */
+  --rk-border: 10 11 14;
+  --rk-border-alpha: 0.08;
+  --rk-border-strong-alpha: 0.16;
 
-  /* MARCA Y ESTADOS */
-  --rk-primary: 17 17 19;
+  /* ---- MARCA ---- */
+  --rk-primary: 10 11 14;
   --rk-on-primary: 255 255 255;
-  --rk-accent: 88 86 214;
-  --rk-accent-soft: rgb(88 86 214 / 0.12);
-  --rk-success: 13 132 88;
-  --rk-warning: 166 108 8;
-  --rk-danger: 205 44 44;
 
-  /* VIDRIO */
+  /* Azul eléctrico: color de firma de RCKTDMG. */
+  --rk-accent: 0 98 255;
+  --rk-accent-hover: 0 80 224;
+  --rk-accent-contrast: 255 255 255;
+  --rk-accent-soft: rgb(0 98 255 / 0.1);
+
+  /* ---- ESTADOS ---- */
+  --rk-success: 9 135 87;
+  --rk-warning: 166 105 6;
+  --rk-danger: 206 40 40;
+  --rk-danger-contrast: 255 255 255;
+
+  /* ---- VIDRIO ---- */
   --rk-glass: 255 255 255;
-  --rk-glass-alpha: 0.66;
-  --rk-glass-strong-alpha: 0.82;
-  --rk-glass-border: rgb(255 255 255 / 0.65);
+  --rk-glass-alpha: 0.68;
+  --rk-glass-strong-alpha: 0.84;
+  --rk-glass-border: rgb(255 255 255 / 0.7);
 
-  /* HALOS DEL FONDO */
-  --rk-halo-1: rgb(88 86 214 / 0.1);
-  --rk-halo-2: rgb(0 122 160 / 0.08);
+  /* ---- HALOS DEL FONDO ---- */
+  --rk-halo-1: rgb(0 98 255 / 0.09);
+  --rk-halo-2: rgb(0 160 200 / 0.07);
 
-  /* PROFUNDIDAD: sombras por capas, nunca una sola dura */
+  /* ---- PROFUNDIDAD: sombras por capas ---- */
   --rk-shadow-sm:
-    0 1px 2px rgb(17 17 19 / 0.04),
-    0 4px 12px rgb(17 17 19 / 0.05);
+    0 1px 2px rgb(10 11 14 / 0.04),
+    0 4px 12px rgb(10 11 14 / 0.05);
   --rk-shadow:
-    0 1px 2px rgb(17 17 19 / 0.04),
-    0 8px 24px rgb(17 17 19 / 0.07),
-    0 2px 6px rgb(17 17 19 / 0.04);
+    0 1px 2px rgb(10 11 14 / 0.04),
+    0 8px 24px rgb(10 11 14 / 0.07),
+    0 2px 6px rgb(10 11 14 / 0.04);
   --rk-shadow-lg:
-    0 2px 4px rgb(17 17 19 / 0.04),
-    0 16px 40px rgb(17 17 19 / 0.1),
-    0 4px 12px rgb(17 17 19 / 0.05);
+    0 2px 4px rgb(10 11 14 / 0.04),
+    0 16px 40px rgb(10 11 14 / 0.1),
+    0 4px 12px rgb(10 11 14 / 0.05);
   --rk-shadow-float:
-    0 8px 20px rgb(17 17 19 / 0.1),
-    0 24px 60px rgb(17 17 19 / 0.14);
+    0 8px 20px rgb(10 11 14 / 0.1),
+    0 24px 60px rgb(10 11 14 / 0.14);
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
 
-  /* Nunca negro absoluto: superficies que se elevan. */
-  --rk-background: 12 12 15;
-  --rk-background-2: 17 17 21;
-  --rk-surface: 26 26 31;
-  --rk-surface-elevated: 35 35 42;
-  --rk-card: 30 30 36;
-  --rk-card-alpha: 0.78;
+  /* Negro profundo como base, con superficies que se elevan.
+     Nunca negro absoluto en las tarjetas: se perdería la
+     jerarquía entre capas. */
+  --rk-background: 8 9 11;
+  --rk-background-2: 13 14 17;
+  --rk-surface: 20 21 25;
+  --rk-surface-elevated: 30 32 37;
+  --rk-card: 23 24 29;
+  --rk-card-alpha: 0.8;
 
-  --rk-foreground: 240 240 246;
-  --rk-ink: 240 240 246;
-  --rk-muted: 240 240 246;
-  --rk-muted-alpha: 0.55;
+  --rk-foreground: 243 245 248;
+  --rk-ink: 243 245 248;
+  --rk-muted: 243 245 248;
+  --rk-muted-alpha: 0.64;
 
   --rk-border: 255 255 255;
   --rk-border-alpha: 0.1;
+  --rk-border-strong-alpha: 0.2;
 
   /* En oscuro el primario se invierte para mantener contraste. */
-  --rk-primary: 244 244 250;
-  --rk-on-primary: 15 15 18;
-  --rk-accent: 132 130 255;
-  --rk-accent-soft: rgb(132 130 255 / 0.18);
-  --rk-success: 52 190 130;
+  --rk-primary: 244 246 250;
+  --rk-on-primary: 10 11 14;
+
+  /* Azul eléctrico más luminoso sobre fondo oscuro. */
+  --rk-accent: 61 140 255;
+  --rk-accent-hover: 92 162 255;
+  --rk-accent-contrast: 8 9 11;
+  --rk-accent-soft: rgb(61 140 255 / 0.16);
+
+  --rk-success: 45 190 130;
   --rk-warning: 226 160 44;
   --rk-danger: 248 96 96;
+  --rk-danger-contrast: 8 9 11;
 
-  --rk-glass: 30 30 37;
-  --rk-glass-alpha: 0.62;
-  --rk-glass-strong-alpha: 0.8;
+  --rk-glass: 24 25 30;
+  --rk-glass-alpha: 0.64;
+  --rk-glass-strong-alpha: 0.82;
   --rk-glass-border: rgb(255 255 255 / 0.1);
 
-  --rk-halo-1: rgb(110 108 255 / 0.16);
-  --rk-halo-2: rgb(0 150 190 / 0.12);
+  --rk-halo-1: rgb(61 140 255 / 0.15);
+  --rk-halo-2: rgb(0 170 210 / 0.1);
 
   /* En oscuro la sombra aporta menos; el borde define. */
   --rk-shadow-sm:
-    0 1px 2px rgb(0 0 0 / 0.4),
-    0 4px 12px rgb(0 0 0 / 0.3);
+    0 1px 2px rgb(0 0 0 / 0.5),
+    0 4px 12px rgb(0 0 0 / 0.35);
   --rk-shadow:
-    0 1px 2px rgb(0 0 0 / 0.45),
-    0 8px 24px rgb(0 0 0 / 0.4),
+    0 1px 2px rgb(0 0 0 / 0.5),
+    0 8px 24px rgb(0 0 0 / 0.45),
     0 2px 6px rgb(0 0 0 / 0.3);
   --rk-shadow-lg:
-    0 2px 4px rgb(0 0 0 / 0.45),
-    0 16px 40px rgb(0 0 0 / 0.5),
+    0 2px 4px rgb(0 0 0 / 0.5),
+    0 16px 40px rgb(0 0 0 / 0.55),
     0 4px 12px rgb(0 0 0 / 0.35);
   --rk-shadow-float:
-    0 8px 20px rgb(0 0 0 / 0.5),
-    0 24px 60px rgb(0 0 0 / 0.6);
+    0 8px 20px rgb(0 0 0 / 0.55),
+    0 24px 60px rgb(0 0 0 / 0.65);
 }
 
+/* ----------------------------------------------------------
+   TOKENS COMPARTIDOS (no dependen del tema)
+   ---------------------------------------------------------- */
 :root {
-  /* MOVIMIENTO */
+  /* ---- RADIOS ---- */
+  --rk-radius-sm: 0.75rem;
+  --rk-radius-md: 1.1rem;
+  --rk-radius-lg: 1.5rem;
+  --rk-radius-xl: 2rem;
+  --rk-radius-full: 9999px;
+
+  /* ---- VIDRIO ---- */
+  --rk-glass-blur: 20px;
+  --rk-glass-saturate: 180%;
+
+  /* ---- MOVIMIENTO ---- */
+  --rk-transition-fast: 150ms;
+  --rk-transition-normal: 280ms;
+  --rk-transition-slow: 500ms;
   --rk-ease: cubic-bezier(0.32, 0.72, 0, 1);
   --rk-ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* ALTURA DEL DOCK MÓVIL */
+  /* ---- LAYOUT ---- */
   --rk-dock-h: 4.5rem;
+}
+
+/* ----------------------------------------------------------
+   ALIAS PÚBLICOS
+   Nombres cortos del Design System. Apuntan a los tokens
+   canónicos de arriba, que son los que consume Tailwind y el
+   código ya existente. Usar estos en CSS nuevo.
+   ---------------------------------------------------------- */
+:root {
+  --rk-bg: var(--rk-background);
+  --rk-text: var(--rk-foreground);
+  --rk-text-muted: rgb(var(--rk-muted) / var(--rk-muted-alpha));
+  --rk-border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
+  --rk-border-strong: rgb(
+    var(--rk-border) / var(--rk-border-strong-alpha)
+  );
+  --rk-glass-bg: rgb(var(--rk-glass) / var(--rk-glass-alpha));
+  --rk-shadow-md: var(--rk-shadow);
 }
 
 * {
@@ -172,8 +228,8 @@ body {
   background-attachment: fixed;
 
   transition:
-    background-color 0.35s var(--rk-ease-soft),
-    color 0.35s var(--rk-ease-soft);
+    background-color var(--rk-transition-normal) var(--rk-ease-soft),
+    color var(--rk-transition-normal) var(--rk-ease-soft);
 }
 
 h1,
@@ -186,7 +242,7 @@ h6 {
   letter-spacing: -0.02em;
 }
 
-/* Espacio para el dock inferior en móvil. */
+/* Espacio para la navegación inferior en móvil. */
 @media (max-width: 767px) {
   body {
     padding-bottom: calc(
@@ -195,11 +251,11 @@ h6 {
   }
 }
 
-/* Foco visible y coherente en ambos temas. */
+/* Foco accesible, siempre en azul eléctrico. */
 :focus-visible {
   outline: 2px solid rgb(var(--rk-accent));
   outline-offset: 2px;
-  border-radius: 0.5rem;
+  border-radius: var(--rk-radius-sm);
 }
 
 /* Oculta la X nativa de los inputs type="search". */
@@ -210,34 +266,40 @@ input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance: none;
 }
 
+::selection {
+  background: rgb(var(--rk-accent) / 0.22);
+}
+
 @layer components {
-  /* ---------- SUPERFICIES ---------- */
+  /* ========== SUPERFICIES ========== */
 
   /*
-    Vidrio: la superficie base de la interfaz.
+    Vidrio: superficie translúcida con desenfoque del fondo.
     El blur se aplica AL PANEL, nunca a la imagen que hay
-    detrás: la imagen permanece nítida y es el panel el que
-    la muestra difuminada a través de sí mismo.
+    detrás: la imagen permanece nítida.
   */
   .rk-glass {
-    background: rgb(var(--rk-glass) / var(--rk-glass-alpha));
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    backdrop-filter: saturate(180%) blur(20px);
+    background: var(--rk-glass-bg);
+    -webkit-backdrop-filter: saturate(var(--rk-glass-saturate))
+      blur(var(--rk-glass-blur));
+    backdrop-filter: saturate(var(--rk-glass-saturate))
+      blur(var(--rk-glass-blur));
     border: 1px solid var(--rk-glass-border);
     box-shadow: var(--rk-shadow);
   }
 
   .rk-glass-strong {
     background: rgb(var(--rk-glass) / var(--rk-glass-strong-alpha));
-    -webkit-backdrop-filter: saturate(180%) blur(28px);
-    backdrop-filter: saturate(180%) blur(28px);
+    -webkit-backdrop-filter: saturate(var(--rk-glass-saturate))
+      blur(28px);
+    backdrop-filter: saturate(var(--rk-glass-saturate)) blur(28px);
     border: 1px solid var(--rk-glass-border);
   }
 
   /*
     Vidrio para controles que flotan SOBRE una imagen.
-    Más opaco y con más saturación para que el texto siga
-    siendo legible encima de cualquier fotografía.
+    Más saturado y con sombra propia para seguir siendo legible
+    encima de cualquier fotografía. La imagen nunca se toca.
   */
   .rk-glass-on-image {
     background: rgb(var(--rk-glass) / 0.55);
@@ -248,70 +310,90 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   [data-theme="dark"] .rk-glass-on-image {
-    background: rgb(20 20 25 / 0.55);
+    background: rgb(16 17 21 / 0.58);
     border-color: rgb(255 255 255 / 0.14);
   }
 
-  /* Tarjeta flotante sólida. */
+  /* Tarjeta estándar. */
   .rk-card {
     background: rgb(var(--rk-card) / var(--rk-card-alpha));
     -webkit-backdrop-filter: saturate(150%) blur(12px);
     backdrop-filter: saturate(150%) blur(12px);
-    border: 1px solid rgb(var(--rk-border) / var(--rk-border-alpha));
-    border-radius: 1.5rem;
+    border: 1px solid var(--rk-border-color);
+    border-radius: var(--rk-radius-lg);
     box-shadow: var(--rk-shadow-sm);
     transition:
-      transform 0.35s var(--rk-ease),
-      box-shadow 0.35s var(--rk-ease),
-      background-color 0.35s var(--rk-ease-soft),
-      border-color 0.35s var(--rk-ease-soft);
+      transform var(--rk-transition-slow) var(--rk-ease),
+      box-shadow var(--rk-transition-slow) var(--rk-ease),
+      background-color var(--rk-transition-normal) var(--rk-ease-soft),
+      border-color var(--rk-transition-normal) var(--rk-ease-soft);
   }
 
-  /* Tarjeta que reacciona al puntero como un widget. */
-  .rk-card-hover:hover {
-    transform: translateY(-3px);
+  /* Tarjeta elevada: más presencia, para destacar contenido. */
+  .rk-card-elevated {
+    background: rgb(var(--rk-surface-elevated));
+    border: 1px solid var(--rk-border-color);
+    border-radius: var(--rk-radius-lg);
     box-shadow: var(--rk-shadow-lg);
   }
 
-  /* Superficie plana, sin elevación (secciones internas). */
-  .rk-surface {
-    background: rgb(var(--rk-surface));
-    border: 1px solid rgb(var(--rk-border) / var(--rk-border-alpha));
+  /* Tarjeta de vidrio. */
+  .rk-card-glass {
+    background: var(--rk-glass-bg);
+    -webkit-backdrop-filter: saturate(var(--rk-glass-saturate))
+      blur(var(--rk-glass-blur));
+    backdrop-filter: saturate(var(--rk-glass-saturate))
+      blur(var(--rk-glass-blur));
+    border: 1px solid var(--rk-glass-border);
+    border-radius: var(--rk-radius-lg);
+    box-shadow: var(--rk-shadow);
   }
 
-  /* Elemento que flota por encima del contenido. */
+  /* Reacción al puntero: elevación sutil. */
+  .rk-card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--rk-shadow-lg);
+    border-color: var(--rk-border-strong);
+  }
+
+  /* Superficie plana, sin elevación. */
+  .rk-surface {
+    background: rgb(var(--rk-surface));
+    border: 1px solid var(--rk-border-color);
+  }
+
   .rk-float {
     box-shadow: var(--rk-shadow-float);
   }
 
-  /* ---------- FEEDBACK TÁCTIL ---------- */
+  /* ========== FEEDBACK TÁCTIL ========== */
 
   .rk-press {
     transition:
-      transform 0.18s var(--rk-ease),
-      opacity 0.18s var(--rk-ease),
-      background-color 0.2s var(--rk-ease-soft),
-      color 0.2s var(--rk-ease-soft);
+      transform var(--rk-transition-fast) var(--rk-ease),
+      opacity var(--rk-transition-fast) var(--rk-ease),
+      background-color 200ms var(--rk-ease-soft),
+      color 200ms var(--rk-ease-soft);
     -webkit-user-select: none;
     user-select: none;
   }
 
   .rk-press:active {
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
 
   .rk-press-sm:active {
-    transform: scale(0.975);
+    transform: scale(0.98);
   }
 
-  /* ---------- BOTONES ---------- */
+  /* ========== BOTONES ========== */
 
   .rk-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 9999px;
+    border-radius: var(--rk-radius-full);
     padding: 0.75rem 1.5rem;
     font-size: 0.875rem;
     font-weight: 500;
@@ -319,16 +401,18 @@ input[type="search"]::-webkit-search-results-decoration {
     white-space: nowrap;
     /* Objetivo táctil cómodo en móvil. */
     min-height: 2.75rem;
+    border: 1px solid transparent;
     transition:
-      transform 0.18s var(--rk-ease),
-      box-shadow 0.25s var(--rk-ease),
-      background-color 0.2s var(--rk-ease-soft),
-      color 0.2s var(--rk-ease-soft),
-      opacity 0.2s var(--rk-ease-soft);
+      transform var(--rk-transition-fast) var(--rk-ease),
+      box-shadow 250ms var(--rk-ease),
+      background-color 200ms var(--rk-ease-soft),
+      border-color 200ms var(--rk-ease-soft),
+      color 200ms var(--rk-ease-soft),
+      opacity 200ms var(--rk-ease-soft);
   }
 
   .rk-btn:active:not(:disabled) {
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
 
   .rk-btn:disabled {
@@ -336,33 +420,61 @@ input[type="search"]::-webkit-search-results-decoration {
     cursor: not-allowed;
   }
 
+  /* Primary: la acción principal. Azul eléctrico. */
   .rk-btn-primary {
-    background: rgb(var(--rk-primary));
-    color: rgb(var(--rk-on-primary));
+    background: rgb(var(--rk-accent));
+    color: rgb(var(--rk-accent-contrast));
     box-shadow: var(--rk-shadow);
   }
 
   .rk-btn-primary:hover:not(:disabled) {
+    background: rgb(var(--rk-accent-hover));
     box-shadow: var(--rk-shadow-lg);
   }
 
+  /* Secondary: acción secundaria sólida, neutra. */
+  .rk-btn-secondary {
+    background: rgb(var(--rk-primary));
+    color: rgb(var(--rk-on-primary));
+    box-shadow: var(--rk-shadow-sm);
+  }
+
+  .rk-btn-secondary:hover:not(:disabled) {
+    box-shadow: var(--rk-shadow);
+  }
+
+  /* Ghost: sin fondo, solo texto. */
+  .rk-btn-ghost {
+    background: transparent;
+    color: rgb(var(--rk-muted) / 0.75);
+  }
+
+  .rk-btn-ghost:hover:not(:disabled) {
+    background: rgb(var(--rk-foreground) / 0.06);
+    color: rgb(var(--rk-foreground));
+  }
+
+  /* Glass: sobre imágenes y fondos con textura. */
   .rk-btn-glass {
     background: rgb(var(--rk-glass) / var(--rk-glass-strong-alpha));
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    backdrop-filter: saturate(180%) blur(20px);
-    border: 1px solid var(--rk-glass-border);
+    -webkit-backdrop-filter: saturate(var(--rk-glass-saturate))
+      blur(var(--rk-glass-blur));
+    backdrop-filter: saturate(var(--rk-glass-saturate))
+      blur(var(--rk-glass-blur));
+    border-color: var(--rk-glass-border);
     color: rgb(var(--rk-foreground));
     box-shadow: var(--rk-shadow-sm);
   }
 
   .rk-btn-glass:hover:not(:disabled) {
     background: rgb(var(--rk-surface));
+    border-color: var(--rk-border-strong);
     box-shadow: var(--rk-shadow);
   }
 
   .rk-btn-danger {
     background: transparent;
-    border: 1px solid rgb(var(--rk-danger) / 0.35);
+    border-color: rgb(var(--rk-danger) / 0.35);
     color: rgb(var(--rk-danger));
   }
 
@@ -371,14 +483,25 @@ input[type="search"]::-webkit-search-results-decoration {
     color: #fff;
   }
 
-  /* ---------- CAMPOS ---------- */
+  .rk-btn-success {
+    background: rgb(var(--rk-success));
+    color: #fff;
+    box-shadow: var(--rk-shadow-sm);
+  }
+
+  .rk-btn-success:hover:not(:disabled) {
+    box-shadow: var(--rk-shadow);
+    opacity: 0.92;
+  }
+
+  /* ========== CAMPOS ========== */
 
   .rk-input,
   .rk-select,
   .rk-textarea {
     width: 100%;
-    border-radius: 1rem;
-    border: 1px solid rgb(var(--rk-border) / var(--rk-border-alpha));
+    border-radius: var(--rk-radius-md);
+    border: 1px solid var(--rk-border-color);
     background: rgb(var(--rk-surface) / 0.75);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
@@ -387,9 +510,9 @@ input[type="search"]::-webkit-search-results-decoration {
     color: rgb(var(--rk-foreground));
     outline: none;
     transition:
-      border-color 0.2s var(--rk-ease-soft),
-      box-shadow 0.2s var(--rk-ease-soft),
-      background-color 0.2s var(--rk-ease-soft);
+      border-color 200ms var(--rk-ease-soft),
+      box-shadow 200ms var(--rk-ease-soft),
+      background-color 200ms var(--rk-ease-soft);
   }
 
   .rk-input::placeholder,
@@ -397,63 +520,94 @@ input[type="search"]::-webkit-search-results-decoration {
     color: rgb(var(--rk-muted) / 0.4);
   }
 
+  .rk-input:hover:not(:disabled),
+  .rk-select:hover:not(:disabled),
+  .rk-textarea:hover:not(:disabled) {
+    border-color: var(--rk-border-strong);
+  }
+
+  /* Foco: azul eléctrico + halo suave. */
   .rk-input:focus,
   .rk-select:focus,
   .rk-textarea:focus {
     background: rgb(var(--rk-surface));
-    border-color: rgb(var(--rk-accent) / 0.45);
+    border-color: rgb(var(--rk-accent) / 0.55);
     box-shadow: 0 0 0 4px var(--rk-accent-soft);
     outline: none;
   }
 
-  /* ---------- PÍLDORAS / CHIPS ---------- */
+  .rk-input:disabled,
+  .rk-select:disabled,
+  .rk-textarea:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: rgb(var(--rk-foreground) / 0.04);
+  }
+
+  .rk-input-error,
+  .rk-input[aria-invalid="true"],
+  .rk-textarea[aria-invalid="true"] {
+    border-color: rgb(var(--rk-danger) / 0.55);
+  }
+
+  .rk-input-error:focus,
+  .rk-input[aria-invalid="true"]:focus,
+  .rk-textarea[aria-invalid="true"]:focus {
+    border-color: rgb(var(--rk-danger));
+    box-shadow: 0 0 0 4px rgb(var(--rk-danger) / 0.14);
+  }
+
+  /* ========== PÍLDORAS / CHIPS ========== */
 
   .rk-chip {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    border-radius: 9999px;
-    border: 1px solid rgb(var(--rk-border) / var(--rk-border-alpha));
+    border-radius: var(--rk-radius-full);
+    border: 1px solid var(--rk-border-color);
     background: rgb(var(--rk-surface) / 0.7);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     padding: 0.5rem 1rem;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: rgb(var(--rk-muted) / 0.65);
+    color: rgb(var(--rk-muted) / 0.78);
     transition:
-      transform 0.18s var(--rk-ease),
-      background-color 0.2s var(--rk-ease-soft),
-      color 0.2s var(--rk-ease-soft),
-      border-color 0.2s var(--rk-ease-soft);
+      transform var(--rk-transition-fast) var(--rk-ease),
+      background-color 200ms var(--rk-ease-soft),
+      color 200ms var(--rk-ease-soft),
+      border-color 200ms var(--rk-ease-soft);
   }
 
   .rk-chip:hover {
     color: rgb(var(--rk-foreground));
-    border-color: rgb(var(--rk-border) / 0.2);
+    border-color: var(--rk-border-strong);
   }
 
   .rk-chip:active {
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
 
+  /* Estado seleccionado: azul eléctrico. */
   .rk-chip-active {
-    background: rgb(var(--rk-primary));
-    border-color: rgb(var(--rk-primary));
-    color: rgb(var(--rk-on-primary));
+    background: rgb(var(--rk-accent));
+    border-color: rgb(var(--rk-accent));
+    color: rgb(var(--rk-accent-contrast));
   }
 
   .rk-chip-active:hover {
-    color: rgb(var(--rk-on-primary));
+    background: rgb(var(--rk-accent-hover));
+    border-color: rgb(var(--rk-accent-hover));
+    color: rgb(var(--rk-accent-contrast));
   }
 
-  /* ---------- ETIQUETAS DE ESTADO ---------- */
+  /* ========== BADGES ========== */
 
   .rk-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    border-radius: 9999px;
+    border-radius: var(--rk-radius-full);
     padding: 0.25rem 0.625rem;
     font-size: 0.6875rem;
     font-weight: 500;
@@ -462,7 +616,12 @@ input[type="search"]::-webkit-search-results-decoration {
 
   .rk-badge-neutral {
     background: rgb(var(--rk-foreground) / 0.07);
-    color: rgb(var(--rk-muted) / 0.7);
+    color: rgb(var(--rk-muted) / 0.72);
+  }
+
+  .rk-badge-accent {
+    background: rgb(var(--rk-accent) / 0.14);
+    color: rgb(var(--rk-accent));
   }
 
   .rk-badge-success {
@@ -480,19 +639,31 @@ input[type="search"]::-webkit-search-results-decoration {
     color: rgb(var(--rk-danger));
   }
 
-  .rk-badge-accent {
-    background: rgb(var(--rk-accent) / 0.15);
-    color: rgb(var(--rk-accent));
-  }
-
-  /* ---------- TEXTO ---------- */
+  /* ========== TEXTO ========== */
 
   .rk-eyebrow {
     font-size: 0.6875rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.22em;
-    color: rgb(var(--rk-muted) / 0.45);
+    color: rgb(var(--rk-muted) / 0.62);
+  }
+
+  .rk-title {
+    font-family: var(--font-sora), system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .rk-subtitle {
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: rgb(var(--rk-muted) / 0.62);
+  }
+
+  .rk-muted {
+    color: var(--rk-text-muted);
   }
 
   /* Marco de imagen: fondo neutro mientras carga. */
@@ -503,18 +674,54 @@ input[type="search"]::-webkit-search-results-decoration {
       rgb(var(--rk-foreground) / 0.09)
     );
   }
+
+  /* Separadores finos. */
+  .rk-divider {
+    height: 1px;
+    background: var(--rk-border-color);
+  }
+
+  .rk-divider-b {
+    border-bottom: 1px solid var(--rk-border-color);
+  }
+
+  .rk-divider-y > * + * {
+    border-top: 1px solid var(--rk-border-color);
+  }
 }
 
 @layer utilities {
-  /* Entrada suave del contenido al cargar la vista. */
-  .rk-enter {
-    animation: rk-fade-up 0.5s var(--rk-ease) both;
+  /* ========== ANIMACIONES ========== */
+
+  .rk-fade {
+    animation: rk-fade var(--rk-transition-normal) var(--rk-ease) both;
+  }
+
+  .rk-enter,
+  .rk-fade-up {
+    animation: rk-fade-up var(--rk-transition-slow) var(--rk-ease) both;
+  }
+
+  .rk-scale {
+    animation: rk-scale-in 350ms var(--rk-ease) both;
   }
 
   .rk-enter-1 { animation-delay: 0.04s; }
   .rk-enter-2 { animation-delay: 0.08s; }
   .rk-enter-3 { animation-delay: 0.12s; }
   .rk-enter-4 { animation-delay: 0.16s; }
+
+  /* Elevación al pasar el puntero, sin tocar el layout. */
+  .rk-hover-lift {
+    transition:
+      transform var(--rk-transition-normal) var(--rk-ease),
+      box-shadow var(--rk-transition-normal) var(--rk-ease);
+  }
+
+  .rk-hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--rk-shadow-lg);
+  }
 
   /* Proporción vertical 9:16 del contenido de producto. */
   .rk-aspect-product {
@@ -526,6 +733,11 @@ input[type="search"]::-webkit-search-results-decoration {
       var(--rk-dock-h) + env(safe-area-inset-bottom) + 1rem
     );
   }
+}
+
+@keyframes rk-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes rk-fade-up {
@@ -559,5 +771,14 @@ input[type="search"]::-webkit-search-results-decoration {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .rk-press:active,
+  .rk-press-sm:active,
+  .rk-btn:active:not(:disabled),
+  .rk-chip:active,
+  .rk-card-hover:hover,
+  .rk-hover-lift:hover {
+    transform: none;
   }
 }

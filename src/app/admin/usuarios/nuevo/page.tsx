@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeft, ShieldCheck } from "lucide-react";
 
 export default function NuevoCreadorPage() {
   const router = useRouter();
@@ -50,108 +51,169 @@ export default function NuevoCreadorPage() {
   }
 
   return (
-    <main className="min-h-screen px-4 sm:px-5 py-8 sm:py-12">
-      <div className="mx-auto max-w-2xl">
+    <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
+      <div className="mx-auto w-full max-w-2xl">
 
-        <div className="mb-8">
+        {/* ========== CABECERA ========== */}
+        <header className="rk-fade-up">
           <Link
             href="/admin/usuarios"
-            className="text-sm text-ink/50 hover:text-ink"
+            className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
           >
-            ← Volver a usuarios
+            <ChevronLeft size={15} />
+            Usuarios
           </Link>
 
-          <p className="mt-8 text-sm font-medium uppercase tracking-wider text-ink/40">
-            Admin Center
-          </p>
+          <p className="rk-eyebrow mt-4">Admin Center</p>
 
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight">
+          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
             Crear creador
           </h1>
 
-          <p className="mt-2 text-ink/50">
-            Registra un nuevo creador para RCKTDMG.
+          <p className="mt-3 text-[15px] leading-7 text-ink/60">
+            Registra manualmente una cuenta de creador.
           </p>
-        </div>
+        </header>
 
-        <div className="rk-card p-7 sm:p-8">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-3">
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {/* ========== INFORMACIÓN PERSONAL ========== */}
+          <section className="rk-fade-up rk-enter-1 rk-card p-5 sm:p-6">
+            <p className="rk-eyebrow">Paso 1</p>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium">
+            <h2 className="rk-title mt-2 text-xl">
+              Información personal
+            </h2>
+
+            <div className="rk-divider mt-4" />
+
+            <div className="mt-5">
+              <label
+                htmlFor="nombre"
+                className="mb-2 block text-sm font-medium"
+              >
                 Nombre completo
               </label>
 
               <input
+                id="nombre"
                 type="text"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 placeholder="Ej. Juan Pérez"
                 required
                 disabled={loading}
-                className="w-full rk-card px-4 py-3 outline-none transition focus:border-accent/45 disabled:opacity-50"
+                className="rk-input w-full"
               />
             </div>
+          </section>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                Correo electrónico
-              </label>
+          {/* ========== CUENTA ========== */}
+          <section className="rk-fade-up rk-enter-2 rk-card p-5 sm:p-6">
+            <p className="rk-eyebrow">Paso 2</p>
 
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="creador@rcktdmg.com"
-                required
-                disabled={loading}
-                className="w-full rk-card px-4 py-3 outline-none transition focus:border-accent/45 disabled:opacity-50"
-              />
+            <h2 className="rk-title mt-2 text-xl">Cuenta</h2>
+
+            <div className="rk-divider mt-4" />
+
+            <div className="mt-5 space-y-5">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  Correo electrónico
+                </label>
+
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="creador@rcktdmg.com"
+                  required
+                  disabled={loading}
+                  className="rk-input w-full"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  Contraseña temporal
+                </label>
+
+                {/* Mismo campo y mismo tratamiento que antes:
+                    se envía tal cual y nunca se muestra. */}
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Mínimo 8 caracteres"
+                  minLength={8}
+                  required
+                  disabled={loading}
+                  autoComplete="new-password"
+                  className="rk-input w-full"
+                />
+
+                <p className="mt-2 text-xs text-ink/60">
+                  El creador podrá cambiarla más adelante.
+                </p>
+              </div>
             </div>
+          </section>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                Contraseña temporal
-              </label>
+          {/* ========== ROL Y ACCESO ========== */}
+          <section className="rk-fade-up rk-enter-3 rk-card p-5 sm:p-6">
+            <p className="rk-eyebrow">Paso 3</p>
 
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mínimo 8 caracteres"
-                minLength={8}
-                required
-                disabled={loading}
-                className="w-full rk-card px-4 py-3 outline-none transition focus:border-accent/45 disabled:opacity-50"
-              />
+            <h2 className="rk-title mt-2 text-xl">
+              Rol y acceso
+            </h2>
 
-              <p className="mt-2 text-xs text-ink/40">
-                El creador podrá cambiar su contraseña posteriormente.
-              </p>
-            </div>
+            <div className="rk-divider mt-4" />
 
-            <div className="rounded-2xl bg-ink/[0.05] p-4">
-              <p className="text-sm font-medium">
-                Rol: CREATOR
-              </p>
+            <div className="mt-5 flex items-start gap-3.5 rounded-rk-md bg-ink/[0.03] p-4">
+              <span
+                aria-hidden
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent"
+              >
+                <ShieldCheck size={18} />
+              </span>
 
-              <p className="mt-1 text-sm text-ink/50">
-                Podrá publicar y administrar sus recursos.
-              </p>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-sm font-semibold">Rol</p>
+
+                  <span className="rk-badge rk-badge-accent">
+                    CREATOR
+                  </span>
+                </div>
+
+                <p className="mt-1.5 text-sm leading-6 text-ink/60">
+                  Podrá entrar al Creator Studio y administrar
+                  sus propios recursos.
+                </p>
+              </div>
             </div>
 
             {error && (
-              <div className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
+              <div
+                role="alert"
+                className="rk-fade mt-5 rounded-rk-sm border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
+              >
                 {error}
               </div>
             )}
 
-            <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
-
+            <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
               <Link
                 href="/admin/usuarios"
-                className="rounded-full border border-ink/10 px-6 py-3 text-center text-sm font-medium transition hover:bg-ink/[0.06]"
+                className="rk-btn rk-btn-glass"
               >
                 Cancelar
               </Link>
@@ -159,16 +221,13 @@ export default function NuevoCreadorPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-full bg-primary px-6 py-3 text-sm font-medium text-onprimary transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-50"
+                className="rk-btn rk-btn-primary"
               >
                 {loading ? "Creando..." : "Crear creador"}
               </button>
-
             </div>
-
-          </form>
-
-        </div>
+          </section>
+        </form>
       </div>
     </main>
   );

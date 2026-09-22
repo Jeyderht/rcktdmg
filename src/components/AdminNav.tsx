@@ -97,7 +97,7 @@ function AdminNavContent() {
       aria-label="Secciones de administración"
       className="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-5 lg:px-8"
     >
-      <div className="rk-glass flex gap-1 overflow-x-auto rounded-[1.25rem] p-1.5">
+      <div className="rk-glass flex gap-1 overflow-x-auto rounded-rk-lg p-1.5">
         {SECTIONS.map((section) => {
           const Icon = section.icon;
           const active = isActive(section);
@@ -107,10 +107,10 @@ function AdminNavContent() {
               key={section.label}
               href={section.href}
               aria-current={active ? "page" : undefined}
-              className={`rk-press flex shrink-0 items-center gap-1.5 rounded-[0.9rem] px-3 py-2 text-[13px] font-medium transition-colors ${
+              className={`rk-press flex shrink-0 items-center gap-1.5 rounded-rk-sm px-3 py-2 text-[13px] font-medium transition-colors duration-fast ease-rk ${
                 active
-                  ? "bg-primary text-onprimary shadow-rk-sm"
-                  : "text-ink/55 hover:bg-ink/[0.05] hover:text-ink"
+                  ? "bg-accent/12 text-accent"
+                  : "text-ink/60 hover:bg-ink/[0.05] hover:text-ink"
               }`}
             >
               <Icon size={15} />
@@ -128,7 +128,7 @@ export default function AdminNav() {
     <Suspense
       fallback={
         <div className="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-5 lg:px-8">
-          <div className="rk-glass h-[3.25rem] rounded-[1.25rem]" />
+          <div className="rk-glass h-[3.25rem] rounded-rk-lg" />
         </div>
       }
     >

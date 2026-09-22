@@ -1,8 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { ArrowLeft, Inbox } from "lucide-react";
+import { ClipboardCheck, Inbox } from "lucide-react";
 
+import EmptyState from "@/components/EmptyState";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import ResourceActions from "./ResourceActions";
@@ -21,12 +23,19 @@ const STATUS_LABEL: Record<string, string> = {
   ARCHIVED: "Archivado",
 };
 
-const STATUS_STYLE: Record<string, string> = {
-  DRAFT: "bg-ink/[0.06] text-ink/60",
-  PENDING_REVIEW: "bg-warning/12 text-warning",
-  PUBLISHED: "bg-success/12 text-success",
-  REJECTED: "bg-danger/10 text-danger",
-  ARCHIVED: "bg-ink/[0.09] text-ink/70",
+const STATUS_BADGE: Record<string, string> = {
+  DRAFT: "rk-badge-neutral",
+  PENDING_REVIEW: "rk-badge-warning",
+  PUBLISHED: "rk-badge-success",
+  REJECTED: "rk-badge-danger",
+  ARCHIVED: "rk-badge-neutral",
+};
+
+/** Borde sutil por estado: distingue sin saturar la lista. */
+const STATUS_EDGE: Record<string, string> = {
+  PENDING_REVIEW: "!border-warning/30",
+  PUBLISHED: "!border-success/25",
+  REJECTED: "!border-danger/30",
 };
 
 type PageProps = {
@@ -119,33 +128,44 @@ export default async function RecursosAdminPage({
     },
   ];
 
+  /*
+    "Revisiones" no es una ruta aparte: es esta misma página
+    con el filtro de pendientes, que es a donde apuntan el
+    menú lateral y los accesos del dashboard. Cuando ese
+    filtro está activo, la página se presenta como bandeja
+    de moderación.
+  */
+  const isReviewInbox = statusFilter === "PENDING_REVIEW";
+
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-5 lg:pb-24 lg:pt-12">
+    <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
 
-      <Link
-        href="/admin"
-        className="rk-press mb-5 inline-flex items-center gap-1.5 text-sm text-ink/50 transition-colors hover:text-ink"
-      >
-        <ArrowLeft size={15} />
-        Volver al panel
-      </Link>
+      {/* ========== CABECERA ========== */}
+      <header className="rk-fade-up">
+        <p className="rk-eyebrow">Admin Center</p>
 
-      {/* ENCABEZADO */}
-      <section className="rk-enter">
-        <div className="rk-glass rounded-[2rem] px-5 py-8 sm:rounded-[2.5rem] sm:px-9 sm:py-10">
-          <p className="rk-eyebrow">Admin Center</p>
+        <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
+          {isReviewInbox ? "Revisiones" : "Recursos"}
+        </h1>
 
-          <h1 className="mt-2.5 text-[2rem] font-semibold leading-tight sm:text-4xl">
-            Recursos
-          </h1>
+        <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
+          {isReviewInbox
+            ? "Recursos pendientes de revisión, en orden de llegada."
+            : "Revisa, publica o rechaza los recursos enviados por los creadores."}
+        </p>
+      </header>
 
-          <p className="mt-2.5 max-w-xl text-[15px] leading-7 text-ink/50">
-            Revisa, publica o rechaza los recursos enviados por
-            los creadores.
-          </p>
+      {/* ========== FILTROS ========== */}
+      <section className="rk-fade-up rk-enter-1 mt-7">
+        <div
+          role="group"
+          aria-label="Filtrar por estado"
+          className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+        >
+          {filters.map((filter) => {
+            const active = statusFilter === filter.value;
 
-          <div className="mt-6 flex flex-wrap gap-2">
-            {filters.map((filter) => (
+            return (
               <Link
                 key={filter.label}
                 href={
@@ -153,33 +173,60 @@ export default async function RecursosAdminPage({
                     ? `/admin/recursos?estado=${filter.value}`
                     : "/admin/recursos"
                 }
-                className={`rk-chip ${
-                  statusFilter === filter.value
-                    ? "rk-chip-active"
-                    : ""
+                aria-current={active ? "true" : undefined}
+                className={`rk-chip shrink-0 ${
+                  active ? "rk-chip-active" : ""
                 }`}
               >
                 {filter.label}
-                <span className="opacity-50">{filter.count}</span>
+                <span className="tabular-nums opacity-50">
+                  {filter.count}
+                </span>
               </Link>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* LISTA */}
-      {visibleResources.length === 0 ? (
-        <div className="rk-enter rk-enter-1 rk-card mt-5 px-6 py-16 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-ink/[0.05]">
-            <Inbox size={24} className="text-ink/35" />
-          </div>
+      {/* ========== CONTADOR ========== */}
+      <div className="rk-fade-up mt-6 flex items-baseline justify-between gap-4">
+        <p className="text-[15px] text-ink/60">
+          {statusFilter
+            ? STATUS_LABEL[statusFilter]
+            : "Todo el catálogo"}
+        </p>
 
-          <h2 className="mt-5 text-lg font-semibold">
-            No hay recursos con este filtro
-          </h2>
+        <span className="text-sm font-medium tabular-nums text-ink/60">
+          {visibleResources.length}{" "}
+          {visibleResources.length === 1 ? "recurso" : "recursos"}
+        </span>
+      </div>
+
+      <div className="rk-divider mt-4" />
+
+      {/* ========== LISTA ========== */}
+      {visibleResources.length === 0 ? (
+        <div className="mt-5">
+          <EmptyState
+            icon={isReviewInbox ? ClipboardCheck : Inbox}
+            title={
+              isReviewInbox
+                ? "No hay recursos pendientes de revisión"
+                : "No hay recursos con este filtro"
+            }
+            description={
+              isReviewInbox
+                ? "Cuando un creador envíe un recurso a revisión aparecerá aquí."
+                : "Cambia de filtro para ver otros recursos del catálogo."
+            }
+            action={{
+              href: "/admin/recursos",
+              label: "Ver todo el catálogo",
+            }}
+          />
         </div>
       ) : (
-        <div className="rk-enter rk-enter-1 mt-5 space-y-3">
+        <section className="rk-fade-up rk-enter-2 mt-5 space-y-3">
           {visibleResources.map((resource) => {
             const image =
               resource.coverUrl || resource.images[0]?.url || null;
@@ -187,25 +234,26 @@ export default async function RecursosAdminPage({
             return (
               <article
                 key={resource.id}
-                className="rk-card p-4 sm:p-5"
+                className={`rk-card p-4 sm:p-5 ${
+                  STATUS_EDGE[resource.status] || ""
+                }`}
               >
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
 
-                  {/* MINIATURA */}
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-[1rem] bg-gradient-to-br from-ink/[0.04] to-ink/[0.08]">
+                  {/* CONTENIDO VISUAL 9:16, SIEMPRE NÍTIDO */}
+                  <div className="rk-media rk-aspect-product relative w-20 shrink-0 overflow-hidden rounded-rk-sm sm:w-24">
                     {image ? (
-                      <img
+                      <Image
                         src={image}
                         alt={resource.name}
-                        loading="lazy"
-                        className="h-full w-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="96px"
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <span className="text-[9px] uppercase tracking-[0.2em] text-ink/25">
-                          RK
-                        </span>
-                      </div>
+                      <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
+                        RCKTDMG
+                      </span>
                     )}
                   </div>
 
@@ -217,21 +265,23 @@ export default async function RecursosAdminPage({
                       </h2>
 
                       <span
-                        className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${
-                          STATUS_STYLE[resource.status]
+                        className={`rk-badge ${
+                          STATUS_BADGE[resource.status] ||
+                          "rk-badge-neutral"
                         }`}
                       >
                         {STATUS_LABEL[resource.status]}
                       </span>
                     </div>
 
-                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-ink/50">
+                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-ink/60">
                       {resource.description}
                     </p>
 
+                    {/* Motivo real del rechazo. */}
                     {resource.status === "REJECTED" &&
                       resource.rejectionReason && (
-                        <p className="mt-3 rounded-[0.9rem] bg-danger/10 px-3.5 py-2.5 text-xs leading-5 text-danger">
+                        <p className="mt-3 rounded-rk-sm border border-danger/25 bg-danger/10 px-3.5 py-2.5 text-xs leading-5 text-danger">
                           <span className="font-medium">
                             Motivo del rechazo:
                           </span>{" "}
@@ -239,10 +289,10 @@ export default async function RecursosAdminPage({
                         </p>
                       )}
 
-                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink/45">
-                      <span>
+                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink/60">
+                      <span className="truncate">
                         {resource.creator.name || "Sin nombre"}
-                        <span className="text-ink/30">
+                        <span className="text-ink/60">
                           {" · "}
                           {resource.creator.email}
                         </span>
@@ -250,14 +300,14 @@ export default async function RecursosAdminPage({
 
                       <span>{resource.category.name}</span>
 
-                      <span className="font-medium text-ink/60">
+                      <span className="font-medium tabular-nums text-ink/60">
                         S/ {Number(resource.price).toFixed(2)}
                       </span>
 
                       <span>
-                        {new Date(
-                          resource.createdAt
-                        ).toLocaleDateString("es-PE")}
+                        {new Intl.DateTimeFormat("es-PE", {
+                          dateStyle: "medium",
+                        }).format(resource.createdAt)}
                       </span>
                     </div>
                   </div>
@@ -274,7 +324,7 @@ export default async function RecursosAdminPage({
               </article>
             );
           })}
-        </div>
+        </section>
       )}
     </main>
   );

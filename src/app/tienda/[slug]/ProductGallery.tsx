@@ -88,9 +88,9 @@ export default function ProductGallery({
 
   if (total === 0) {
     return (
-      <div className="rk-card mx-auto w-full max-w-sm overflow-hidden rounded-[1.75rem] p-2 lg:max-w-none">
-        <div className="rk-media rk-aspect-product flex w-full items-center justify-center rounded-[1.4rem]">
-          <span className="text-[10px] uppercase tracking-[0.3em] text-ink/20">
+      <div className="rk-card mx-auto w-full max-w-[16rem] overflow-hidden rounded-rk-xl p-2 sm:max-w-sm lg:max-w-none">
+        <div className="rk-media rk-aspect-product flex w-full items-center justify-center rounded-rk-lg">
+          <span className="text-[10px] uppercase tracking-[0.3em] text-ink/45">
             RCKTDMG
           </span>
         </div>
@@ -104,8 +104,8 @@ export default function ProductGallery({
     <div className="w-full min-w-0">
 
       {/* IMAGEN PRINCIPAL 9:16 */}
-      <div className="rk-card mx-auto w-full max-w-sm overflow-hidden rounded-[1.75rem] p-2 sm:rounded-[2rem] lg:max-w-none">
-        <div className="rk-media rk-aspect-product relative overflow-hidden rounded-[1.4rem] sm:rounded-[1.6rem]">
+      <div className="rk-card mx-auto w-full max-w-[16rem] overflow-hidden rounded-rk-xl p-2 sm:max-w-sm lg:max-w-none">
+        <div className="rk-media rk-aspect-product relative overflow-hidden rounded-rk-lg">
           <Image
             key={selectedImage.key}
             src={selectedImage.url}
@@ -157,7 +157,7 @@ export default function ProductGallery({
         <div
           role="tablist"
           aria-label="Imágenes del recurso"
-          className="mx-auto mt-3 flex max-w-sm gap-2.5 overflow-x-auto pb-1 lg:max-w-none"
+          className="mx-auto mt-3 flex max-w-[16rem] gap-2.5 overflow-x-auto pb-1 sm:max-w-sm lg:max-w-none"
         >
           {images.map((image, index) => {
             const active = index === selectedIndex;
@@ -170,9 +170,9 @@ export default function ProductGallery({
                 aria-selected={active}
                 aria-label={`Ver ${image.label}`}
                 onClick={() => setSelectedIndex(index)}
-                className={`rk-press rk-media rk-aspect-product relative w-16 shrink-0 overflow-hidden rounded-[0.9rem] transition-all duration-300 ease-rk sm:w-20 ${
+                className={`rk-press rk-media rk-aspect-product relative w-16 shrink-0 overflow-hidden rounded-rk-sm transition-all duration-normal ease-rk sm:w-20 ${
                   active
-                    ? "ring-2 ring-primary ring-offset-2 ring-offset-transparent"
+                    ? "ring-2 ring-accent ring-offset-2 ring-offset-transparent"
                     : "opacity-55 hover:opacity-100"
                 }`}
               >

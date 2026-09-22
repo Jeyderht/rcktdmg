@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Lock, ShoppingBag } from "lucide-react";
@@ -119,15 +120,15 @@ export default function CheckoutPage() {
 
         <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-8 sm:px-5 lg:pt-12">
           <div className="rk-card px-6 py-16 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-ink/[0.05]">
-              <ShoppingBag size={24} className="text-ink/35" />
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-rk-md bg-ink/[0.05]">
+              <ShoppingBag size={24} className="text-ink/60" />
             </div>
 
             <h1 className="mt-5 text-xl font-semibold">
               No hay nada que pagar
             </h1>
 
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-ink/45">
+            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-ink/60">
               Agrega un recurso antes de continuar con el pago.
             </p>
 
@@ -148,7 +149,7 @@ export default function CheckoutPage() {
 
         <Link
           href="/carrito"
-          className="rk-press mb-5 inline-flex items-center gap-1.5 text-sm text-ink/50 transition-colors hover:text-ink"
+          className="rk-press mb-5 inline-flex items-center gap-1.5 text-sm text-ink/60 transition-colors hover:text-ink"
         >
           <ArrowLeft size={15} />
           Volver al carrito
@@ -161,7 +162,7 @@ export default function CheckoutPage() {
             Confirmar pedido
           </h1>
 
-          <p className="mt-2 max-w-xl text-sm text-ink/50">
+          <p className="mt-2 max-w-xl text-sm text-ink/60">
             Revisa tu pedido antes de continuar con el pago.
           </p>
         </div>
@@ -169,25 +170,26 @@ export default function CheckoutPage() {
         <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_340px]">
 
           {/* RESUMEN DE ARTÍCULOS */}
-          <div className="rk-enter rk-enter-1 rk-card divide-y divide-ink/[0.07] p-5 sm:p-6">
+          <div className="rk-enter rk-enter-1 rk-card divide-y divide-line/10 p-5 sm:p-6">
             {cart.map((item) => (
               <div
                 key={item.id}
                 className="flex items-center gap-4 py-4 first:pt-0 last:pb-0"
               >
-                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-[0.9rem] bg-gradient-to-br from-ink/[0.04] to-ink/[0.08]">
+                {/* Contenido visual 9:16, siempre nítido. */}
+                <div className="rk-media rk-aspect-product relative w-14 shrink-0 overflow-hidden rounded-rk-sm">
                   {item.coverUrl ? (
-                    <img
+                    <Image
                       src={item.coverUrl}
                       alt={item.name}
-                      className="h-full w-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="56px"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center">
-                      <span className="text-[9px] uppercase tracking-[0.2em] text-ink/25">
-                        RK
-                      </span>
-                    </div>
+                    <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
+                      RK
+                    </span>
                   )}
                 </div>
 
@@ -196,7 +198,7 @@ export default function CheckoutPage() {
                     {item.name}
                   </p>
 
-                  <p className="mt-1 text-sm text-ink/45">
+                  <p className="mt-1 text-sm text-ink/60">
                     {item.quantity} × S/ {item.price.toFixed(2)}
                   </p>
                 </div>
@@ -210,7 +212,7 @@ export default function CheckoutPage() {
 
           {/* PAGO */}
           <div className="rk-enter rk-enter-2 lg:sticky lg:top-24 lg:self-start">
-            <div className="rk-glass rounded-[1.75rem] p-5 sm:p-6">
+            <div className="rk-glass rounded-rk-lg p-5 sm:p-6">
               <h2 className="text-sm font-semibold">Total a pagar</h2>
 
               <p className="mt-3 text-3xl font-semibold tracking-tight">
@@ -220,7 +222,7 @@ export default function CheckoutPage() {
               {error && (
                 <div
                   role="alert"
-                  className="animate-scale-in mt-5 rounded-[1rem] border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
+                  className="animate-scale-in mt-5 rounded-rk-sm border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
                 >
                   {error}
                 </div>
@@ -235,7 +237,7 @@ export default function CheckoutPage() {
                 {loading ? "Creando pedido..." : "Continuar al pago"}
               </button>
 
-              <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-ink/40">
+              <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-ink/60">
                 <Lock size={12} />
                 Pago protegido
               </p>

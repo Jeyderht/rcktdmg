@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
+  ArrowRight,
   BarChart3,
   ClipboardCheck,
   CreditCard,
@@ -31,6 +32,8 @@ type QuickLink = {
   href: string;
   label: string;
   icon: LucideIcon;
+  /** Solo en los accesos de cliente, que son los destacados. */
+  description?: string;
 };
 
 /**
@@ -99,25 +102,53 @@ const CREATOR_LINKS: QuickLink[] = [
 ];
 
 const CLIENT_LINKS: QuickLink[] = [
-  { href: "/mi-cuenta/compras", label: "Mis compras", icon: Receipt },
+  {
+    href: "/mi-cuenta/compras",
+    label: "Mis compras",
+    icon: Receipt,
+    description: "Consulta tus recursos adquiridos",
+  },
   {
     href: "/mi-cuenta/descargas",
     label: "Mis descargas",
     icon: Download,
+    description: "Descarga lo que ya tienes disponible",
   },
-  { href: "/mi-cuenta/favoritos", label: "Favoritos", icon: Heart },
+  {
+    href: "/mi-cuenta/favoritos",
+    label: "Favoritos",
+    icon: Heart,
+    description: "Recursos que guardaste para después",
+  },
   {
     href: "/mi-cuenta/colecciones",
     label: "Colecciones",
     icon: FolderHeart,
+    description: "Organiza tus recursos por temas",
   },
-  { href: "/carrito", label: "Carrito", icon: ShoppingBag },
-  { href: "/tienda", label: "Explorar", icon: Sparkles },
+  {
+    href: "/carrito",
+    label: "Carrito",
+    icon: ShoppingBag,
+    description: "Revisa lo que tienes pendiente de pagar",
+  },
+  {
+    href: "/tienda",
+    label: "Explorar recursos",
+    icon: Sparkles,
+    description: "Descubre lo nuevo del marketplace",
+  },
 ];
 
-function LinkGrid({ links }: { links: QuickLink[] }) {
+/**
+ * Rejilla compacta: solo icono y nombre.
+ *
+ * Se usa en los bloques de administración y de creador, que
+ * tienen muchos destinos y se navegan por memoria.
+ */
+function CompactGrid({ links }: { links: QuickLink[] }) {
   return (
-    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
       {links.map((link) => {
         const Icon = link.icon;
 
@@ -125,15 +156,59 @@ function LinkGrid({ links }: { links: QuickLink[] }) {
           <Link
             key={`${link.href}-${link.label}`}
             href={link.href}
-            className="rk-card rk-card-hover rk-press flex items-center gap-2.5 !rounded-[1.1rem] p-3"
+            className="rk-card rk-card-hover rk-press flex items-center gap-2.5 !rounded-rk-sm p-3"
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.75rem] bg-ink/[0.06] text-ink/70">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink/70">
               <Icon size={16} />
             </span>
 
             <span className="min-w-0 truncate text-[13px] font-medium">
               {link.label}
             </span>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Tarjetas con descripción y flecha, para los accesos de
+ * cliente: son los que se usan a diario.
+ */
+function FeatureGrid({ links }: { links: QuickLink[] }) {
+  return (
+    <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+      {links.map((link) => {
+        const Icon = link.icon;
+
+        return (
+          <Link
+            key={`${link.href}-${link.label}`}
+            href={link.href}
+            className="rk-card rk-card-hover rk-press group flex items-center gap-3.5 p-3.5 sm:p-4"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent transition-transform duration-normal ease-rk group-hover:scale-105">
+              <Icon size={18} />
+            </span>
+
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-semibold">
+                {link.label}
+              </span>
+
+              {link.description && (
+                <span className="mt-0.5 block truncate text-xs text-ink/60">
+                  {link.description}
+                </span>
+              )}
+            </span>
+
+            <ArrowRight
+              size={16}
+              aria-hidden
+              className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-accent"
+            />
           </Link>
         );
       })}
@@ -174,97 +249,105 @@ export default function QuickAccess({
       : null;
 
   return (
-    <section className="rk-enter rk-enter-3 mt-3 sm:mt-4">
-      <div className="rk-glass rounded-[1.5rem] p-4 sm:p-5">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="text-sm font-semibold">Accesos rápidos</h2>
+    <section className="rk-fade-up rk-enter-3 mt-10 sm:mt-12">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="rk-eyebrow">Accesos rápidos</p>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="rk-press inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-ink/55 transition-colors hover:bg-danger/10 hover:text-danger"
-          >
-            <LogOut size={13} />
-            Cerrar sesión
-          </button>
+          <h2 className="rk-title mt-2 text-2xl">Todo tu espacio</h2>
         </div>
 
-        {/* ADMINISTRACIÓN */}
-        {isAdmin && (
-          <div className="mt-4">
-            <p className="rk-eyebrow !tracking-[0.16em]">
-              Administración
-            </p>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="rk-press inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:bg-danger/10 hover:text-danger"
+        >
+          <LogOut size={14} />
+          Cerrar sesión
+        </button>
+      </div>
 
-            <div className="mt-2.5">
-              <LinkGrid links={ADMIN_LINKS} />
-            </div>
+      <div className="rk-divider mt-4" />
+
+      {/* ADMINISTRACIÓN */}
+      {isAdmin && (
+        <div className="mt-5">
+          <p className="rk-eyebrow">Administración</p>
+
+          <div className="mt-3">
+            <CompactGrid links={ADMIN_LINKS} />
           </div>
-        )}
+        </div>
+      )}
 
-        {/* CREATOR STUDIO */}
-        {isCreator && (
-          <div className="mt-4">
-            <p className="rk-eyebrow !tracking-[0.16em]">
-              Creator Studio
-            </p>
+      {/* CREATOR STUDIO */}
+      {isCreator && (
+        <div className="mt-5">
+          <p className="rk-eyebrow">Creator Studio</p>
 
-            <div className="mt-2.5">
-              <LinkGrid links={CREATOR_LINKS} />
-            </div>
+          <div className="mt-3">
+            <CompactGrid links={CREATOR_LINKS} />
+          </div>
 
-            {/* PERFIL PÚBLICO */}
-            <div className="mt-2.5">
-              {publicProfileUrl ? (
+          {/* PERFIL PÚBLICO */}
+          <div className="mt-2">
+            {publicProfileUrl ? (
+              <Link
+                href={publicProfileUrl}
+                className="rk-card rk-card-hover rk-press group flex items-center gap-2.5 !rounded-rk-sm p-3"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent">
+                  <UserRound size={16} />
+                </span>
+
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[13px] font-medium">
+                    Ver perfil público
+                  </span>
+
+                  <span className="block truncate text-[11px] text-ink/60">
+                    @{user.username}
+                  </span>
+                </span>
+
+                <ArrowRight
+                  size={15}
+                  aria-hidden
+                  className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-accent"
+                />
+              </Link>
+            ) : (
+              <div className="rk-card flex flex-wrap items-center justify-between gap-3 !rounded-rk-sm p-3">
+                <span className="flex min-w-0 items-center gap-2.5">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-rk-sm bg-warning/12 text-warning">
+                    <AlertCircle size={16} />
+                  </span>
+
+                  <span className="min-w-0 text-[13px] text-ink/60">
+                    Configura tu username para publicar tu perfil
+                  </span>
+                </span>
+
                 <Link
-                  href={publicProfileUrl}
-                  className="rk-card rk-card-hover rk-press flex items-center gap-2.5 !rounded-[1.1rem] p-3"
+                  href="/creadores/panel/perfil"
+                  className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2 !text-xs"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.75rem] bg-primary text-onprimary">
-                    <UserRound size={16} />
-                  </span>
-
-                  <span className="min-w-0">
-                    <span className="block text-[13px] font-medium">
-                      Ver perfil público
-                    </span>
-
-                    <span className="block truncate text-[11px] text-ink/45">
-                      @{user.username}
-                    </span>
-                  </span>
+                  Configurar perfil
                 </Link>
-              ) : (
-                <div className="rk-card flex flex-wrap items-center justify-between gap-3 !rounded-[1.1rem] p-3">
-                  <span className="flex min-w-0 items-center gap-2.5">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.75rem] bg-warning/12 text-warning">
-                      <AlertCircle size={16} />
-                    </span>
-
-                    <span className="min-w-0 text-[13px] text-ink/60">
-                      Configura tu username para publicar tu perfil
-                    </span>
-                  </span>
-
-                  <Link
-                    href="/creadores/panel/perfil"
-                    className="rk-btn rk-btn-primary !px-4 !py-2 !text-xs"
-                  >
-                    Configurar perfil
-                  </Link>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
+        </div>
+      )}
+
+      {/* CUENTA */}
+      <div className="mt-5">
+        {(isAdmin || isCreator) && (
+          <p className="rk-eyebrow">Mi cuenta</p>
         )}
 
-        {/* CUENTA */}
-        <div className="mt-4">
-          <p className="rk-eyebrow !tracking-[0.16em]">Mi cuenta</p>
-
-          <div className="mt-2.5">
-            <LinkGrid links={CLIENT_LINKS} />
-          </div>
+        <div className={isAdmin || isCreator ? "mt-3" : ""}>
+          <FeatureGrid links={CLIENT_LINKS} />
         </div>
       </div>
     </section>

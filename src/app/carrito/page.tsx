@@ -1,9 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 
+import EmptyState from "@/components/EmptyState";
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import {
     CART_STORAGE_KEY,
@@ -121,12 +124,12 @@ export default function Cart() {
                     <div>
                         <p className="rk-eyebrow">RCKTDMG</p>
 
-                        <h1 className="mt-2 text-[2rem] font-semibold leading-tight sm:text-4xl">
+                        <h1 className="rk-title mt-2 text-[2rem] sm:text-4xl">
                             Carrito
                         </h1>
 
                         {cart.length > 0 && (
-                            <p className="mt-2 text-sm text-ink/45">
+                            <p className="mt-2 text-sm text-ink/60">
                                 {units}{" "}
                                 {units === 1 ? "artículo" : "artículos"}
                             </p>
@@ -147,26 +150,16 @@ export default function Cart() {
 
                 {cart.length === 0 ? (
                     /* CARRITO VACÍO */
-                    <div className="rk-enter rk-enter-1 rk-card mt-6 px-6 py-16 text-center">
-                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-ink/[0.05]">
-                            <ShoppingBag size={24} className="text-ink/35" />
-                        </div>
-
-                        <h2 className="mt-5 text-xl font-semibold">
-                            Tu carrito está vacío
-                        </h2>
-
-                        <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-ink/45">
-                            Agrega un recurso para comenzar.
-                        </p>
-
-                        <Link
-                            href="/tienda"
-                            className="rk-btn rk-btn-primary mt-7"
-                        >
-                            Explorar recursos
-                            <ArrowRight size={16} />
-                        </Link>
+                    <div className="mt-6">
+                        <EmptyState
+                            icon={ShoppingBag}
+                            title="Tu carrito está vacío"
+                            description="Agrega un recurso para comenzar."
+                            action={{
+                                href: "/tienda",
+                                label: "Explorar recursos",
+                            }}
+                        />
                     </div>
                 ) : (
                     <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_340px]">
@@ -181,20 +174,22 @@ export default function Cart() {
                                     <Link
                                         href={`/tienda/${item.slug}`}
                                         className="rk-press-sm shrink-0"
+                                        aria-label={item.name}
                                     >
-                                        <div className="h-20 w-20 overflow-hidden rounded-[1rem] bg-gradient-to-br from-ink/[0.04] to-ink/[0.08] sm:h-24 sm:w-24">
+                                        {/* Contenido visual 9:16, siempre nítido. */}
+                                        <div className="rk-media rk-aspect-product relative w-16 overflow-hidden rounded-rk-sm sm:w-[4.5rem]">
                                             {item.coverUrl ? (
-                                                <img
+                                                <Image
                                                     src={item.coverUrl}
                                                     alt={item.name}
-                                                    className="h-full w-full object-cover"
+                                                    fill
+                                                    className="object-cover"
+                                                    sizes="72px"
                                                 />
                                             ) : (
-                                                <div className="flex h-full items-center justify-center">
-                                                    <span className="text-[9px] uppercase tracking-[0.2em] text-ink/25">
-                                                        RK
-                                                    </span>
-                                                </div>
+                                                <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
+                                                    RK
+                                                </span>
                                             )}
                                         </div>
                                     </Link>
@@ -214,13 +209,13 @@ export default function Cart() {
                                                 type="button"
                                                 onClick={() => remove(item.id)}
                                                 aria-label={`Quitar ${item.name}`}
-                                                className="rk-press flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/35 hover:bg-danger/10 hover:text-danger"
+                                                className="rk-press flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/60 hover:bg-danger/10 hover:text-danger"
                                             >
                                                 <Trash2 size={15} />
                                             </button>
                                         </div>
 
-                                        <p className="mt-1 text-sm text-ink/45">
+                                        <p className="mt-1 text-sm text-ink/60">
                                             S/ {item.price.toFixed(2)} c/u
                                         </p>
 
@@ -264,24 +259,33 @@ export default function Cart() {
 
                         {/* RESUMEN */}
                         <div className="rk-enter rk-enter-2 lg:sticky lg:top-24 lg:self-start">
-                            <div className="rk-glass rounded-[1.75rem] p-5 sm:p-6">
+                            <div className="rk-glass rounded-rk-lg p-5 sm:p-6">
                                 <h2 className="text-sm font-semibold">
                                     Resumen del pedido
                                 </h2>
 
+                                {/* Solo importes reales: no hay
+                                    descuentos ni impuestos calculados. */}
                                 <div className="mt-5 space-y-2.5 text-sm">
-                                    <div className="flex justify-between text-ink/55">
+                                    <div className="flex justify-between text-ink/60">
                                         <span>Subtotal</span>
-                                        <span>S/ {total.toFixed(2)}</span>
+
+                                        <span className="tabular-nums">
+                                            S/ {total.toFixed(2)}
+                                        </span>
                                     </div>
 
-                                    <div className="flex justify-between text-ink/55">
-                                        <span>Descuentos</span>
-                                        <span>S/ 0.00</span>
+                                    <div className="flex justify-between text-ink/60">
+                                        <span>
+                                            {units}{" "}
+                                            {units === 1
+                                                ? "artículo"
+                                                : "artículos"}
+                                        </span>
                                     </div>
                                 </div>
 
-                                <div className="mt-5 flex items-baseline justify-between border-t border-ink/[0.07] pt-5">
+                                <div className="mt-5 flex items-baseline justify-between border-t border-line/10 pt-5">
                                     <span className="text-sm font-medium">
                                         Total
                                     </span>
@@ -310,6 +314,8 @@ export default function Cart() {
                     </div>
                 )}
             </main>
+
+            <Footer />
         </>
     );
 }
