@@ -243,7 +243,7 @@ export default function AccountMenu({
     return (
       <div
         aria-hidden
-        className="h-10 w-10 animate-pulse rounded-full bg-ink/[0.06]"
+        className="h-11 w-11 animate-pulse rounded-full bg-ink/[0.06]"
       />
     );
   }
@@ -257,7 +257,7 @@ export default function AccountMenu({
         aria-expanded={open}
         aria-haspopup="dialog"
         title="Mi cuenta"
-        className={`rk-press relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full transition-colors ${
+        className={`rk-press relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full transition-colors ${
           open
             ? "bg-ink/[0.08] text-ink"
             : "text-ink/70 hover:bg-ink/[0.06] hover:text-ink"

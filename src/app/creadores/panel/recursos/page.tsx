@@ -256,7 +256,7 @@ export default function RecursosPage() {
             <button
               type="button"
               onClick={cargarRecursos}
-              className="rk-btn rk-btn-primary mt-4 !min-h-0 !px-4 !py-2.5 !text-sm"
+              className="rk-btn rk-btn-primary mt-4 rk-btn-compact !px-4 !py-2.5 !text-sm"
             >
               Intentar nuevamente
             </button>
@@ -381,21 +381,21 @@ export default function RecursosPage() {
                   <div className="mt-4 flex flex-wrap gap-2 border-t border-line/10 pt-4">
                     <Link
                       href={`/creadores/productos/${product.id}`}
-                      className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2 !text-[13px]"
+                      className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2 !text-[13px]"
                     >
                       Gestionar
                     </Link>
 
                     <Link
                       href={`/creadores/productos/${product.id}/estadisticas`}
-                      className="rk-btn rk-btn-ghost !min-h-0 !px-4 !py-2 !text-[13px]"
+                      className="rk-btn rk-btn-ghost rk-btn-compact !px-4 !py-2 !text-[13px]"
                     >
                       Estadísticas
                     </Link>
 
                     <Link
                       href={`/creadores/productos/${product.id}/imagenes`}
-                      className="rk-btn rk-btn-ghost !min-h-0 !px-4 !py-2 !text-[13px]"
+                      className="rk-btn rk-btn-ghost rk-btn-compact !px-4 !py-2 !text-[13px]"
                     >
                       Imágenes
                     </Link>
@@ -404,7 +404,7 @@ export default function RecursosPage() {
                       product.status === "REJECTED") && (
                       <Link
                         href={`/creadores/productos/${product.id}/editar`}
-                        className="rk-btn rk-btn-ghost !min-h-0 !px-4 !py-2 !text-[13px]"
+                        className="rk-btn rk-btn-ghost rk-btn-compact !px-4 !py-2 !text-[13px]"
                       >
                         Editar
                       </Link>
@@ -415,7 +415,7 @@ export default function RecursosPage() {
                         type="button"
                         onClick={() => enviarARevision(product.id)}
                         disabled={sendingId === product.id}
-                        className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2 !text-[13px]"
+                        className="rk-btn rk-btn-primary rk-btn-compact !px-4 !py-2 !text-[13px]"
                       >
                         <Send size={14} />
                         {sendingId === product.id
@@ -429,7 +429,7 @@ export default function RecursosPage() {
                         href={`/tienda/${product.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2 !text-[13px]"
+                        className="rk-btn rk-btn-primary rk-btn-compact !px-4 !py-2 !text-[13px]"
                       >
                         <ExternalLink size={14} />
                         Ver publicación

@@ -5,10 +5,21 @@ import { Search, SlidersHorizontal, X } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FiltrosMoviles from "./FiltrosMoviles";
+import FiltrosSidebar from "./FiltrosSidebar";
 import StoreResults, {
   StoreResultsSkeleton,
 } from "./StoreResults";
 import { prisma } from "@/lib/prisma";
+import {
+  COLORES,
+  ORDENES,
+  RANGOS_PRECIO,
+  TAG_PACK,
+  leerParametros,
+  urlTienda,
+  type ParametrosTienda,
+} from "@/lib/catalogo";
 
 export const metadata: Metadata = {
   title: "Recursos",
@@ -19,68 +30,142 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 type StoreProps = {
-  searchParams: Promise<{
-    q?: string;
-    categoria?: string;
-  }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function Store({ searchParams }: StoreProps) {
-  const params = await searchParams;
+  const parametros = leerParametros(await searchParams);
 
-  const query =
-    typeof params.q === "string" ? params.q.trim() : "";
+  const query = parametros.q ?? "";
+  const categorySlug = parametros.categoria ?? "";
 
-  const categorySlug =
-    typeof params.categoria === "string"
-      ? params.categoria.trim()
-      : "";
-
-  // Las categorías se necesitan para pintar los filtros, que
-  // van por encima de los resultados.
-  const categories = await prisma.category.findMany({
-    where: {
-      products: {
-        some: {
-          status: "PUBLISHED",
+  /*
+    Las opciones de filtro salen del catálogo real: solo se
+    ofrecen formatos y colores que de verdad tienen recursos
+    publicados detrás, para que ningún filtro lleve a una
+    lista vacía.
+  */
+  const [categories, formatosCrudos, coloresCrudos, totalPacks] =
+    await Promise.all([
+      prisma.category.findMany({
+        where: {
+          products: {
+            some: {
+              status: "PUBLISHED",
+            },
+          },
         },
+        orderBy: {
+          name: "asc",
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      }),
+
+      prisma.product.groupBy({
+        by: ["fileFormat"],
+        where: {
+          status: "PUBLISHED",
+          fileFormat: { not: null },
+        },
+        _count: { _all: true },
+      }),
+
+      prisma.product.groupBy({
+        by: ["color"],
+        where: {
+          status: "PUBLISHED",
+          color: { not: null },
+        },
+        _count: { _all: true },
+      }),
+
+      prisma.product.count({
+        where: {
+          status: "PUBLISHED",
+          tags: { some: { tag: { slug: TAG_PACK } } },
+        },
+      }),
+    ]);
+
+  const formatos = formatosCrudos
+    .filter((fila) => Boolean(fila.fileFormat))
+    .map((fila) => ({
+      valor: fila.fileFormat as string,
+      etiqueta: (fila.fileFormat as string).toUpperCase(),
+      conteo: fila._count._all,
+    }))
+    .sort((a, b) => b.conteo - a.conteo || a.valor.localeCompare(b.valor));
+
+  // Se respeta el orden de la paleta, no el alfabético.
+  const colores = COLORES.flatMap((definicion) => {
+    const fila = coloresCrudos.find(
+      (c) => c.color === definicion.valor
+    );
+
+    if (!fila) return [];
+
+    return [
+      {
+        valor: definicion.valor,
+        etiqueta: definicion.etiqueta,
+        conteo: fila._count._all,
       },
-    },
-    orderBy: {
-      name: "asc",
-    },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-    },
+    ];
   });
 
   const activeCategory = categories.find(
     (category) => category.slug === categorySlug
   );
 
-  // Conserva el otro filtro al cambiar de categoría.
-  function categoryHref(slug?: string) {
-    const search = new URLSearchParams();
+  // Quitar solo la búsqueda, conservando el resto de filtros.
+  const clearQueryHref = urlTienda(parametros, { q: undefined });
 
-    if (query) {
-      search.set("q", query);
-    }
+  /* Filtros aplicados, cada uno con su propia forma de quitarse. */
+  const aplicados: { clave: keyof ParametrosTienda; etiqueta: string }[] =
+    [];
 
-    if (slug) {
-      search.set("categoria", slug);
-    }
-
-    const queryString = search.toString();
-
-    return queryString ? `/tienda?${queryString}` : "/tienda";
+  if (activeCategory) {
+    aplicados.push({
+      clave: "categoria",
+      etiqueta: activeCategory.name,
+    });
   }
 
-  // Quitar solo la búsqueda, conservando la categoría activa.
-  const clearQueryHref = categorySlug
-    ? `/tienda?categoria=${categorySlug}`
-    : "/tienda";
+  if (parametros.precio) {
+    const rango = RANGOS_PRECIO.find(
+      (r) => r.valor === parametros.precio
+    );
+
+    if (rango) {
+      aplicados.push({ clave: "precio", etiqueta: rango.etiqueta });
+    }
+  }
+
+  if (parametros.formato) {
+    aplicados.push({
+      clave: "formato",
+      etiqueta: parametros.formato.toUpperCase(),
+    });
+  }
+
+  if (parametros.color) {
+    const color = COLORES.find((c) => c.valor === parametros.color);
+
+    if (color) {
+      aplicados.push({ clave: "color", etiqueta: color.etiqueta });
+    }
+  }
+
+  if (parametros.pack === "true") {
+    aplicados.push({ clave: "pack", etiqueta: "Solo packs" });
+  }
+
+  const ordenActual =
+    ORDENES.find((o) => o.valor === parametros.sort) ?? ORDENES[0];
 
   return (
     <>
@@ -93,12 +178,12 @@ export default async function Store({ searchParams }: StoreProps) {
           {/* Decoración CSS sutil: un halo y nada más. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-accent/12 blur-[90px]"
+            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-ink/[0.05] blur-[90px]"
           />
 
-          <p className="rk-eyebrow">RCKTDMG Store</p>
+          <p className="rk-kicker">RCKTDMG Store</p>
 
-          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl lg:text-5xl">
+          <h1 className="rk-title mt-3 text-[2rem] sm:text-4xl lg:text-5xl">
             Explora recursos digitales
           </h1>
 
@@ -111,13 +196,21 @@ export default async function Store({ searchParams }: StoreProps) {
         {/* ══════════ BUSCADOR ══════════ */}
         <section className="rk-fade-up rk-enter-1 mt-7">
           <form action="/tienda" method="GET">
-            {/* Mantiene la categoría activa al buscar. */}
-            {categorySlug && (
-              <input
-                type="hidden"
-                name="categoria"
-                value={categorySlug}
-              />
+            {/*
+              Una búsqueda nueva no debe tirar los filtros que ya
+              estaban puestos: viajan como campos ocultos.
+            */}
+            {(
+              ["categoria", "formato", "color", "precio", "pack", "sort"] as const
+            ).map((clave) =>
+              parametros[clave] ? (
+                <input
+                  key={clave}
+                  type="hidden"
+                  name={clave}
+                  value={parametros[clave]}
+                />
+              ) : null
             )}
 
             <div className="relative max-w-2xl">
@@ -133,11 +226,11 @@ export default async function Store({ searchParams }: StoreProps) {
                 placeholder="Buscar recursos..."
                 aria-label="Buscar recursos"
                 autoComplete="off"
-                className="h-14 w-full rounded-rk-md border border-line/10 bg-surface/70 pl-14 pr-[6.5rem] text-[15px] outline-none backdrop-blur-rk transition-colors duration-normal ease-rk placeholder:text-ink/60 hover:border-line/20 focus:border-accent/55 focus:bg-surface focus:shadow-[0_0_0_4px_var(--rk-accent-soft)]"
+                className="h-14 w-full rounded-rk-md border border-line/10 bg-surface/70 pl-14 pr-[6.5rem] text-[15px] outline-none backdrop-blur-rk transition-colors duration-normal ease-rk placeholder:text-ink/60 hover:border-line/20 focus:border-ink/40 focus:bg-surface focus:shadow-[0_0_0_4px_var(--rk-accent-soft)]"
               />
 
               <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
-                {/* Limpiar: navegación real, conserva la categoría. */}
+                {/* Limpiar: navegación real, conserva los filtros. */}
                 {query && (
                   <Link
                     href={clearQueryHref}
@@ -151,7 +244,7 @@ export default async function Store({ searchParams }: StoreProps) {
 
                 <button
                   type="submit"
-                  className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2.5 !text-sm"
+                  className="rk-btn rk-btn-ink !px-4 !py-3 !text-sm"
                 >
                   Buscar
                 </button>
@@ -160,7 +253,7 @@ export default async function Store({ searchParams }: StoreProps) {
           </form>
         </section>
 
-        {/* ══════════ FILTROS ══════════ */}
+        {/* ══════════ CATEGORÍAS ══════════ */}
         {categories.length > 0 && (
           <section className="rk-fade-up rk-enter-2 mt-4">
             <div className="flex items-center gap-2.5">
@@ -180,7 +273,7 @@ export default async function Store({ searchParams }: StoreProps) {
                 className="-mx-4 flex flex-1 gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
               >
                 <Link
-                  href={categoryHref()}
+                  href={urlTienda(parametros, { categoria: undefined })}
                   aria-current={!categorySlug ? "true" : undefined}
                   className={`rk-chip shrink-0 ${
                     categorySlug ? "" : "rk-chip-active"
@@ -195,7 +288,9 @@ export default async function Store({ searchParams }: StoreProps) {
                   return (
                     <Link
                       key={category.id}
-                      href={categoryHref(category.slug)}
+                      href={urlTienda(parametros, {
+                        categoria: active ? undefined : category.slug,
+                      })}
                       aria-current={active ? "true" : undefined}
                       className={`rk-chip shrink-0 ${
                         active ? "rk-chip-active" : ""
@@ -210,22 +305,68 @@ export default async function Store({ searchParams }: StoreProps) {
           </section>
         )}
 
-        {/*
-          ══════════ RESULTADOS ══════════
-          El límite de carga vive aquí, no en un loading.tsx de
-          segmento: así no afecta a /tienda/[slug], que necesita
-          poder devolver un 404 real.
-        */}
-        <Suspense
-          key={`${query}|${categorySlug}`}
-          fallback={<StoreResultsSkeleton />}
-        >
-          <StoreResults
-            query={query}
-            categorySlug={categorySlug}
-            activeCategoryName={activeCategory?.name ?? null}
+        {/* ══════════ FILTROS Y RESULTADOS ══════════ */}
+        <div className="mt-5 flex gap-6">
+          <FiltrosSidebar
+            actuales={parametros}
+            formatos={formatos}
+            colores={colores}
+            totalPacks={totalPacks}
           />
-        </Suspense>
+
+          <div className="min-w-0 flex-1">
+            {/* En móvil, los filtros viven en una hoja inferior. */}
+            <FiltrosMoviles
+              actuales={parametros}
+              formatos={formatos}
+              colores={colores}
+              totalPacks={totalPacks}
+            />
+
+            {/* Lo que está aplicado, y cómo quitarlo. */}
+            {aplicados.length > 0 && (
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                {aplicados.map((filtro) => (
+                  <Link
+                    key={filtro.clave}
+                    href={urlTienda(parametros, {
+                      [filtro.clave]: undefined,
+                    })}
+                    className="rk-chip rk-chip-active"
+                  >
+                    {filtro.etiqueta}
+                    <X size={12} aria-hidden />
+                    <span className="sr-only">
+                      Quitar filtro {filtro.etiqueta}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* El orden activo también se ve en escritorio. */}
+            {parametros.sort && (
+              <p className="mt-3 hidden text-xs text-ink/45 lg:block">
+                Orden: {ordenActual.etiqueta}
+              </p>
+            )}
+
+            {/*
+              El límite de carga vive aquí, no en un loading.tsx de
+              segmento: así no afecta a /tienda/[slug], que necesita
+              poder devolver un 404 real.
+            */}
+            <Suspense
+              key={JSON.stringify(parametros)}
+              fallback={<StoreResultsSkeleton />}
+            >
+              <StoreResults
+                parametros={parametros}
+                activeCategoryName={activeCategory?.name ?? null}
+              />
+            </Suspense>
+          </div>
+        </div>
       </main>
 
       <Footer />

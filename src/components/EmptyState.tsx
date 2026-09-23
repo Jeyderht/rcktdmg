@@ -33,7 +33,7 @@ export default function EmptyState({
     <div className="rk-fade-up rk-card px-6 py-14 text-center sm:py-16">
       <div
         aria-hidden
-        className="mx-auto flex h-16 w-16 items-center justify-center rounded-rk-md bg-accent/10 text-accent"
+        className="mx-auto flex h-16 w-16 items-center justify-center rounded-rk-md bg-ink/[0.06] text-ink"
       >
         <Icon size={26} />
       </div>

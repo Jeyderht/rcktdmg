@@ -45,7 +45,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-20 border-t border-line/10">
+    <footer className="rk-onyx mt-16">
       <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-5 lg:px-8 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_2fr]">
 
@@ -74,14 +74,14 @@ export default function Footer() {
           <div className="grid gap-8 sm:grid-cols-3">
             {SECTIONS.map((section) => (
               <nav key={section.title} aria-label={section.title}>
-                <h2 className="rk-eyebrow">{section.title}</h2>
+                <h2 className="rk-kicker">{section.title}</h2>
 
-                <ul className="mt-4 space-y-2.5">
+                <ul className="mt-4 space-y-0.5">
                   {section.links.map((link) => (
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="-ml-1 inline-block rounded-full px-1 py-1.5 text-sm text-ink/60 transition-colors duration-fast hover:text-accent"
+                        className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center rounded-full px-1 text-sm text-ink/60 transition-colors duration-fast hover:text-ink"
                       >
                         {link.label}
                       </Link>

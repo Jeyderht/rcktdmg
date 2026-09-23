@@ -7,6 +7,7 @@ import { ChevronLeft, ExternalLink } from "lucide-react";
 import ResourceActions from "../ResourceActions";
 import { verifySessionToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { COLORES, TAG_PACK } from "@/lib/catalogo";
 
 type Props = {
   params: Promise<{
@@ -53,6 +54,12 @@ export default async function AdminRecursoPage({ params }: Props) {
     include: {
       creator: true,
       category: true,
+
+      // Solo la etiqueta de pack: el panel no necesita más.
+      tags: {
+        where: { tag: { slug: TAG_PACK } },
+        select: { tagId: true },
+      },
       images: {
         orderBy: { sortOrder: "asc" },
         select: { id: true, url: true, alt: true },
@@ -63,6 +70,11 @@ export default async function AdminRecursoPage({ params }: Props) {
   if (!resource) {
     notFound();
   }
+
+  const colorEtiqueta =
+    COLORES.find((c) => c.valor === resource.color)?.etiqueta ?? null;
+
+  const esPack = resource.tags.length > 0;
 
   const statusLabel =
     STATUS_LABEL[resource.status] || resource.status;
@@ -83,6 +95,27 @@ export default async function AdminRecursoPage({ params }: Props) {
     {
       label: "Precio",
       value: `S/ ${Number(resource.price).toFixed(2)}`,
+    },
+    // Metadatos del catálogo: solo se listan si existen.
+    ...(resource.fileFormat
+      ? [
+        {
+          label: "Formato",
+          value: resource.fileFormat.toUpperCase(),
+        },
+      ]
+      : []),
+    ...(colorEtiqueta
+      ? [
+        {
+          label: "Color",
+          value: colorEtiqueta,
+        },
+      ]
+      : []),
+    {
+      label: "Tipo",
+      value: esPack ? "Pack" : "Recurso individual",
     },
     {
       label: "Creado",
@@ -152,7 +185,7 @@ export default async function AdminRecursoPage({ params }: Props) {
         <header className="rk-fade-up">
           <Link
             href="/admin/recursos"
-            className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
+            className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
           >
             <ChevronLeft size={15} />
             Recursos
@@ -182,7 +215,7 @@ export default async function AdminRecursoPage({ params }: Props) {
                 href={`/tienda/${resource.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rk-btn rk-btn-glass !min-h-0 shrink-0 !px-4 !py-2.5 !text-sm"
+                className="rk-btn rk-btn-glass rk-btn-compact shrink-0 !px-4 !py-2.5 !text-sm"
               >
                 <ExternalLink size={15} />
                 Ver publicación

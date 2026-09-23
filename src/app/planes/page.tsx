@@ -78,7 +78,7 @@ export default async function PlansPage() {
                     <>
                       <div
                         aria-hidden
-                        className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-accent/35 blur-3xl"
+                        className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-ink/[0.07] blur-3xl"
                       />
 
                       <span className="relative mb-4 inline-flex w-fit rounded-full bg-onprimary/15 px-3 py-1 text-[11px] font-medium backdrop-blur-sm">

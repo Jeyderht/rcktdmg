@@ -160,7 +160,7 @@ export default async function CreatorPublicProfile({
                   sizes="(max-width: 1024px) 100vw, 72rem"
                 />
               ) : (
-                <div className="h-full w-full bg-gradient-to-br from-ink via-ink/75 to-accent/60" />
+                <div className="h-full w-full bg-gradient-to-br from-ink via-ink/75 to-ink/50" />
               )}
 
               {/* Degradado para que el avatar respire sobre la imagen */}

@@ -71,7 +71,7 @@ function SearchField({
           placeholder="Buscar recursos..."
           aria-label="Buscar recursos"
           autoComplete="off"
-          className="h-11 w-full rounded-full border border-line/10 bg-surface/60 pl-11 pr-24 text-sm outline-none backdrop-blur-xl transition duration-300 ease-rk placeholder:text-ink/60 focus:border-accent/40 focus:bg-surface focus:shadow-[0_0_0_4px_var(--rk-accent-soft)]"
+          className="h-12 w-full rounded-full border border-line/10 bg-surface/60 pl-11 pr-24 text-sm outline-none backdrop-blur-xl transition duration-300 ease-rk placeholder:text-ink/60 focus:border-ink/40 focus:bg-surface"
         />
 
         <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
@@ -88,7 +88,7 @@ function SearchField({
 
           <button
             type="submit"
-            className="rk-press rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-accent-contrast shadow-rk-sm hover:bg-accent-hover"
+            className="rk-btn rk-btn-ink rk-btn-compact !rounded-full !px-4 !py-2 !text-xs"
           >
             Buscar
           </button>
@@ -117,12 +117,12 @@ function IconAction({
       href={href}
       aria-label={label}
       title={label}
-      className={`rk-press relative flex h-10 w-10 items-center justify-center rounded-full text-ink/70 hover:bg-ink/[0.06] hover:text-ink ${className}`}
+      className={`rk-press relative flex h-11 w-11 items-center justify-center rounded-full text-ink/70 hover:bg-ink/[0.06] hover:text-ink ${className}`}
     >
       {children}
 
       {badge !== undefined && badge > 0 && (
-        <span className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold leading-none text-accent-contrast ring-2 ring-surface/80">
+        <span className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-foreground px-1 text-[10px] font-semibold leading-none text-background ring-2 ring-surface/80">
           {badge > 9 ? "9+" : badge}
         </span>
       )}
@@ -178,12 +178,12 @@ function NavbarContent() {
               : "border border-line/10 bg-surface/45 shadow-rk-sm backdrop-blur-xl"
           }`}
         >
-          <div className="flex h-[3.75rem] items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 lg:px-5">
+          <div className="flex h-[3.75rem] items-center gap-1 px-2 py-2.5 sm:gap-3 sm:px-4 lg:px-5">
 
             {/* LOGO */}
             <Link
               href="/"
-              className="rk-press-sm flex shrink-0 items-center gap-2 rounded-full pl-1 pr-2"
+              className="rk-press-sm flex shrink-0 items-center gap-2 rounded-full py-1.5 pl-1 pr-2"
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-rk-sm bg-primary text-[11px] font-bold tracking-tight text-onprimary shadow-rk-sm">
                 R
@@ -195,14 +195,14 @@ function NavbarContent() {
             </Link>
 
             {/* NAVEGACIÓN PRINCIPAL */}
-            <nav className="hidden items-center gap-0.5 pl-2 lg:flex">
+            <nav className="hidden items-center gap-0.5 pl-2 xl:flex">
               {links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={`rk-press-sm rounded-full px-3.5 py-2 text-sm transition-colors duration-200 ${
                     isActive(link.href)
-                      ? "bg-accent/10 font-medium text-accent"
+                      ? "bg-ink/[0.07] font-semibold text-ink"
                       : "text-ink/60 hover:bg-ink/[0.04] hover:text-ink"
                   }`}
                 >
@@ -212,12 +212,12 @@ function NavbarContent() {
             </nav>
 
             {/* BUSCADOR (DESKTOP) */}
-            <div className="ml-auto hidden min-w-0 flex-1 justify-end md:flex">
-              <SearchField className="w-full max-w-xs" />
+            <div className="ml-auto hidden min-w-0 flex-1 justify-end xl:flex">
+              <SearchField className="w-full max-w-sm" />
             </div>
 
             {/* ACCIONES */}
-            <div className="ml-auto flex shrink-0 items-center gap-0.5 md:ml-2">
+            <div className="ml-auto flex shrink-0 items-center gap-0 sm:gap-0.5 xl:ml-2">
 
               {/* BUSCADOR (MÓVIL) */}
               <button
@@ -225,7 +225,7 @@ function NavbarContent() {
                 onClick={() => setMobileSearchOpen((open) => !open)}
                 aria-label="Buscar"
                 aria-expanded={mobileSearchOpen}
-                className="rk-press flex h-10 w-10 items-center justify-center rounded-full text-ink/70 hover:bg-ink/[0.06] hover:text-ink md:hidden"
+                className="rk-press flex h-11 w-11 items-center justify-center rounded-full text-ink/70 hover:bg-ink/[0.06] hover:text-ink xl:hidden"
               >
                 {mobileSearchOpen ? <X size={18} /> : <Search size={18} />}
               </button>
@@ -261,7 +261,7 @@ function NavbarContent() {
               {user?.role === "ADMIN" && (
                 <Link
                   href="/admin"
-                  className="rk-btn rk-btn-glass ml-1 hidden !px-3.5 !py-2 !text-[13px] lg:inline-flex"
+                  className="rk-btn rk-btn-line ml-1 hidden !px-3.5 !text-[13px] xl:inline-flex"
                 >
                   <Shield size={14} />
                   Mi panel
@@ -271,7 +271,7 @@ function NavbarContent() {
               {(user?.role === "CREATOR" || user?.role === "ADMIN") && (
                 <Link
                   href="/creadores/panel"
-                  className="rk-btn rk-btn-glass ml-1 hidden !px-3.5 !py-2 !text-[13px] lg:inline-flex"
+                  className="rk-btn rk-btn-line ml-1 hidden !px-3.5 !text-[13px] xl:inline-flex"
                 >
                   <Sparkles size={14} />
                   Creator Studio
@@ -290,7 +290,7 @@ function NavbarContent() {
                     <IconAction
                       href="/admin"
                       label="Mi panel"
-                      className="flex lg:hidden"
+                      className="flex xl:hidden"
                     >
                       <Shield size={18} />
                     </IconAction>
@@ -301,7 +301,7 @@ function NavbarContent() {
                     <IconAction
                       href="/creadores/panel"
                       label="Creator Studio"
-                      className="flex lg:hidden"
+                      className="flex xl:hidden"
                     >
                       <Sparkles size={18} />
                     </IconAction>
@@ -316,7 +316,7 @@ function NavbarContent() {
                 <>
                   <Link
                     href="/registro"
-                    className="rk-btn rk-btn-primary hidden !px-4 !py-2.5 sm:inline-flex"
+                    className="rk-btn rk-btn-ink hidden !px-4 sm:inline-flex"
                   >
                     Crear cuenta
                   </Link>
@@ -329,7 +329,7 @@ function NavbarContent() {
 
           {/* BUSCADOR DESPLEGABLE EN MÓVIL */}
           {mobileSearchOpen && (
-            <div className="animate-scale-in border-t border-line/10 px-3 py-3 md:hidden">
+            <div className="animate-scale-in border-t border-line/10 px-3 py-3 xl:hidden">
               <SearchField
                 autoFocus
                 onSubmitted={() => setMobileSearchOpen(false)}
@@ -339,12 +339,12 @@ function NavbarContent() {
         </div>
 
         {/* NAVEGACIÓN SECUNDARIA EN TABLET */}
-        <nav className="mx-auto mt-2 hidden max-w-7xl items-center gap-1 overflow-x-auto px-1 sm:flex lg:hidden">
+        <nav className="mx-auto mt-2 hidden max-w-7xl items-center gap-1 overflow-x-auto px-1 sm:flex xl:hidden">
           <Link
             href="/"
             className={`rk-press-sm shrink-0 rounded-full px-3.5 py-2 text-sm backdrop-blur-xl transition-colors ${
               isActive("/")
-                ? "bg-accent/10 font-medium text-accent"
+                ? "bg-ink/[0.07] font-semibold text-ink"
                 : "text-ink/60 hover:text-ink"
             }`}
           >
@@ -357,7 +357,7 @@ function NavbarContent() {
               href={link.href}
               className={`rk-press-sm shrink-0 rounded-full px-3.5 py-2 text-sm backdrop-blur-xl transition-colors ${
                 isActive(link.href)
-                  ? "bg-accent/10 font-medium text-accent"
+                  ? "bg-ink/[0.07] font-semibold text-ink"
                   : "text-ink/60 hover:text-ink"
               }`}
             >
@@ -370,7 +370,7 @@ function NavbarContent() {
               href="/creadores/panel"
               className={`rk-press-sm shrink-0 rounded-full px-3.5 py-2 text-sm backdrop-blur-xl transition-colors ${
                 isActive("/creadores/panel")
-                  ? "bg-accent/10 font-medium text-accent"
+                  ? "bg-ink/[0.07] font-semibold text-ink"
                   : "text-ink/60 hover:text-ink"
               }`}
             >
@@ -383,7 +383,7 @@ function NavbarContent() {
               href="/admin"
               className={`rk-press-sm shrink-0 rounded-full px-3.5 py-2 text-sm backdrop-blur-xl transition-colors ${
                 isActive("/admin")
-                  ? "bg-accent/10 font-medium text-accent"
+                  ? "bg-ink/[0.07] font-semibold text-ink"
                   : "text-ink/60 hover:text-ink"
               }`}
             >

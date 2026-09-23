@@ -88,7 +88,7 @@ export default function MobileBottomNav({
               aria-current={active ? "page" : undefined}
               className={`rk-press relative flex flex-1 flex-col items-center justify-center gap-1 rounded-rk-md py-2 ${
                 active
-                  ? "bg-accent/10 text-accent"
+                  ? "bg-ink/[0.07] text-ink"
                   : "text-ink/60 hover:text-ink/70"
               }`}
             >
@@ -96,7 +96,7 @@ export default function MobileBottomNav({
                 <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
 
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -right-2 -top-1.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold leading-none text-accent-contrast ring-2 ring-surface/90">
+                  <span className="absolute -right-2 -top-1.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-foreground px-1 text-[10px] font-semibold leading-none text-background ring-2 ring-surface/90">
                     {item.badge > 9 ? "9+" : item.badge}
                   </span>
                 )}
@@ -110,11 +110,11 @@ export default function MobileBottomNav({
                 {item.label}
               </span>
 
-              {/* Indicador de pestaña activa, en azul de firma. */}
+              {/* Indicador de pestaña activa, en tinta. */}
               {active && (
                 <span
                   aria-hidden
-                  className="absolute inset-x-4 bottom-0.5 h-[2px] rounded-full bg-accent"
+                  className="absolute inset-x-4 bottom-0.5 h-[2px] rounded-full bg-foreground"
                 />
               )}
             </Link>

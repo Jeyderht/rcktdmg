@@ -196,7 +196,7 @@ export default function MisDescargasPage() {
                         <button
                             type="button"
                             onClick={loadDownloads}
-                            className="rk-btn rk-btn-primary mt-4 !min-h-0 !px-4 !py-2.5 !text-sm"
+                            className="rk-btn rk-btn-primary mt-4 rk-btn-compact !px-4 !py-2.5 !text-sm"
                         >
                             Intentar nuevamente
                         </button>
@@ -360,7 +360,7 @@ export default function MisDescargasPage() {
                                                         !isActive ||
                                                         isDownloading
                                                     }
-                                                    className="rk-btn rk-btn-primary !min-h-0 w-full !py-2.5 !text-sm"
+                                                    className="rk-btn rk-btn-primary rk-btn-compact w-full !py-2.5 !text-sm"
                                                 >
                                                     <DownloadIcon
                                                         size={15}

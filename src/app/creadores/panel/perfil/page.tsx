@@ -297,7 +297,7 @@ export default function CreatorProfilePage() {
                 href={`/creadores/${profile.username}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rk-btn rk-btn-glass !min-h-0 w-fit !px-4 !py-2.5 !text-sm"
+                className="rk-btn rk-btn-glass rk-btn-compact w-fit !px-4 !py-2.5 !text-sm"
               >
                 Ver perfil público
               </Link>
@@ -323,7 +323,7 @@ export default function CreatorProfilePage() {
                 sizes="(max-width: 1024px) 100vw, 64rem"
               />
             ) : (
-              <div className="rk-media flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/25 via-accent/10 to-transparent">
+              <div className="rk-media flex h-full w-full items-center justify-center bg-gradient-to-br from-ink/[0.12] via-ink/[0.05] to-transparent">
                 <span className="text-[10px] font-medium uppercase tracking-[0.35em] text-ink/60">
                   RCKTDMG CREATOR
                 </span>
@@ -337,7 +337,7 @@ export default function CreatorProfilePage() {
                   coverInputRef.current?.click()
                 }
                 disabled={uploadingCover}
-                className="rk-press rk-glass-on-image rounded-full px-5 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-60"
+                className="rk-press rk-glass-on-image inline-flex min-h-[2.75rem] items-center rounded-full px-5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {uploadingCover
                   ? "Subiendo..."
@@ -390,7 +390,7 @@ export default function CreatorProfilePage() {
                     avatarInputRef.current?.click()
                   }
                   disabled={uploadingAvatar}
-                  className="rk-press rk-glass-strong absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-4 py-2 text-xs font-medium shadow-rk-sm transition-colors duration-fast ease-rk hover:text-accent disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rk-press rk-glass-strong absolute -bottom-3 left-1/2 inline-flex min-h-[2.75rem] -translate-x-1/2 items-center whitespace-nowrap rounded-full px-4 text-xs font-medium shadow-rk-sm transition-colors duration-fast ease-rk hover:text-ink disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {uploadingAvatar
                     ? "Subiendo..."
@@ -738,7 +738,7 @@ export default function CreatorProfilePage() {
               <div
                 className={`inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${
                   profile.isVerified
-                    ? "bg-accent/12 text-accent"
+                    ? "bg-ink/[0.07] text-ink"
                     : "bg-ink/[0.05] text-ink/60"
                 }`}
               >

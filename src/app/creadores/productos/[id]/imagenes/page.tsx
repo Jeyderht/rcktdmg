@@ -558,7 +558,7 @@ export default function EditarImagenesPage() {
         <div className="mb-8">
           <Link
             href={`/creadores/productos/${id}`}
-            className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
+            className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
           >
             ← Volver a gestionar
           </Link>
@@ -621,7 +621,7 @@ export default function EditarImagenesPage() {
               )}
             </div>
 
-            <label className="rk-btn rk-btn-primary mx-auto mt-4 !min-h-0 cursor-pointer !px-5 !py-2.5 !text-sm">
+            <label className="rk-btn rk-btn-primary mx-auto mt-4 rk-btn-compact cursor-pointer !px-5 !py-2.5 !text-sm">
               {uploadingCover
                 ? "Subiendo portada..."
                 : coverUrl
@@ -750,13 +750,13 @@ export default function EditarImagenesPage() {
               className={`mt-6 flex cursor-pointer items-center justify-center rounded-rk-md border border-dashed border-line/20 px-6 py-8 text-center transition-colors duration-normal ease-rk ${
                 uploadingImages
                   ? "cursor-wait opacity-50"
-                  : "hover:border-accent/40 hover:bg-ink/[0.02]"
+                  : "hover:border-ink/40 hover:bg-ink/[0.02]"
               }`}
             >
               <div>
                 <span
                   aria-hidden
-                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-accent/10 text-accent"
+                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink"
                 >
                   <ImagePlus size={22} />
                 </span>

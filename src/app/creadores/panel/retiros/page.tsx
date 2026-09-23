@@ -266,7 +266,7 @@ export default function RetirosPage() {
           <button
             type="button"
             onClick={loadWithdrawals}
-            className="rk-btn rk-btn-primary mt-5 !min-h-0 !px-4 !py-2.5 !text-sm"
+            className="rk-btn rk-btn-primary mt-5 rk-btn-compact !px-4 !py-2.5 !text-sm"
           >
             Intentar nuevamente
           </button>
@@ -301,12 +301,12 @@ export default function RetirosPage() {
 
         {/* ========== SALDO ========== */}
         <section className="rk-fade-up rk-enter-1 mt-7 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
-          <div className="rk-card border-accent/25 bg-accent/[0.06] p-5">
-            <p className="rk-eyebrow !text-accent">
+          <div className="rk-card border-ink/20 bg-ink/[0.04] p-5">
+            <p className="rk-eyebrow !text-ink">
               Saldo disponible
             </p>
 
-            <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight text-accent">
+            <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight text-ink">
               {formatMoney(summary.availableBalance)}
             </p>
 
@@ -412,7 +412,7 @@ export default function RetirosPage() {
 
                     <Link
                       href="/creadores/panel/metodos-pago"
-                      className="rk-btn rk-btn-primary mt-4 !min-h-0 !px-4 !py-2.5 !text-sm"
+                      className="rk-btn rk-btn-primary mt-4 rk-btn-compact !px-4 !py-2.5 !text-sm"
                     >
                       Registrar método de pago
                     </Link>
@@ -432,7 +432,7 @@ export default function RetirosPage() {
                           key={method.id}
                           className={`block cursor-pointer rounded-rk-md border p-4 transition-colors duration-fast ease-rk ${
                             selected
-                              ? "border-accent/55 bg-accent/[0.06]"
+                              ? "border-ink/40 bg-ink/[0.05]"
                               : "border-line/10 hover:border-line/25"
                           }`}
                         >
@@ -448,7 +448,7 @@ export default function RetirosPage() {
                                 )
                               }
                               disabled={submitting}
-                              className="mt-1 accent-accent"
+                              className="mt-1 accent-[rgb(var(--rk-foreground))]"
                             />
 
                             <div className="min-w-0 flex-1">

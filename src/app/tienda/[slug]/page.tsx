@@ -19,6 +19,7 @@ import ProductGallery from "./ProductGallery";
 import ProductCard from "@/components/ProductCard";
 import { getPriceDisplay, formatPrice } from "@/lib/pricing";
 import { getProductFileInfo } from "@/lib/product-file";
+import { COLORES, TAG_PACK } from "@/lib/catalogo";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +49,13 @@ async function getPublishedProduct(slug: string) {
                 orderBy: {
                     sortOrder: "asc",
                 },
+            },
+
+            // Solo se consulta la etiqueta de pack: es la
+            // única que la ficha necesita mostrar.
+            tags: {
+                where: { tag: { slug: TAG_PACK } },
+                select: { tagId: true },
             },
         },
     });
@@ -109,6 +117,20 @@ export default async function ProductPage({
     // Ficha técnica: solo datos que existen de verdad.
     const fileInfo = await getProductFileInfo(product.fileUrl);
 
+    /*
+     * Formato: primero el del archivo real; si no se pudo leer,
+     * el que quedó guardado en el recurso. Si no hay ninguno,
+     * la fila no se pinta.
+     */
+    const formato =
+        fileInfo.format ??
+        (product.fileFormat ? product.fileFormat.toUpperCase() : null);
+
+    const colorEtiqueta =
+        COLORES.find((c) => c.valor === product.color)?.etiqueta ?? null;
+
+    const esPack = product.tags.length > 0;
+
     const accessTypeLabel: Record<string, string> = {
         INDIVIDUAL: "Compra individual",
         PLAN: "Incluido en planes",
@@ -116,9 +138,13 @@ export default async function ProductPage({
     };
 
     const specs = [
-        fileInfo.format && {
+        formato && {
             label: "Formato",
-            value: fileInfo.format,
+            value: formato,
+        },
+        colorEtiqueta && {
+            label: "Color",
+            value: colorEtiqueta,
         },
         fileInfo.size && {
             label: "Tamaño",
@@ -217,11 +243,11 @@ export default async function ProductPage({
                 {/* ══════════ BREADCRUMBS ══════════ */}
                 <nav
                     aria-label="Ruta de navegación"
-                    className="rk-fade-up mb-6 flex items-center gap-1.5 overflow-x-auto text-[13px] text-ink/60"
+                    className="rk-fade-up mb-3 flex items-center gap-1 overflow-x-auto text-[13px] text-ink/60"
                 >
                     <Link
                         href="/tienda"
-                        className="rk-press shrink-0 transition-colors hover:text-accent"
+                        className="rk-press-sm inline-flex min-h-[2.75rem] shrink-0 items-center rounded-full px-1.5 transition-colors hover:text-ink"
                     >
                         Tienda
                     </Link>
@@ -230,7 +256,7 @@ export default async function ProductPage({
 
                     <Link
                         href={`/tienda?categoria=${product.category.slug}`}
-                        className="rk-press shrink-0 transition-colors hover:text-accent"
+                        className="rk-press-sm inline-flex min-h-[2.75rem] shrink-0 items-center rounded-full px-1.5 transition-colors hover:text-ink"
                     >
                         {product.category.name}
                     </Link>
@@ -239,7 +265,7 @@ export default async function ProductPage({
 
                     <span
                         aria-current="page"
-                        className="truncate font-medium text-ink/70"
+                        className="inline-flex min-h-[2.75rem] items-center truncate px-1.5 font-medium text-ink/70"
                     >
                         {product.name}
                     </span>
@@ -280,6 +306,16 @@ export default async function ProductPage({
                             >
                                 {product.category.name}
                             </Link>
+
+                            {/* PACK: solo si el recurso lleva la etiqueta. */}
+                            {esPack && (
+                                <Link
+                                    href="/tienda?pack=true"
+                                    className="rk-chip rk-chip-active !py-1.5 !text-[12px] !font-bold !uppercase !tracking-[0.14em]"
+                                >
+                                    Pack
+                                </Link>
+                            )}
 
                             {accessTypeLabel[product.accessType] && (
                                 <span className="rk-badge rk-badge-accent">
@@ -355,7 +391,7 @@ export default async function ProductPage({
                                 <li className="flex items-start gap-2">
                                     <Download
                                         size={14}
-                                        className="mt-0.5 shrink-0 text-accent"
+                                        className="mt-0.5 shrink-0 text-ink"
                                     />
                                     <span className="text-xs leading-5 text-ink/60">
                                         Descarga inmediata tras el pago
@@ -365,7 +401,7 @@ export default async function ProductPage({
                                 <li className="flex items-start gap-2">
                                     <ShieldCheck
                                         size={14}
-                                        className="mt-0.5 shrink-0 text-accent"
+                                        className="mt-0.5 shrink-0 text-ink"
                                     />
                                     <span className="text-xs leading-5 text-ink/60">
                                         Acceso permanente desde tu cuenta
@@ -403,7 +439,7 @@ export default async function ProductPage({
                                     {product.creator.isVerified && (
                                         <BadgeCheck
                                             size={14}
-                                            className="shrink-0 text-accent"
+                                            className="shrink-0 text-ink"
                                             aria-label="Creador verificado"
                                         />
                                     )}
@@ -419,7 +455,7 @@ export default async function ProductPage({
                             {creatorProfileUrl && (
                                 <Link
                                     href={creatorProfileUrl}
-                                    className="rk-btn rk-btn-glass shrink-0 !min-h-0 !px-4 !py-2 !text-xs"
+                                    className="rk-btn rk-btn-line shrink-0 !px-4 !text-xs"
                                 >
                                     Ver perfil
                                 </Link>
@@ -485,7 +521,7 @@ export default async function ProductPage({
 
                             <Link
                                 href="/tienda"
-                                className="rk-press text-sm font-medium text-ink/60 transition-colors hover:text-accent"
+                                className="rk-press text-sm font-medium text-ink/60 transition-colors hover:text-ink"
                             >
                                 Ver todos
                             </Link>

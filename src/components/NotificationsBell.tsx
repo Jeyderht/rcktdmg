@@ -220,7 +220,7 @@ export default function NotificationsBell() {
             <button
               type="button"
               onClick={markAllAsRead}
-              className="rk-btn rk-btn-ghost !min-h-0 !px-2.5 !py-2 !text-[11px]"
+              className="rk-btn rk-btn-ghost !px-2.5 !text-[11px]"
             >
               Marcar todas
             </button>
@@ -374,7 +374,7 @@ export default function NotificationsBell() {
         aria-expanded={open}
         aria-haspopup="dialog"
         title="Notificaciones"
-        className={`rk-press relative flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+        className={`rk-press relative flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
           open
             ? "bg-ink/[0.08] text-ink"
             : "text-ink/70 hover:bg-ink/[0.06] hover:text-ink"

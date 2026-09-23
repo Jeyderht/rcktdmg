@@ -333,7 +333,7 @@ export default function MetodosPagoPage() {
                   onChange={(event) =>
                     setIsDefault(event.target.checked)
                   }
-                  className="h-4 w-4 accent-accent"
+                  className="h-4 w-4 accent-[rgb(var(--rk-foreground))]"
                 />
 
                 <span className="text-sm text-ink/60">
@@ -366,7 +366,7 @@ export default function MetodosPagoPage() {
                 type="button"
                 onClick={loadMethods}
                 disabled={loading}
-                className="rk-press inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-opacity hover:opacity-75 disabled:opacity-50"
+                className="rk-press inline-flex min-h-[2.75rem] items-center gap-1.5 text-sm font-medium text-ink transition-opacity hover:opacity-75 disabled:opacity-50"
               >
                 <RefreshCw size={14} />
                 Actualizar
@@ -400,7 +400,7 @@ export default function MetodosPagoPage() {
                       <div className="flex min-w-0 items-start gap-3">
                         <span
                           aria-hidden
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent"
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink"
                         >
                           {method.type === "BANK" ? (
                             <CreditCard size={18} />

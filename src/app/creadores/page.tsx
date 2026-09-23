@@ -71,7 +71,7 @@ export default async function CreatorsPage() {
           <div className="rk-glass relative overflow-hidden rounded-rk-xl px-6 py-12 text-center sm:rounded-rk-xl sm:px-10 sm:py-16">
             <div
               aria-hidden
-              className="pointer-events-none absolute -top-28 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/20 blur-3xl"
+              className="pointer-events-none absolute -top-28 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-ink/[0.06] blur-3xl"
             />
 
             <div className="relative">
@@ -151,7 +151,7 @@ export default async function CreatorsPage() {
                           sizes="(max-width: 1024px) 100vw, 22rem"
                         />
                       ) : (
-                        <div className="h-full w-full bg-gradient-to-br from-accent/25 via-accent/10 to-transparent" />
+                        <div className="h-full w-full bg-gradient-to-br from-ink/[0.12] via-ink/[0.05] to-transparent" />
                       )}
                     </div>
 
@@ -182,7 +182,7 @@ export default async function CreatorsPage() {
                           <BadgeCheck
                             size={15}
                             aria-label="Creador verificado"
-                            className="shrink-0 text-accent"
+                            className="shrink-0 text-ink"
                           />
                         )}
                       </div>

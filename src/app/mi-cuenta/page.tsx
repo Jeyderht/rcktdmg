@@ -168,7 +168,7 @@ export default function Account() {
         <section className="rk-fade-up relative overflow-hidden">
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-accent/12 blur-[90px]"
+            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-ink/[0.05] blur-[90px]"
           />
 
           <p className="rk-eyebrow">RCKTDMG</p>
@@ -270,7 +270,7 @@ export default function Account() {
                   </p>
                 </div>
 
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent transition-transform duration-normal ease-rk group-hover:scale-110">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink transition-transform duration-normal ease-rk group-hover:scale-110">
                   <Icon size={19} />
                 </span>
               </Link>
@@ -295,7 +295,7 @@ export default function Account() {
             {paidOrders.length > 0 && (
               <Link
                 href="/mi-cuenta/compras"
-                className="rk-press inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-opacity hover:opacity-75"
+                className="rk-press inline-flex items-center gap-1.5 text-sm font-medium text-ink transition-opacity hover:opacity-75"
               >
                 Ver todas
                 <ArrowRight size={15} />

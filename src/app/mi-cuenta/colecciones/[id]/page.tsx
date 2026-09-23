@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { FolderOpen, Trash2 } from "lucide-react";
+import { FolderOpen, Globe, Lock, Trash2 } from "lucide-react";
 
 import AccountPageHeader from "@/components/AccountPageHeader";
 import EmptyState from "@/components/EmptyState";
@@ -25,6 +25,7 @@ type CollectionItem = {
 type Collection = {
     id: string;
     name: string;
+    isPublic: boolean;
     items: CollectionItem[];
 };
 
@@ -37,6 +38,8 @@ export default function CollectionDetailPage() {
     );
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [cambiandoVisibilidad, setCambiandoVisibilidad] =
+        useState(false);
     const [removingId, setRemovingId] = useState<string | null>(null);
 
     const loadCollection = useCallback(async () => {
@@ -130,6 +133,54 @@ export default function CollectionDetailPage() {
         }
     }
 
+    /*
+      Publicar o despublicar la colección.
+
+      Mientras es privada no existe para nadie más: la página
+      pública devuelve 404. Al publicarla, cualquiera con el
+      enlace puede ver los recursos que contiene.
+    */
+    async function cambiarVisibilidad() {
+        if (!collection) return;
+
+        const siguiente = !collection.isPublic;
+
+        try {
+            setCambiandoVisibilidad(true);
+
+            const response = await fetch("/api/colecciones", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    collectionId: collection.id,
+                    isPublic: siguiente,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error || "No se pudo cambiar la visibilidad."
+                );
+            }
+
+            setCollection((current) =>
+                current ? { ...current, isPublic: siguiente } : current
+            );
+        } catch (err) {
+            alert(
+                err instanceof Error
+                    ? err.message
+                    : "No se pudo cambiar la visibilidad."
+            );
+        } finally {
+            setCambiandoVisibilidad(false);
+        }
+    }
+
     if (loading) {
         return (
             <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
@@ -197,11 +248,63 @@ export default function CollectionDetailPage() {
             >
                 <Link
                     href="/tienda"
-                    className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
+                    className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2.5 !text-sm"
                 >
                     Agregar recursos
                 </Link>
             </AccountPageHeader>
+
+            {/* VISIBILIDAD */}
+            <section className="rk-tile mt-6 flex flex-wrap items-center justify-between gap-4 p-4 sm:p-5">
+                <div className="flex min-w-0 items-start gap-3.5">
+                    <span
+                        aria-hidden
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06]"
+                    >
+                        {collection.isPublic ? (
+                            <Globe size={18} />
+                        ) : (
+                            <Lock size={18} />
+                        )}
+                    </span>
+
+                    <div className="min-w-0">
+                        <p className="text-sm font-semibold">
+                            {collection.isPublic
+                                ? "Colección pública"
+                                : "Colección privada"}
+                        </p>
+
+                        <p className="mt-0.5 text-xs leading-5 text-ink/60">
+                            {collection.isPublic
+                                ? "Cualquiera con el enlace puede verla, y puede aparecer en el inicio."
+                                : "Solo tú puedes verla. Nadie más tiene acceso a esta página."}
+                        </p>
+
+                        {collection.isPublic && (
+                            <Link
+                                href={`/colecciones/${collection.id}`}
+                                className="rk-press-sm mt-2 inline-flex items-center gap-1.5 text-xs font-medium underline underline-offset-4 hover:text-ink"
+                            >
+                                Ver la página pública
+                            </Link>
+                        )}
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={cambiarVisibilidad}
+                    disabled={cambiandoVisibilidad}
+                    className="rk-btn rk-btn-line rk-btn-compact shrink-0 !px-4 !py-2.5 !text-sm"
+                >
+                    {cambiandoVisibilidad
+                        ? "Guardando..."
+                        : collection.isPublic
+                            ? "Hacerla privada"
+                            : "Hacerla pública"}
+                </button>
+            </section>
 
             {collection.items.length === 0 ? (
                 <div className="mt-8">
@@ -267,7 +370,7 @@ export default function CollectionDetailPage() {
                                     <div className="mt-auto flex items-center justify-between gap-2 pt-3">
                                         <Link
                                             href={`/tienda/${product.slug}`}
-                                            className="rk-press text-sm font-medium text-accent transition-opacity hover:opacity-75"
+                                            className="rk-press text-sm font-medium text-ink transition-opacity hover:opacity-75"
                                         >
                                             Ver recurso
                                         </Link>

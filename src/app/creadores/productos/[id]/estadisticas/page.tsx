@@ -181,7 +181,7 @@ export default function ProductStatisticsPage() {
 
                     <Link
                         href="/creadores/panel/recursos"
-                        className="rk-btn rk-btn-primary mt-5 !min-h-0 !px-4 !py-2.5 !text-sm"
+                        className="rk-btn rk-btn-primary mt-5 rk-btn-compact !px-4 !py-2.5 !text-sm"
                     >
                         Volver a mis recursos
                     </Link>
@@ -216,7 +216,7 @@ export default function ProductStatisticsPage() {
                 <header className="rk-fade-up">
                     <Link
                         href="/creadores/panel/recursos"
-                        className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
+                        className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
                     >
                         <ChevronLeft size={15} />
                         Mis recursos
@@ -263,7 +263,7 @@ export default function ProductStatisticsPage() {
                         <div className="flex shrink-0 flex-wrap gap-2">
                             <Link
                                 href={`/creadores/productos/${product.id}`}
-                                className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
+                                className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2.5 !text-sm"
                             >
                                 Gestionar
                             </Link>
@@ -273,7 +273,7 @@ export default function ProductStatisticsPage() {
                                     href={`/tienda/${product.slug}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2.5 !text-sm"
+                                    className="rk-btn rk-btn-primary rk-btn-compact !px-4 !py-2.5 !text-sm"
                                 >
                                     <ExternalLink size={15} />
                                     Ver publicación
@@ -285,12 +285,12 @@ export default function ProductStatisticsPage() {
 
                 {/* ========== MÉTRICAS REALES ========== */}
                 <section className="rk-fade-up rk-enter-1 mt-8 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
-                    <div className="rk-card border-accent/25 bg-accent/[0.06] p-5">
-                        <p className="rk-eyebrow !text-accent">
+                    <div className="rk-card border-ink/20 bg-ink/[0.04] p-5">
+                        <p className="rk-eyebrow !text-ink">
                             Ingresos
                         </p>
 
-                        <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight text-accent">
+                        <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight text-ink">
                             {formatMoney(stats.revenue)}
                         </p>
 
@@ -355,7 +355,7 @@ export default function ProductStatisticsPage() {
                                 <span className="flex items-center gap-2">
                                     <span
                                         aria-hidden
-                                        className="h-2.5 w-2.5 rounded-full bg-accent"
+                                        className="h-2.5 w-2.5 rounded-full bg-foreground"
                                     />
                                     Ingresos
                                 </span>
@@ -413,7 +413,7 @@ export default function ProductStatisticsPage() {
                                                 <div className="mt-2 flex h-44 w-full items-end justify-center gap-1.5">
                                                     <div className="flex h-full w-[42%] items-end">
                                                         <div
-                                                            className="w-full rounded-t-rk-sm bg-accent/85 transition-[height] duration-slow ease-rk"
+                                                            className="w-full rounded-t-rk-sm bg-foreground/80 transition-[height] duration-slow ease-rk"
                                                             style={{
                                                                 height: `${revenueHeight}%`,
                                                             }}

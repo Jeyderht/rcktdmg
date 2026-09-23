@@ -292,7 +292,7 @@ export default async function UsuariosPage({
                         user.creatorStatus === "APPROVED" && (
                           <Link
                             href={`/creadores/${user.username}`}
-                            className="rk-press text-xs font-medium text-accent transition-opacity hover:opacity-75"
+                            className="rk-press text-xs font-medium text-ink transition-opacity hover:opacity-75"
                           >
                             @{user.username}
                           </Link>

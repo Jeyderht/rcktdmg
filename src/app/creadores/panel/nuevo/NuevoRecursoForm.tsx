@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 import { subirArchivoDeProducto } from "@/lib/storage/client-upload";
+import { COLORES } from "@/lib/catalogo";
 import {
   CheckCircle2,
   ChevronLeft,
@@ -36,6 +37,8 @@ export default function NuevoRecursoForm({
   const [categoryId, setCategoryId] = useState("");
   const [price, setPrice] = useState("");
   const [accessType, setAccessType] = useState("BOTH");
+  const [color, setColor] = useState("");
+  const [esPack, setEsPack] = useState(false);
   const [coverUrl, setCoverUrl] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [fileUrl, setFileUrl] = useState("");
@@ -108,6 +111,8 @@ export default function NuevoRecursoForm({
           categoryId,
           price,
           accessType,
+          color: color || null,
+          esPack,
           coverUrl,
           previewUrl,
           fileUrl,
@@ -128,6 +133,8 @@ export default function NuevoRecursoForm({
       setCategoryId("");
       setPrice("");
       setAccessType("BOTH");
+      setColor("");
+      setEsPack(false);
       setCoverUrl("");
       setPreviewUrl("");
       setFileUrl("");
@@ -147,7 +154,7 @@ export default function NuevoRecursoForm({
       <header className="rk-fade-up">
         <Link
           href="/creadores/panel"
-          className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
+          className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
         >
           <ChevronLeft size={15} />
           Creator Studio
@@ -291,6 +298,75 @@ export default function NuevoRecursoForm({
                 <option value="BOTH">Compra + planes</option>
               </select>
             </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="color"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  Color predominante
+                  <span className="ml-1.5 font-normal text-ink/45">
+                    (opcional)
+                  </span>
+                </label>
+
+                <select
+                  id="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="rk-select w-full"
+                >
+                  <option value="">Sin especificar</option>
+
+                  {COLORES.map((opcion) => (
+                    <option key={opcion.valor} value={opcion.valor}>
+                      {opcion.etiqueta}
+                    </option>
+                  ))}
+                </select>
+
+                <p className="mt-2 text-xs text-ink/60">
+                  Ayuda a que tu recurso aparezca al filtrar por
+                  color en la tienda.
+                </p>
+              </div>
+
+              <div>
+                <p className="mb-2 block text-sm font-medium">
+                  Tipo de recurso
+                </p>
+
+                <label
+                  htmlFor="esPack"
+                  className="flex cursor-pointer items-start gap-3 rounded-rk-md border border-line/10 p-3.5 transition-colors duration-fast ease-rk hover:border-line/20"
+                >
+                  <input
+                    id="esPack"
+                    type="checkbox"
+                    checked={esPack}
+                    onChange={(e) => setEsPack(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-[rgb(var(--rk-foreground))]"
+                  />
+
+                  <span className="min-w-0">
+                    <span className="block text-sm font-medium">
+                      Es un pack
+                    </span>
+
+                    <span className="mt-0.5 block text-xs leading-5 text-ink/60">
+                      Marca esta casilla si el archivo reúne varios
+                      recursos en un solo paquete.
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            {/*
+              El formato no se escribe a mano: se toma del archivo
+              que subas en el paso 2.
+            */}
           </div>
         </section>
 
@@ -309,10 +385,10 @@ export default function NuevoRecursoForm({
                 Archivo del recurso
               </p>
 
-              <div className="rounded-rk-md border border-dashed border-line/20 bg-ink/[0.02] p-6 text-center transition-colors duration-normal ease-rk hover:border-accent/40">
+              <div className="rounded-rk-md border border-dashed border-line/20 bg-ink/[0.02] p-6 text-center transition-colors duration-normal ease-rk hover:border-ink/40">
                 <span
                   aria-hidden
-                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-accent/10 text-accent"
+                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink"
                 >
                   <UploadCloud size={22} />
                 </span>
@@ -327,7 +403,7 @@ export default function NuevoRecursoForm({
 
                 <label
                   htmlFor="product-file"
-                  className="rk-btn rk-btn-primary mt-4 cursor-pointer !min-h-0 !px-5 !py-2.5 !text-sm"
+                  className="rk-btn rk-btn-primary mt-4 cursor-pointer rk-btn-compact !px-5 !py-2.5 !text-sm"
                 >
                   <FileUp size={15} />
                   {uploadingFile
@@ -413,7 +489,7 @@ export default function NuevoRecursoForm({
 
           {/* Comportamiento real del backend, no una promesa. */}
           <p className="mt-5 flex items-start gap-2.5 text-sm leading-6 text-ink/60">
-            <Info size={16} className="mt-0.5 shrink-0 text-accent" />
+            <Info size={16} className="mt-0.5 shrink-0 text-ink" />
             El recurso se guarda como borrador. Desde “Mis
             recursos” podrás enviarlo a revisión para que el
             equipo lo publique.

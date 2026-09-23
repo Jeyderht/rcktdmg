@@ -21,16 +21,21 @@ export type ProductCardData = {
   category?: { name: string; slug?: string } | null;
   /** Autor real del recurso. Opcional: solo se pinta si llega. */
   creator?: { name: string; username: string | null } | null;
+  /** Formato real del archivo. Solo se pinta si existe. */
+  fileFormat?: string | null;
+  /** true cuando el recurso lleva la etiqueta "pack". */
+  esPack?: boolean;
 };
 
 /**
  * Tarjeta de recurso compartida por la home, la tienda, las
  * categorías y los perfiles de creador.
  *
- * El contenido visual del producto es vertical 9:16
- * (1080 × 1920). La imagen se muestra SIEMPRE nítida y con
- * `object-cover`, sin deformarse; el desenfoque se aplica
- * únicamente a los controles de vidrio que flotan encima.
+ * La imagen manda: ocupa la tarjeta entera en 9:16 y el texto
+ * vive debajo, sin marco ni sombra que compitan con ella. Todo
+ * lo que flota encima de la imagen es vidrio; la imagen en sí
+ * permanece SIEMPRE nítida y con `object-cover`, sin
+ * deformarse.
  *
  * La tarjeta es compacta a propósito: prioriza ver muchos
  * recursos a la vez sobre el tamaño de cada uno.
@@ -53,46 +58,53 @@ export default function ProductCard({
   );
 
   return (
-    <article className="rk-card rk-card-hover group relative overflow-hidden !rounded-rk-md">
+    <article className="group relative">
 
       {/* CONTENIDO VISUAL 9:16 */}
       <Link
         href={`/tienda/${product.slug}`}
-        className="relative block overflow-hidden rounded-t-rk-md"
+        className="relative block"
         aria-label={product.name}
       >
-        <div className="rk-media rk-aspect-product relative w-full overflow-hidden">
+        <div className="rk-frame rk-aspect-product w-full">
           {image ? (
             <Image
               src={image}
               alt={imageAlt}
               fill
               /* El contenido es 9:16; `cover` recorta sin deformar. */
-              className="object-cover transition-transform duration-slow ease-rk group-hover:scale-[1.02]"
+              className="object-cover"
               sizes="(max-width: 480px) 45vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 15vw"
             />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <span className="text-[9px] uppercase tracking-[0.3em] text-ink/45">
+              <span className="text-[9px] uppercase tracking-[0.3em] text-ink/30">
                 RCKTDMG
               </span>
             </div>
           )}
+
+          {/* CATEGORÍA: vidrio sobre la imagen, imagen nítida */}
+          {product.category && (
+            <span className="rk-glass-on-image pointer-events-none absolute left-2 top-2 max-w-[calc(100%-3.25rem)] truncate rounded-full px-2.5 py-1 text-[10px] font-medium">
+              {product.category.name}
+            </span>
+          )}
+
+          {/* PACK: distintivo en blanco y negro, solo si lo es. */}
+          {product.esPack && (
+            <span className="rk-glass-on-image pointer-events-none absolute bottom-2 left-2 rounded-full px-2 py-1 text-[9px] font-bold uppercase tracking-[0.18em]">
+              Pack
+            </span>
+          )}
+
+          {/* DESCUENTO REAL: solo si existe promoción */}
+          {pricing.hasPromotion && (
+            <span className="rk-glass-on-image pointer-events-none absolute bottom-2 right-2 rounded-full px-2 py-1 text-[10px] font-bold text-danger">
+              {pricing.discountPercent}% OFF
+            </span>
+          )}
         </div>
-
-        {/* CATEGORÍA: vidrio sobre la imagen, imagen nítida */}
-        {product.category && (
-          <span className="rk-glass-on-image pointer-events-none absolute left-2 top-2 max-w-[calc(100%-3.25rem)] truncate rounded-full px-2.5 py-1 text-[10px] font-medium">
-            {product.category.name}
-          </span>
-        )}
-
-        {/* DESCUENTO REAL: solo si existe promoción */}
-        {pricing.hasPromotion && (
-          <span className="rk-glass-on-image pointer-events-none absolute bottom-2 right-2 rounded-full px-2 py-1 text-[10px] font-bold text-danger">
-            {pricing.discountPercent}% OFF
-          </span>
-        )}
       </Link>
 
       {/* FAVORITO: control de vidrio flotante */}
@@ -103,20 +115,20 @@ export default function ProductCard({
       )}
 
       {/* INFORMACIÓN */}
-      <div className="p-2.5 sm:p-3">
+      <div className="px-0.5 pt-2.5">
         <Link href={`/tienda/${product.slug}`}>
-          <h3 className="line-clamp-2 min-h-[2.25rem] text-[13px] font-semibold leading-[1.15rem] transition-opacity group-hover:opacity-70">
+          <h3 className="line-clamp-2 min-h-[2.1rem] text-[13px] font-semibold leading-[1.05rem] tracking-tight transition-opacity group-hover:opacity-60">
             {product.name}
           </h3>
         </Link>
 
         {/* CREADOR: solo si se pasa el dato real. */}
         {product.creator && (
-          <p className="mt-1 truncate text-[11px] text-ink/60">
+          <p className="mt-1 truncate text-[11px] text-ink/45">
             {product.creator.username ? (
               <Link
                 href={`/creadores/${product.creator.username}`}
-                className="transition-colors hover:text-accent"
+                className="transition-colors hover:text-ink"
               >
                 {product.creator.name}
               </Link>
@@ -127,14 +139,21 @@ export default function ProductCard({
         )}
 
         <div className="mt-1.5 flex items-baseline gap-1.5">
-          <p className="text-[15px] font-semibold tracking-tight">
+          <p className="text-[14px] font-semibold tabular-nums tracking-tight">
             {formatPrice(pricing.price)}
           </p>
 
           {pricing.compareAtPrice !== null && (
-            <p className="text-[11px] text-ink/60 line-through">
+            <p className="text-[11px] text-ink/45 line-through">
               {formatPrice(pricing.compareAtPrice)}
             </p>
+          )}
+
+          {/* Formato real del archivo, nunca supuesto. */}
+          {product.fileFormat && (
+            <span className="ml-auto text-[10px] font-semibold uppercase tracking-wider text-ink/40">
+              {product.fileFormat}
+            </span>
           )}
         </div>
       </div>

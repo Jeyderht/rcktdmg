@@ -67,6 +67,10 @@ model Product {
   coverUrl        String?
   previewUrl      String?
   fileUrl         String?
+  /// Extensión real del archivo, calculada al subirlo. Nunca se escribe a mano.
+  fileFormat      String?
+  /// Color dominante declarado por el creador. Null si no lo indicó.
+  color           String?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
   rejectionReason String?
@@ -85,6 +89,8 @@ model Product {
   @@index([creatorId])
   @@index([categoryId])
   @@index([status])
+  @@index([fileFormat])
+  @@index([color])
 }
 
 model ProductTag {
@@ -232,11 +238,15 @@ model Collection {
   id        String   @id @default(cuid())
   userId    String
   name      String
+  /// Privada por defecto: nada se publica sin acción explícita.
+  isPublic  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   items CollectionItem[]
+
+  @@index([isPublic])
 }
 
 model CollectionItem {

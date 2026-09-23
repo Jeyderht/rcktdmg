@@ -299,7 +299,7 @@ export default function AdminRetirosPage() {
             type="button"
             disabled={isProcessing}
             onClick={() => handleAction(withdrawal.id, "APPROVE")}
-            className="rk-btn rk-btn-primary !min-h-0 !px-3.5 !py-2 !text-xs"
+            className="rk-btn rk-btn-primary rk-btn-compact !px-3.5 !py-2 !text-xs"
           >
             {isProcessing ? "Procesando..." : "Aprobar"}
           </button>
@@ -308,7 +308,7 @@ export default function AdminRetirosPage() {
             type="button"
             disabled={isProcessing}
             onClick={() => handleAction(withdrawal.id, "REJECT")}
-            className="rk-btn !min-h-0 border border-danger/25 !px-3.5 !py-2 !text-xs text-danger hover:bg-danger/10"
+            className="rk-btn rk-btn-compact border border-danger/25 !px-3.5 !py-2 !text-xs text-danger hover:bg-danger/10"
           >
             Rechazar
           </button>
@@ -322,7 +322,7 @@ export default function AdminRetirosPage() {
           type="button"
           disabled={isProcessing}
           onClick={() => handleAction(withdrawal.id, "PAY")}
-          className="rk-btn rk-btn-success !min-h-0 !px-3.5 !py-2 !text-xs"
+          className="rk-btn rk-btn-success rk-btn-compact !px-3.5 !py-2 !text-xs"
         >
           {isProcessing ? "Procesando..." : "Marcar pagado"}
         </button>
@@ -386,13 +386,13 @@ export default function AdminRetirosPage() {
             key={item.label}
             className={`rk-card p-4 sm:p-5 ${
               item.accent
-                ? "border-accent/25 bg-accent/[0.06]"
+                ? "border-ink/20 bg-ink/[0.04]"
                 : ""
             }`}
           >
             <p
               className={`rk-eyebrow ${
-                item.accent ? "!text-accent" : ""
+                item.accent ? "!text-ink" : ""
               }`}
             >
               {item.label}
@@ -400,7 +400,7 @@ export default function AdminRetirosPage() {
 
             <p
               className={`mt-3 text-[1.6rem] font-semibold tabular-nums leading-tight tracking-tight ${
-                item.accent ? "text-accent" : ""
+                item.accent ? "text-ink" : ""
               }`}
             >
               {loading ? (

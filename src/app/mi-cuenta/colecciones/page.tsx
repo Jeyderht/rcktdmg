@@ -36,6 +36,7 @@ type Collection = {
   name: string;
   createdAt: string;
   updatedAt: string;
+  isPublic: boolean;
   items: CollectionItem[];
 };
 
@@ -393,6 +394,13 @@ export default function ColeccionesPage() {
                           {collection.name}
                         </Link>
 
+                        {/* Distintivo solo cuando es pública. */}
+                        {collection.isPublic && (
+                          <span className="rk-badge rk-badge-neutral mt-1.5">
+                            Pública
+                          </span>
+                        )}
+
                         {/* Solo datos reales: la colección no
                             guarda descripción. */}
                         <p className="mt-1 text-xs text-ink/60">
@@ -463,7 +471,7 @@ export default function ColeccionesPage() {
                             onClick={() =>
                               updateCollection(collection.id)
                             }
-                            className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2 !text-xs"
+                            className="rk-btn rk-btn-primary rk-btn-compact !px-4 !py-2 !text-xs"
                           >
                             <Check size={14} />
                             Guardar
@@ -475,7 +483,7 @@ export default function ColeccionesPage() {
                               setEditingId(null);
                               setEditingName("");
                             }}
-                            className="rk-btn rk-btn-ghost !min-h-0 !px-4 !py-2 !text-xs"
+                            className="rk-btn rk-btn-ghost rk-btn-compact !px-4 !py-2 !text-xs"
                           >
                             <X size={14} />
                             Cancelar
@@ -487,7 +495,7 @@ export default function ColeccionesPage() {
                     <div className="mt-4 pt-1">
                       <Link
                         href={`/mi-cuenta/colecciones/${collection.id}`}
-                        className="rk-press inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-opacity hover:opacity-75"
+                        className="rk-press inline-flex items-center gap-1.5 text-sm font-medium text-ink transition-opacity hover:opacity-75"
                       >
                         Ver colección
                         <ArrowRight

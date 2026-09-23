@@ -127,7 +127,7 @@ export default function FavoritosPage() {
             <button
               type="button"
               onClick={loadFavorites}
-              className="rk-btn rk-btn-primary mt-4 !min-h-0 !px-4 !py-2.5 !text-sm"
+              className="rk-btn rk-btn-primary mt-4 rk-btn-compact !px-4 !py-2.5 !text-sm"
             >
               Intentar nuevamente
             </button>
@@ -141,13 +141,10 @@ export default function FavoritosPage() {
             aria-busy="true"
           >
             {Array.from({ length: 6 }).map((_, index) => (
-              <div
-                key={index}
-                className="rk-card overflow-hidden !rounded-rk-md"
-              >
-                <div className="rk-aspect-product w-full animate-pulse bg-ink/[0.06]" />
+              <div key={index}>
+                <div className="rk-aspect-product w-full animate-pulse rounded-rk-md bg-ink/[0.06]" />
 
-                <div className="p-2.5 sm:p-3">
+                <div className="px-0.5 pt-2.5">
                   <div className="h-3 w-full animate-pulse rounded-full bg-ink/[0.06]" />
                   <div className="mt-2 h-3 w-2/3 animate-pulse rounded-full bg-ink/[0.05]" />
                 </div>

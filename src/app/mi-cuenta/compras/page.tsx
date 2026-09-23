@@ -124,7 +124,7 @@ export default function MisComprasPage() {
                     {orders.length > 0 && (
                         <Link
                             href="/mi-cuenta/descargas"
-                            className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
+                            className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2.5 !text-sm"
                         >
                             <DownloadIcon size={15} />
                             Mis descargas
@@ -163,7 +163,7 @@ export default function MisComprasPage() {
                         <button
                             type="button"
                             onClick={loadOrders}
-                            className="rk-btn rk-btn-primary mt-4 !min-h-0 !px-4 !py-2.5 !text-sm"
+                            className="rk-btn rk-btn-primary mt-4 rk-btn-compact !px-4 !py-2.5 !text-sm"
                         >
                             Intentar nuevamente
                         </button>
@@ -287,7 +287,7 @@ export default function MisComprasPage() {
                                                 {order.status === "PAID" ? (
                                                     <Link
                                                         href="/mi-cuenta/descargas"
-                                                        className="rk-btn rk-btn-primary !min-h-0 flex-1 !px-4 !py-2.5 !text-sm sm:flex-none"
+                                                        className="rk-btn rk-btn-primary rk-btn-compact flex-1 !px-4 !py-2.5 !text-sm sm:flex-none"
                                                     >
                                                         <DownloadIcon
                                                             size={15}
@@ -297,7 +297,7 @@ export default function MisComprasPage() {
                                                 ) : (
                                                     <Link
                                                         href={`/tienda/${item.product.slug}`}
-                                                        className="rk-btn rk-btn-glass !min-h-0 flex-1 !px-4 !py-2.5 !text-sm sm:flex-none"
+                                                        className="rk-btn rk-btn-glass rk-btn-compact flex-1 !px-4 !py-2.5 !text-sm sm:flex-none"
                                                     >
                                                         Ver recurso
                                                     </Link>

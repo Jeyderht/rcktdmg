@@ -159,7 +159,7 @@ export default async function CreatorProductPage({
       <header className="rk-fade-up">
         <Link
           href="/creadores/panel/recursos"
-          className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
+          className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
         >
           <ChevronLeft size={15} />
           Mis recursos
@@ -203,7 +203,7 @@ export default async function CreatorProductPage({
                 href={`/tienda/${product.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2.5 !text-sm"
+                className="rk-btn rk-btn-primary rk-btn-compact !px-4 !py-2.5 !text-sm"
               >
                 <ExternalLink size={15} />
                 Ver publicación
@@ -212,7 +212,7 @@ export default async function CreatorProductPage({
 
             <Link
               href={`/creadores/productos/${product.id}/estadisticas`}
-              className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
+              className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2.5 !text-sm"
             >
               <BarChart3 size={15} />
               Estadísticas
@@ -307,7 +307,7 @@ export default async function CreatorProductPage({
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
             href={`/creadores/productos/${product.id}/imagenes`}
-            className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
+            className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2.5 !text-sm"
           >
             <ImageIcon size={15} />
             Imágenes
@@ -317,7 +317,7 @@ export default async function CreatorProductPage({
             product.status === "REJECTED") && (
             <Link
               href={`/creadores/productos/${product.id}/editar`}
-              className="rk-btn rk-btn-glass !min-h-0 !px-4 !py-2.5 !text-sm"
+              className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2.5 !text-sm"
             >
               <Pencil size={15} />
               Editar recurso
@@ -332,7 +332,7 @@ export default async function CreatorProductPage({
             >
               <button
                 type="submit"
-                className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2.5 !text-sm"
+                className="rk-btn rk-btn-primary rk-btn-compact !px-4 !py-2.5 !text-sm"
               >
                 Enviar a revisión
               </button>

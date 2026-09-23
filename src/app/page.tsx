@@ -4,19 +4,39 @@ import {
   ArrowRight,
   ArrowUpRight,
   BadgeCheck,
-  Download,
-  FolderHeart,
-  LayoutGrid,
-  ShieldCheck,
-  Users,
+  Search,
 } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import SeccionesMarketplace from "@/components/home/SeccionesMarketplace";
 import { prisma } from "@/lib/prisma";
+import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 
 export const dynamic = "force-dynamic";
+
+/* Los tres pasos reales para conseguir un recurso. */
+const PASOS = [
+  {
+    numero: "01",
+    titulo: "Explora",
+    texto:
+      "Busca por categoría, formato, color o precio hasta dar con lo que necesitas.",
+  },
+  {
+    numero: "02",
+    titulo: "Elige",
+    texto:
+      "Abre el recurso, revisa sus imágenes y su ficha, y añádelo al carrito.",
+  },
+  {
+    numero: "03",
+    titulo: "Descarga",
+    texto:
+      "Tras el pago queda en tu cuenta, disponible para descargar cuando quieras.",
+  },
+];
 
 export default async function Home() {
   /*
@@ -24,107 +44,92 @@ export default async function Home() {
    * No hay cifras, productos, categorías ni creadores de
    * ejemplo: si algo no existe, su sección no se pinta.
    */
-  const [products, categories, creators, productCount] =
-    await Promise.all([
-      prisma.product.findMany({
-        where: { status: "PUBLISHED" },
-        orderBy: { createdAt: "desc" },
-        take: 6,
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          price: true,
-          coverUrl: true,
-          category: { select: { name: true, slug: true } },
-          creator: {
-            select: {
-              name: true,
-              publicName: true,
-              username: true,
-              creatorStatus: true,
-            },
-          },
-          images: {
-            orderBy: { sortOrder: "asc" },
-            take: 1,
-            select: { url: true, alt: true },
-          },
-        },
-      }),
+  const [
+    products,
+    categories,
+    creators,
+    productCount,
+    portadas,
+  ] = await Promise.all([
+    prisma.product.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+      select: SELECCION_TARJETA,
+    }),
 
-      prisma.category.findMany({
-        where: { products: { some: { status: "PUBLISHED" } } },
-        orderBy: { name: "asc" },
-        take: 8,
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          description: true,
-          _count: {
-            select: {
-              products: { where: { status: "PUBLISHED" } },
-            },
+    prisma.category.findMany({
+      where: { products: { some: { status: "PUBLISHED" } } },
+      orderBy: { name: "asc" },
+      take: 8,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        _count: {
+          select: {
+            products: { where: { status: "PUBLISHED" } },
           },
         },
-      }),
-
-      prisma.user.findMany({
-        where: {
-          role: { in: ["CREATOR", "ADMIN"] },
-          creatorStatus: "APPROVED",
-          username: { not: null },
-          products: { some: { status: "PUBLISHED" } },
+        // Portadas reales para ilustrar la categoría.
+        products: {
+          where: { status: "PUBLISHED", coverUrl: { not: null } },
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          select: { id: true, coverUrl: true },
         },
-        orderBy: [{ isVerified: "desc" }, { createdAt: "asc" }],
-        take: 4,
-        select: {
-          id: true,
-          name: true,
-          publicName: true,
-          username: true,
-          avatarUrl: true,
-          bio: true,
-          isVerified: true,
-          _count: {
-            select: {
-              products: { where: { status: "PUBLISHED" } },
-            },
+      },
+    }),
+
+    prisma.user.findMany({
+      where: {
+        role: { in: ["CREATOR", "ADMIN"] },
+        creatorStatus: "APPROVED",
+        username: { not: null },
+        products: { some: { status: "PUBLISHED" } },
+      },
+      orderBy: [{ isVerified: "desc" }, { createdAt: "asc" }],
+      take: 4,
+      select: {
+        id: true,
+        name: true,
+        publicName: true,
+        username: true,
+        avatarUrl: true,
+        bio: true,
+        isVerified: true,
+        _count: {
+          select: {
+            products: { where: { status: "PUBLISHED" } },
           },
         },
-      }),
+      },
+    }),
 
-      prisma.product.count({ where: { status: "PUBLISHED" } }),
-    ]);
+    prisma.product.count({ where: { status: "PUBLISHED" } }),
 
-  /* Qué ofrece RCKTDMG: solo funciones que existen de verdad. */
-  const propuesta = [
-    {
-      icon: Download,
-      title: "Descarga inmediata",
-      text: "Tras el pago, el recurso queda disponible en tu cuenta.",
-      href: "/mi-cuenta/descargas",
-    },
-    {
-      icon: LayoutGrid,
-      title: "Recursos digitales",
-      text: "Plantillas y packs listos para usar en tus proyectos.",
-      href: "/tienda",
-    },
-    {
-      icon: Users,
-      title: "Creadores",
-      text: "Cada recurso tiene autor, con su perfil público.",
-      href: "/creadores",
-    },
-    {
-      icon: FolderHeart,
-      title: "Colecciones",
-      text: "Guarda favoritos y organiza lo que te interesa.",
-      href: "/mi-cuenta/colecciones",
-    },
-  ];
+    /*
+      Imágenes de la portada del inicio.
+
+      Son recursos reales con imagen real. Hoy no todos los
+      recursos publicados tienen portada, así que la
+      composición se construye con las que existan: si no hay
+      ninguna, el bloque visual no se pinta y el texto ocupa
+      todo el ancho.
+    */
+    prisma.product.findMany({
+      where: { status: "PUBLISHED", coverUrl: { not: null } },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        coverUrl: true,
+      },
+    }),
+  ]);
 
   return (
     <>
@@ -134,390 +139,520 @@ export default async function Home() {
 
         {/* ══════════ HERO ══════════ */}
         <section className="relative overflow-hidden">
-          {/*
-            Composición abstracta hecha solo con CSS:
-            halos, retícula y una forma geométrica girada.
-            No se usa ninguna imagen.
-          */}
+          {/* Retícula fina: profundidad sin color. */}
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 -z-10"
           >
-            <div className="absolute -left-40 -top-32 h-[32rem] w-[32rem] rounded-full bg-accent/20 blur-[100px]" />
-            <div className="absolute -right-32 top-10 h-[26rem] w-[26rem] rounded-full bg-accent/10 blur-[90px]" />
-
-            {/* Retícula fina */}
             <div
-              className="absolute inset-0 opacity-[0.18]"
+              className="absolute inset-0 opacity-[0.35]"
               style={{
                 backgroundImage:
-                  "linear-gradient(to right, rgb(var(--rk-border) / 0.16) 1px, transparent 1px), linear-gradient(to bottom, rgb(var(--rk-border) / 0.16) 1px, transparent 1px)",
-                backgroundSize: "clamp(3rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem)",
+                  "linear-gradient(to right, rgb(var(--rk-border) / 0.14) 1px, transparent 1px), linear-gradient(to bottom, rgb(var(--rk-border) / 0.14) 1px, transparent 1px)",
+                backgroundSize:
+                  "clamp(3rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem)",
                 maskImage:
-                  "radial-gradient(70% 60% at 50% 0%, #000 30%, transparent 100%)",
+                  "radial-gradient(75% 65% at 30% 0%, #000 20%, transparent 100%)",
                 WebkitMaskImage:
-                  "radial-gradient(70% 60% at 50% 0%, #000 30%, transparent 100%)",
+                  "radial-gradient(75% 65% at 30% 0%, #000 20%, transparent 100%)",
               }}
             />
           </div>
 
-          <div className="mx-auto w-full max-w-7xl px-4 pb-14 pt-14 sm:px-5 lg:px-8 lg:pb-20 lg:pt-24">
-            <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
-
+          <div className="mx-auto w-full max-w-7xl px-4 pb-16 pt-12 sm:px-5 lg:px-8 lg:pb-24 lg:pt-20">
+            <div
+              className={`grid items-center gap-12 ${
+                portadas.length > 0
+                  ? "lg:grid-cols-[1.05fr_0.95fr] lg:gap-16"
+                  : ""
+              }`}
+            >
               {/* TEXTO */}
-              <div className="rk-fade-up">
-                <span className="rk-chip !border-accent/25 !bg-accent/10 !text-accent">
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                  RCKTDMG · Digital resources for creators
-                </span>
+              <div className="rk-fade-up min-w-0">
+                <p className="rk-kicker">Recursos creativos</p>
 
-                <h1 className="rk-title mt-6 text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-7xl">
-                  Crea sin
-                  <br />
-                  empezar
-                  <br />
-                  <span className="text-accent">desde cero.</span>
+                <h1 className="rk-display mt-6 max-w-[13ch]">
+                  Todo lo que necesitas para crear mejor.
                 </h1>
 
-                <p className="mt-6 max-w-lg text-[15px] leading-7 text-ink/60 sm:text-lg sm:leading-8">
+                <p className="mt-7 max-w-md text-base leading-8 text-ink/60 sm:text-lg">
                   Recursos digitales hechos por creadores, listos
                   para descargar y usar en tus proyectos.
                 </p>
 
-                <div className="mt-9 flex flex-wrap gap-3">
-                  <Link href="/tienda" className="rk-btn rk-btn-primary">
+                {/* BUSCADOR: navegación real a la tienda. */}
+                <form
+                  action="/tienda"
+                  method="GET"
+                  className="mt-9 max-w-md"
+                >
+                  <div className="relative">
+                    <Search
+                      size={18}
+                      aria-hidden
+                      className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-ink/45"
+                    />
+
+                    <input
+                      type="search"
+                      name="q"
+                      placeholder="Buscar recursos..."
+                      aria-label="Buscar recursos"
+                      autoComplete="off"
+                      className="h-14 w-full rounded-full border border-line/15 bg-surface/70 pl-14 pr-[7.5rem] text-[15px] outline-none backdrop-blur-rk transition-colors duration-normal ease-rk placeholder:text-ink/45 hover:border-line/30 focus:border-ink/40 focus:bg-surface"
+                    />
+
+                    <button
+                      type="submit"
+                      className="rk-btn rk-btn-ink rk-btn-compact absolute right-1.5 top-1/2 -translate-y-1/2 !px-5 !py-3 !text-sm"
+                    >
+                      Buscar
+                    </button>
+                  </div>
+                </form>
+
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/tienda"
+                    className="rk-btn rk-btn-line"
+                  >
                     Explorar recursos
                     <ArrowRight size={16} />
                   </Link>
 
-                  <Link href="/creadores" className="rk-btn rk-btn-glass">
+                  <Link
+                    href="/creadores"
+                    className="rk-btn rk-btn-ghost"
+                  >
                     Ver creadores
                   </Link>
                 </div>
-              </div>
 
-              {/* VISUAL ABSTRACTO (CSS puro) */}
-              <div
-                aria-hidden
-                className="rk-fade-up rk-enter-2 relative hidden h-[26rem] lg:block"
-              >
-                <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rotate-12 rounded-[3.5rem] border border-line/15 bg-gradient-to-br from-accent/25 via-accent/5 to-transparent backdrop-blur-sm" />
-
-                <div className="absolute left-1/2 top-1/2 h-56 w-56 -translate-x-[62%] -translate-y-[38%] -rotate-6 rounded-[3rem] border border-line/10 bg-surface/50 shadow-rk-lg backdrop-blur-md" />
-
-                <div className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-[28%] -translate-y-[62%] rotate-[18deg] rounded-[2.25rem] bg-accent shadow-rk-float" />
-
-                <div className="absolute bottom-6 left-6 h-20 w-20 rounded-full border border-line/15 bg-surface/40 backdrop-blur-md" />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════ RECURSOS DESTACADOS ══════════ */}
-        <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
-          <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="rk-eyebrow">Novedades</p>
-
-              <h2 className="rk-title mt-2.5 text-[1.75rem] sm:text-4xl">
-                Recursos destacados
-              </h2>
-            </div>
-
-            <Link
-              href="/tienda"
-              className="rk-press group inline-flex items-center gap-1.5 text-sm font-medium text-ink/60 transition-colors hover:text-accent"
-            >
-              Ver los {productCount}
-              <ArrowUpRight
-                size={15}
-                className="transition-transform duration-fast group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </Link>
-          </div>
-
-          {products.length === 0 ? (
-            <div className="rk-card mt-8 px-6 py-16 text-center">
-              <p className="text-sm text-ink/60">
-                Todavía no hay recursos publicados.
-              </p>
-            </div>
-          ) : (
-            <div className="rk-fade-up rk-enter-1 mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 xl:grid-cols-6">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={{
-                    id: product.id,
-                    name: product.name,
-                    slug: product.slug,
-                    price: Number(product.price),
-                    coverUrl: product.coverUrl,
-                    image: product.images[0] ?? null,
-                    category: product.category,
-                    creator: {
-                      name:
-                        product.creator.publicName ||
-                        product.creator.name ||
-                        "Creador",
-                      username:
-                        product.creator.creatorStatus === "APPROVED"
-                          ? product.creator.username
-                          : null,
+                {/*
+                  Cifras reales del catálogo. Son conteos de la
+                  base de datos, no estimaciones.
+                */}
+                <dl className="mt-12 flex flex-wrap gap-x-10 gap-y-5">
+                  {[
+                    {
+                      valor: productCount,
+                      etiqueta:
+                        productCount === 1 ? "recurso" : "recursos",
                     },
-                  }}
-                />
-              ))}
+                    {
+                      valor: categories.length,
+                      etiqueta:
+                        categories.length === 1
+                          ? "categoría"
+                          : "categorías",
+                    },
+                    {
+                      valor: creators.length,
+                      etiqueta:
+                        creators.length === 1
+                          ? "creador"
+                          : "creadores",
+                    },
+                  ].map((dato) => (
+                    <div key={dato.etiqueta}>
+                      <dt className="sr-only">{dato.etiqueta}</dt>
+
+                      <dd>
+                        <span className="rk-title block text-3xl tabular-nums sm:text-4xl">
+                          {dato.valor}
+                        </span>
+
+                        <span className="mt-1.5 block text-[11px] uppercase tracking-[0.18em] text-ink/45">
+                          {dato.etiqueta}
+                        </span>
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+
+              {/* COMPOSICIÓN CON RECURSOS REALES */}
+              {portadas.length > 0 && (
+                <div className="rk-fade-up rk-enter-2 min-w-0">
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    {portadas.map((recurso, indice) => (
+                      <Link
+                        key={recurso.id}
+                        href={`/tienda/${recurso.slug}`}
+                        aria-label={recurso.name}
+                        className={`group relative block min-w-0 flex-1 ${
+                          // Escalonado: la composición respira.
+                          indice === 1
+                            ? "translate-y-6 sm:translate-y-10"
+                            : indice === 2
+                              ? "hidden translate-y-3 sm:block sm:translate-y-5"
+                              : ""
+                        }`}
+                      >
+                        <div className="rk-frame rk-aspect-product w-full shadow-rk-lg">
+                          <Image
+                            src={recurso.coverUrl as string}
+                            alt={recurso.name}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 1024px) 32vw, 16vw"
+                            priority={indice === 0}
+                          />
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </section>
 
         {/* ══════════ CATEGORÍAS ══════════ */}
         {categories.length > 0 && (
-          <section className="border-y border-line/10">
-            <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
+          <section className="border-t border-line/10">
+            <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
               <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
                 <div>
-                  <p className="rk-eyebrow">Explora</p>
+                  <p className="rk-kicker">Explora</p>
 
-                  <h2 className="rk-title mt-2.5 text-[1.75rem] sm:text-4xl">
+                  <h2 className="rk-title mt-3 text-[2rem] sm:text-5xl">
                     Por categoría
                   </h2>
                 </div>
 
                 <Link
                   href="/categorias"
-                  className="rk-press text-sm font-medium text-ink/60 transition-colors hover:text-accent"
+                  className="rk-press group inline-flex items-center gap-2 text-sm font-semibold"
                 >
                   Ver todas
+                  <ArrowRight
+                    size={16}
+                    className="transition-transform duration-normal ease-rk group-hover:translate-x-0.5"
+                  />
                 </Link>
               </div>
 
               {/*
-                La rejilla se adapta al número real de
-                categorías: con una sola, una tarjeta suelta
-                dentro de cuatro columnas se vería rota.
+                Solo aparecen las categorías que tienen recursos
+                publicados: la consulta ya descarta las vacías, así
+                que nunca se pinta una tarjeta sin nada detrás.
+
+                La rejilla se adapta al número real de categorías:
+                con una sola, una tarjeta suelta dentro de cuatro
+                columnas se vería rota.
               */}
               <div
-                className={`rk-fade-up rk-enter-1 mt-8 grid gap-3 ${
+                className={`rk-fade-up rk-enter-1 mt-10 grid gap-3 sm:gap-4 ${
                   categories.length === 1
-                    ? "max-w-sm"
+                    ? "max-w-md"
                     : categories.length === 2
-                    ? "sm:grid-cols-2 lg:max-w-3xl"
-                    : categories.length === 3
-                    ? "sm:grid-cols-2 lg:grid-cols-3"
-                    : "sm:grid-cols-2 lg:grid-cols-4"
+                      ? "sm:grid-cols-2"
+                      : categories.length === 3
+                        ? "sm:grid-cols-2 lg:grid-cols-3"
+                        : "sm:grid-cols-2 lg:grid-cols-4"
                 }`}
               >
-                {categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={`/tienda?categoria=${category.slug}`}
-                    className="rk-card rk-hover-lift rk-press group relative overflow-hidden p-5"
-                  >
-                    {/* Marca geométrica CSS: no hay imagen de categoría. */}
-                    <span
-                      aria-hidden
-                      className="absolute -right-6 -top-6 h-24 w-24 rotate-12 rounded-[1.75rem] border border-line/10 bg-accent/[0.07] transition-transform duration-normal ease-rk group-hover:rotate-[24deg] group-hover:scale-110"
-                    />
+                {categories.map((category) => {
+                  const portada = category.products[0]?.coverUrl;
 
-                    <span className="relative flex h-10 w-10 items-center justify-center rounded-rk-sm bg-accent/10 text-accent">
-                      <LayoutGrid size={17} />
-                    </span>
+                  return (
+                    <Link
+                      key={category.id}
+                      href={`/tienda?categoria=${category.slug}`}
+                      className="rk-press group relative block overflow-hidden rounded-rk-lg"
+                    >
+                      {/* La imagen manda; el texto va encima. */}
+                      <div className="rk-frame !rounded-rk-lg relative aspect-[4/3] w-full sm:aspect-[16/10]">
+                        {portada ? (
+                          <Image
+                            src={portada}
+                            alt=""
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                          />
+                        ) : (
+                          <span
+                            aria-hidden
+                            className="flex h-full items-center justify-center text-[11px] uppercase tracking-[0.3em] text-ink/30"
+                          >
+                            RCKTDMG
+                          </span>
+                        )}
 
-                    <h3 className="relative mt-5 text-[15px] font-semibold tracking-tight">
-                      {category.name}
-                    </h3>
+                        {/*
+                          Velo oscuro solo sobre la zona del texto:
+                          la imagen sigue nítida, sin desenfoque.
+                        */}
+                        <span
+                          aria-hidden
+                          className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black/75 via-black/35 to-transparent"
+                        />
 
-                    {category.description && (
-                      <p className="relative mt-1 line-clamp-2 text-xs leading-5 text-ink/60">
-                        {category.description}
-                      </p>
-                    )}
+                        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 sm:p-5">
+                          <div className="min-w-0">
+                            <h3 className="truncate text-lg font-semibold tracking-tight text-white sm:text-xl">
+                              {category.name}
+                            </h3>
 
-                    <p className="relative mt-3 text-xs font-medium text-ink/60">
-                      {category._count.products}{" "}
-                      {category._count.products === 1
-                        ? "recurso"
-                        : "recursos"}
-                    </p>
-                  </Link>
-                ))}
+                            <p className="mt-1 text-xs text-white/70">
+                              {category._count.products}{" "}
+                              {category._count.products === 1
+                                ? "recurso"
+                                : "recursos"}
+                            </p>
+                          </div>
+
+                          <span
+                            aria-hidden
+                            className="rk-glass-on-image flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white transition-transform duration-normal ease-rk group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                          >
+                            <ArrowUpRight size={16} />
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </section>
         )}
 
-        {/* ══════════ CREADORES ══════════ */}
-        {creators.length > 0 && (
-          <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
+        {/* ══════════ RECURSOS DESTACADOS ══════════ */}
+        <section className="border-t border-line/10">
+          <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
             <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="rk-eyebrow">Comunidad</p>
+                <p className="rk-kicker">Novedades</p>
 
-                <h2 className="rk-title mt-2.5 text-[1.75rem] sm:text-4xl">
-                  Creadores en RCKTDMG
+                <h2 className="rk-title mt-3 text-[2rem] sm:text-5xl">
+                  Recursos destacados
                 </h2>
               </div>
 
               <Link
-                href="/creadores"
-                className="rk-press text-sm font-medium text-ink/60 transition-colors hover:text-accent"
+                href="/tienda"
+                className="rk-press group inline-flex items-center gap-2 text-sm font-semibold"
               >
-                Ver todos
+                Ver los {productCount}
+                <ArrowUpRight
+                  size={15}
+                  className="transition-transform duration-fast group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
               </Link>
             </div>
 
-            <div
-              className={`rk-fade-up rk-enter-1 mt-8 grid gap-3 sm:grid-cols-2 ${
-                creators.length > 2 ? "lg:grid-cols-4" : "lg:max-w-3xl"
-              }`}
-            >
-              {creators.map((creator) => {
-                const displayName =
-                  creator.publicName || creator.name || "Creador";
+            {products.length === 0 ? (
+              <div className="rk-tile mt-10 px-6 py-16 text-center">
+                <p className="text-sm text-ink/60">
+                  Todavía no hay recursos publicados.
+                </p>
+              </div>
+            ) : (
+              <div className="rk-fade-up rk-enter-1 mt-10 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 xl:grid-cols-6">
+                {products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={aTarjeta(product)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
 
-                return (
-                  <Link
-                    key={creator.id}
-                    href={`/creadores/${creator.username}`}
-                    className="rk-card rk-hover-lift rk-press group flex items-center gap-3.5 p-4"
-                  >
-                    {/* Avatar real, o iniciales si no lo tiene. */}
-                    <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-rk-sm bg-primary text-base font-semibold text-onprimary">
-                      {creator.avatarUrl ? (
-                        <Image
-                          src={creator.avatarUrl}
-                          alt={displayName}
-                          fill
-                          className="object-cover"
-                          sizes="48px"
-                        />
-                      ) : (
-                        displayName.charAt(0).toUpperCase()
-                      )}
-                    </span>
+        {/* ══════════ COLECCIONES, PACKS Y MÁS GUARDADOS ══════════ */}
+        <SeccionesMarketplace />
 
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-1.5">
-                        <span className="truncate text-[14px] font-semibold tracking-tight">
-                          {displayName}
+        {/* ══════════ CREADORES ══════════ */}
+        {creators.length > 0 && (
+          <section className="border-t border-line/10">
+            <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
+              <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="rk-kicker">Comunidad</p>
+
+                  <h2 className="rk-title mt-3 text-[2rem] sm:text-5xl">
+                    Detrás de cada recurso
+                  </h2>
+
+                  <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">
+                    Cada archivo tiene autor, con su perfil público
+                    y su catálogo.
+                  </p>
+                </div>
+
+                <Link
+                  href="/creadores"
+                  className="rk-press group inline-flex items-center gap-2 text-sm font-semibold"
+                >
+                  Ver todos
+                  <ArrowRight
+                    size={16}
+                    className="transition-transform duration-normal ease-rk group-hover:translate-x-0.5"
+                  />
+                </Link>
+              </div>
+
+              <div
+                className={`rk-fade-up rk-enter-1 mt-10 grid gap-3 sm:grid-cols-2 ${
+                  creators.length > 2 ? "lg:grid-cols-4" : ""
+                }`}
+              >
+                {creators.map((creator) => {
+                  const displayName =
+                    creator.publicName || creator.name || "Creador";
+
+                  return (
+                    <Link
+                      key={creator.id}
+                      href={`/creadores/${creator.username}`}
+                      className="rk-tile rk-press group p-5 sm:p-6"
+                    >
+                      <div className="flex items-center gap-4">
+                        {/* Avatar real, o iniciales si no lo tiene. */}
+                        <span className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-lg font-semibold text-onprimary">
+                          {creator.avatarUrl ? (
+                            <Image
+                              src={creator.avatarUrl}
+                              alt={displayName}
+                              fill
+                              className="object-cover"
+                              sizes="56px"
+                            />
+                          ) : (
+                            displayName.charAt(0).toUpperCase()
+                          )}
                         </span>
 
-                        {creator.isVerified && (
-                          <BadgeCheck
-                            size={14}
-                            className="shrink-0 text-accent"
-                            aria-label="Creador verificado"
-                          />
-                        )}
-                      </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="flex items-center gap-1.5">
+                            <span className="truncate text-[17px] font-semibold tracking-tight">
+                              {displayName}
+                            </span>
 
-                      <span className="mt-0.5 block truncate text-[11px] text-ink/60">
-                        @{creator.username}
-                      </span>
+                            {creator.isVerified && (
+                              <BadgeCheck
+                                size={15}
+                                className="shrink-0 text-ink/45"
+                                aria-label="Creador verificado"
+                              />
+                            )}
+                          </span>
 
-                      <span className="mt-1.5 block text-[11px] font-medium text-ink/60">
+                          <span className="mt-0.5 block truncate text-[13px] text-ink/45">
+                            @{creator.username}
+                          </span>
+                        </span>
+
+                        <ArrowUpRight
+                          size={17}
+                          aria-hidden
+                          className="shrink-0 text-ink/40 transition-transform duration-normal ease-rk group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        />
+                      </div>
+
+                      {/* Biografía real; si no la hay, no se pinta. */}
+                      {creator.bio && (
+                        <p className="mt-4 line-clamp-2 text-[13px] leading-6 text-ink/60">
+                          {creator.bio}
+                        </p>
+                      )}
+
+                      <p className="mt-4 text-[11px] uppercase tracking-[0.18em] text-ink/45">
                         {creator._count.products}{" "}
                         {creator._count.products === 1
-                          ? "recurso"
-                          : "recursos"}
-                      </span>
-                    </span>
-
-                    <ArrowUpRight
-                      size={15}
-                      className="shrink-0 text-ink/45 transition-all duration-fast group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
-                    />
-                  </Link>
-                );
-              })}
+                          ? "recurso publicado"
+                          : "recursos publicados"}
+                      </p>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </section>
         )}
 
-        {/* ══════════ PROPUESTA ══════════ */}
-        <section className="border-y border-line/10">
-          <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
-            <div className="rk-fade-up max-w-xl">
-              <p className="rk-eyebrow">Cómo funciona</p>
+        {/* ══════════ CÓMO FUNCIONA ══════════ */}
+        <section className="border-t border-line/10">
+          <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
+            <div className="rk-fade-up max-w-2xl">
+              <p className="rk-kicker">Cómo funciona</p>
 
-              <h2 className="rk-title mt-2.5 text-[1.75rem] sm:text-4xl">
-                Todo lo que necesitas,
-                <br className="hidden sm:block" /> en un solo sitio
+              <h2 className="rk-title mt-3 text-[2rem] sm:text-5xl">
+                Del catálogo a tu proyecto en tres pasos
               </h2>
             </div>
 
-            <div className="rk-fade-up rk-enter-1 mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {propuesta.map((item, index) => {
-                const Icon = item.icon;
+            <div className="rk-fade-up rk-enter-1 mt-12 grid gap-px overflow-hidden rounded-rk-lg border border-line/10 bg-line/10 sm:grid-cols-3">
+              {PASOS.map((paso) => (
+                <div
+                  key={paso.numero}
+                  className="bg-background p-6 sm:p-8"
+                >
+                  <span className="rk-title block text-5xl tabular-nums text-ink/15 sm:text-6xl">
+                    {paso.numero}
+                  </span>
 
-                return (
-                  <Link
-                    key={item.title}
-                    href={item.href}
-                    className="rk-card rk-hover-lift rk-press group relative overflow-hidden p-5"
-                  >
-                    <span className="rk-eyebrow !text-accent">
-                      0{index + 1}
-                    </span>
+                  <h3 className="mt-6 text-xl font-semibold tracking-tight">
+                    {paso.titulo}
+                  </h3>
 
-                    <span className="mt-4 flex h-10 w-10 items-center justify-center rounded-rk-sm bg-accent/10 text-accent transition-transform duration-normal ease-rk group-hover:scale-110">
-                      <Icon size={17} />
-                    </span>
-
-                    <h3 className="mt-4 text-[15px] font-semibold tracking-tight">
-                      {item.title}
-                    </h3>
-
-                    <p className="mt-1.5 text-xs leading-5 text-ink/60">
-                      {item.text}
-                    </p>
-                  </Link>
-                );
-              })}
+                  <p className="mt-2.5 text-sm leading-7 text-ink/60">
+                    {paso.texto}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* ══════════ CTA FINAL ══════════ */}
-        <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
-          <div className="rk-fade-up relative overflow-hidden rounded-rk-xl border border-line/10 bg-primary px-6 py-14 text-center sm:px-10 sm:py-20">
-            {/* Halos y retícula sobre la superficie oscura. */}
+        <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-4 sm:px-5 lg:px-8 lg:pb-24">
+          <div className="rk-onyx rk-fade-up relative overflow-hidden rounded-rk-xl px-6 py-16 text-center sm:px-10 sm:py-24">
+            {/* Retícula sobre la superficie oscura. */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0"
-            >
-              <div className="absolute -left-20 -top-24 h-72 w-72 rounded-full bg-accent/30 blur-[80px]" />
-              <div className="absolute -bottom-28 -right-16 h-72 w-72 rounded-full bg-accent/20 blur-[90px]" />
-            </div>
+              className="pointer-events-none absolute inset-0 opacity-[0.5]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px), linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px)",
+                backgroundSize: "4rem 4rem",
+                maskImage:
+                  "radial-gradient(60% 60% at 50% 40%, #000 10%, transparent 100%)",
+                WebkitMaskImage:
+                  "radial-gradient(60% 60% at 50% 40%, #000 10%, transparent 100%)",
+              }}
+            />
 
             <div className="relative">
-              <span className="inline-flex items-center gap-2 rounded-full border border-onprimary/15 bg-onprimary/10 px-3.5 py-1.5 text-[11px] font-medium text-onprimary/80 backdrop-blur-sm">
-                <ShieldCheck size={12} />
-                Descarga permanente desde tu cuenta
-              </span>
+              <p className="rk-kicker justify-center">
+                Descarga permanente
+              </p>
 
-              <h2 className="rk-title mx-auto mt-6 max-w-2xl text-[1.9rem] text-onprimary sm:text-5xl">
-                Tu próximo proyecto
-                <br />
-                empieza aquí.
+              <h2 className="rk-display mx-auto mt-6 max-w-3xl !text-[clamp(2.25rem,6vw,4rem)]">
+                Tu próximo proyecto empieza aquí.
               </h2>
 
-              <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-onprimary/60 sm:text-base">
+              <p className="mx-auto mt-6 max-w-md text-[15px] leading-8 text-ink/60">
                 Explora los recursos publicados y descarga el que
                 necesites.
               </p>
 
-              <div className="mt-9 flex flex-wrap justify-center gap-3">
-                <Link href="/tienda" className="rk-btn rk-btn-primary">
+              <div className="mt-10 flex flex-wrap justify-center gap-3">
+                <Link
+                  href="/tienda"
+                  className="rk-btn rk-btn-paper"
+                >
                   Ir a la tienda
                   <ArrowRight size={16} />
                 </Link>
 
                 <Link
                   href="/registro"
-                  className="rk-btn border-onprimary/20 bg-onprimary/10 text-onprimary backdrop-blur-sm transition hover:bg-onprimary/20"
+                  className="rk-btn rk-btn-line"
                 >
                   Crear cuenta
                 </Link>

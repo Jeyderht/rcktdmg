@@ -332,7 +332,7 @@ export default function CreatorDashboard() {
           <button
             type="button"
             onClick={loadDashboard}
-            className="rk-btn rk-btn-primary mt-5 !min-h-0 !px-4 !py-2.5 !text-sm"
+            className="rk-btn rk-btn-primary mt-5 rk-btn-compact !px-4 !py-2.5 !text-sm"
           >
             Intentar nuevamente
           </button>
@@ -402,7 +402,7 @@ export default function CreatorDashboard() {
         <section className="rk-fade-up relative overflow-hidden">
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-accent/12 blur-[90px]"
+            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-ink/[0.05] blur-[90px]"
           />
 
           <p className="rk-eyebrow">RCKTDMG</p>
@@ -504,12 +504,12 @@ export default function CreatorDashboard() {
           {earnings ? (
             <div className="mt-5 grid gap-3 md:grid-cols-3">
               {/* La ganancia real del creador manda. */}
-              <div className="rk-card relative overflow-hidden border-accent/25 bg-accent/[0.06] p-5 sm:p-6">
-                <p className="rk-eyebrow !text-accent">
+              <div className="rk-card relative overflow-hidden border-ink/20 bg-ink/[0.04] p-5 sm:p-6">
+                <p className="rk-eyebrow !text-ink">
                   Ganancias
                 </p>
 
-                <p className="mt-3 text-[2rem] font-semibold tabular-nums leading-tight tracking-tight text-accent">
+                <p className="mt-3 text-[2rem] font-semibold tabular-nums leading-tight tracking-tight text-ink">
                   {formatMoney(earnings.summary.creatorEarnings)}
                 </p>
 
@@ -586,7 +586,7 @@ export default function CreatorDashboard() {
               href="/creadores/panel/retiros"
               className="rk-card rk-card-hover rk-press group flex items-center gap-3.5 p-4"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink">
                 <Wallet size={18} />
               </span>
 
@@ -603,7 +603,7 @@ export default function CreatorDashboard() {
               <ArrowRight
                 size={16}
                 aria-hidden
-                className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-accent"
+                className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-ink"
               />
             </Link>
           </div>
@@ -622,7 +622,7 @@ export default function CreatorDashboard() {
 
             <Link
               href="/creadores/panel/recursos"
-              className="rk-press inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-opacity hover:opacity-75"
+              className="rk-press inline-flex items-center gap-1.5 text-sm font-medium text-ink transition-opacity hover:opacity-75"
             >
               Ver todos
               <ArrowRight size={15} />
@@ -691,7 +691,7 @@ export default function CreatorDashboard() {
                   href={action.href}
                   className="rk-card rk-card-hover rk-press group flex items-center gap-3.5 p-3.5 sm:p-4"
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent transition-transform duration-normal ease-rk group-hover:scale-105">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink transition-transform duration-normal ease-rk group-hover:scale-105">
                     <Icon size={18} />
                   </span>
 
@@ -708,7 +708,7 @@ export default function CreatorDashboard() {
                   <ArrowRight
                     size={16}
                     aria-hidden
-                    className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-accent"
+                    className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-ink"
                   />
                 </Link>
               );
@@ -760,7 +760,7 @@ export default function CreatorDashboard() {
 
                       <div className="mt-2 flex h-40 w-full items-end">
                         <div
-                          className="w-full rounded-t-rk-sm bg-accent/85 transition-[height] duration-slow ease-rk"
+                          className="w-full rounded-t-rk-sm bg-foreground/80 transition-[height] duration-slow ease-rk"
                           style={{ height: `${height}%` }}
                         />
                       </div>
@@ -800,7 +800,7 @@ export default function CreatorDashboard() {
 
               <Link
                 href="/creadores/panel/recursos"
-                className="rk-press text-sm font-medium text-accent transition-opacity hover:opacity-75"
+                className="rk-press text-sm font-medium text-ink transition-opacity hover:opacity-75"
               >
                 Ver todos
               </Link>
@@ -865,14 +865,14 @@ export default function CreatorDashboard() {
                     <div className="flex shrink-0 flex-col gap-1.5">
                       <Link
                         href={`/creadores/productos/${product.id}`}
-                        className="rk-btn rk-btn-glass !min-h-0 !px-3 !py-1.5 !text-xs"
+                        className="rk-btn rk-btn-glass rk-btn-compact !px-3 !py-1.5 !text-xs"
                       >
                         Gestionar
                       </Link>
 
                       <Link
                         href={`/creadores/productos/${product.id}/estadisticas`}
-                        className="rk-btn rk-btn-ghost !min-h-0 !px-3 !py-1.5 !text-xs"
+                        className="rk-btn rk-btn-ghost rk-btn-compact !px-3 !py-1.5 !text-xs"
                       >
                         Estadísticas
                       </Link>
@@ -949,7 +949,7 @@ export default function CreatorDashboard() {
                   href={`/tienda/${product.productSlug}`}
                   className="rk-press-sm flex items-center gap-4 py-4 transition-opacity hover:opacity-70"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-semibold tabular-nums text-accent">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-sm font-semibold tabular-nums text-ink">
                     {index + 1}
                   </span>
 
@@ -1010,7 +1010,7 @@ export default function CreatorDashboard() {
                   </div>
 
                   <div className="shrink-0 text-right">
-                    <p className="text-base font-semibold tabular-nums text-accent">
+                    <p className="text-base font-semibold tabular-nums text-ink">
                       {formatMoney(earning.creatorAmount)}
                     </p>
 

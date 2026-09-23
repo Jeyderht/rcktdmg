@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { olvidarObjeto } from "@/lib/storage";
+import {
+  aplicarEtiquetaPack,
+  colorValido,
+  formatoDesdeUrl,
+} from "@/lib/producto-metadata";
+import { TAG_PACK } from "@/lib/catalogo";
 import { verifySessionToken } from "@/lib/auth";
 
 type RouteContext = {
@@ -47,6 +53,13 @@ export async function GET(
       },
       include: {
         category: true,
+
+        // Solo la etiqueta de pack: es la única que el
+        // formulario de edición necesita conocer.
+        tags: {
+          where: { tag: { slug: TAG_PACK } },
+          select: { tagId: true },
+        },
       },
     });
 
@@ -80,6 +93,9 @@ export async function GET(
         coverUrl: product.coverUrl,
         previewUrl: product.previewUrl,
         fileUrl: product.fileUrl,
+        fileFormat: product.fileFormat,
+        color: product.color,
+        esPack: product.tags.length > 0,
         categoryId: product.categoryId,
         category: product.category
           ? {
@@ -188,6 +204,8 @@ export async function PATCH(
       coverUrl,
       previewUrl,
       fileUrl,
+      color,
+      esPack,
     } = body;
 
     if (
@@ -240,6 +258,14 @@ export async function PATCH(
       );
     }
 
+    /*
+      Archivo final tras la edición: el nuevo si llegó uno, y
+      si no, el que ya tenía. De él sale el formato, para que
+      no quede describiendo a un archivo que ya no está.
+    */
+    const archivoFinal =
+      fileUrl !== undefined ? fileUrl || null : product.fileUrl;
+
     const updatedProduct = await prisma.product.update({
       where: {
         id: product.id,
@@ -258,10 +284,13 @@ export async function PATCH(
           previewUrl !== undefined
             ? previewUrl || null
             : product.previewUrl,
-        fileUrl:
-          fileUrl !== undefined
-            ? fileUrl || null
-            : product.fileUrl,
+        fileUrl: archivoFinal,
+
+        color:
+          color !== undefined ? colorValido(color) : product.color,
+
+        // El formato acompaña siempre al archivo guardado.
+        fileFormat: formatoDesdeUrl(archivoFinal),
 
         // Si estaba rechazado, vuelve a borrador.
         status:
@@ -275,6 +304,11 @@ export async function PATCH(
             : product.rejectionReason,
       },
     });
+
+    // La etiqueta "pack" solo se toca si el formulario la envía.
+    if (typeof esPack === "boolean") {
+      await aplicarEtiquetaPack(product.id, esPack);
+    }
 
     /*
       Limpieza del almacén, ya con la base de datos guardada.

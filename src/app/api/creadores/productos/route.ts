@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
+import {
+  aplicarEtiquetaPack,
+  colorValido,
+  formatoDesdeUrl,
+} from "@/lib/producto-metadata";
 
 function createSlug(text: string) {
   return text
@@ -52,6 +57,8 @@ export async function POST(req: NextRequest) {
       coverUrl,
       previewUrl,
       fileUrl,
+      color,
+      esPack,
     } = body;
 
     if (!name || !description || !categoryId || price === undefined) {
@@ -101,8 +108,17 @@ export async function POST(req: NextRequest) {
         coverUrl: coverUrl || null,
         previewUrl: previewUrl || null,
         fileUrl: fileUrl || null,
+        color: colorValido(color),
+        // El formato lo deduce el archivo subido, no el
+        // formulario: así siempre coincide con la descarga.
+        fileFormat: formatoDesdeUrl(fileUrl),
       },
     });
+
+    // La etiqueta "pack" es opcional y se puede quitar luego.
+    if (esPack === true) {
+      await aplicarEtiquetaPack(product.id, true);
+    }
 
     return NextResponse.json(
       {

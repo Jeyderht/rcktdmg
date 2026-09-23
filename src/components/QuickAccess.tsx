@@ -188,7 +188,7 @@ function FeatureGrid({ links }: { links: QuickLink[] }) {
             href={link.href}
             className="rk-card rk-card-hover rk-press group flex items-center gap-3.5 p-3.5 sm:p-4"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent transition-transform duration-normal ease-rk group-hover:scale-105">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink transition-transform duration-normal ease-rk group-hover:scale-105">
               <Icon size={18} />
             </span>
 
@@ -207,7 +207,7 @@ function FeatureGrid({ links }: { links: QuickLink[] }) {
             <ArrowRight
               size={16}
               aria-hidden
-              className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-accent"
+              className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-ink"
             />
           </Link>
         );
@@ -260,7 +260,7 @@ export default function QuickAccess({
         <button
           type="button"
           onClick={handleLogout}
-          className="rk-press inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:bg-danger/10 hover:text-danger"
+          className="rk-press inline-flex min-h-[2.75rem] items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:bg-danger/10 hover:text-danger"
         >
           <LogOut size={14} />
           Cerrar sesión
@@ -296,7 +296,7 @@ export default function QuickAccess({
                 href={publicProfileUrl}
                 className="rk-card rk-card-hover rk-press group flex items-center gap-2.5 !rounded-rk-sm p-3"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink">
                   <UserRound size={16} />
                 </span>
 
@@ -313,7 +313,7 @@ export default function QuickAccess({
                 <ArrowRight
                   size={15}
                   aria-hidden
-                  className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-accent"
+                  className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-ink"
                 />
               </Link>
             ) : (
@@ -330,7 +330,7 @@ export default function QuickAccess({
 
                 <Link
                   href="/creadores/panel/perfil"
-                  className="rk-btn rk-btn-primary !min-h-0 !px-4 !py-2 !text-xs"
+                  className="rk-btn rk-btn-primary !px-4 !text-xs"
                 >
                   Configurar perfil
                 </Link>

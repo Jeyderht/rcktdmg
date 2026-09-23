@@ -58,7 +58,7 @@ export default function NuevoCreadorPage() {
         <header className="rk-fade-up">
           <Link
             href="/admin/usuarios"
-            className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
+            className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
           >
             <ChevronLeft size={15} />
             Usuarios
@@ -180,7 +180,7 @@ export default function NuevoCreadorPage() {
             <div className="mt-5 flex items-start gap-3.5 rounded-rk-md bg-ink/[0.03] p-4">
               <span
                 aria-hidden
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink"
               >
                 <ShieldCheck size={18} />
               </span>

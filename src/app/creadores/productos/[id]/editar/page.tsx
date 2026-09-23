@@ -8,6 +8,7 @@ import {
   subirImagen,
 } from "@/lib/storage/client-upload";
 import Link from "next/link";
+import { COLORES } from "@/lib/catalogo";
 import { useParams, useRouter } from "next/navigation";
 
 type Product = {
@@ -22,6 +23,9 @@ type Product = {
   coverUrl: string | null;
   previewUrl: string | null;
   fileUrl: string | null;
+  fileFormat: string | null;
+  color: string | null;
+  esPack: boolean;
   categoryId: string;
   category: {
     id: string;
@@ -64,6 +68,8 @@ export default function EditarRecursoPage() {
   const [previewUrl, setPreviewUrl] = useState("");
   const [fileUrl, setFileUrl] = useState("");
   const [fileName, setFileName] = useState("");
+  const [color, setColor] = useState("");
+  const [esPack, setEsPack] = useState(false);
 
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingPreview, setUploadingPreview] = useState(false);
@@ -105,6 +111,8 @@ export default function EditarRecursoPage() {
         setCoverUrl(currentProduct.coverUrl || "");
         setPreviewUrl(currentProduct.previewUrl || "");
         setFileUrl(currentProduct.fileUrl || "");
+        setColor(currentProduct.color || "");
+        setEsPack(currentProduct.esPack === true);
       } catch (err) {
         console.error(err);
 
@@ -235,6 +243,8 @@ export default function EditarRecursoPage() {
             coverUrl,
             previewUrl,
             fileUrl,
+            color: color || null,
+            esPack,
           }),
         }
       );
@@ -263,6 +273,8 @@ export default function EditarRecursoPage() {
             coverUrl: coverUrl || null,
             previewUrl: previewUrl || null,
             fileUrl: fileUrl || null,
+            color: color || null,
+            esPack,
             status: data.product.status,
           }
           : current
@@ -360,7 +372,7 @@ export default function EditarRecursoPage() {
       <div className="mx-auto max-w-4xl">
         <Link
           href={`/creadores/productos/${id}`}
-          className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
+          className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
         >
           ← Volver al recurso
         </Link>
@@ -447,7 +459,7 @@ export default function EditarRecursoPage() {
                   }
                   required
                   rows={6}
-                  className="w-full resize-y rk-card px-4 py-3 outline-none transition focus:border-accent/45"
+                  className="w-full resize-y rk-card px-4 py-3 outline-none transition focus:border-ink/40"
                 />
               </div>
             </div>
@@ -564,6 +576,70 @@ export default function EditarRecursoPage() {
                 Por ahora se mantiene la categoría actual.
               </p>
             </div>
+
+            <div className="mt-6 grid gap-5 md:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="color"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  Color predominante
+                  <span className="ml-1.5 font-normal text-ink/45">
+                    (opcional)
+                  </span>
+                </label>
+
+                <select
+                  id="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="rk-select w-full"
+                >
+                  <option value="">Sin especificar</option>
+
+                  {COLORES.map((opcion) => (
+                    <option key={opcion.valor} value={opcion.valor}>
+                      {opcion.etiqueta}
+                    </option>
+                  ))}
+                </select>
+
+                <p className="mt-2 text-xs text-ink/60">
+                  Permite encontrar tu recurso al filtrar por color
+                  en la tienda.
+                </p>
+              </div>
+
+              <div>
+                <p className="mb-2 block text-sm font-medium">
+                  Tipo de recurso
+                </p>
+
+                <label
+                  htmlFor="esPack"
+                  className="flex cursor-pointer items-start gap-3 rounded-rk-md border border-line/10 p-3.5 transition-colors duration-fast ease-rk hover:border-line/20"
+                >
+                  <input
+                    id="esPack"
+                    type="checkbox"
+                    checked={esPack}
+                    onChange={(e) => setEsPack(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-[rgb(var(--rk-foreground))]"
+                  />
+
+                  <span className="min-w-0">
+                    <span className="block text-sm font-medium">
+                      Es un pack
+                    </span>
+
+                    <span className="mt-0.5 block text-xs leading-5 text-ink/60">
+                      Márcalo si el archivo reúne varios recursos en
+                      un solo paquete.
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </div>
           </section>
 
           {/* ARCHIVO */}
@@ -601,6 +677,16 @@ export default function EditarRecursoPage() {
               </div>
             )}
 
+            {product.fileFormat && (
+              <p className="mt-4 text-xs text-ink/60">
+                Formato detectado:{" "}
+                <span className="font-semibold uppercase text-ink">
+                  {product.fileFormat}
+                </span>
+                . Se actualiza solo al reemplazar el archivo.
+              </p>
+            )}
+
             <div className="mt-5 rounded-rk-md border-2 border-dashed border-line/10 bg-ink/[0.05] p-8 text-center">
               <input
                 id="product-file-edit"
@@ -612,7 +698,7 @@ export default function EditarRecursoPage() {
 
               <label
                 htmlFor="product-file-edit"
-                className="rk-btn rk-btn-primary cursor-pointer !min-h-0 !px-5 !py-2.5 !text-sm"
+                className="rk-btn rk-btn-primary cursor-pointer rk-btn-compact !px-5 !py-2.5 !text-sm"
               >
                 {uploadingFile
                   ? "Subiendo archivo..."
@@ -686,7 +772,7 @@ export default function EditarRecursoPage() {
 
                 <label
                   htmlFor="cover-upload"
-                  className="rk-btn rk-btn-primary cursor-pointer !min-h-0 !px-5 !py-2.5 !text-sm"
+                  className="rk-btn rk-btn-primary cursor-pointer rk-btn-compact !px-5 !py-2.5 !text-sm"
                 >
                   {uploadingCover
                     ? "Subiendo portada..."

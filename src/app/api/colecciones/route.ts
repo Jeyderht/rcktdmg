@@ -216,6 +216,14 @@ export async function PATCH(request: Request) {
     const collectionId = String(body.collectionId || "").trim();
     const name = String(body.name || "").trim();
 
+    /*
+      Esta ruta atiende dos cambios distintos, y cada uno puede
+      llegar solo: renombrar la colección y publicarla o volver
+      a hacerla privada. Se valida únicamente lo que llega.
+    */
+    const cambiaNombre = body.name !== undefined;
+    const cambiaVisibilidad = typeof body.isPublic === "boolean";
+
     if (!collectionId) {
       return NextResponse.json(
         { error: "Falta el ID de la colección." },
@@ -223,14 +231,21 @@ export async function PATCH(request: Request) {
       );
     }
 
-    if (!name) {
+    if (!cambiaNombre && !cambiaVisibilidad) {
+      return NextResponse.json(
+        { error: "No hay nada que actualizar." },
+        { status: 400 }
+      );
+    }
+
+    if (cambiaNombre && !name) {
       return NextResponse.json(
         { error: "El nombre de la colección es obligatorio." },
         { status: 400 }
       );
     }
 
-    if (name.length > 80) {
+    if (cambiaNombre && name.length > 80) {
       return NextResponse.json(
         {
           error:
@@ -259,7 +274,8 @@ export async function PATCH(request: Request) {
         id: collectionId,
       },
       data: {
-        name,
+        ...(cambiaNombre ? { name } : {}),
+        ...(cambiaVisibilidad ? { isPublic: body.isPublic } : {}),
       },
       include: {
         items: {

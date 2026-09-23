@@ -113,7 +113,7 @@ function BarChart({
               title={`${point.label}: ${format(value)}`}
             >
               <div
-                className="w-full rounded-t-rk-sm bg-accent/85 transition-[height] duration-slow ease-rk"
+                className="w-full rounded-t-rk-sm bg-foreground/80 transition-[height] duration-slow ease-rk"
                 style={{ height: `${Math.max(height, value > 0 ? 4 : 0)}%` }}
               />
             </div>
@@ -225,7 +225,7 @@ export default async function Admin() {
       <section className="rk-fade-up relative overflow-hidden">
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-accent/12 blur-[90px]"
+          className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-ink/[0.05] blur-[90px]"
         />
 
         <p className="rk-eyebrow">Admin Center</p>
@@ -302,7 +302,7 @@ export default async function Admin() {
                   {item.label}
                 </p>
 
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink">
                   <Icon size={15} />
                 </span>
               </div>
@@ -335,7 +335,7 @@ export default async function Admin() {
 
       {/* GRÁFICOS */}
       <section className="rk-enter rk-enter-2 mt-4 grid gap-4 xl:grid-cols-2">
-        <div className="rk-card p-5">
+        <div className="rk-card min-w-0 p-5">
           <h2 className="text-sm font-semibold">Ventas por mes</h2>
 
           <p className="mt-0.5 text-xs text-ink/60">
@@ -351,7 +351,7 @@ export default async function Admin() {
           </div>
         </div>
 
-        <div className="rk-card p-5">
+        <div className="rk-card min-w-0 p-5">
           <h2 className="text-sm font-semibold">
             Ingresos mensuales
           </h2>
@@ -880,7 +880,7 @@ export default async function Admin() {
                 href={item.href}
                 className="rk-card rk-card-hover rk-press group flex items-center gap-3.5 p-3.5 sm:p-4"
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-accent/10 text-accent transition-transform duration-normal ease-rk group-hover:scale-105">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink transition-transform duration-normal ease-rk group-hover:scale-105">
                   <Icon size={18} />
                 </span>
 
@@ -898,7 +898,7 @@ export default async function Admin() {
                 <ArrowRight
                   size={16}
                   aria-hidden
-                  className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-accent"
+                  className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-ink"
                 />
               </Link>
             );

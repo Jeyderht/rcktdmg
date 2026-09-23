@@ -121,9 +121,9 @@ function AdminSidebarContent() {
                   <Link
                     href={section.href}
                     aria-current={active ? "page" : undefined}
-                    className={`rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors duration-fast ease-rk ${
+                    className={`rk-press flex min-h-[2.75rem] items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors duration-fast ease-rk ${
                       active
-                        ? "bg-accent/12 text-accent"
+                        ? "bg-ink/[0.07] font-semibold text-ink"
                         : "text-ink/60 hover:bg-ink/[0.05] hover:text-ink"
                     }`}
                   >

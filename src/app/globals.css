@@ -5,11 +5,13 @@
 /* ==========================================================
    RCKTDMG — DESIGN SYSTEM
    ----------------------------------------------------------
-   Identidad: digital, premium, futurista, minimalista.
-   Base negra profunda · contraste blanco · azul eléctrico
-   como color de firma (CTAs, foco, estados activos, badges).
+   Identidad: editorial, premium, minimalista.
+   Tinta y papel: negro, blanco y grises. El contraste y el
+   espacio hacen el trabajo que en otros sitios hace el color.
 
-   El azul NUNCA baña la interfaz: es acento, no fondo.
+   Los tokens de acento siguen definidos porque el color aún
+   marca estados con significado (éxito, aviso, error), pero
+   ningún botón, badge ni estado activo lo usa como adorno.
 
    Los colores se declaran en formato "R G B" para poder
    usarlos con opacidad desde Tailwind (text-ink/60).
@@ -63,9 +65,11 @@
   --rk-glass-strong-alpha: 0.84;
   --rk-glass-border: rgb(255 255 255 / 0.7);
 
-  /* ---- HALOS DEL FONDO ---- */
-  --rk-halo-1: rgb(0 98 255 / 0.09);
-  --rk-halo-2: rgb(0 160 200 / 0.07);
+  /* ---- HALOS DEL FONDO ----
+     Neutros: la identidad es tinta sobre papel, así que el
+     fondo aporta profundidad con grises, no con color. */
+  --rk-halo-1: rgb(10 11 14 / 0.05);
+  --rk-halo-2: rgb(10 11 14 / 0.035);
 
   /* ---- PROFUNDIDAD: sombras por capas ---- */
   --rk-shadow-sm:
@@ -126,8 +130,8 @@
   --rk-glass-strong-alpha: 0.82;
   --rk-glass-border: rgb(255 255 255 / 0.1);
 
-  --rk-halo-1: rgb(61 140 255 / 0.15);
-  --rk-halo-2: rgb(0 170 210 / 0.1);
+  --rk-halo-1: rgb(255 255 255 / 0.05);
+  --rk-halo-2: rgb(255 255 255 / 0.035);
 
   /* En oscuro la sombra aporta menos; el borde define. */
   --rk-shadow-sm:
@@ -251,9 +255,16 @@ h6 {
   }
 }
 
-/* Foco accesible, siempre en azul eléctrico. */
+/*
+   Foco accesible: tinta sobre papel.
+
+   Se invierte con el tema, así que siempre tiene el máximo
+   contraste disponible contra el fondo de la página, y el
+   desplazamiento lo mantiene visible incluso sobre un botón
+   del mismo color.
+*/
 :focus-visible {
-  outline: 2px solid rgb(var(--rk-accent));
+  outline: 2px solid rgb(var(--rk-foreground));
   outline-offset: 2px;
   border-radius: var(--rk-radius-sm);
 }
@@ -267,7 +278,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 ::selection {
-  background: rgb(var(--rk-accent) / 0.22);
+  background: rgb(var(--rk-foreground) / 0.16);
 }
 
 @layer components {
@@ -420,26 +431,243 @@ input[type="search"]::-webkit-search-results-decoration {
     cursor: not-allowed;
   }
 
-  /* Primary: la acción principal. Azul eléctrico. */
-  .rk-btn-primary {
-    background: rgb(var(--rk-accent));
-    color: rgb(var(--rk-accent-contrast));
+  /*
+    Botón compacto.
+
+    Con ratón puede ser más bajo que el botón estándar, porque
+    apuntar es preciso. En una pantalla táctil recupera los
+    44 px de objetivo mínimo: ahí el dedo no distingue matices.
+
+    Sustituye al viejo `!min-h-0`, que dejaba controles de
+    30 px imposibles de acertar en móvil.
+  */
+  .rk-btn-compact {
+    min-height: 2rem;
+  }
+
+  @media (pointer: coarse) {
+    .rk-btn-compact {
+      min-height: 2.75rem;
+    }
+  }
+
+  /* ========== BOTONES: BLACK & WHITE ==========
+     La identidad de RCKTDMG es tinta sobre papel. El azul de
+     firma se reserva para el foco y para señales de estado;
+     en un botón no interviene nunca.
+
+     Las cuatro variantes son la misma idea con distinto peso:
+     ink (sólido), paper (sólido invertido), line (contorno) y
+     ghost (solo texto). Todas se invierten al pasar el puntero,
+     que es lo que les da el aire editorial.
+
+     Todo se expresa con --rk-foreground y --rk-background, así
+     que el par se invierte solo en tema oscuro y dentro de una
+     banda .rk-onyx, sin escribir un segundo juego de reglas. */
+
+  /* Ink: tinta sobre papel. La acción principal. */
+  .rk-btn-ink {
+    background: rgb(var(--rk-foreground));
+    color: rgb(var(--rk-background));
+    border-color: rgb(var(--rk-foreground));
+    box-shadow: var(--rk-shadow-sm);
+  }
+
+  .rk-btn-ink:hover:not(:disabled) {
+    background: rgb(var(--rk-background));
+    color: rgb(var(--rk-foreground));
+    border-color: rgb(var(--rk-foreground));
     box-shadow: var(--rk-shadow);
   }
 
+  /* Paper: papel sobre tinta. Para fondos oscuros. */
+  .rk-btn-paper {
+    background: rgb(var(--rk-background));
+    color: rgb(var(--rk-foreground));
+    border-color: rgb(var(--rk-foreground));
+    box-shadow: var(--rk-shadow-sm);
+  }
+
+  .rk-btn-paper:hover:not(:disabled) {
+    background: rgb(var(--rk-foreground));
+    color: rgb(var(--rk-background));
+    border-color: rgb(var(--rk-foreground));
+    box-shadow: var(--rk-shadow);
+  }
+
+  /* Line: solo contorno. La opción más discreta. */
+  .rk-btn-line {
+    background: transparent;
+    color: rgb(var(--rk-foreground));
+    border-color: rgb(var(--rk-foreground) / 0.18);
+  }
+
+  .rk-btn-line:hover:not(:disabled) {
+    background: rgb(var(--rk-foreground));
+    color: rgb(var(--rk-background));
+    border-color: rgb(var(--rk-foreground));
+  }
+
+  /*
+    Primary: se mantiene el nombre porque lo usan decenas de
+    pantallas ya construidas, pero su aspecto pasa a ser el de
+    ink. Así el cambio de identidad llega a toda la aplicación
+    sin tocar el marcado de cada botón.
+  */
+  .rk-btn-primary {
+    background: rgb(var(--rk-foreground));
+    color: rgb(var(--rk-background));
+    border-color: rgb(var(--rk-foreground));
+    box-shadow: var(--rk-shadow-sm);
+  }
+
   .rk-btn-primary:hover:not(:disabled) {
-    background: rgb(var(--rk-accent-hover));
-    box-shadow: var(--rk-shadow-lg);
+    background: rgb(var(--rk-background));
+    color: rgb(var(--rk-foreground));
+    border-color: rgb(var(--rk-foreground));
+    box-shadow: var(--rk-shadow);
+  }
+
+  /* Etiqueta editorial de las secciones nuevas. */
+  .rk-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    color: rgb(var(--rk-foreground) / 0.62);
+  }
+
+  /* Tarjeta de la capa B&N: borde fino, sin color. */
+  .rk-tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--rk-radius-md);
+    border: 1px solid var(--rk-border-color);
+    background: rgb(var(--rk-card));
+    transition:
+      border-color 200ms var(--rk-ease-soft),
+      transform var(--rk-transition-normal) var(--rk-ease),
+      box-shadow var(--rk-transition-normal) var(--rk-ease);
+  }
+
+  .rk-tile:hover {
+    border-color: rgb(var(--rk-foreground) / 0.3);
+    box-shadow: var(--rk-shadow);
+  }
+
+  /* Rail horizontal con anclaje, para los carruseles. */
+  .rk-rail {
+    display: flex;
+    gap: 0.625rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .rk-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rk-rail > * {
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+  }
+
+  /* ========== PRIMITIVAS EDITORIALES ==========
+     Piezas del nuevo lenguaje visual: una banda oscura que
+     invierte el tema dentro de sí, una escala tipográfica de
+     portada y un marco de imagen que hace zoom sin tocar la
+     nitidez del archivo. */
+
+  /*
+    Banda ónice: fondo negro en cualquier tema.
+
+    En lugar de escribir colores fijos para cada hijo, redefine
+    los tokens dentro de su subárbol. Todo lo que ya usa
+    text-ink, border-line o .rk-btn-paper se adapta solo, y el
+    contraste queda garantizado sin duplicar reglas.
+  */
+  .rk-onyx {
+    --rk-foreground: 250 250 252;
+    --rk-ink: 250 250 252;
+    --rk-muted: 250 250 252;
+    --rk-muted-alpha: 0.66;
+    --rk-background: 9 9 11;
+    --rk-background-2: 14 14 17;
+    --rk-surface: 22 22 26;
+    --rk-card: 22 22 26;
+    --rk-card-alpha: 1;
+    --rk-border: 255 255 255;
+    --rk-border-alpha: 0.14;
+    --rk-border-strong-alpha: 0.28;
+    --rk-primary: 250 250 252;
+    --rk-on-primary: 9 9 11;
+    --rk-glass: 24 24 28;
+
+    background-color: rgb(9 9 11);
+    color: rgb(250 250 252);
+  }
+
+  /* Tipografía de portada: grande, pero nunca desbordada. */
+  .rk-display {
+    font-family: var(--font-sora), system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 0.97;
+    font-size: clamp(2.5rem, 8.5vw, 5.5rem);
+    text-wrap: balance;
+  }
+
+  /*
+    Marco de imagen con zoom al pasar el puntero.
+
+    El zoom vive en el contenedor y la imagen se mantiene
+    nítida: aquí no hay filtros, solo una escala. El recorte lo
+    hace overflow, no una deformación de la imagen.
+  */
+  .rk-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--rk-radius-md);
+    background: rgb(var(--rk-foreground) / 0.05);
+  }
+
+  .rk-frame img {
+    transition: transform var(--rk-transition-slow) var(--rk-ease);
+  }
+
+  .group:hover .rk-frame img,
+  .rk-frame:hover img {
+    transform: scale(1.03);
+  }
+
+  /* Línea fina de sección, más discreta que un borde entero. */
+  .rk-hairline {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--rk-border-color),
+      transparent 85%
+    );
   }
 
   /* Secondary: acción secundaria sólida, neutra. */
   .rk-btn-secondary {
     background: rgb(var(--rk-primary));
     color: rgb(var(--rk-on-primary));
+    border-color: rgb(var(--rk-primary));
     box-shadow: var(--rk-shadow-sm);
   }
 
   .rk-btn-secondary:hover:not(:disabled) {
+    background: transparent;
+    color: rgb(var(--rk-primary));
+    border-color: rgb(var(--rk-primary));
     box-shadow: var(--rk-shadow);
   }
 
@@ -526,13 +754,13 @@ input[type="search"]::-webkit-search-results-decoration {
     border-color: var(--rk-border-strong);
   }
 
-  /* Foco: azul eléctrico + halo suave. */
+  /* Foco: borde de tinta y halo neutro. */
   .rk-input:focus,
   .rk-select:focus,
   .rk-textarea:focus {
     background: rgb(var(--rk-surface));
-    border-color: rgb(var(--rk-accent) / 0.55);
-    box-shadow: 0 0 0 4px var(--rk-accent-soft);
+    border-color: rgb(var(--rk-foreground) / 0.45);
+    box-shadow: 0 0 0 4px rgb(var(--rk-foreground) / 0.08);
     outline: none;
   }
 
@@ -588,17 +816,28 @@ input[type="search"]::-webkit-search-results-decoration {
     transform: scale(0.97);
   }
 
-  /* Estado seleccionado: azul eléctrico. */
+  /*
+    En pantallas táctiles la píldora crece hasta el objetivo
+    mínimo de 44 px. Con ratón mantiene su altura compacta: el
+    tamaño solo estorba donde no hace falta.
+  */
+  @media (pointer: coarse) {
+    .rk-chip {
+      min-height: 2.75rem;
+    }
+  }
+
+  /* Estado seleccionado: tinta sólida, como los botones. */
   .rk-chip-active {
-    background: rgb(var(--rk-accent));
-    border-color: rgb(var(--rk-accent));
-    color: rgb(var(--rk-accent-contrast));
+    background: rgb(var(--rk-foreground));
+    border-color: rgb(var(--rk-foreground));
+    color: rgb(var(--rk-background));
   }
 
   .rk-chip-active:hover {
-    background: rgb(var(--rk-accent-hover));
-    border-color: rgb(var(--rk-accent-hover));
-    color: rgb(var(--rk-accent-contrast));
+    background: rgb(var(--rk-foreground) / 0.82);
+    border-color: rgb(var(--rk-foreground));
+    color: rgb(var(--rk-background));
   }
 
   /* ========== BADGES ========== */
@@ -619,9 +858,10 @@ input[type="search"]::-webkit-search-results-decoration {
     color: rgb(var(--rk-muted) / 0.72);
   }
 
+  /* Acento neutro: el realce por defecto es tinta, no color. */
   .rk-badge-accent {
-    background: rgb(var(--rk-accent) / 0.14);
-    color: rgb(var(--rk-accent));
+    background: rgb(var(--rk-foreground) / 0.08);
+    color: rgb(var(--rk-foreground) / 0.82);
   }
 
   .rk-badge-success {

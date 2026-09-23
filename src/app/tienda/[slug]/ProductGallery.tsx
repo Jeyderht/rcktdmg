@@ -124,7 +124,7 @@ export default function ProductGallery({
                 type="button"
                 onClick={() => goTo(selectedIndex - 1)}
                 aria-label="Imagen anterior"
-                className="rk-press rk-glass-on-image absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full"
+                className="rk-press rk-glass-on-image absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -133,7 +133,7 @@ export default function ProductGallery({
                 type="button"
                 onClick={() => goTo(selectedIndex + 1)}
                 aria-label="Imagen siguiente"
-                className="rk-press rk-glass-on-image absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full"
+                className="rk-press rk-glass-on-image absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full"
               >
                 <ChevronRight size={18} />
               </button>
@@ -172,7 +172,7 @@ export default function ProductGallery({
                 onClick={() => setSelectedIndex(index)}
                 className={`rk-press rk-media rk-aspect-product relative w-16 shrink-0 overflow-hidden rounded-rk-sm transition-all duration-normal ease-rk sm:w-20 ${
                   active
-                    ? "ring-2 ring-accent ring-offset-2 ring-offset-transparent"
+                    ? "ring-2 ring-foreground ring-offset-2 ring-offset-transparent"
                     : "opacity-55 hover:opacity-100"
                 }`}
               >

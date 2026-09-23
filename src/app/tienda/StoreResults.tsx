@@ -1,13 +1,21 @@
 import Link from "next/link";
-import type { Prisma } from "@prisma/client";
 import { SearchX, X } from "lucide-react";
 
 import ProductCard from "@/components/ProductCard";
 import { prisma } from "@/lib/prisma";
+import {
+  SELECCION_TARJETA,
+  aTarjeta,
+  construirWhere,
+  filtrosDesde,
+  hayFiltros,
+  ordenPrisma,
+  type OrdenCatalogo,
+  type ParametrosTienda,
+} from "@/lib/catalogo";
 
 type StoreResultsProps = {
-  query: string;
-  categorySlug: string;
+  parametros: ParametrosTienda;
   activeCategoryName: string | null;
 };
 
@@ -25,82 +33,24 @@ type StoreResultsProps = {
  * un 404 real en un producto inexistente.
  */
 export default async function StoreResults({
-  query,
-  categorySlug,
+  parametros,
   activeCategoryName,
 }: StoreResultsProps) {
   // Solo se muestran recursos PUBLISHED: los estados
   // DRAFT, PENDING_REVIEW, REJECTED y ARCHIVED nunca
   // deben aparecer públicamente.
-  const where: Prisma.ProductWhereInput = {
-    status: "PUBLISHED",
-  };
+  const where = construirWhere(filtrosDesde(parametros));
 
-  if (categorySlug) {
-    where.category = {
-      slug: categorySlug,
-    };
-  }
-
-  if (query) {
-    where.OR = [
-      {
-        name: {
-          contains: query,
-          mode: "insensitive",
-        },
-      },
-      {
-        description: {
-          contains: query,
-          mode: "insensitive",
-        },
-      },
-      {
-        category: {
-          name: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-      },
-    ];
-  }
+  const orden = (parametros.sort ?? "recientes") as OrdenCatalogo;
 
   const products = await prisma.product.findMany({
     where,
-
-    include: {
-      category: true,
-
-      // El autor real, para mostrarlo en la tarjeta.
-      creator: {
-        select: {
-          name: true,
-          publicName: true,
-          username: true,
-          creatorStatus: true,
-        },
-      },
-
-      images: {
-        orderBy: {
-          sortOrder: "asc",
-        },
-        take: 1,
-        select: {
-          url: true,
-          alt: true,
-        },
-      },
-    },
-
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: ordenPrisma(orden),
+    select: SELECCION_TARJETA,
   });
 
-  const hasFilters = Boolean(query || categorySlug);
+  const query = parametros.q ?? "";
+  const conFiltros = hayFiltros(parametros);
 
   return (
     <>
@@ -142,10 +92,10 @@ export default async function StoreResults({
             {products.length === 1 ? "recurso" : "recursos"}
           </span>
 
-          {hasFilters && (
+          {conFiltros && (
             <Link
               href="/tienda"
-              className="rk-press inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-opacity hover:opacity-75"
+              className="rk-press inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-4 transition-opacity hover:opacity-60"
             >
               <X size={14} />
               Limpiar filtros
@@ -158,53 +108,32 @@ export default async function StoreResults({
 
       {/* RESULTADOS */}
       {products.length > 0 ? (
-        <div className="rk-fade-up rk-enter-1 mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 xl:grid-cols-6">
+        <div className="rk-fade-up rk-enter-1 mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5">
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={{
-                id: product.id,
-                name: product.name,
-                slug: product.slug,
-                price: Number(product.price),
-                coverUrl: product.coverUrl,
-                image: product.images[0] ?? null,
-                category: product.category,
-                creator: {
-                  name:
-                    product.creator.publicName ||
-                    product.creator.name ||
-                    "Creador",
-                  username:
-                    product.creator.creatorStatus === "APPROVED"
-                      ? product.creator.username
-                      : null,
-                },
-              }}
-            />
+            <ProductCard key={product.id} product={aTarjeta(product)} />
           ))}
         </div>
       ) : (
         /* SIN RESULTADOS */
-        <div className="rk-fade-up rk-card mt-6 px-6 py-16 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-rk-md bg-accent/10 text-accent">
+        <div className="rk-fade-up rk-tile mt-6 px-6 py-16 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-rk-md bg-ink/[0.06]">
             <SearchX size={26} />
           </div>
 
           <h2 className="rk-title mt-5 text-xl">
-            {hasFilters
+            {conFiltros
               ? "Sin resultados"
               : "Todavía no hay recursos publicados"}
           </h2>
 
           <p className="mx-auto mt-2.5 max-w-md text-sm leading-6 text-ink/60">
-            {hasFilters
+            {conFiltros
               ? "No encontramos recursos que coincidan con tu búsqueda."
               : "Vuelve pronto: los creadores están preparando sus recursos."}
           </p>
 
-          {hasFilters && (
-            <Link href="/tienda" className="rk-btn rk-btn-primary mt-7">
+          {conFiltros && (
+            <Link href="/tienda" className="rk-btn rk-btn-ink mt-7">
               <X size={15} />
               Limpiar filtros
             </Link>
@@ -226,15 +155,12 @@ export function StoreResultsSkeleton() {
 
       <div className="rk-divider mt-4" />
 
-      <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 xl:grid-cols-6">
-        {Array.from({ length: 12 }).map((_, index) => (
-          <div
-            key={index}
-            className="rk-card overflow-hidden !rounded-rk-md"
-          >
-            <div className="rk-aspect-product w-full animate-pulse bg-ink/[0.06]" />
+      <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <div key={index}>
+            <div className="rk-aspect-product w-full animate-pulse rounded-rk-md bg-ink/[0.06]" />
 
-            <div className="p-2.5 sm:p-3">
+            <div className="px-0.5 pt-2.5">
               <div className="h-3 w-full animate-pulse rounded-full bg-ink/[0.06]" />
               <div className="mt-2 h-3 w-2/3 animate-pulse rounded-full bg-ink/[0.05]" />
               <div className="mt-3 h-4 w-16 animate-pulse rounded-full bg-ink/[0.07]" />

@@ -33,7 +33,7 @@ export default function AccountPageHeader({
     <header className="rk-fade-up">
       <Link
         href={backHref}
-        className="rk-press-sm -ml-1 inline-flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-accent"
+        className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
       >
         <ChevronLeft size={15} />
         {backLabel}
