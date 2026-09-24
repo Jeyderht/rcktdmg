@@ -14,7 +14,7 @@ type CartItem = {
   price: number;
   slug: string;
   coverUrl: string | null;
-  kind?: "PRODUCT" | "PACK";
+  kind?: "PRODUCT" | "PACK" | "COLLECTION";
   quantity: number;
 };
 
@@ -65,16 +65,24 @@ export default function CheckoutPage() {
         },
         body: JSON.stringify({
           /*
-            Un pack viaja como packId; el servidor lo expande
-            en una línea por recurso y cobra el precio DEL
-            PACK. Los elementos sin `kind` son recursos
-            sueltos, como siempre.
+            Cada elemento viaja con SU identificador y nada
+            más: ni precio ni total. Un pack va como packId y
+            una colección como collectionId; el servidor los
+            expande en una línea por recurso y cobra el precio
+            del conjunto. Los elementos sin `kind` son
+            recursos sueltos, como siempre.
           */
-          items: cart.map((item) =>
-            item.kind === "PACK"
-              ? { packId: item.id, quantity: item.quantity }
-              : { productId: item.id, quantity: item.quantity }
-          ),
+          items: cart.map((item) => {
+            if (item.kind === "PACK") {
+              return { packId: item.id, quantity: item.quantity };
+            }
+
+            if (item.kind === "COLLECTION") {
+              return { collectionId: item.id, quantity: item.quantity };
+            }
+
+            return { productId: item.id, quantity: item.quantity };
+          }),
         }),
       });
 

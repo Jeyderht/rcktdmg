@@ -381,8 +381,16 @@ export default async function CreatorPublicProfile({
                     </ul>
                   )}
 
-                  {/* RECURSOS PUBLICADOS + ACCIÓN */}
-                  <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                  {/*
+                    RECURSOS PUBLICADOS + ACCIÓN
+
+                    En móvil cada bloque ocupa su línea y va
+                    centrado; a partir de sm se alinean en fila.
+                    Antes el botón de seguir traía su recuento
+                    apilado debajo y en una fila centrada
+                    quedaba desalineado con el resto.
+                  */}
+                  <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-start">
                     <span className="rk-card px-4 py-2 text-sm font-medium tabular-nums">
                       {totalRecursos}{" "}
                       <span className="text-ink/60">

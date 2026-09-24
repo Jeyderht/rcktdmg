@@ -14,6 +14,9 @@ import {
   Tag,
   Users,
   Wallet,
+  FolderTree,
+  Inbox,
+  Library,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -66,9 +69,24 @@ const SECTIONS: Section[] = [
     match: { path: "/admin/recursos", query: "estado=PENDING_REVIEW" },
   },
   {
+    href: "/admin/solicitudes",
+    label: "Solicitudes",
+    icon: Inbox,
+  },
+  {
     href: "/admin/packs",
     label: "Packs",
     icon: Layers,
+  },
+  {
+    href: "/admin/colecciones",
+    label: "Colecciones",
+    icon: Library,
+  },
+  {
+    href: "/admin/categorias",
+    label: "Categorías",
+    icon: FolderTree,
   },
   {
     href: "/admin/resenas",

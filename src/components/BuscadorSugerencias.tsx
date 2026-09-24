@@ -23,8 +23,11 @@ export default function BuscadorSugerencias({
   ocultos = {},
   placeholder = "Buscar recursos...",
   className = "",
+  idInput,
 }: {
   valorInicial?: string;
+  /** Id del campo, para que la cabecera pueda enfocarlo. */
+  idInput?: string;
   /** Filtros que deben viajar con la búsqueda. */
   ocultos?: Record<string, string | undefined>;
   placeholder?: string;
@@ -85,6 +88,7 @@ export default function BuscadorSugerencias({
 
         <input
           ref={entrada}
+          id={idInput}
           type="search"
           name="q"
           value={texto}

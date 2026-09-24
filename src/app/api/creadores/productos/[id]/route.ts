@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { dimensionesDesdeUrl } from "@/lib/dimensiones";
 import { olvidarObjeto } from "@/lib/storage";
 import {
   aplicarEtiquetaPack,
@@ -277,6 +278,16 @@ export async function PATCH(
     const archivoFinal =
       fileUrl !== undefined ? fileUrl || null : product.fileUrl;
 
+    /*
+      La portada solo se vuelve a medir si de verdad cambia.
+      Medir en cada guardado costaría una descarga parcial por
+      edición para acabar con el mismo número.
+    */
+    const medidaPortada =
+      coverUrl !== undefined && coverUrl
+        ? await dimensionesDesdeUrl(coverUrl)
+        : null;
+
     const updatedProduct = await prisma.product.update({
       where: {
         id: product.id,
@@ -294,6 +305,16 @@ export async function PATCH(
           coverUrl !== undefined
             ? coverUrl || null
             : product.coverUrl,
+        /*
+          Las dimensiones se vuelven a medir SOLO si la portada
+          cambia. Si no se toca, se conservan las que ya había.
+        */
+        ...(coverUrl !== undefined
+          ? {
+              coverWidth: medidaPortada?.width ?? null,
+              coverHeight: medidaPortada?.height ?? null,
+            }
+          : {}),
         previewUrl:
           previewUrl !== undefined
             ? previewUrl || null

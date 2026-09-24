@@ -116,14 +116,26 @@ export default function SeguirButton({
     }
   }
 
+  /*
+    DISPOSICIÓN
+
+    Móvil: el botón ocupa el ancho y el recuento se apila
+    debajo, centrado con el resto de la cabecera.
+
+    Escritorio: los dos en la misma línea —[Seguir] 123
+    seguidores—, que es como se lee de un vistazo.
+
+    El recuento va SIEMPRE fuera del botón: dentro cambiaría
+    de ancho al pulsarlo y el botón daría un salto.
+  */
   return (
-    <div className="relative inline-flex flex-col items-start gap-1">
+    <div className="relative flex w-full flex-col items-center gap-1.5 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
       <button
         type="button"
         onClick={alternar}
         disabled={guardando}
         aria-pressed={haySesion ? siguiendo : undefined}
-        className={`rk-btn ${
+        className={`rk-btn w-full sm:w-auto ${
           siguiendo ? "rk-btn-line" : "rk-btn-ink"
         } disabled:opacity-60`}
       >
@@ -140,18 +152,15 @@ export default function SeguirButton({
         )}
       </button>
 
-      {/*
-        El contador va fuera del botón: dentro cambiaría de
-        ancho al pulsarlo y el botón daría un salto.
-      */}
-      <p className="text-xs tabular-nums text-ink/55">
-        {seguidores} {seguidores === 1 ? "seguidor" : "seguidores"}
+      <p className="text-[13px] tabular-nums text-ink/55">
+        <span className="font-semibold text-ink/80">{seguidores}</span>{" "}
+        {seguidores === 1 ? "seguidor" : "seguidores"}
       </p>
 
       {error && (
         <p
           role="alert"
-          className="absolute left-0 top-full mt-1 whitespace-nowrap text-xs text-danger"
+          className="absolute left-0 right-0 top-full mt-1 text-center text-xs text-danger sm:text-left"
         >
           {error}
         </p>

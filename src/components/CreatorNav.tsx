@@ -11,6 +11,7 @@ import {
   UserRound,
   Users,
   Wallet,
+  Library,
 } from "lucide-react";
 
 /**
@@ -41,6 +42,11 @@ const SECTIONS = [
     href: "/creadores/panel/packs",
     label: "Packs",
     icon: Layers,
+  },
+  {
+    href: "/creadores/panel/colecciones",
+    label: "Colecciones",
+    icon: Library,
   },
   {
     href: "/creadores/panel/seguidores",

@@ -1,8 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+
+import PreviewProtegido from "@/components/PreviewProtegido";
+import VisorStory, { type ImagenStory } from "./VisorStory";
 
 type ProductImage = {
   id: string;
@@ -11,13 +14,29 @@ type ProductImage = {
   alt: string | null;
   sortOrder: number;
   createdAt: Date | string;
+  imageWidth?: number | null;
+  imageHeight?: number | null;
 };
 
 type ProductGalleryProps = {
   name: string;
   coverUrl: string | null;
+  coverWidth?: number | null;
+  coverHeight?: number | null;
   previewUrl: string | null;
   images: ProductImage[];
+  /** Datos para el modo story. Sin ellos el botón no aparece. */
+  story?: {
+    id: string;
+    slug: string;
+    price: number;
+    creador: {
+      nombre: string;
+      username: string | null;
+      avatarUrl: string | null;
+      isVerified: boolean;
+    };
+  };
 };
 
 /**
@@ -31,28 +50,48 @@ type ProductGalleryProps = {
 export default function ProductGallery({
   name,
   coverUrl,
+  coverWidth,
+  coverHeight,
   previewUrl,
   images: additionalImages,
+  story,
 }: ProductGalleryProps) {
+  /*
+    Cada imagen viaja con su tamaño real cuando se conoce. Sin
+    él se sigue recortando al marco, como antes: no se inventa
+    una proporción.
+  */
   const images = [
     coverUrl
-      ? { key: "cover", url: coverUrl, label: "Portada" }
+      ? {
+          key: "cover",
+          url: coverUrl,
+          label: "Portada",
+          ancho: coverWidth ?? null,
+          alto: coverHeight ?? null,
+        }
       : null,
 
     previewUrl
-      ? { key: "preview", url: previewUrl, label: "Preview" }
+      ? {
+          key: "preview",
+          url: previewUrl,
+          label: "Preview",
+          ancho: null,
+          alto: null,
+        }
       : null,
 
     ...additionalImages.map((image, index) => ({
       key: image.id,
       url: image.url,
       label: image.alt?.trim() || `Imagen ${index + 1}`,
+      ancho: image.imageWidth ?? null,
+      alto: image.imageHeight ?? null,
     })),
-  ].filter(Boolean) as {
-    key: string;
-    url: string;
-    label: string;
-  }[];
+  ].filter(Boolean) as ImagenStory[];
+
+  const [storyAbierta, setStoryAbierta] = useState(false);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -106,15 +145,22 @@ export default function ProductGallery({
       {/* IMAGEN PRINCIPAL 9:16 */}
       <div className="rk-card mx-auto w-full max-w-[16rem] overflow-hidden rounded-rk-xl p-2 sm:max-w-sm lg:max-w-none">
         <div className="rk-media rk-aspect-product relative overflow-hidden rounded-rk-lg">
-          <Image
+          {/*
+            Con dimensiones conocidas la imagen se enseña
+            ENTERA, con su forma. Sin ellas se recorta al
+            marco, que es el comportamiento de siempre. En
+            ningún caso se estira.
+          */}
+          <PreviewProtegido
             key={selectedImage.key}
             src={selectedImage.url}
             alt={`${selectedImage.label} de ${name}`}
-            fill
+            ancho={selectedImage.ancho}
+            alto={selectedImage.alto}
+            contener={Boolean(selectedImage.ancho && selectedImage.alto)}
             priority
-            /* El contenido es 9:16; `cover` recorta sin deformar. */
-            className="animate-scale-in object-cover"
             sizes="(max-width: 1024px) 90vw, 45vw"
+            className="animate-scale-in"
           />
 
           {/* CONTROLES: vidrio sobre imagen nítida */}
@@ -152,12 +198,37 @@ export default function ProductGallery({
         </div>
       </div>
 
-      {/* MINIATURAS */}
+      {/*
+        VER COMO STORY
+
+        A pantalla completa, sin el resto de la página. Se
+        ofrece en todos los tamaños, pero en móvil ocupa el
+        ancho completo porque es donde más se usa.
+      */}
+      {story && (
+        <button
+          type="button"
+          onClick={() => setStoryAbierta(true)}
+          className="rk-btn rk-btn-line mx-auto mt-3 flex w-full max-w-[16rem] sm:max-w-sm lg:max-w-none"
+        >
+          <Maximize2 size={15} aria-hidden />
+          Ver como Story
+        </button>
+      )}
+
+      {/*
+        MINIATURAS
+
+        Solo a partir de 768px. En móvil la tira robaba altura
+        a la imagen para repetir lo que ya hacen las flechas y
+        el contador, así que desaparece por completo: no queda
+        hueco, porque el bloque entero no se pinta.
+      */}
       {total > 1 && (
         <div
           role="tablist"
           aria-label="Imágenes del recurso"
-          className="mx-auto mt-3 flex max-w-[16rem] gap-2.5 overflow-x-auto pb-1 sm:max-w-sm lg:max-w-none"
+          className="mx-auto mt-3 hidden max-w-[16rem] gap-2.5 overflow-x-auto pb-1 sm:max-w-sm md:flex lg:max-w-none"
         >
           {images.map((image, index) => {
             const active = index === selectedIndex;
@@ -187,6 +258,15 @@ export default function ProductGallery({
             );
           })}
         </div>
+      )}
+
+      {story && (
+        <VisorStory
+          abierto={storyAbierta}
+          alCerrar={() => setStoryAbierta(false)}
+          imagenes={images}
+          producto={{ ...story, name }}
+        />
       )}
     </div>
   );

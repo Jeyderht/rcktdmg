@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import {
   ArrowRight,
   ArrowUpRight,
-  BadgeCheck,
   Search,
 } from "lucide-react";
 
@@ -13,6 +12,22 @@ import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import SeccionesMarketplace from "@/components/home/SeccionesMarketplace";
 import Recomendados from "@/components/home/Recomendados";
+import SelectorBusqueda from "@/components/home/SelectorBusqueda";
+import StoriesEventos from "@/components/home/StoriesEventos";
+import SliceCorporativos from "@/components/home/SliceCorporativos";
+import SeccionColecciones from "@/components/home/SeccionColecciones";
+import CarruselCreadores from "@/components/home/CarruselCreadores";
+import Ecosistema from "@/components/home/Ecosistema";
+import MasDisenos from "@/components/home/MasDisenos";
+import ConvierteteEnCreador from "@/components/home/ConvierteteEnCreador";
+import {
+  conteosDeDisenos,
+  creadoresDestacados,
+  flyersDeEventos,
+  recursosCorporativos,
+} from "@/lib/home";
+import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
+import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { SITIO, absoluta, paginaPublica } from "@/lib/seo";
@@ -63,12 +78,23 @@ export default async function Home() {
    * No hay cifras, productos, categorías ni creadores de
    * ejemplo: si algo no existe, su sección no se pinta.
    */
+  /*
+    La sesión decide si se enseña la llamada a convertirse en
+    creador: a quien ya publica no se le propone empezar.
+  */
+  const session = await getSession();
+
   const [
     products,
     categories,
     creators,
     productCount,
     portadas,
+    flyers,
+    corporativos,
+    colecciones,
+    creadoresHome,
+    conteosDisenos,
   ] = await Promise.all([
     prisma.product.findMany({
       where: { status: "PUBLISHED" },
@@ -148,6 +174,22 @@ export default async function Home() {
         coverUrl: true,
       },
     }),
+
+    /*
+      Las tres secciones nuevas entran en el MISMO Promise.all
+      que las anteriores: son tres consultas más en paralelo,
+      no tres viajes extra en serie. Cada una con su tope y su
+      select mínimo.
+    */
+    flyersDeEventos(12),
+
+    recursosCorporativos(9),
+
+    listarColeccionesPublicas(6),
+
+    creadoresDestacados(12),
+
+    conteosDeDisenos(),
   ]);
 
   /*
@@ -374,6 +416,18 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */}
+        <SelectorBusqueda />
+
+        {/* ══════════ STORIES DE EVENTOS ══════════ */}
+        <StoriesEventos flyers={flyers} />
+
+        {/* ══════════ COLECCIONES ══════════ */}
+        <SeccionColecciones colecciones={colecciones} />
+
+        {/* ══════════ CORPORATIVOS ══════════ */}
+        <SliceCorporativos recursos={corporativos} />
+
         {/* ══════════ CATEGORÍAS ══════════ */}
         {categories.length > 0 && (
           <section className="border-t border-line/10">
@@ -535,114 +589,24 @@ export default async function Home() {
         {/* Recomendaciones: contextual o personal, según haya datos. */}
         <Recomendados />
 
-        {/* ══════════ CREADORES ══════════ */}
-        {creators.length > 0 && (
-          <section className="border-t border-line/10">
-            <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
-              <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
-                <div>
-                  <p className="rk-kicker">Comunidad</p>
+        {/*
+          ══════════ CREADORES ══════════
 
-                  <h2 className="rk-title mt-3 text-[2rem] sm:text-5xl">
-                    Detrás de cada recurso
-                  </h2>
+          Era una rejilla de cuatro. Ahora es un carrusel que
+          cabe en una línea aunque haya veinte creadores. Es
+          la MISMA sección, no una segunda: se sustituye, no
+          se duplica.
+        */}
+        <CarruselCreadores creadores={creadoresHome} />
 
-                  <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">
-                    Cada archivo tiene autor, con su perfil público
-                    y su catálogo.
-                  </p>
-                </div>
+        {/* ══════════ MÁS DISEÑOS PARA TU NEGOCIO ══════════ */}
+        <MasDisenos conteos={conteosDisenos} />
 
-                <Link
-                  href="/creadores"
-                  className="rk-press group inline-flex items-center gap-2 text-sm font-semibold"
-                >
-                  Ver todos
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform duration-normal ease-rk group-hover:translate-x-0.5"
-                  />
-                </Link>
-              </div>
+        {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
+        <Ecosistema />
 
-              <div
-                className={`rk-fade-up rk-enter-1 mt-10 grid gap-3 sm:grid-cols-2 ${
-                  creators.length > 2 ? "lg:grid-cols-4" : ""
-                }`}
-              >
-                {creators.map((creator) => {
-                  const displayName =
-                    creator.publicName || creator.name || "Creador";
-
-                  return (
-                    <Link
-                      key={creator.id}
-                      href={`/creadores/${creator.username}`}
-                      className="rk-tile rk-press group p-5 sm:p-6"
-                    >
-                      <div className="flex items-center gap-4">
-                        {/* Avatar real, o iniciales si no lo tiene. */}
-                        <span className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-lg font-semibold text-onprimary">
-                          {creator.avatarUrl ? (
-                            <Image
-                              src={creator.avatarUrl}
-                              alt={displayName}
-                              fill
-                              className="object-cover"
-                              sizes="56px"
-                            />
-                          ) : (
-                            displayName.charAt(0).toUpperCase()
-                          )}
-                        </span>
-
-                        <span className="min-w-0 flex-1">
-                          <span className="flex items-center gap-1.5">
-                            <span className="truncate text-[17px] font-semibold tracking-tight">
-                              {displayName}
-                            </span>
-
-                            {creator.isVerified && (
-                              <BadgeCheck
-                                size={15}
-                                className="shrink-0 text-ink/45"
-                                aria-label="Creador verificado"
-                              />
-                            )}
-                          </span>
-
-                          <span className="mt-0.5 block truncate text-[13px] text-ink/45">
-                            @{creator.username}
-                          </span>
-                        </span>
-
-                        <ArrowUpRight
-                          size={17}
-                          aria-hidden
-                          className="shrink-0 text-ink/40 transition-transform duration-normal ease-rk group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                        />
-                      </div>
-
-                      {/* Biografía real; si no la hay, no se pinta. */}
-                      {creator.bio && (
-                        <p className="mt-4 line-clamp-2 text-[13px] leading-6 text-ink/60">
-                          {creator.bio}
-                        </p>
-                      )}
-
-                      <p className="mt-4 text-[11px] uppercase tracking-[0.18em] text-ink/45">
-                        {creator._count.products}{" "}
-                        {creator._count.products === 1
-                          ? "recurso publicado"
-                          : "recursos publicados"}
-                      </p>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
+        {/* ══════════ CONVIÉRTETE EN CREADOR ══════════ */}
+        <ConvierteteEnCreador rol={session?.role ?? null} />
 
         {/* ══════════ CÓMO FUNCIONA ══════════ */}
         <section className="border-t border-line/10">

@@ -16,16 +16,34 @@ import {
 type CartItem = {
     id: string;
     /**
-     * "PACK" para los packs. Ausente en los elementos que ya
-     * estaban guardados, que son recursos sueltos.
+     * Qué es este elemento. Ausente en los que ya estaban
+     * guardados antes de que existieran packs y colecciones:
+     * aquellos son recursos sueltos y se siguen tratando así.
      */
-    kind?: "PRODUCT" | "PACK";
+    kind?: "PRODUCT" | "PACK" | "COLLECTION";
     name: string;
     price: number;
     slug: string;
     coverUrl: string | null;
     quantity: number;
 };
+
+/**
+ * Página a la que lleva un elemento del carrito.
+ *
+ * Cada tipo vive en su sección. Antes todo apuntaba a
+ * /tienda/[slug], de modo que pulsar un pack guardado llevaba
+ * a un 404.
+ */
+function rutaDe(item: CartItem): string {
+    if (item.kind === "PACK") return `/packs/${item.slug}`;
+
+    if (item.kind === "COLLECTION") {
+        return `/colecciones-comerciales/${item.slug}`;
+    }
+
+    return `/tienda/${item.slug}`;
+}
 
 export default function Cart() {
     const [cart, setCart] = useState<CartItem[]>([]);
@@ -177,7 +195,7 @@ export default function Cart() {
                                     className="rk-card flex gap-4 p-4"
                                 >
                                     <Link
-                                        href={`/tienda/${item.slug}`}
+                                        href={rutaDe(item)}
                                         className="rk-press-sm shrink-0"
                                         aria-label={item.name}
                                     >
@@ -202,7 +220,7 @@ export default function Cart() {
                                     <div className="flex min-w-0 flex-1 flex-col">
                                         <div className="flex items-start justify-between gap-3">
                                             <Link
-                                                href={`/tienda/${item.slug}`}
+                                                href={rutaDe(item)}
                                                 className="min-w-0"
                                             >
                                                 <h2 className="line-clamp-2 text-[15px] font-semibold leading-snug transition-opacity hover:opacity-70">

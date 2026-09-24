@@ -409,8 +409,28 @@ export default async function ProductPage({
                         <ProductGallery
                             name={product.name}
                             coverUrl={product.coverUrl}
+                            coverWidth={product.coverWidth}
+                            coverHeight={product.coverHeight}
                             previewUrl={product.previewUrl}
                             images={product.images}
+                            /*
+                              Datos del modo story. El creador
+                              solo se enlaza si tiene perfil
+                              público de verdad.
+                            */
+                            story={{
+                                id: product.id,
+                                slug: product.slug,
+                                price: Number(product.price),
+                                creador: {
+                                    nombre: creatorName,
+                                    username: creatorProfileUrl
+                                        ? product.creator.username
+                                        : null,
+                                    avatarUrl: product.creator.avatarUrl,
+                                    isVerified: product.creator.isVerified,
+                                },
+                            }}
                         />
                     </div>
 

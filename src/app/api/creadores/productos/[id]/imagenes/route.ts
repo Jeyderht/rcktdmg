@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { olvidarObjeto } from "@/lib/storage";
+import { dimensionesDesdeUrl } from "@/lib/dimensiones";
 import { verifySessionToken } from "@/lib/auth";
 
 type RouteContext = {
@@ -191,10 +192,23 @@ export async function POST(
       );
     }
 
+    /*
+      Dimensiones reales de la imagen.
+
+      Se leen de la cabecera del archivo ya publicado, no de lo
+      que diga el cliente. Si no se pueden leer quedan nulas:
+      es preferible no saber el tamaño a registrar uno falso,
+      porque de estos números depende qué recursos entran en la
+      sección de Corporativos.
+    */
+    const medida = await dimensionesDesdeUrl(url);
+
     const image = await prisma.productImage.create({
       data: {
         productId: product.id,
         url,
+        imageWidth: medida?.width ?? null,
+        imageHeight: medida?.height ?? null,
         alt:
           typeof alt === "string" && alt.trim()
             ? alt.trim()

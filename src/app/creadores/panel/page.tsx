@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Clock,
   CreditCard,
+  ExternalLink,
   Package,
   Plus,
   Settings,
@@ -490,6 +491,53 @@ export default function CreatorDashboard() {
               )}
             </div>
           </div>
+
+          {/*
+            ACCESO AL PERFIL PÚBLICO
+
+            Con username, un enlace directo: el creador quiere
+            ver su perfil como lo ve un cliente y hasta ahora
+            tenía que escribir la URL a mano.
+
+            Sin username, un aviso con la acción para ponerlo.
+            NO se inventa uno por su cuenta: es la dirección
+            pública con la que va a quedar y la elige él. Sin
+            username su perfil no existe, y antes eso se
+            manifestaba como un 404 sin explicación.
+          */}
+          {user?.username ? (
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <Link
+                href={`/creadores/${user.username}`}
+                className="rk-btn rk-btn-line !px-5 !py-2.5 !text-[13px]"
+              >
+                <ExternalLink size={15} aria-hidden />
+                Ver mi perfil público
+              </Link>
+
+              <span className="text-[13px] text-ink/55">
+                rcktdmg.com/creadores/{user.username}
+              </span>
+            </div>
+          ) : (
+            <div className="rk-card mt-4 border-warning/30 bg-warning/[0.06] p-4">
+              <p className="text-sm font-medium">
+                Tu perfil público todavía no existe
+              </p>
+
+              <p className="mt-1 text-[13px] leading-6 text-ink/65">
+                Necesitas un nombre de usuario para tener una
+                dirección pública donde se vean tus recursos.
+              </p>
+
+              <Link
+                href="/creadores/panel/perfil"
+                className="rk-btn rk-btn-ink mt-3 !px-5 !py-2.5 !text-[13px]"
+              >
+                Elegir mi nombre de usuario
+              </Link>
+            </div>
+          )}
         </section>
 
         {/* ========== FINANZAS ========== */}

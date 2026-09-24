@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { dimensionesDesdeUrl } from "@/lib/dimensiones";
 import { verifySessionToken } from "@/lib/auth";
 import {
   aplicarEtiquetaPack,
@@ -99,6 +100,10 @@ export async function POST(req: NextRequest) {
       slug = `${baseSlug}-${Date.now()}`;
     }
 
+    const medidaPortada = coverUrl
+      ? await dimensionesDesdeUrl(coverUrl)
+      : null;
+
     const product = await prisma.product.create({
       data: {
         creatorId: session.userId as string,
@@ -110,6 +115,12 @@ export async function POST(req: NextRequest) {
         accessType: accessType || "BOTH",
         status: "DRAFT",
         coverUrl: coverUrl || null,
+        /*
+          Tamaño real de la portada, leído de su cabecera. Nulo
+          si no se pudo leer: nunca se supone.
+        */
+        coverWidth: medidaPortada?.width ?? null,
+        coverHeight: medidaPortada?.height ?? null,
         previewUrl: previewUrl || null,
         fileUrl: fileUrl || null,
         color: colorValido(color),

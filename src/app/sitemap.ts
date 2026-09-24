@@ -28,7 +28,8 @@ export const dynamic = "force-dynamic";
 const TOPE = 5000;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [productos, packs, creadores, categorias] = await Promise.all([
+  const [productos, packs, colecciones, creadores, categorias] =
+    await Promise.all([
     prisma.product.findMany({
       where: { status: "PUBLISHED" },
       select: { slug: true, updatedAt: true },
@@ -37,6 +38,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
 
     prisma.pack.findMany({
+      where: { status: "PUBLISHED" },
+      select: { slug: true, updatedAt: true },
+      orderBy: { updatedAt: "desc" },
+      take: TOPE,
+    }),
+
+    /*
+      Colecciones COMERCIALES, no las personales. Las personales
+      viven en /colecciones/[id], llevan `noindex` y no entran
+      aquí: son listas privadas que su dueño comparte con quien
+      quiere, no páginas del catálogo.
+    */
+    prisma.commercialCollection.findMany({
       where: { status: "PUBLISHED" },
       select: { slug: true, updatedAt: true },
       orderBy: { updatedAt: "desc" },
@@ -77,6 +91,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluta("/"), lastModified: ahora, changeFrequency: "daily", priority: 1 },
     { url: absoluta("/tienda"), lastModified: ahora, changeFrequency: "daily", priority: 0.9 },
     { url: absoluta("/packs"), lastModified: ahora, changeFrequency: "weekly", priority: 0.8 },
+    { url: absoluta("/colecciones-comerciales"), lastModified: ahora, changeFrequency: "weekly", priority: 0.8 },
+    { url: absoluta("/conviertete-en-creador"), lastModified: ahora, changeFrequency: "monthly", priority: 0.4 },
     { url: absoluta("/categorias"), lastModified: ahora, changeFrequency: "weekly", priority: 0.7 },
     { url: absoluta("/creadores"), lastModified: ahora, changeFrequency: "weekly", priority: 0.7 },
     { url: absoluta("/tags"), lastModified: ahora, changeFrequency: "weekly", priority: 0.5 },
@@ -96,6 +112,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...packs.map((p) => ({
       url: absoluta(`/packs/${p.slug}`),
       lastModified: p.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+
+    ...colecciones.map((c) => ({
+      url: absoluta(`/colecciones-comerciales/${c.slug}`),
+      lastModified: c.updatedAt,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     })),

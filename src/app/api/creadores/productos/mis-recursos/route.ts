@@ -27,7 +27,6 @@ export async function GET() {
     }
 
     const userId = session.userId as string;
-    const role = session.role as string;
 
     // Verificar que sea creador
     if (session.role !== "CREATOR" && session.role !== "ADMIN") {
@@ -65,7 +64,16 @@ export async function GET() {
       coverUrl: product.coverUrl,
       rejectionReason: product.rejectionReason,
       previewUrl: product.previewUrl,
-      fileUrl: product.fileUrl,
+      /*
+        `fileUrl` NO sale hacia el navegador.
+
+        Es la referencia al almacén privado del archivo que se
+        vende. El panel no la pintaba en ningún sitio —solo la
+        declaraba en su tipo—, así que enviarla solo servía
+        para que una referencia privada viajara sin motivo.
+        Para descargar se usa /api/downloads/[id], que
+        comprueba la compra.
+      */
       category: product.category
         ? {
           name: product.category.name,

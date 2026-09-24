@@ -24,7 +24,6 @@ type Product = {
   accessType: "INDIVIDUAL" | "PLAN" | "BOTH";
   coverUrl: string | null;
   previewUrl: string | null;
-  fileUrl: string | null;
   category: {
     name: string;
   } | null;

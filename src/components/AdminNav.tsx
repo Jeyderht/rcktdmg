@@ -14,6 +14,9 @@ import {
   Tag,
   Users,
   Wallet,
+  FolderTree,
+  Inbox,
+  Library,
 } from "lucide-react";
 
 /**
@@ -58,9 +61,24 @@ const SECTIONS = [
     },
   },
   {
+    href: "/admin/solicitudes",
+    label: "Solicitudes",
+    icon: Inbox,
+  },
+  {
     href: "/admin/packs",
     label: "Packs",
     icon: Layers,
+  },
+  {
+    href: "/admin/colecciones",
+    label: "Colecciones",
+    icon: Library,
+  },
+  {
+    href: "/admin/categorias",
+    label: "Categorías",
+    icon: FolderTree,
   },
   {
     href: "/admin/resenas",

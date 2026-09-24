@@ -8,6 +8,7 @@ import { SlidersHorizontal, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BuscadorSugerencias from "@/components/BuscadorSugerencias";
+import { ID_BUSCADOR_TIENDA } from "@/lib/busqueda-ui";
 import FiltrosMoviles from "./FiltrosMoviles";
 import FiltrosSidebar from "./FiltrosSidebar";
 import StoreResults, {
@@ -333,6 +334,7 @@ export default async function Store({ searchParams }: StoreProps) {
           */}
           <BuscadorSugerencias
             valorInicial={query}
+            idInput={ID_BUSCADOR_TIENDA}
             className="max-w-2xl"
             ocultos={{
               categoria: parametros.categoria,

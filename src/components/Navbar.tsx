@@ -14,6 +14,7 @@ import {
 
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { useCartCount } from "@/components/useCartCount";
+import { ID_BUSCADOR_TIENDA } from "@/lib/busqueda-ui";
 import { useSessionUser } from "@/components/useSessionUser";
 import ThemeToggle from "@/components/ThemeToggle";
 import NotificationsBell from "@/components/NotificationsBell";
@@ -205,6 +206,32 @@ function NavbarContent() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  /*
+    EN LA TIENDA NO HAY DOS BUSCADORES.
+
+    /tienda tiene su propia caja de búsqueda, la principal, y
+    es la única que conserva los filtros ya aplicados al buscar
+    de nuevo. Repetir aquí un segundo campo dejaba dos cajas
+    idénticas en pantalla, y la del header tiraba los filtros.
+
+    Así que en esa ruta la cabecera deja de ser un campo y pasa
+    a ser un acceso: lleva el foco a la caja principal. En el
+    resto del sitio el buscador del header funciona igual que
+    siempre.
+  */
+  const enLaTienda = pathname === "/tienda";
+
+  function irAlBuscadorDeLaTienda() {
+    const campo = document.getElementById(ID_BUSCADOR_TIENDA);
+
+    if (!campo) return;
+
+    campo.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // El foco después del desplazamiento, para no cortarlo.
+    window.setTimeout(() => campo.focus(), 320);
+  }
+
   // Cierra el buscador móvil al cambiar de página.
   useEffect(() => {
     setMobileSearchOpen(false);
@@ -280,7 +307,18 @@ function NavbarContent() {
 
             {/* BUSCADOR (DESKTOP) */}
             <div className="ml-auto hidden min-w-0 flex-1 justify-end xl:flex">
-              <SearchField className="w-full max-w-sm" />
+              {enLaTienda ? (
+                <button
+                  type="button"
+                  onClick={irAlBuscadorDeLaTienda}
+                  className="rk-press inline-flex h-11 items-center gap-2 rounded-full border border-line/10 bg-surface/60 px-4 text-sm text-ink/60 backdrop-blur-xl transition-colors hover:border-ink/30 hover:text-ink"
+                >
+                  <Search size={15} aria-hidden />
+                  Buscar en la tienda
+                </button>
+              ) : (
+                <SearchField className="w-full max-w-sm" />
+              )}
             </div>
 
             {/* ACCIONES */}
@@ -289,12 +327,20 @@ function NavbarContent() {
               {/* BUSCADOR (MÓVIL) */}
               <button
                 type="button"
-                onClick={() => setMobileSearchOpen((open) => !open)}
+                onClick={
+                  enLaTienda
+                    ? irAlBuscadorDeLaTienda
+                    : () => setMobileSearchOpen((open) => !open)
+                }
                 aria-label="Buscar"
-                aria-expanded={mobileSearchOpen}
+                aria-expanded={enLaTienda ? undefined : mobileSearchOpen}
                 className="rk-press flex h-11 w-11 items-center justify-center rounded-full text-ink/70 hover:bg-ink/[0.06] hover:text-ink xl:hidden"
               >
-                {mobileSearchOpen ? <X size={18} /> : <Search size={18} />}
+                {mobileSearchOpen && !enLaTienda ? (
+                  <X size={18} />
+                ) : (
+                  <Search size={18} />
+                )}
               </button>
 
               <IconAction
@@ -395,7 +441,7 @@ function NavbarContent() {
           </div>
 
           {/* BUSCADOR DESPLEGABLE EN MÓVIL */}
-          {mobileSearchOpen && (
+          {mobileSearchOpen && !enLaTienda && (
             <div className="animate-scale-in border-t border-line/10 px-3 py-3 xl:hidden">
               <SearchField
                 autoFocus

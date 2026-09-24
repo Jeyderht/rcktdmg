@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
 import { Prisma } from "@prisma/client";
 import { expandirPack } from "@/lib/packs";
+import { expandirColeccion } from "@/lib/colecciones-comerciales";
 
 /**
  * Una línea del carrito.
@@ -15,6 +16,7 @@ import { expandirPack } from "@/lib/packs";
 type OrderItemInput = {
   productId?: string;
   packId?: string;
+  collectionId?: string;
   quantity: number;
 };
 
@@ -57,15 +59,25 @@ export async function POST(request: Request) {
       .map((item) => ({
         productId: item.productId ? String(item.productId) : "",
         packId: item.packId ? String(item.packId) : "",
+        collectionId: item.collectionId ? String(item.collectionId) : "",
         quantity: Number(item.quantity),
       }))
-      .filter(
-        (item) =>
-          // Uno u otro, no los dos ni ninguno.
-          Boolean(item.productId) !== Boolean(item.packId) &&
+      .filter((item) => {
+        /*
+          Una línea es de UNA cosa: un recurso suelto, un pack
+          o una colección. Nunca de dos, nunca de ninguna.
+        */
+        const cuantos =
+          Number(Boolean(item.productId)) +
+          Number(Boolean(item.packId)) +
+          Number(Boolean(item.collectionId));
+
+        return (
+          cuantos === 1 &&
           Number.isInteger(item.quantity) &&
           item.quantity > 0
-      );
+        );
+      });
 
     if (cleanItems.length === 0) {
       return NextResponse.json(
@@ -124,6 +136,7 @@ export async function POST(request: Request) {
       platformFee: Prisma.Decimal;
       creatorAmount: Prisma.Decimal;
       packId: string | null;
+      commercialCollectionId: string | null;
     };
 
     /** Calcula comisión y ganancia de una línea ya valorada. */
@@ -131,7 +144,8 @@ export async function POST(request: Request) {
       productId: string,
       price: Prisma.Decimal,
       quantity: number,
-      packId: string | null
+      packId: string | null,
+      commercialCollectionId: string | null = null
     ): LineaPedido {
       const lineTotal = price.mul(quantity);
 
@@ -149,6 +163,7 @@ export async function POST(request: Request) {
         platformFee,
         creatorAmount: lineTotal.sub(platformFee),
         packId,
+        commercialCollectionId,
       };
     }
 
@@ -172,6 +187,37 @@ export async function POST(request: Request) {
               linea.price,
               item.quantity,
               linea.packId
+            )
+          );
+        }
+
+        continue;
+      }
+
+      if (item.collectionId) {
+        /*
+          Una colección se cobra UNA vez y se reparte entre
+          sus recursos, igual que un pack. El precio, el
+          estado y el contenido los determina el servidor:
+          aquí solo llega el id.
+        */
+        const expandida = await expandirColeccion(item.collectionId);
+
+        if (!expandida.ok) {
+          return NextResponse.json(
+            { error: expandida.error },
+            { status: 400 }
+          );
+        }
+
+        for (const linea of expandida.lineas) {
+          orderItems.push(
+            componer(
+              linea.productId,
+              linea.price,
+              item.quantity,
+              null,
+              linea.collectionId
             )
           );
         }
