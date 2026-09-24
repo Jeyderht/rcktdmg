@@ -5,201 +5,201 @@ import { Bell, BellOff, Check, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-type NotificationItem = {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-  href: string;
-  tone: "neutral" | "success" | "warning" | "danger";
-};
+import {
+  haceCuanto,
+  tonoDe,
+  type NotificacionVista,
+  type TonoNotificacion,
+} from "@/lib/notificaciones-comun";
 
 /**
  * Centro de notificaciones.
  *
- * Los elementos vienen de /api/notificaciones y todos se
- * derivan de registros reales de la base de datos: nunca se
- * inventa actividad.
+ * Todo viene de /api/notificaciones, que lee la tabla
+ * `Notification`. El estado leído es una columna del servidor:
+ * marcar una aquí se ve igual en otro navegador y sobrevive a
+ * borrar la caché. Antes vivía en localStorage y no.
  *
- * Como el esquema todavía no tiene un modelo `Notification`,
- * el estado leído/no leído no puede vivir en el servidor y se
- * guarda por navegador. Al añadir el modelo, basta sustituir
- * estas dos funciones por llamadas a la API.
+ * La campana muestra las más recientes; el histórico completo
+ * está en /notificaciones.
  */
-const READ_STORAGE_KEY = "rcktdmg-notifications-read";
 
-function readDismissed(): string[] {
-  if (typeof window === "undefined") return [];
-
-  try {
-    const stored = localStorage.getItem(READ_STORAGE_KEY);
-    const parsed = stored ? JSON.parse(stored) : [];
-
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeDismissed(ids: string[]) {
-  try {
-    // Se acota para que el almacenamiento no crezca sin fin.
-    localStorage.setItem(
-      READ_STORAGE_KEY,
-      JSON.stringify(ids.slice(-200))
-    );
-  } catch {
-    // Almacenamiento bloqueado: el panel sigue funcionando.
-  }
-}
-
-const TONE_DOT: Record<NotificationItem["tone"], string> = {
+const PUNTO_TONO: Record<TonoNotificacion, string> = {
   neutral: "bg-ink/25",
   success: "bg-success",
   warning: "bg-warning",
   danger: "bg-danger",
 };
 
-function timeAgo(value: string) {
-  const diff = Date.now() - new Date(value).getTime();
-
-  const minutes = Math.floor(diff / 60000);
-
-  if (minutes < 1) return "ahora";
-  if (minutes < 60) return `hace ${minutes} min`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `hace ${hours} h`;
-
-  const days = Math.floor(hours / 24);
-  if (days < 30) return `hace ${days} d`;
-
-  return new Intl.DateTimeFormat("es-PE", {
-    day: "2-digit",
-    month: "short",
-  }).format(new Date(value));
-}
+const EN_LA_CAMPANA = 10;
 
 export default function NotificationsBell() {
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<NotificationItem[]>([]);
-  const [dismissed, setDismissed] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [abierto, setAbierto] = useState(false);
+  const [items, setItems] = useState<NotificacionVista[]>([]);
+  const [noLeidas, setNoLeidas] = useState(0);
+  const [cargando, setCargando] = useState(true);
 
-  // El panel se renderiza como hoja inferior en móvil y como
-  // desplegable anclado a la campana en escritorio.
-  const [isDesktop, setIsDesktop] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  // El panel es hoja inferior en móvil y desplegable anclado
+  // a la campana en escritorio.
+  const [esEscritorio, setEsEscritorio] = useState(false);
+  const [montado, setMontado] = useState(false);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const sheetRef = useRef<HTMLDivElement>(null);
+  const contenedorRef = useRef<HTMLDivElement>(null);
+  const hojaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
-    setDismissed(readDismissed());
+    setMontado(true);
   }, []);
 
   useEffect(() => {
-    const query = window.matchMedia("(min-width: 640px)");
+    const consulta = window.matchMedia("(min-width: 640px)");
 
-    function sync() {
-      setIsDesktop(query.matches);
+    function sincronizar() {
+      setEsEscritorio(consulta.matches);
     }
 
-    sync();
-    query.addEventListener("change", sync);
+    sincronizar();
+    consulta.addEventListener("change", sincronizar);
 
-    return () => query.removeEventListener("change", sync);
+    return () => consulta.removeEventListener("change", sincronizar);
   }, []);
 
-  const load = useCallback(async () => {
+  const cargar = useCallback(async () => {
     try {
-      const response = await fetch("/api/notificaciones", {
-        cache: "no-store",
-      });
+      const respuesta = await fetch(
+        `/api/notificaciones?pageSize=${EN_LA_CAMPANA}`,
+        { cache: "no-store" }
+      );
 
-      if (!response.ok) {
+      // 401 = sin sesión. La campana simplemente queda vacía.
+      if (!respuesta.ok) {
         setItems([]);
+        setNoLeidas(0);
         return;
       }
 
-      const data = await response.json();
+      const datos = await respuesta.json();
 
-      setItems(data.notifications ?? []);
+      setItems(datos.notificaciones ?? []);
+      setNoLeidas(datos.noLeidas ?? 0);
     } catch {
       setItems([]);
+      setNoLeidas(0);
     } finally {
-      setLoading(false);
+      setCargando(false);
     }
   }, []);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    cargar();
+  }, [cargar]);
 
   // Cierra con Escape, y al pulsar fuera en escritorio.
   useEffect(() => {
-    if (!open) return;
+    if (!abierto) return;
 
-    function onPointerDown(event: MouseEvent) {
-      const target = event.target as Node;
+    function alPulsar(evento: MouseEvent) {
+      const destino = evento.target as Node;
 
-      const insideBell = containerRef.current?.contains(target);
-      const insideSheet = sheetRef.current?.contains(target);
+      const dentroCampana = contenedorRef.current?.contains(destino);
+      const dentroHoja = hojaRef.current?.contains(destino);
 
-      if (!insideBell && !insideSheet) {
-        setOpen(false);
-      }
+      if (!dentroCampana && !dentroHoja) setAbierto(false);
     }
 
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") setOpen(false);
+    function alTeclear(evento: KeyboardEvent) {
+      if (evento.key === "Escape") setAbierto(false);
     }
 
-    document.addEventListener("mousedown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("mousedown", alPulsar);
+    document.addEventListener("keydown", alTeclear);
 
     return () => {
-      document.removeEventListener("mousedown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("mousedown", alPulsar);
+      document.removeEventListener("keydown", alTeclear);
     };
-  }, [open]);
+  }, [abierto]);
 
   // En móvil la hoja cubre la pantalla: se bloquea el scroll
   // del fondo. En escritorio el desplegable no lo bloquea.
   useEffect(() => {
-    if (!open || isDesktop) return;
+    if (!abierto || esEscritorio) return;
 
-    const previous = document.body.style.overflow;
+    const previo = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow = previous;
+      document.body.style.overflow = previo;
     };
-  }, [open, isDesktop]);
+  }, [abierto, esEscritorio]);
 
-  const unread = items.filter(
-    (item) => !dismissed.includes(item.id)
-  );
+  /**
+   * Marca una como leída.
+   *
+   * Se pinta como leída al instante y se revierte si el
+   * servidor falla: pulsar y esperar a la red antes de ver
+   * cualquier cambio se siente roto.
+   */
+  async function marcar(id: string) {
+    const item = items.find((n) => n.id === id);
 
-  function markAsRead(id: string) {
-    const next = [...new Set([...dismissed, id])];
+    if (!item || item.readAt) return;
 
-    setDismissed(next);
-    writeDismissed(next);
+    const ahora = new Date().toISOString();
+
+    setItems((previos) =>
+      previos.map((n) => (n.id === id ? { ...n, readAt: ahora } : n))
+    );
+    setNoLeidas((n) => Math.max(0, n - 1));
+
+    try {
+      const respuesta = await fetch("/api/notificaciones", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      if (!respuesta.ok) throw new Error();
+
+      const datos = await respuesta.json();
+
+      // El servidor manda: su cuenta es la buena.
+      setNoLeidas(datos.noLeidas ?? 0);
+    } catch {
+      setItems((previos) =>
+        previos.map((n) => (n.id === id ? { ...n, readAt: null } : n))
+      );
+      setNoLeidas((n) => n + 1);
+    }
   }
 
-  function markAllAsRead() {
-    const next = [
-      ...new Set([...dismissed, ...items.map((item) => item.id)]),
-    ];
+  async function marcarTodas() {
+    const previos = items;
+    const previasNoLeidas = noLeidas;
 
-    setDismissed(next);
-    writeDismissed(next);
+    const ahora = new Date().toISOString();
+
+    setItems((lista) =>
+      lista.map((n) => (n.readAt ? n : { ...n, readAt: ahora }))
+    );
+    setNoLeidas(0);
+
+    try {
+      const respuesta = await fetch("/api/notificaciones", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ todas: true }),
+      });
+
+      if (!respuesta.ok) throw new Error();
+    } catch {
+      setItems(previos);
+      setNoLeidas(previasNoLeidas);
+    }
   }
 
   /** Contenido compartido por la hoja móvil y el desplegable. */
-  const panelBody = (
+  const cuerpo = (
     <>
       {/* CABECERA */}
       <div className="flex items-center justify-between gap-2 border-b border-line/10 px-4 py-3">
@@ -208,18 +208,18 @@ export default function NotificationsBell() {
             Notificaciones
           </h2>
 
-          {unread.length > 0 && (
-            <span className="rk-badge rk-badge-danger shrink-0">
-              {unread.length}
+          {noLeidas > 0 && (
+            <span className="rk-badge rk-badge-danger shrink-0 tabular-nums">
+              {noLeidas}
             </span>
           )}
         </div>
 
         <div className="flex shrink-0 items-center gap-1">
-          {unread.length > 0 && (
+          {noLeidas > 0 && (
             <button
               type="button"
-              onClick={markAllAsRead}
+              onClick={marcarTodas}
               className="rk-btn rk-btn-ghost !px-2.5 !text-[11px]"
             >
               Marcar todas
@@ -228,24 +228,27 @@ export default function NotificationsBell() {
 
           <button
             type="button"
-            onClick={() => setOpen(false)}
+            onClick={() => setAbierto(false)}
             aria-label="Cerrar notificaciones"
-            className="rk-press flex h-9 w-9 items-center justify-center rounded-full text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
+            className="rk-press rk-touch flex h-9 w-9 items-center justify-center rounded-full text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
           >
-            <X size={16} />
+            <X size={16} aria-hidden />
           </button>
         </div>
       </div>
 
       {/* LISTA */}
       <div className="flex-1 overflow-y-auto overscroll-contain">
-        {loading ? (
+        {cargando ? (
           <p className="px-4 py-10 text-center text-sm text-ink/60">
             Cargando...
           </p>
         ) : items.length === 0 ? (
           <div className="px-4 py-10 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-md bg-ink/[0.05]">
+            <div
+              aria-hidden
+              className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-md bg-ink/[0.05]"
+            >
               <BellOff size={20} className="text-ink/60" />
             </div>
 
@@ -256,54 +259,81 @@ export default function NotificationsBell() {
         ) : (
           <ul className="divide-y divide-line/10">
             {items.map((item) => {
-              const isUnread = !dismissed.includes(item.id);
+              const sinLeer = item.readAt === null;
+
+              const interior = (
+                <>
+                  <span
+                    aria-hidden
+                    className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
+                      PUNTO_TONO[tonoDe(item.type)]
+                    }`}
+                  />
+
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[13px] font-semibold leading-5">
+                      {item.title}
+                    </span>
+
+                    {item.body && (
+                      <span className="mt-0.5 block break-words text-xs leading-5 text-ink/60">
+                        {item.body}
+                      </span>
+                    )}
+
+                    <span className="mt-1 block text-[10px] text-ink/60">
+                      {haceCuanto(item.createdAt)}
+                      {!sinLeer && " · leída"}
+                    </span>
+                  </span>
+                </>
+              );
+
+              const clases = `flex min-w-0 flex-1 gap-2.5 rounded-rk-sm px-1 py-2.5 text-left ${
+                sinLeer ? "" : "opacity-55"
+              }`;
 
               return (
                 <li
                   key={item.id}
                   className="group flex items-start gap-2 px-3 py-1 transition-colors hover:bg-ink/[0.04]"
                 >
-                  <Link
-                    href={item.href}
-                    onClick={() => {
-                      markAsRead(item.id);
-                      setOpen(false);
-                    }}
-                    className={`flex min-w-0 flex-1 gap-2.5 rounded-rk-sm px-1 py-2.5 ${
-                      isUnread ? "" : "opacity-55"
-                    }`}
-                  >
-                    <span
-                      aria-hidden
-                      className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
-                        TONE_DOT[item.tone]
-                      }`}
-                    />
-
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-[13px] font-semibold leading-5">
-                        {item.title}
-                      </span>
-
-                      <span className="mt-0.5 block break-words text-xs leading-5 text-ink/60">
-                        {item.description}
-                      </span>
-
-                      <span className="mt-1 block text-[10px] text-ink/60">
-                        {timeAgo(item.createdAt)}
-                      </span>
-                    </span>
-                  </Link>
-
-                  {isUnread && (
+                  {/*
+                    Con destino es un enlace; sin destino, un
+                    botón que solo marca. Antes siempre era un
+                    enlace, y las que no llevan a ningún sitio
+                    navegaban a "".
+                  */}
+                  {item.href ? (
+                    <Link
+                      href={item.href}
+                      onClick={() => {
+                        marcar(item.id);
+                        setAbierto(false);
+                      }}
+                      className={clases}
+                    >
+                      {interior}
+                    </Link>
+                  ) : (
                     <button
                       type="button"
-                      onClick={() => markAsRead(item.id)}
+                      onClick={() => marcar(item.id)}
+                      className={clases}
+                    >
+                      {interior}
+                    </button>
+                  )}
+
+                  {sinLeer && (
+                    <button
+                      type="button"
+                      onClick={() => marcar(item.id)}
                       aria-label={`Marcar "${item.title}" como leída`}
                       title="Marcar como leída"
                       className="rk-press mt-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-ink/60 transition-opacity hover:bg-ink/10 hover:text-ink focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                     >
-                      <Check size={13} />
+                      <Check size={13} aria-hidden />
                     </button>
                   )}
                 </li>
@@ -312,6 +342,19 @@ export default function NotificationsBell() {
           </ul>
         )}
       </div>
+
+      {/* PIE */}
+      {items.length > 0 && (
+        <div className="shrink-0 border-t border-line/10 px-4 py-2.5 text-center">
+          <Link
+            href="/notificaciones"
+            onClick={() => setAbierto(false)}
+            className="rk-press-sm inline-flex min-h-[2.75rem] items-center px-3 text-[13px] font-medium underline underline-offset-4 transition-opacity hover:opacity-70"
+          >
+            Ver todas
+          </Link>
+        </div>
+      )}
     </>
   );
 
@@ -324,33 +367,30 @@ export default function NotificationsBell() {
    * el portal, `fixed` se ancla al header y la tarjeta aparece
    * cortada y fuera de sitio en el móvil.
    */
-  const mobileSheet =
-    mounted && open && !isDesktop
+  const hojaMovil =
+    montado && abierto && !esEscritorio
       ? createPortal(
           <div className="fixed inset-0 z-[80] sm:hidden">
-            {/* FONDO */}
             <button
               type="button"
               aria-label="Cerrar notificaciones"
-              onClick={() => setOpen(false)}
+              onClick={() => setAbierto(false)}
               className="absolute inset-0 h-full w-full bg-black/40 backdrop-blur-sm"
             />
 
-            {/* HOJA INFERIOR */}
             <div
-              ref={sheetRef}
+              ref={hojaRef}
               role="dialog"
               aria-modal="true"
               aria-label="Centro de notificaciones"
               className="rk-glass-strong rk-float animate-fade-up absolute inset-x-3 bottom-[calc(var(--rk-dock-h)+env(safe-area-inset-bottom)+0.75rem)] flex max-h-[65vh] flex-col overflow-hidden rounded-rk-lg"
             >
-              {/* Asa de arrastre */}
               <div
                 aria-hidden
                 className="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-ink/15"
               />
 
-              {panelBody}
+              {cuerpo}
             </div>
           </div>,
           document.body
@@ -358,49 +398,49 @@ export default function NotificationsBell() {
       : null;
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={contenedorRef} className="relative">
       <button
         type="button"
         onClick={() => {
-          setOpen((value) => !value);
+          setAbierto((valor) => !valor);
 
-          if (!open) load();
+          if (!abierto) cargar();
         }}
         aria-label={
-          unread.length > 0
-            ? `Notificaciones (${unread.length} sin leer)`
+          noLeidas > 0
+            ? `Notificaciones (${noLeidas} sin leer)`
             : "Notificaciones"
         }
-        aria-expanded={open}
+        aria-expanded={abierto}
         aria-haspopup="dialog"
         title="Notificaciones"
         className={`rk-press relative flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
-          open
+          abierto
             ? "bg-ink/[0.08] text-ink"
             : "text-ink/70 hover:bg-ink/[0.06] hover:text-ink"
         }`}
       >
-        <Bell size={18} />
+        <Bell size={18} aria-hidden />
 
-        {unread.length > 0 && (
+        {noLeidas > 0 && (
           <span className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold leading-none text-danger-contrast ring-2 ring-surface/80">
-            {unread.length > 9 ? "9+" : unread.length}
+            {noLeidas > 9 ? "9+" : noLeidas}
           </span>
         )}
       </button>
 
       {/* ESCRITORIO: desplegable anclado a la campana */}
-      {open && isDesktop && (
+      {abierto && esEscritorio && (
         <div
           role="dialog"
           aria-label="Centro de notificaciones"
           className="rk-glass-strong rk-float animate-fade-up absolute right-0 top-[calc(100%+0.6rem)] z-[80] flex max-h-[26rem] w-[22rem] flex-col overflow-hidden rounded-rk-lg"
         >
-          {panelBody}
+          {cuerpo}
         </div>
       )}
 
-      {mobileSheet}
+      {hojaMovil}
     </div>
   );
 }

@@ -3,9 +3,18 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
 import { Prisma } from "@prisma/client";
+import { expandirPack } from "@/lib/packs";
 
+/**
+ * Una línea del carrito.
+ *
+ * Lleva "productId" o "packId", nunca los dos. Los carritos
+ * que ya están guardados en el navegador solo traen
+ * "productId", y siguen funcionando igual.
+ */
 type OrderItemInput = {
-  productId: string;
+  productId?: string;
+  packId?: string;
   quantity: number;
 };
 
@@ -46,12 +55,14 @@ export async function POST(request: Request) {
 
     const cleanItems = items
       .map((item) => ({
-        productId: String(item.productId),
+        productId: item.productId ? String(item.productId) : "",
+        packId: item.packId ? String(item.packId) : "",
         quantity: Number(item.quantity),
       }))
       .filter(
         (item) =>
-          item.productId &&
+          // Uno u otro, no los dos ni ninguno.
+          Boolean(item.productId) !== Boolean(item.packId) &&
           Number.isInteger(item.quantity) &&
           item.quantity > 0
       );
@@ -63,9 +74,19 @@ export async function POST(request: Request) {
       );
     }
 
-    const productIds = cleanItems.map(
-      (item) => item.productId
-    );
+    /*
+      Los productos sueltos se resuelven por su precio; los
+      packs se EXPANDEN en una línea por recurso incluido, con
+      el precio del pack repartido entre ellas.
+
+      De este modo la tabla OrderItem sigue conteniendo una
+      línea por recurso y todo lo que cuelga de ella —la
+      descarga, la licencia y la comisión del creador— funciona
+      sin cambio alguno.
+    */
+    const productIds = cleanItems
+      .filter((item) => item.productId)
+      .map((item) => item.productId);
 
     const products = await prisma.product.findMany({
       where: {
@@ -76,7 +97,7 @@ export async function POST(request: Request) {
       },
     });
 
-    if (products.length !== cleanItems.length) {
+    if (products.length !== productIds.length) {
       return NextResponse.json(
         {
           error:
@@ -95,37 +116,82 @@ export async function POST(request: Request) {
 
     let subtotal = new Prisma.Decimal("0");
 
-    const orderItems = cleanItems.map((item) => {
-      const product = productMap.get(item.productId);
+    type LineaPedido = {
+      productId: string;
+      price: Prisma.Decimal;
+      quantity: number;
+      commissionRate: Prisma.Decimal;
+      platformFee: Prisma.Decimal;
+      creatorAmount: Prisma.Decimal;
+      packId: string | null;
+    };
 
-      if (!product) {
-        throw new Error("Producto no encontrado.");
-      }
+    /** Calcula comisión y ganancia de una línea ya valorada. */
+    function componer(
+      productId: string,
+      price: Prisma.Decimal,
+      quantity: number,
+      packId: string | null
+    ): LineaPedido {
+      const lineTotal = price.mul(quantity);
 
-      const price = product.price;
-
-      // Importe total de esta línea
-      const lineTotal = price.mul(item.quantity);
-
-      // Comisión de RCKTDMG: 20%
       const platformFee = lineTotal
         .mul(CREATOR_COMMISSION_RATE)
         .div(100);
 
-      // Ganancia del creador: 80%
-      const creatorAmount = lineTotal.sub(platformFee);
-
       subtotal = subtotal.add(lineTotal);
 
       return {
-        productId: product.id,
-        price: product.price,
-        quantity: item.quantity,
+        productId,
+        price,
+        quantity,
         commissionRate: CREATOR_COMMISSION_RATE,
         platformFee,
-        creatorAmount,
+        creatorAmount: lineTotal.sub(platformFee),
+        packId,
       };
-    });
+    }
+
+    const orderItems: LineaPedido[] = [];
+
+    for (const item of cleanItems) {
+      if (item.packId) {
+        const expandido = await expandirPack(item.packId);
+
+        if (!expandido.ok) {
+          return NextResponse.json(
+            { error: expandido.error },
+            { status: 400 }
+          );
+        }
+
+        for (const linea of expandido.lineas) {
+          orderItems.push(
+            componer(
+              linea.productId,
+              linea.price,
+              item.quantity,
+              linea.packId
+            )
+          );
+        }
+
+        continue;
+      }
+
+      const product = productMap.get(item.productId);
+
+      if (!product) {
+        return NextResponse.json(
+          { error: "Uno o más productos ya no están disponibles." },
+          { status: 400 }
+        );
+      }
+
+      orderItems.push(
+        componer(product.id, product.price, item.quantity, null)
+      );
+    }
 
     const order = await prisma.order.create({
       data: {

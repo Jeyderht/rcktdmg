@@ -24,6 +24,7 @@ const config: Config = {
     "rk-btn-paper",
     "rk-btn-line",
     "rk-btn-compact",
+    "rk-touch",
     "rk-kicker",
     "rk-tile",
     "rk-rail",

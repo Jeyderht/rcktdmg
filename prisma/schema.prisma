@@ -35,6 +35,345 @@ model User {
   products       Product[]              @relation("CreatorProducts")
   subscriptions  Subscription[]
   withdrawals    Withdrawal[]
+
+  /// Creadores a los que sigue este usuario.
+  siguiendo Follow[] @relation("UsuarioSigue")
+  /// Usuarios que siguen a este creador.
+  seguidores Follow[] @relation("CreadorSeguido")
+
+  notifications Notification[]
+  reviews       Review[]
+  licenses      License[]
+  packs         Pack[]         @relation("CreatorPacks")
+}
+
+/**
+ * Licencia de uso de un recurso comprado.
+ *
+ * Es el documento que acredita QUÉ puede hacer una persona
+ * con un recurso, y se puede verificar después: guarda a quién
+ * se otorgó, sobre qué recurso, qué compra la originó, con qué
+ * condiciones y cuándo.
+ *
+ * Nace de una línea de pedido, no del pedido entero: un pedido
+ * con tres recursos otorga tres licencias, porque cada recurso
+ * puede tener condiciones distintas.
+ *
+ * `type` y `terms` se COPIAN en el momento de otorgarla. Si el
+ * creador cambia mañana la licencia de su recurso, quien ya
+ * compró conserva las condiciones que aceptó: una licencia que
+ * se reescribe sola no acredita nada.
+ */
+model License {
+  id String @id @default(cuid())
+
+  /// Código legible para soporte. Se deriva de la línea de
+  /// compra, así que es estable y no depende del azar.
+  code String @unique
+
+  userId      String
+  productId   String
+  orderId     String
+  /// La línea de compra exacta. Única: una licencia por línea,
+  /// lo que hace idempotentes los reintentos del webhook sin
+  /// necesidad de comprobarlo en código.
+  orderItemId String @unique
+
+  type   LicenseType
+  status LicenseStatus @default(ACTIVE)
+
+  /// Condiciones vigentes al otorgarla, copiadas tal cual.
+  terms String?
+
+  grantedAt     DateTime  @default(now())
+  revokedAt     DateTime?
+  /// Por qué se retiró. Visible para su titular.
+  revokedReason String?
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product   @relation(fields: [productId], references: [id])
+  order     Order     @relation(fields: [orderId], references: [id])
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  /// "Mis licencias", de la más reciente a la más antigua.
+  @@index([userId, grantedAt])
+  /// Comprobación al descargar: ¿tiene licencia vigente?
+  @@index([userId, productId, status])
+  /// Sincronizar todas las de un pedido al cambiar de estado.
+  @@index([orderId])
+}
+
+/**
+ * Un pack: varios recursos que se venden juntos.
+ *
+ * NO es un producto con una etiqueta. Es una agrupación con
+ * nombre, portada y precio propios, que al comprarse otorga
+ * acceso a CADA recurso incluido por separado: su descarga y
+ * su licencia individuales.
+ *
+ * Convive con los productos que hoy llevan la etiqueta "pack".
+ * Esos siguen siendo productos normales y no se tocan.
+ */
+model Pack {
+  id          String     @id @default(cuid())
+  creatorId   String
+  name        String
+  slug        String     @unique
+  description String
+  coverUrl    String?
+  /*
+    Precio propio, NO la suma de los recursos. El creador lo
+    decide: un pack existe justamente para costar menos que
+    comprar sus piezas sueltas, y calcularlo automáticamente
+    le quitaría esa decisión.
+  */
+  price     Decimal    @db.Decimal(10, 2)
+  status    PackStatus @default(DRAFT)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  creator    User        @relation("CreatorPacks", fields: [creatorId], references: [id], onDelete: Cascade)
+  items      PackItem[]
+  /// Líneas de pedido originadas por la compra de este pack.
+  orderItems OrderItem[]
+
+  @@index([creatorId])
+  @@index([status])
+}
+
+model PackItem {
+  packId    String
+  productId String
+  /// Orden en que se presentan dentro del pack.
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  pack    Pack    @relation(fields: [packId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  /// Un recurso no puede estar dos veces en el mismo pack.
+  @@id([packId, productId])
+  @@index([productId])
+}
+
+/**
+ * Estado de un pack.
+ *
+ * Sin revisión administrativa, y es deliberado: un pack solo
+ * puede contener recursos que YA pasaron por PENDING_REVIEW y
+ * están publicados. Lo que se revisa —los archivos— ya está
+ * revisado; añadir una segunda cola para el nombre y la
+ * portada sería duplicar el flujo sin añadir control real.
+ * Administración conserva la potestad de archivarlo.
+ */
+enum PackStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+/**
+ * Una versión publicada de un recurso.
+ *
+ * Cada versión guarda SU PROPIO archivo. Los archivos de las
+ * versiones anteriores NO se borran: siguen siendo el objeto
+ * que compró quien compró entonces, y borrarlos convertiría el
+ * historial en una lista de enlaces rotos.
+ *
+ * `fileUrl` es una referencia al almacén privado. Nunca sale
+ * hacia el navegador: la descarga la sirve
+ * /api/downloads/[id] después de comprobar sesión, pedido
+ * pagado y licencia vigente.
+ */
+model ProductVersion {
+  id        String @id @default(cuid())
+  productId String
+
+  /// Número tal y como lo escribió el creador: "1.0", "2.1.3".
+  version String
+
+  /// Archivo privado de ESTA versión.
+  fileUrl    String
+  fileFormat String?
+
+  /// Qué cambió respecto a la anterior.
+  changelog String?
+
+  /// Solo una por recurso puede ser la vigente.
+  isCurrent Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  downloads Download[]
+
+  /// Dos versiones del mismo recurso no pueden llamarse igual.
+  @@unique([productId, version])
+  /// "¿cuál es la vigente de este recurso?"
+  @@index([productId, isCurrent])
+}
+
+enum LicenseType {
+  /// Uso personal, sin explotación comercial.
+  PERSONAL
+  /// Uso comercial por cuenta propia o de un cliente.
+  COMMERCIAL
+  /// Uso comercial ampliado, incluido el uso corporativo.
+  ENTERPRISE
+}
+
+enum LicenseStatus {
+  /// Vigente.
+  ACTIVE
+  /// Retirada: el pedido se canceló o se reembolsó.
+  REVOKED
+}
+
+/**
+ * Valoración de un recurso.
+ *
+ * Solo puede escribirla quien tiene acceso legítimo al
+ * recurso: lo decide `puedeValorar` en src/lib/resenas.ts, y
+ * se comprueba en el servidor cada vez, no solo al pintar el
+ * formulario.
+ *
+ * La clave única por (usuario, recurso) impide dos reseñas de
+ * la misma persona sobre el mismo recurso sin depender de que
+ * el código lo compruebe. Editar actualiza la fila existente.
+ */
+model Review {
+  id        String       @id @default(cuid())
+  userId    String
+  productId String
+  /// De 1 a 5. Se valida antes de escribir.
+  rating    Int
+  comment   String?
+  status    ReviewStatus @default(PUBLISHED)
+  /// Motivo interno al ocultarla. No se muestra en público.
+  moderationNote String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  /// Una reseña por persona y recurso.
+  @@unique([userId, productId])
+  /// Listado público de un recurso: solo las publicadas.
+  @@index([productId, status, createdAt])
+  /// Cola de moderación y "mis reseñas".
+  @@index([status, createdAt])
+  @@index([userId])
+}
+
+enum ReviewStatus {
+  /// Visible en la ficha del recurso.
+  PUBLISHED
+  /// Retirada por administración. No suma a la media.
+  HIDDEN
+}
+
+/**
+ * Notificación de un usuario.
+ *
+ * Se escribe cuando ocurre el hecho, no cuando alguien abre
+ * la campana: por eso el estado leído sobrevive al cambio de
+ * navegador o de dispositivo, que antes no ocurría porque
+ * vivía en localStorage.
+ *
+ * `title` y `body` se guardan ya redactados. Es deliberado:
+ * una notificación cuenta lo que pasó EN SU MOMENTO, y si más
+ * tarde el recurso cambia de nombre o el pedido de importe,
+ * el aviso no debe reescribirse solo.
+ */
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String?
+  /// Ruta interna al recurso relacionado, si la hay.
+  href      String?
+  /// null mientras está sin leer.
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Contador de no leídas: el caso más frecuente con mucho.
+  @@index([userId, readAt])
+  /// Listado paginado, siempre del más reciente al más antiguo.
+  @@index([userId, createdAt])
+}
+
+/**
+ * Tipos de notificación.
+ *
+ * Cubren uno a uno los avisos que el centro de notificaciones
+ * ya mostraba derivándolos de otras tablas. Es un enum y no un
+ * texto libre para que añadir un tipo nuevo obligue a decidir
+ * también su icono y su tono.
+ */
+enum NotificationType {
+  /// ADMIN · un creador envió un recurso a revisión.
+  PRODUCT_SUBMITTED
+  /// CREADOR · su recurso fue publicado.
+  PRODUCT_PUBLISHED
+  /// CREADOR · su recurso fue rechazado.
+  PRODUCT_REJECTED
+  /// CREADOR · alguien compró uno de sus recursos.
+  SALE
+  /// CREADOR · alguien guardó uno de sus recursos.
+  FAVORITE
+  /// CREADOR · alguien empezó a seguirle.
+  FOLLOW
+  /// CREADOR · alguien valoró uno de sus recursos.
+  REVIEW
+  /// CLIENTE · su reseña fue retirada por moderación.
+  REVIEW_HIDDEN
+  /// CLIENTE · su licencia dejó de estar vigente.
+  LICENSE_REVOKED
+  /// CLIENTE · un recurso que compró tiene una versión nueva.
+  PRODUCT_VERSION
+  /// SEGUIDOR · un creador al que sigue publicó un pack.
+  PACK_PUBLISHED
+  /// ADMIN · un creador solicitó un retiro.
+  WITHDRAWAL_REQUESTED
+  /// CREADOR · su retiro cambió de estado.
+  WITHDRAWAL_UPDATED
+  /// CLIENTE y ADMIN · un pedido quedó pagado.
+  ORDER_PAID
+  /// CLIENTE · su pedido se canceló o se reembolsó.
+  ORDER_UPDATED
+  /// CLIENTE · ya puede descargar lo que compró.
+  DOWNLOAD_READY
+  /// ADMIN · se registró un usuario o un creador.
+  USER_REGISTERED
+  /// Aviso de la plataforma, sin origen en otra tabla.
+  SYSTEM
+}
+
+/**
+ * Un usuario sigue a un creador.
+ *
+ * Las dos puntas son User porque un creador es un usuario con
+ * rol CREATOR: no hay tabla de creadores aparte. La clave
+ * primaria compuesta impide seguir dos veces a la misma
+ * persona sin necesidad de comprobarlo en código.
+ */
+model Follow {
+  followerId String
+  creatorId  String
+  createdAt  DateTime @default(now())
+
+  follower User @relation("UsuarioSigue", fields: [followerId], references: [id], onDelete: Cascade)
+  creator  User @relation("CreadorSeguido", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, creatorId])
+  /// "¿cuántos seguidores tiene?" y el listado del creador.
+  @@index([creatorId, createdAt])
+  /// "¿a quién sigo?", para el área del cliente.
+  @@index([followerId, createdAt])
 }
 
 model Category {
@@ -45,13 +384,22 @@ model Category {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
+
+  /// Búsqueda por similitud sobre el nombre de la categoría.
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin)
 }
 
 model Tag {
-  id       String       @id @default(cuid())
-  name     String       @unique
-  slug     String       @unique
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+  /// Solo informativo: ordena el listado del panel de admin.
+  createdAt DateTime @default(now())
+
   products ProductTag[]
+
+  /// Búsqueda por similitud sobre el nombre de la etiqueta.
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin)
 }
 
 model Product {
@@ -66,6 +414,19 @@ model Product {
   status          ProductStatus @default(DRAFT)
   coverUrl        String?
   previewUrl      String?
+  /*
+    Archivo vigente del recurso.
+
+    Desde que existen las versiones, este campo es un ESPEJO
+    del archivo de la versión actual, no una fuente propia. Se
+    conserva a propósito: lo leen la ficha pública, el panel
+    del creador, el de administración y el envío a revisión, y
+    quitarlo obligaría a tocar todos esos sitios a la vez.
+
+    Un recurso sin versiones —los que ya existían— sigue
+    funcionando exactamente igual que antes: este es su único
+    archivo.
+  */
   fileUrl         String?
   /// Extensión real del archivo, calculada al subirlo. Nunca se escribe a mano.
   fileFormat      String?
@@ -75,10 +436,37 @@ model Product {
   updatedAt       DateTime      @updatedAt
   rejectionReason String?
 
+  /*
+    Valoración media y número de reseñas PUBLICADAS.
+
+    Están desnormalizadas a propósito: ordenar el catálogo por
+    valoración o pintar las estrellas en cada tarjeta exigiría
+    agregar reseñas en cada carga de la tienda. Se recalculan
+    dentro de la misma transacción que escribe la reseña, en
+    src/lib/resenas.ts, que es el único sitio que las toca.
+  */
+  avgRating   Decimal? @db.Decimal(3, 2)
+  reviewCount Int      @default(0)
+
+  /*
+    Licencia con la que se vende este recurso.
+
+    PERSONAL por defecto, que es lo más restrictivo: los ocho
+    recursos que ya existen se venden bajo esas condiciones y
+    nadie ha declarado otra cosa. Poner por defecto algo más
+    permisivo les concedería derechos que su creador nunca
+    otorgó.
+  */
+  licenseType LicenseType @default(PERSONAL)
+
   collectionItems CollectionItem[]
   downloads       Download[]
   favorites       Favorite[]
   orderItems      OrderItem[]
+  reviews         Review[]
+  licenses        License[]
+  versions        ProductVersion[]
+  packItems       PackItem[]
 
   category Category @relation(fields: [categoryId], references: [id])
   creator  User     @relation("CreatorProducts", fields: [creatorId], references: [id])
@@ -91,6 +479,15 @@ model Product {
   @@index([status])
   @@index([fileFormat])
   @@index([color])
+
+  /*
+    Búsqueda por similitud (pg_trgm). Un GIN con gin_trgm_ops
+    es lo único que permite a Postgres usar un índice para
+    `ILIKE '%texto%'`: sin él, cada búsqueda recorre la tabla
+    entera.
+  */
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin)
+  @@index([description(ops: raw("gin_trgm_ops"))], type: Gin)
 }
 
 model ProductTag {
@@ -101,6 +498,11 @@ model ProductTag {
   tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([productId, tagId])
+  /*
+    La clave primaria solo indexa (productId, tagId), así que
+    "qué recursos tienen esta etiqueta" no podía usar índice.
+  */
+  @@index([tagId])
 }
 
 model Plan {
@@ -150,6 +552,7 @@ model Order {
   user      User        @relation(fields: [userId], references: [id])
   items     OrderItem[]
   payment   Payment?
+  licenses  License[]
 
   @@index([userId])
   @@index([status])
@@ -166,11 +569,25 @@ model OrderItem {
   creatorAmount  Decimal  @default(0) @db.Decimal(10, 2)
   platformFee    Decimal  @default(0) @db.Decimal(10, 2)
 
+  /*
+    Pack del que salió esta línea, si vino de uno.
+
+    Null en las compras individuales, que son todas las que
+    existen hoy. Comprar un pack NO crea una línea "pack":
+    crea una línea por recurso incluido, cada una con su
+    parte del precio, para que descargas, licencias y
+    ganancias del creador sigan funcionando sin cambios.
+  */
+  packId String?
+
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
+  pack    Pack?   @relation(fields: [packId], references: [id])
+  license License?
 
   @@index([orderId])
   @@index([productId])
+  @@index([packId])
 }
 
 model Payment {
@@ -213,14 +630,30 @@ model Download {
   status        DownloadStatus @default(ACTIVE)
   expiresAt     DateTime?
 
-  order   Order   @relation(fields: [orderId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
+  /*
+    Versión que estaba vigente cuando se compró.
+
+    OPCIONAL a propósito. Las descargas anteriores a esta etapa
+    tienen null, y deben seguir funcionando: null significa
+    "se compró cuando el recurso no tenía versiones".
+
+    Es un registro histórico, NO lo que se entrega: no se
+    reescribe cuando aparece una versión nueva. Sirve para
+    poder decirle al comprador "compraste la 1.0, ahora hay
+    una 2.0".
+  */
+  versionId String?
+
+  order   Order           @relation(fields: [orderId], references: [id])
+  product Product         @relation(fields: [productId], references: [id])
+  user    User            @relation(fields: [userId], references: [id])
+  version ProductVersion? @relation(fields: [versionId], references: [id])
 
   @@unique([userId, productId, orderId])
   @@index([userId])
   @@index([productId])
   @@index([orderId])
+  @@index([versionId])
 }
 
 model Favorite {

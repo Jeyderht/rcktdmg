@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
+import { notificarAdmins } from "@/lib/notificaciones";
 
 /**
  * Envía un recurso a revisión.
@@ -100,6 +101,18 @@ export async function POST(
         // motivo del rechazo anterior.
         rejectionReason: null,
       },
+    });
+
+    /*
+      La ruta solo acepta recursos en DRAFT o REJECTED, así
+      que reenviar uno que ya está en revisión devuelve 400
+      antes de llegar aquí: un envío, un aviso.
+    */
+    await notificarAdmins({
+      type: "PRODUCT_SUBMITTED",
+      title: "Recurso enviado a revisión",
+      body: updatedProduct.name,
+      href: `/admin/recursos/${updatedProduct.id}`,
     });
 
     if (wantsJson) {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifySessionToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { crearNotificacion } from "@/lib/notificaciones";
 
 export async function POST(
   request: Request,
@@ -59,6 +60,20 @@ export async function POST(
       data: {
         status: "PUBLISHED",
       },
+    });
+
+    /*
+      Un solo aviso por publicación: la ruta ya rechaza arriba
+      cualquier recurso que no esté en PENDING_REVIEW, así que
+      pulsar "publicar" dos veces devuelve 400 la segunda y no
+      llega hasta aquí.
+    */
+    await crearNotificacion({
+      userId: product.creatorId,
+      type: "PRODUCT_PUBLISHED",
+      title: "Recurso publicado",
+      body: `${product.name} ya está visible en la tienda.`,
+      href: `/tienda/${product.slug}`,
     });
 
     return NextResponse.json({

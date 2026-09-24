@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -11,10 +12,28 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import SeccionesMarketplace from "@/components/home/SeccionesMarketplace";
+import Recomendados from "@/components/home/Recomendados";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
+import { SITIO, absoluta, paginaPublica } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+/*
+  La home es la portada del sitio. Su título no lleva el
+  sufijo "· RCKTDMG" de la plantilla porque ya es la marca;
+  por eso se declara como `absolute`.
+*/
+export const metadata: Metadata = {
+  ...paginaPublica({
+    titulo: SITIO.nombre,
+    descripcion: SITIO.descripcion,
+    ruta: "/",
+  }),
+  title: {
+    absolute: `${SITIO.nombre} · Marketplace de recursos digitales`,
+  },
+};
 
 /* Los tres pasos reales para conseguir un recurso. */
 const PASOS = [
@@ -131,9 +150,56 @@ export default async function Home() {
     }),
   ]);
 
+  /*
+    Datos estructurados de la home.
+
+    WebSite declara el buscador interno para que Google pueda
+    enseñar una caja de búsqueda del sitio; el destino es la
+    misma ruta que usa el formulario de la cabecera, así que
+    no se anuncia nada que no funcione.
+
+    Organization se queda en lo comprobable: nombre y sitio.
+    Sin logo (no hay un archivo de marca publicado), sin redes
+    y sin datos de contacto inventados.
+  */
+  const sitioSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITIO.nombre,
+    description: SITIO.descripcion,
+    url: absoluta("/"),
+    inLanguage: "es",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${absoluta("/tienda")}?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const organizacionSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITIO.nombre,
+    url: absoluta("/"),
+  };
+
   return (
     <>
       <Navbar />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(sitioSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizacionSchema),
+        }}
+      />
 
       <main>
 
@@ -465,6 +531,9 @@ export default async function Home() {
 
         {/* ══════════ COLECCIONES, PACKS Y MÁS GUARDADOS ══════════ */}
         <SeccionesMarketplace />
+
+        {/* Recomendaciones: contextual o personal, según haya datos. */}
+        <Recomendados />
 
         {/* ══════════ CREADORES ══════════ */}
         {creators.length > 0 && (

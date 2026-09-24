@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import ProductCard from "@/components/ProductCard";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
+import { noEncontrado, paginaPrivada } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -56,12 +57,19 @@ export async function generateMetadata({
   const coleccion = await obtenerColeccion(id);
 
   if (!coleccion) {
-    return { title: "Colección no encontrada" };
+    return noEncontrado("Colección");
   }
 
+  /*
+    Una colección pública se puede abrir con su enlace, pero
+    no se indexa: la URL lleva un id que su dueño comparte con
+    quien quiere, y su contenido cambia cada vez que añade o
+    quita un recurso. Es una página para compartir, no para
+    aparecer en los buscadores.
+  */
   return {
-    title: coleccion.name,
-    description: `Colección de recursos digitales en RCKTDMG.`,
+    ...paginaPrivada(coleccion.name),
+    description: "Colección de recursos digitales en RCKTDMG.",
   };
 }
 

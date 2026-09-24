@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, Suspense, useEffect, useState } from "react";
+import { FormEvent, Suspense, useEffect, useId, useRef, useState } from "react";
 import {
   Heart,
   Search,
@@ -18,6 +18,11 @@ import { useSessionUser } from "@/components/useSessionUser";
 import ThemeToggle from "@/components/ThemeToggle";
 import NotificationsBell from "@/components/NotificationsBell";
 import AccountMenu from "@/components/AccountMenu";
+import {
+  ListaSugerencias,
+  useSugerencias,
+  useTecladoSugerencias,
+} from "@/components/sugerencias";
 
 function SearchField({
   className,
@@ -36,16 +41,49 @@ function SearchField({
     pathname === "/tienda" ? searchParams.get("q") || "" : "";
 
   const [term, setTerm] = useState(currentQuery);
+  const [abierto, setAbierto] = useState(false);
+
+  const listaId = useId();
+  const contenedor = useRef<HTMLDivElement>(null);
 
   // Mantiene el campo sincronizado si la URL cambia.
   useEffect(() => {
     setTerm(currentQuery);
   }, [currentQuery]);
 
+  const { opciones, hayTexto } = useSugerencias(term, abierto);
+
+  const { activo, setActivo, alTeclear } = useTecladoSugerencias(
+    opciones,
+    () => setAbierto(false),
+    (href) => {
+      router.push(href);
+      onSubmitted?.();
+    }
+  );
+
+  useEffect(() => {
+    if (!abierto) return;
+
+    function alPulsar(evento: MouseEvent) {
+      if (!contenedor.current?.contains(evento.target as Node)) {
+        setAbierto(false);
+      }
+    }
+
+    document.addEventListener("mousedown", alPulsar);
+
+    return () => document.removeEventListener("mousedown", alPulsar);
+  }, [abierto]);
+
+  const hayLista = abierto && opciones.length > 0;
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const clean = term.trim();
+
+    setAbierto(false);
 
     router.push(
       clean ? `/tienda?q=${encodeURIComponent(clean)}` : "/tienda"
@@ -55,46 +93,74 @@ function SearchField({
   }
 
   return (
-    <form onSubmit={handleSubmit} role="search" className={className}>
-      <div className="relative">
-        <Search
-          size={16}
-          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink/60"
-        />
+    <div ref={contenedor} className={`relative ${className ?? ""}`}>
+      <form onSubmit={handleSubmit} role="search">
+        <div className="relative">
+          <Search
+            size={16}
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink/60"
+          />
 
-        <input
-          type="search"
-          name="q"
-          value={term}
-          autoFocus={autoFocus}
-          onChange={(event) => setTerm(event.target.value)}
-          placeholder="Buscar recursos..."
-          aria-label="Buscar recursos"
-          autoComplete="off"
-          className="h-12 w-full rounded-full border border-line/10 bg-surface/60 pl-11 pr-24 text-sm outline-none backdrop-blur-xl transition duration-300 ease-rk placeholder:text-ink/60 focus:border-ink/40 focus:bg-surface"
-        />
+          <input
+            type="search"
+            name="q"
+            value={term}
+            autoFocus={autoFocus}
+            onChange={(event) => {
+              setTerm(event.target.value);
+              setAbierto(true);
+            }}
+            onFocus={() => setAbierto(true)}
+            onKeyDown={alTeclear}
+            placeholder="Buscar recursos..."
+            aria-label="Buscar recursos"
+            role="combobox"
+            aria-expanded={hayLista}
+            aria-controls={listaId}
+            aria-autocomplete="list"
+            aria-activedescendant={
+              activo >= 0 ? `${listaId}-${activo}` : undefined
+            }
+            autoComplete="off"
+            className="h-12 w-full rounded-full border border-line/10 bg-surface/60 pl-11 pr-24 text-sm outline-none backdrop-blur-xl transition duration-300 ease-rk placeholder:text-ink/60 focus:border-ink/40 focus:bg-surface"
+          />
 
-        <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
-          {term && (
+          <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
+            {term && (
+              <button
+                type="button"
+                onClick={() => setTerm("")}
+                aria-label="Limpiar búsqueda"
+                className="rk-press rk-touch rounded-full p-1.5 text-ink/60 hover:bg-ink/5 hover:text-ink"
+              >
+                <X size={14} />
+              </button>
+            )}
+
             <button
-              type="button"
-              onClick={() => setTerm("")}
-              aria-label="Limpiar búsqueda"
-              className="rk-press rounded-full p-1.5 text-ink/60 hover:bg-ink/5 hover:text-ink"
+              type="submit"
+              className="rk-btn rk-btn-ink rk-btn-compact !rounded-full !px-4 !py-2 !text-xs"
             >
-              <X size={14} />
+              Buscar
             </button>
-          )}
-
-          <button
-            type="submit"
-            className="rk-btn rk-btn-ink rk-btn-compact !rounded-full !px-4 !py-2 !text-xs"
-          >
-            Buscar
-          </button>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+
+      {hayLista && (
+        <ListaSugerencias
+          id={listaId}
+          opciones={opciones}
+          activo={activo}
+          hayTexto={hayTexto}
+          onElegir={() => {
+            setAbierto(false);
+            onSubmitted?.();
+          }}
+          onResaltar={setActivo}
+        />
+      )}
+    </div>
   );
 }
 
@@ -163,6 +229,7 @@ function NavbarContent() {
 
   const links = [
     { href: "/tienda", label: "Recursos" },
+    { href: "/packs", label: "Packs" },
     { href: "/categorias", label: "Categorías" },
     { href: "/creadores", label: "Creadores" },
     { href: "/planes", label: "Planes" },

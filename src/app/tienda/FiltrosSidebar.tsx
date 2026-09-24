@@ -3,8 +3,9 @@ import { Check } from "lucide-react";
 
 import {
   COLORES,
-  ORDENES,
   RANGOS_PRECIO,
+  ordenPorDefecto,
+  ordenesDisponibles,
   urlTienda,
   type ParametrosTienda,
 } from "@/lib/catalogo";
@@ -122,13 +123,18 @@ export default function FiltrosSidebar({
   actuales,
   formatos,
   colores,
+  etiquetas,
   totalPacks,
 }: {
   actuales: ParametrosTienda;
   formatos: Opcion[];
   colores: Opcion[];
+  etiquetas: Opcion[];
   totalPacks: number;
 }) {
+  // "Relevancia" solo se ofrece si hay algo que puntuar.
+  const hayBusqueda = Boolean(actuales.q);
+
   return (
     <aside
       aria-label="Filtros"
@@ -138,11 +144,11 @@ export default function FiltrosSidebar({
         <Grupo
           titulo="Orden"
           clave="sort"
-          opciones={ORDENES.map((o) => ({
+          opciones={ordenesDisponibles(hayBusqueda).map((o) => ({
             valor: o.valor,
             etiqueta: o.etiqueta,
           }))}
-          activo={actuales.sort ?? "recientes"}
+          activo={actuales.sort ?? ordenPorDefecto(hayBusqueda)}
           actuales={actuales}
         />
 
@@ -154,6 +160,15 @@ export default function FiltrosSidebar({
             etiqueta: r.etiqueta,
           }))}
           activo={actuales.precio ?? ""}
+          actuales={actuales}
+        />
+
+        {/* Etiquetas reales del catálogo publicado. */}
+        <Grupo
+          titulo="Etiquetas"
+          clave="tag"
+          opciones={etiquetas}
+          activo={actuales.tag ?? ""}
           actuales={actuales}
         />
 

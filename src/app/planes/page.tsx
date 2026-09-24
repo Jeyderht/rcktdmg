@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+
+import { paginaPublica } from "@/lib/seo";
 import { ArrowRight, Check, Sparkles } from "lucide-react";
 
 import EmptyState from "@/components/EmptyState";
@@ -7,11 +9,12 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { prisma } from "@/lib/prisma";
 
-export const metadata: Metadata = {
-  title: "Planes",
-  description:
+export const metadata: Metadata = paginaPublica({
+  titulo: "Planes",
+  descripcion:
     "Planes de suscripción de RCKTDMG para descargar recursos digitales.",
-};
+  ruta: "/planes",
+});
 
 export const dynamic = "force-dynamic";
 

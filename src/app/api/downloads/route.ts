@@ -36,7 +36,13 @@ export async function GET() {
             slug: true,
             coverUrl: true,
             description: true,
-            fileUrl: true,
+            /*
+              fileUrl NO se devuelve: es la referencia al
+              almacén privado y el cliente no la necesita para
+              nada —descarga por /api/downloads/[id], que
+              comprueba sesión, pedido y licencia—. La página
+              nunca la usó; solo viajaba por la red sin motivo.
+            */
           },
         },
         order: {

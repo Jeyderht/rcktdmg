@@ -2,15 +2,11 @@ import Link from "next/link";
 import { SearchX, X } from "lucide-react";
 
 import ProductCard from "@/components/ProductCard";
-import { prisma } from "@/lib/prisma";
+import Paginacion from "@/components/Paginacion";
+import { consultarCatalogo } from "@/lib/catalogo-consulta";
 import {
-  SELECCION_TARJETA,
-  aTarjeta,
-  construirWhere,
-  filtrosDesde,
   hayFiltros,
-  ordenPrisma,
-  type OrdenCatalogo,
+  urlTienda,
   type ParametrosTienda,
 } from "@/lib/catalogo";
 
@@ -36,18 +32,15 @@ export default async function StoreResults({
   parametros,
   activeCategoryName,
 }: StoreResultsProps) {
-  // Solo se muestran recursos PUBLISHED: los estados
-  // DRAFT, PENDING_REVIEW, REJECTED y ARCHIVED nunca
-  // deben aparecer públicamente.
-  const where = construirWhere(filtrosDesde(parametros));
-
-  const orden = (parametros.sort ?? "recientes") as OrdenCatalogo;
-
-  const products = await prisma.product.findMany({
-    where,
-    orderBy: ordenPrisma(orden),
-    select: SELECCION_TARJETA,
-  });
+  /*
+    Solo se muestran recursos PUBLISHED: los estados DRAFT,
+    PENDING_REVIEW, REJECTED y ARCHIVED nunca deben aparecer
+    públicamente. De eso se ocupa construirWhere, dentro de
+    consultarCatalogo, que además pagina: aquí nunca llegan
+    más de POR_PAGINA recursos.
+  */
+  const { productos, total, pagina, totalPaginas } =
+    await consultarCatalogo(parametros);
 
   const query = parametros.q ?? "";
   const conFiltros = hayFiltros(parametros);
@@ -86,10 +79,13 @@ export default async function StoreResults({
         </div>
 
         <div className="flex shrink-0 items-center gap-3">
-          {/* Contador real, nunca estimado. */}
-          <span className="text-sm font-medium text-ink/60">
-            {products.length}{" "}
-            {products.length === 1 ? "recurso" : "recursos"}
+          {/*
+            Contador real, nunca estimado, y del catálogo
+            filtrado entero: no de la página que se está
+            viendo.
+          */}
+          <span className="text-sm font-medium tabular-nums text-ink/60">
+            {total} {total === 1 ? "recurso" : "recursos"}
           </span>
 
           {conFiltros && (
@@ -107,12 +103,25 @@ export default async function StoreResults({
       <div className="rk-divider mt-4" />
 
       {/* RESULTADOS */}
-      {products.length > 0 ? (
-        <div className="rk-fade-up rk-enter-1 mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={aTarjeta(product)} />
-          ))}
-        </div>
+      {productos.length > 0 ? (
+        <>
+          <div className="rk-fade-up rk-enter-1 mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5">
+            {productos.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          <Paginacion
+            pagina={pagina}
+            totalPaginas={totalPaginas}
+            href={(numero) =>
+              urlTienda(parametros, {
+                // La página 1 es la URL limpia, sin ?page=1.
+                page: numero <= 1 ? undefined : String(numero),
+              })
+            }
+          />
+        </>
       ) : (
         /* SIN RESULTADOS */
         <div className="rk-fade-up rk-tile mt-6 px-6 py-16 text-center">

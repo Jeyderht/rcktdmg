@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 import { fulfillPaidOrder } from "@/lib/orders";
+import { sincronizarLicenciasDePedido } from "@/lib/licencias";
 
 export const runtime = "nodejs";
 
@@ -123,6 +124,15 @@ export async function POST(request: Request) {
           },
         }),
       ]);
+
+      /*
+        Un pedido cancelado retira sus licencias. Hoy solo
+        llega aquí desde un pago expirado o cancelado, que
+        nunca llegó a otorgar ninguna; pero dejarlo atado
+        aquí evita que un pago anulado tras cobrarse deje
+        licencias vivas.
+      */
+      await sincronizarLicenciasDePedido(payment.orderId);
     }
 
     return NextResponse.json({ success: true }, { status: 200 });

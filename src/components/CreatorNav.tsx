@@ -5,9 +5,11 @@ import { usePathname } from "next/navigation";
 import {
   CreditCard,
   LayoutDashboard,
+  Layers,
   Package,
   Plus,
   UserRound,
+  Users,
   Wallet,
 } from "lucide-react";
 
@@ -34,6 +36,16 @@ const SECTIONS = [
     href: "/creadores/panel/nuevo",
     label: "Nuevo recurso",
     icon: Plus,
+  },
+  {
+    href: "/creadores/panel/packs",
+    label: "Packs",
+    icon: Layers,
+  },
+  {
+    href: "/creadores/panel/seguidores",
+    label: "Seguidores",
+    icon: Users,
   },
   {
     href: "/creadores/panel/retiros",

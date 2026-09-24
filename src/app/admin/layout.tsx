@@ -1,7 +1,18 @@
+import type { Metadata } from "next";
+
+import { paginaPrivada } from "@/lib/seo";
+
 import AdminNav from "@/components/AdminNav";
 import AdminSidebar from "@/components/AdminSidebar";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+
+/*
+  El panel de administración exige rol ADMIN. Aunque el
+  middleware ya lo protege, declararlo aquí evita que una
+  URL filtrada acabe indexada.
+*/
+export const metadata: Metadata = paginaPrivada("Administración");
 
 /**
  * Estructura del área de administración:

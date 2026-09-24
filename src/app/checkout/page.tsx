@@ -14,6 +14,7 @@ type CartItem = {
   price: number;
   slug: string;
   coverUrl: string | null;
+  kind?: "PRODUCT" | "PACK";
   quantity: number;
 };
 
@@ -63,10 +64,17 @@ export default function CheckoutPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          items: cart.map((item) => ({
-            productId: item.id,
-            quantity: item.quantity,
-          })),
+          /*
+            Un pack viaja como packId; el servidor lo expande
+            en una línea por recurso y cobra el precio DEL
+            PACK. Los elementos sin `kind` son recursos
+            sueltos, como siempre.
+          */
+          items: cart.map((item) =>
+            item.kind === "PACK"
+              ? { packId: item.id, quantity: item.quantity }
+              : { productId: item.id, quantity: item.quantity }
+          ),
         }),
       });
 

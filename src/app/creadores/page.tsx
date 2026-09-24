@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+
+import { paginaPublica } from "@/lib/seo";
 import { ArrowRight, BadgeCheck } from "lucide-react";
 
 import Footer from "@/components/Footer";
@@ -8,11 +10,12 @@ import Navbar from "@/components/Navbar";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 
-export const metadata: Metadata = {
-  title: "Creadores",
-  description:
+export const metadata: Metadata = paginaPublica({
+  titulo: "Creadores",
+  descripcion:
     "Descubre a los creadores de RCKTDMG y publica tus propios recursos.",
-};
+  ruta: "/creadores",
+});
 
 export const dynamic = "force-dynamic";
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { crearNotificacion } from "@/lib/notificaciones";
 import { verifySessionToken } from "@/lib/auth";
 import { WithdrawalStatus } from "@prisma/client";
 
@@ -134,6 +135,29 @@ export async function PATCH(
             ? new Date()
             : withdrawal.processedAt,
       },
+    });
+
+    /*
+      La ruta comprueba arriba que la transición de estado sea
+      válida, así que repetir la misma acción no vuelve a
+      llegar hasta aquí: un cambio de estado, un aviso.
+    */
+    const copia = {
+      APPROVED: "Retiro aprobado",
+      REJECTED: "Retiro rechazado",
+      PAID: "Retiro pagado",
+      REQUESTED: "Retiro solicitado",
+    } as const;
+
+    await crearNotificacion({
+      userId: updatedWithdrawal.creatorId,
+      type: "WITHDRAWAL_UPDATED",
+      title: copia[updatedWithdrawal.status],
+      body:
+        updatedWithdrawal.status === "REJECTED" && updatedWithdrawal.note
+          ? updatedWithdrawal.note
+          : `S/ ${Number(updatedWithdrawal.amount).toFixed(2)}`,
+      href: "/creadores/panel/retiros",
     });
 
     return NextResponse.json({

@@ -8,6 +8,8 @@ import {
   formatoDesdeUrl,
 } from "@/lib/producto-metadata";
 import { TAG_PACK } from "@/lib/catalogo";
+import { sincronizarTagsProducto, tagsVisibles } from "@/lib/tags";
+import { esTipoLicencia } from "@/lib/licencias-comun";
 import { verifySessionToken } from "@/lib/auth";
 
 type RouteContext = {
@@ -54,11 +56,13 @@ export async function GET(
       include: {
         category: true,
 
-        // Solo la etiqueta de pack: es la única que el
-        // formulario de edición necesita conocer.
+        /*
+          Todas las etiquetas: el formulario necesita las
+          descriptivas para poder editarlas, y la de pack
+          para saber si el interruptor va marcado.
+        */
         tags: {
-          where: { tag: { slug: TAG_PACK } },
-          select: { tagId: true },
+          select: { tag: { select: { name: true, slug: true } } },
         },
       },
     });
@@ -95,7 +99,12 @@ export async function GET(
         fileUrl: product.fileUrl,
         fileFormat: product.fileFormat,
         color: product.color,
-        esPack: product.tags.length > 0,
+        licenseType: product.licenseType,
+        esPack: product.tags.some((fila) => fila.tag.slug === TAG_PACK),
+        // Solo las descriptivas: `pack` se maneja aparte.
+        tags: tagsVisibles(product.tags.map((fila) => fila.tag)).map(
+          (tag) => tag.name
+        ),
         categoryId: product.categoryId,
         category: product.category
           ? {
@@ -206,6 +215,8 @@ export async function PATCH(
       fileUrl,
       color,
       esPack,
+      tags,
+      licenseType,
     } = body;
 
     if (
@@ -276,6 +287,9 @@ export async function PATCH(
         categoryId,
         price: String(numericPrice),
         accessType: accessType || product.accessType,
+        licenseType: esTipoLicencia(licenseType)
+          ? licenseType
+          : product.licenseType,
         coverUrl:
           coverUrl !== undefined
             ? coverUrl || null
@@ -308,6 +322,15 @@ export async function PATCH(
     // La etiqueta "pack" solo se toca si el formulario la envía.
     if (typeof esPack === "boolean") {
       await aplicarEtiquetaPack(product.id, esPack);
+    }
+
+    /*
+      Igual con las descriptivas: si el formulario no manda
+      `tags`, las que ya tenía el recurso se quedan como
+      están. Solo se sincronizan cuando llega una lista.
+    */
+    if (Array.isArray(tags)) {
+      await sincronizarTagsProducto(product.id, tags);
     }
 
     /*

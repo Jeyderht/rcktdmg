@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import FavoriteButton from "@/components/FavoriteButton";
 import { getPriceDisplay, formatPrice } from "@/lib/pricing";
+import Estrellas from "@/components/Estrellas";
 
 export type ProductCardData = {
   id: string;
@@ -25,6 +26,9 @@ export type ProductCardData = {
   fileFormat?: string | null;
   /** true cuando el recurso lleva la etiqueta "pack". */
   esPack?: boolean;
+  /** Media de las reseñas publicadas. null si no tiene. */
+  avgRating?: number | null;
+  reviewCount?: number;
 };
 
 /**
@@ -135,6 +139,21 @@ export default function ProductCard({
             ) : (
               product.creator.name
             )}
+          </p>
+        )}
+
+        {/*
+          VALORACIÓN
+          Sin reseñas no se pinta nada: cinco estrellas vacías
+          se leen como "valorado mal", no como "sin valorar".
+        */}
+        {product.avgRating != null && (product.reviewCount ?? 0) > 0 && (
+          <p className="mt-1 flex items-center gap-1">
+            <Estrellas valor={product.avgRating} tamano={11} />
+
+            <span className="text-[10px] tabular-nums text-ink/45">
+              ({product.reviewCount})
+            </span>
           </p>
         )}
 

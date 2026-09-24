@@ -21,7 +21,6 @@ type Download = {
         slug: string;
         coverUrl: string | null;
         description: string | null;
-        fileUrl: string | null;
     };
     order: {
         id: string;

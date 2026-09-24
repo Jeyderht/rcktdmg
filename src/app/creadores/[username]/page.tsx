@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -15,6 +16,12 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import EmptyState from "@/components/EmptyState";
 import ProductCard from "@/components/ProductCard";
+import Paginacion from "@/components/Paginacion";
+import SeguirButton from "@/components/SeguirButton";
+import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
+import { estadoSeguimiento } from "@/lib/seguidores";
+import { getSession } from "@/lib/session";
+import { noEncontrado, paginaPublica } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -22,8 +29,18 @@ type PageProps = {
   params: Promise<{
     username: string;
   }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
+const POR_PAGINA = 20;
+
+/**
+ * Datos del creador, sin sus recursos.
+ *
+ * Los recursos se piden aparte y paginados: antes venían con
+ * un `include` sin límite, de modo que abrir el perfil de un
+ * creador con 500 recursos los traía los 500.
+ */
 async function getCreator(username: string) {
   return prisma.user.findFirst({
     where: {
@@ -54,69 +71,112 @@ async function getCreator(username: string) {
       tiktokUrl: true,
       isVerified: true,
 
-      products: {
-        where: {
-          status: "PUBLISHED",
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
+      _count: {
         select: {
-          id: true,
-          name: true,
-          slug: true,
-          description: true,
-          price: true,
-          coverUrl: true,
-          createdAt: true,
-
-          category: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-
-          images: {
-            orderBy: {
-              sortOrder: "asc",
-            },
-            take: 1,
-            select: {
-              url: true,
-              alt: true,
-            },
-          },
+          products: { where: { status: "PUBLISHED" } },
+          seguidores: true,
         },
       },
     },
   });
 }
 
+/** Recursos publicados del creador, de una página. */
+async function getRecursos(creatorId: string, pagina: number) {
+  return prisma.product.findMany({
+    where: { creatorId, status: "PUBLISHED" },
+    // El id cierra el orden para que paginar sea estable.
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    skip: (pagina - 1) * POR_PAGINA,
+    take: POR_PAGINA,
+    select: SELECCION_TARJETA,
+  });
+}
+
+/**
+ * Categorías en las que publica este creador.
+ *
+ * Salen de sus recursos reales, con su recuento: no es una
+ * lista de intereses declarada a mano.
+ */
+async function getCategorias(creatorId: string) {
+  const filas = await prisma.category.findMany({
+    where: {
+      products: { some: { creatorId, status: "PUBLISHED" } },
+    },
+    select: {
+      name: true,
+      slug: true,
+      _count: {
+        select: {
+          products: { where: { creatorId, status: "PUBLISHED" } },
+        },
+      },
+    },
+  });
+
+  return filas.sort((a, b) => b._count.products - a._count.products);
+}
+
 export async function generateMetadata({
   params,
+  searchParams,
 }: PageProps): Promise<Metadata> {
   const { username } = await params;
 
   const creator = await getCreator(username);
 
+  /*
+    getCreator solo devuelve perfiles APPROVED con username.
+    Los suspendidos, rechazados, sin perfil o inexistentes
+    caen aquí: 404 y sin indexar.
+  */
   if (!creator) {
-    return { title: "Creador no encontrado" };
+    return noEncontrado("Creador");
   }
 
   const displayName =
     creator.publicName || creator.name || `@${creator.username}`;
 
-  return {
-    title: displayName,
-    description:
-      creator.bio?.slice(0, 160) ||
-      `Recursos digitales de ${displayName} en RCKTDMG.`,
-  };
+  const recursos = creator._count.products;
+
+  /*
+    La descripción usa la biografía real si existe. Si no, se
+    compone con el número REAL de recursos publicados; no se
+    inventa ninguna biografía.
+  */
+  const descripcion = creator.bio
+    ? creator.bio.replace(/\s+/g, " ").trim().slice(0, 160)
+    : `${displayName} publica ${recursos} ${
+        recursos === 1 ? "recurso" : "recursos"
+      } en RCKTDMG.`;
+
+  /*
+    El perfil está paginado. La página 2 enseña recursos que
+    no están en la 1, así que lleva su propia canónica: si
+    todas apuntaran a la primera, el resto de recursos del
+    creador quedaría fuera de los buscadores.
+  */
+  const pedida = Number((await searchParams).page ?? "1");
+
+  const pagina =
+    Number.isFinite(pedida) && pedida > 1 ? Math.floor(pedida) : 1;
+
+  const base = `/creadores/${creator.username}`;
+
+  return paginaPublica({
+    titulo: pagina > 1 ? `${displayName} · Página ${pagina}` : displayName,
+    descripcion,
+    ruta: pagina > 1 ? `${base}?page=${pagina}` : base,
+    // El avatar es del almacén público; nunca un archivo privado.
+    imagen: creator.avatarUrl,
+    tipo: "profile",
+  });
 }
 
 export default async function CreatorPublicProfile({
   params,
+  searchParams,
 }: PageProps) {
   const { username } = await params;
 
@@ -125,6 +185,39 @@ export default async function CreatorPublicProfile({
   if (!creator) {
     notFound();
   }
+
+  const totalRecursos = creator._count.products;
+
+  const totalPaginas = Math.max(
+    1,
+    Math.ceil(totalRecursos / POR_PAGINA)
+  );
+
+  const pedida = Number(
+    typeof (await searchParams).page === "string"
+      ? (await searchParams).page
+      : "1"
+  );
+
+  const pagina = Math.min(
+    Number.isFinite(pedida) && pedida > 1 ? Math.floor(pedida) : 1,
+    totalPaginas
+  );
+
+  /*
+    La sesión hace falta para saber si el visitante ya sigue a
+    este creador. Sin sesión el perfil se ve igual: lo único
+    que cambia es que el botón lleva al login.
+  */
+  const session = await getSession();
+
+  const [recursos, categorias, seguimiento] = await Promise.all([
+    totalRecursos > 0 ? getRecursos(creator.id, pagina) : [],
+    getCategorias(creator.id),
+    estadoSeguimiento(creator.id, session?.userId ?? null),
+  ]);
+
+  const perfilUrl = `/creadores/${creator.username}`;
 
   const displayName =
     creator.publicName || creator.name || "Creador";
@@ -261,21 +354,56 @@ export default async function CreatorPublicProfile({
                     </div>
                   )}
 
+                  {/*
+                    CATEGORÍAS
+                    Salen de sus recursos publicados, no de una
+                    lista declarada: enlazan a la tienda ya
+                    filtrada por ese creador.
+                  */}
+                  {categorias.length > 0 && (
+                    <ul className="mt-5 flex flex-wrap justify-center gap-2 sm:justify-start">
+                      {categorias.map((categoria) => (
+                        <li key={categoria.slug}>
+                          <Link
+                            href={`/tienda?categoria=${encodeURIComponent(
+                              categoria.slug
+                            )}`}
+                            className="rk-chip"
+                          >
+                            {categoria.name}
+
+                            <span className="text-[10px] tabular-nums opacity-60">
+                              {categoria._count.products}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
                   {/* RECURSOS PUBLICADOS + ACCIÓN */}
                   <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-                    <span className="rk-card px-4 py-2 text-sm font-medium">
-                      {creator.products.length}{" "}
+                    <span className="rk-card px-4 py-2 text-sm font-medium tabular-nums">
+                      {totalRecursos}{" "}
                       <span className="text-ink/60">
-                        {creator.products.length === 1
+                        {totalRecursos === 1
                           ? "recurso publicado"
                           : "recursos publicados"}
                       </span>
                     </span>
 
-                    {creator.products.length > 0 && (
+                    <SeguirButton
+                      creatorId={creator.id}
+                      perfilUrl={perfilUrl}
+                      seguidoresIniciales={seguimiento.seguidores}
+                      siguiendoInicial={seguimiento.siguiendo}
+                      esUnoMismo={seguimiento.esUnoMismo}
+                    />
+
+                    {totalRecursos > 0 && (
                       <a
                         href="#recursos"
-                        className="rk-btn rk-btn-primary !px-5 !py-2.5 !text-[13px]"
+                        className="rk-btn rk-btn-line !px-5 !py-2.5 !text-[13px]"
                       >
                         Explorar sus recursos
                       </a>
@@ -303,7 +431,7 @@ export default async function CreatorPublicProfile({
             Recursos de {displayName}
           </h2>
 
-          {creator.products.length === 0 ? (
+          {totalRecursos === 0 ? (
             <div className="mt-6">
               <EmptyState
                 icon={PackageOpen}
@@ -316,23 +444,27 @@ export default async function CreatorPublicProfile({
               />
             </div>
           ) : (
-            <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
-              {creator.products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={{
-                    id: product.id,
-                    name: product.name,
-                    slug: product.slug,
-                    description: product.description,
-                    price: Number(product.price),
-                    coverUrl: product.coverUrl,
-                    image: product.images[0] ?? null,
-                    category: product.category,
-                  }}
-                />
-              ))}
-            </div>
+            <>
+              <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+                {recursos.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={aTarjeta(product)}
+                  />
+                ))}
+              </div>
+
+              <Paginacion
+                pagina={pagina}
+                totalPaginas={totalPaginas}
+                href={(numero) =>
+                  // La página 1 es la URL limpia del perfil.
+                  numero <= 1
+                    ? `${perfilUrl}#recursos`
+                    : `${perfilUrl}?page=${numero}#recursos`
+                }
+              />
+            </>
           )}
         </section>
       </main>

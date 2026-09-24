@@ -90,9 +90,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // CUENTA DEL CLIENTE Y CHECKOUT
+  // CUENTA DEL CLIENTE, CHECKOUT Y NOTIFICACIONES
   if (
     pathname.startsWith("/mi-cuenta") ||
+    pathname.startsWith("/notificaciones") ||
     pathname.startsWith("/checkout")
   ) {
     if (!session) {
@@ -111,6 +112,7 @@ export const config = {
     "/creadores/panel/:path*",
     "/creadores/productos/:path*",
     "/mi-cuenta/:path*",
+    "/notificaciones",
     "/checkout/:path*",
     "/login",
     "/registro",

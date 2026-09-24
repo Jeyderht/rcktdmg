@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
+import { crearNotificacion } from "@/lib/notificaciones";
 
 async function getAuthenticatedUser() {
   const cookieStore = await cookies();
@@ -101,6 +102,9 @@ export async function POST(request: Request) {
       },
       select: {
         id: true,
+        name: true,
+        slug: true,
+        creatorId: true,
       },
     });
 
@@ -110,6 +114,19 @@ export async function POST(request: Request) {
         { status: 404 }
       );
     }
+
+    /*
+      Se mira antes de guardar si ya estaba: el upsert de
+      abajo no distingue "creado" de "ya existía", y sin esa
+      diferencia volver a pulsar el corazón le mandaría al
+      creador otro aviso por el mismo favorito.
+    */
+    const yaEraFavorito = await prisma.favorite.findUnique({
+      where: {
+        userId_productId: { userId, productId },
+      },
+      select: { createdAt: true },
+    });
 
     const favorite = await prisma.favorite.upsert({
       where: {
@@ -133,6 +150,17 @@ export async function POST(request: Request) {
         },
       },
     });
+
+    // Nadie necesita un aviso por guardarse su propio recurso.
+    if (!yaEraFavorito && product.creatorId !== userId) {
+      await crearNotificacion({
+        userId: product.creatorId,
+        type: "FAVORITE",
+        title: "Nuevo favorito",
+        body: `Alguien guardó ${product.name}.`,
+        href: `/tienda/${product.slug}`,
+      });
+    }
 
     return NextResponse.json({
       success: true,

@@ -7,6 +7,8 @@ import {
   colorValido,
   formatoDesdeUrl,
 } from "@/lib/producto-metadata";
+import { sincronizarTagsProducto } from "@/lib/tags";
+import { esTipoLicencia } from "@/lib/licencias-comun";
 
 function createSlug(text: string) {
   return text
@@ -59,6 +61,8 @@ export async function POST(req: NextRequest) {
       fileUrl,
       color,
       esPack,
+      tags,
+      licenseType,
     } = body;
 
     if (!name || !description || !categoryId || price === undefined) {
@@ -112,6 +116,11 @@ export async function POST(req: NextRequest) {
         // El formato lo deduce el archivo subido, no el
         // formulario: así siempre coincide con la descarga.
         fileFormat: formatoDesdeUrl(fileUrl),
+        // Un tipo desconocido cae a PERSONAL, que es el más
+        // restrictivo: nunca se conceden derechos de más.
+        licenseType: esTipoLicencia(licenseType)
+          ? licenseType
+          : "PERSONAL",
       },
     });
 
@@ -119,6 +128,14 @@ export async function POST(req: NextRequest) {
     if (esPack === true) {
       await aplicarEtiquetaPack(product.id, true);
     }
+
+    /*
+      Etiquetas descriptivas. Van después de la de pack a
+      propósito: sincronizarTagsProducto nunca toca las
+      etiquetas protegidas, así que el orden es seguro en
+      los dos sentidos.
+    */
+    await sincronizarTagsProducto(product.id, tags);
 
     return NextResponse.json(
       {

@@ -1,6 +1,13 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+
+import TagsInput from "@/components/TagsInput";
+import {
+  LICENCIAS,
+  TIPOS_LICENCIA,
+  type TipoLicencia,
+} from "@/lib/licencias-comun";
 import Image from "next/image";
 
 import {
@@ -26,6 +33,8 @@ type Product = {
   fileFormat: string | null;
   color: string | null;
   esPack: boolean;
+  tags: string[];
+  licenseType: TipoLicencia;
   categoryId: string;
   category: {
     id: string;
@@ -70,6 +79,9 @@ export default function EditarRecursoPage() {
   const [fileName, setFileName] = useState("");
   const [color, setColor] = useState("");
   const [esPack, setEsPack] = useState(false);
+  const [tags, setTags] = useState<string[]>([]);
+  const [licenseType, setLicenseType] =
+    useState<TipoLicencia>("PERSONAL");
 
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingPreview, setUploadingPreview] = useState(false);
@@ -113,6 +125,8 @@ export default function EditarRecursoPage() {
         setFileUrl(currentProduct.fileUrl || "");
         setColor(currentProduct.color || "");
         setEsPack(currentProduct.esPack === true);
+        setTags(currentProduct.tags ?? []);
+        setLicenseType(currentProduct.licenseType ?? "PERSONAL");
       } catch (err) {
         console.error(err);
 
@@ -245,6 +259,8 @@ export default function EditarRecursoPage() {
             fileUrl,
             color: color || null,
             esPack,
+            tags,
+            licenseType,
           }),
         }
       );
@@ -275,6 +291,8 @@ export default function EditarRecursoPage() {
             fileUrl: fileUrl || null,
             color: color || null,
             esPack,
+            tags,
+            licenseType,
             status: data.product.status,
           }
           : current
@@ -575,6 +593,46 @@ export default function EditarRecursoPage() {
               <p className="mt-2 text-xs text-ink/60">
                 Por ahora se mantiene la categoría actual.
               </p>
+            </div>
+
+            <div className="mt-6">
+              <label
+                htmlFor="licenseType"
+                className="mb-2 block text-sm font-medium"
+              >
+                Licencia de uso
+              </label>
+
+              <select
+                id="licenseType"
+                value={licenseType}
+                onChange={(e) =>
+                  setLicenseType(e.target.value as TipoLicencia)
+                }
+                className="rk-select w-full"
+              >
+                {TIPOS_LICENCIA.map((tipo) => (
+                  <option key={tipo} value={tipo}>
+                    {LICENCIAS[tipo].etiqueta}
+                  </option>
+                ))}
+              </select>
+
+              <p className="mt-2 text-xs leading-5 text-ink/60">
+                {LICENCIAS[licenseType].resumen} Cambiarla NO afecta
+                a quien ya compró: cada licencia guarda las
+                condiciones que se aceptaron.
+              </p>
+            </div>
+            <div className="mt-6">
+              <p className="mb-2 block text-sm font-medium">
+                Etiquetas
+                <span className="ml-1.5 font-normal text-ink/45">
+                  (opcional)
+                </span>
+              </p>
+
+              <TagsInput valor={tags} onChange={setTags} disabled={saving} />
             </div>
 
             <div className="mt-6 grid gap-5 md:grid-cols-2">

@@ -6,8 +6,9 @@ import { ArrowUpDown, Check, SlidersHorizontal, X } from "lucide-react";
 
 import {
   COLORES,
-  ORDENES,
   RANGOS_PRECIO,
+  ordenPorDefecto,
+  ordenesDisponibles,
   urlTienda,
   type ParametrosTienda,
 } from "@/lib/catalogo";
@@ -55,11 +56,13 @@ export default function FiltrosMoviles({
   actuales,
   formatos,
   colores,
+  etiquetas,
   totalPacks,
 }: {
   actuales: ParametrosTienda;
   formatos: Opcion[];
   colores: Opcion[];
+  etiquetas: Opcion[];
   totalPacks: number;
 }) {
   const router = useRouter();
@@ -114,11 +117,18 @@ export default function FiltrosMoviles({
     actuales.precio,
     actuales.formato,
     actuales.color,
+    actuales.tag,
     actuales.pack,
   ].filter(Boolean).length;
 
+  const hayBusqueda = Boolean(actuales.q);
+
+  const disponibles = ordenesDisponibles(hayBusqueda);
+
   const ordenActual =
-    ORDENES.find((o) => o.valor === actuales.sort) ?? ORDENES[0];
+    disponibles.find((o) => o.valor === actuales.sort) ??
+    disponibles.find((o) => o.valor === ordenPorDefecto(hayBusqueda)) ??
+    disponibles[0];
 
   function Grupo({
     titulo,
@@ -235,9 +245,10 @@ export default function FiltrosMoviles({
             <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-4 pt-3">
               {modo === "orden" ? (
                 <div className="space-y-0.5">
-                  {ORDENES.map((opcion) => {
+                  {disponibles.map((opcion) => {
                     const seleccionada =
-                      (pendientes.sort ?? "recientes") === opcion.valor;
+                      (pendientes.sort ?? ordenPorDefecto(hayBusqueda)) ===
+                      opcion.valor;
 
                     return (
                       <button
@@ -272,6 +283,12 @@ export default function FiltrosMoviles({
                       valor: r.valor,
                       etiqueta: r.etiqueta,
                     }))}
+                  />
+
+                  <Grupo
+                    titulo="Etiquetas"
+                    clave="tag"
+                    opciones={etiquetas}
                   />
 
                   <Grupo

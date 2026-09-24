@@ -3,6 +3,29 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
 
+  /**
+   * Las respuestas de la API no se indexan.
+   *
+   * robots.txt ya desaconseja rastrear /api, pero robots.txt
+   * solo evita el rastreo: una URL enlazada desde fuera puede
+   * acabar indexada igualmente. `X-Robots-Tag` viaja en la
+   * respuesta y sí lo impide.
+   *
+   * Es una cabecera de indexación, no de seguridad: quien
+   * protege estas rutas sigue siendo el middleware y la
+   * comprobación de sesión de cada endpoint.
+   */
+  async headers() {
+    return [
+      {
+        source: "/api/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+    ];
+  },
+
   // Oculta el indicador flotante de Dev Tools de Next.js.
   // Es la opción oficial en Next 15.5: el propio tipo indica
   // "To disable, set `devIndicators` to `false`".

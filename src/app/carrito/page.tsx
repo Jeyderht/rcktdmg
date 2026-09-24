@@ -15,6 +15,11 @@ import {
 
 type CartItem = {
     id: string;
+    /**
+     * "PACK" para los packs. Ausente en los elementos que ya
+     * estaban guardados, que son recursos sueltos.
+     */
+    kind?: "PRODUCT" | "PACK";
     name: string;
     price: number;
     slug: string;

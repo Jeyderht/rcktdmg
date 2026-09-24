@@ -20,6 +20,22 @@ import ProductCard from "@/components/ProductCard";
 import { getPriceDisplay, formatPrice } from "@/lib/pricing";
 import { getProductFileInfo } from "@/lib/product-file";
 import { COLORES, TAG_PACK } from "@/lib/catalogo";
+import { tagsVisibles } from "@/lib/tags-comun";
+import Valoraciones from "@/components/Valoraciones";
+import Estrellas from "@/components/Estrellas";
+import { LICENCIAS } from "@/lib/licencias-comun";
+import {
+    MINIMO_RESENAS_SCHEMA,
+    absoluta,
+    imagenSocial,
+    migasSchema,
+    noEncontrado,
+    paginaPublica,
+} from "@/lib/seo";
+import { listarVersiones, mostrarVersion } from "@/lib/versiones";
+import { paraProducto, packsQueIncluyen } from "@/lib/recomendaciones";
+import PackCard from "@/components/PackCard";
+import { getSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -51,11 +67,13 @@ async function getPublishedProduct(slug: string) {
                 },
             },
 
-            // Solo se consulta la etiqueta de pack: es la
-            // única que la ficha necesita mostrar.
+            /*
+              Todas las etiquetas: la de pack decide el
+              distintivo, y las descriptivas se enseñan como
+              enlaces al catálogo.
+            */
             tags: {
-                where: { tag: { slug: TAG_PACK } },
-                select: { tagId: true },
+                select: { tag: { select: { name: true, slug: true } } },
             },
         },
     });
@@ -76,16 +94,37 @@ export async function generateMetadata({
 
     const product = await getPublishedProduct(slug);
 
+    /*
+      getPublishedProduct devuelve null para todo lo que no
+      esté PUBLISHED, así que un borrador, uno en revisión, uno
+      rechazado o uno archivado cae aquí: la página dará 404 y
+      además queda marcada como no indexable.
+    */
     if (!product) {
-        return {
-            title: "Recurso no encontrado",
-        };
+        return noEncontrado("Recurso");
     }
 
-    return {
-        title: product.name,
-        description: product.description.slice(0, 160),
-    };
+    /*
+      Imagen social: la portada pública o la primera imagen de
+      la galería. `imagenSocial` descarta cualquier referencia
+      al almacén privado, así que el archivo que se vende no
+      puede acabar en una etiqueta og:image.
+    */
+    const imagen =
+        product.coverUrl ?? product.images[0]?.url ?? null;
+
+    const descripcion = product.description
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 160);
+
+    return paginaPublica({
+        titulo: product.name,
+        descripcion,
+        ruta: `/tienda/${product.slug}`,
+        imagen,
+        tipo: "article",
+    });
 }
 
 export default async function ProductPage({
@@ -129,13 +168,31 @@ export default async function ProductPage({
     const colorEtiqueta =
         COLORES.find((c) => c.valor === product.color)?.etiqueta ?? null;
 
-    const esPack = product.tags.length > 0;
+    const etiquetasProducto = product.tags.map((fila) => fila.tag);
+
+    const esPack = etiquetasProducto.some(
+        (tag) => tag.slug === TAG_PACK
+    );
+
+    // Las estructurales no se enseñan: ya están en el distintivo.
+    const etiquetasVisibles = tagsVisibles(etiquetasProducto);
 
     const accessTypeLabel: Record<string, string> = {
         INDIVIDUAL: "Compra individual",
         PLAN: "Incluido en planes",
         BOTH: "Compra individual o plan",
     };
+
+    /*
+      Historial de versiones.
+
+      listarVersiones NO devuelve fileUrl: esa referencia
+      apunta al almacén privado y no sale del servidor. Aquí
+      solo se pintan número, formato, fecha y cambios.
+    */
+    const versiones = await listarVersiones(product.id);
+
+    const versionActual = versiones.find((v) => v.isCurrent) ?? null;
 
     const specs = [
         formato && {
@@ -159,6 +216,16 @@ export default async function ProductPage({
             value: accessTypeLabel[product.accessType],
         },
         {
+            // Con qué condiciones se vende: el comprador debe
+            // saberlo ANTES de pagar, no al recibir la licencia.
+            label: "Licencia",
+            value: LICENCIAS[product.licenseType].etiqueta,
+        },
+        versionActual && {
+            label: "Versión",
+            value: mostrarVersion(versionActual.version),
+        },
+        {
             label: "Actualizado",
             value: new Intl.DateTimeFormat("es-PE", {
                 dateStyle: "medium",
@@ -173,58 +240,36 @@ export default async function ProductPage({
      * completa con otros publicados. Si no hay ninguno, la
      * sección no se muestra.
      */
-    const suggestionSelect = {
-        id: true,
-        name: true,
-        slug: true,
-        price: true,
-        coverUrl: true,
-        category: { select: { name: true, slug: true } },
-        creator: {
-            select: {
-                name: true,
-                publicName: true,
-                username: true,
-                creatorStatus: true,
-            },
-        },
-        images: {
-            orderBy: { sortOrder: "asc" as const },
-            take: 1,
-            select: { url: true, alt: true },
-        },
-    };
+    /*
+     * RECOMENDACIONES
+     *
+     * Bloques con señal propia: del mismo creador, de la misma
+     * categoría y por parecido general. Cada uno se pinta solo
+     * si tiene contenido, y el título dice de dónde sale, sin
+     * prometer una personalización que aquí no existe.
+     *
+     * La puntuación vive en src/lib/recomendaciones.ts y no
+     * sale hacia el navegador.
+     */
+    const session = await getSession();
 
-    const sameCategory = await prisma.product.findMany({
-        where: {
-            status: "PUBLISHED",
+    const packsConEste = await packsQueIncluyen(product.id);
+
+    const bloques = await paraProducto(
+        {
+            id: product.id,
             categoryId: product.categoryId,
-            id: { not: product.id },
+            creatorId: product.creatorId,
+            fileFormat: product.fileFormat,
+            color: product.color,
+            price: Number(product.price),
+            tagSlugs: product.tags.map((fila) => fila.tag.slug),
+            categoriaNombre: product.category.name,
+            creadorNombre: creatorName,
         },
-        orderBy: { createdAt: "desc" },
-        take: 6,
-        select: suggestionSelect,
-    });
+        session?.userId ?? null
+    );
 
-    const others =
-        sameCategory.length < 6
-            ? await prisma.product.findMany({
-                  where: {
-                      status: "PUBLISHED",
-                      id: {
-                          notIn: [
-                              product.id,
-                              ...sameCategory.map((item) => item.id),
-                          ],
-                      },
-                  },
-                  orderBy: { createdAt: "desc" },
-                  take: 6 - sameCategory.length,
-                  select: suggestionSelect,
-              })
-            : [];
-
-    const suggestions = [...sameCategory, ...others];
 
     // El perfil público solo existe si el creador tiene
     // username y está aprobado.
@@ -234,9 +279,89 @@ export default async function ProductPage({
             ? `/creadores/${product.creator.username}`
             : null;
 
+    /*
+      DATOS ESTRUCTURADOS
+
+      Solo campos con un dato real detrás. Se omiten a
+      propósito `brand`, `sku`, `availability` y `review`: el
+      modelo no los tiene y rellenarlos sería declarar a Google
+      información que no existe.
+
+      `aggregateRating` solo se publica a partir de
+      MINIMO_RESENAS_SCHEMA reseñas. Con una sola opinión, unas
+      estrellas en los resultados de búsqueda transmiten una
+      confianza que el dato no respalda.
+    */
+    const imagenSchema = imagenSocial(
+        product.coverUrl ?? product.images[0]?.url ?? null
+    );
+
+    const productoSchema = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: product.name,
+        description: product.description
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 500),
+        url: absoluta(`/tienda/${product.slug}`),
+        ...(imagenSchema ? { image: [imagenSchema] } : {}),
+        category: product.category.name,
+        offers: {
+            "@type": "Offer",
+            price: Number(product.price).toFixed(2),
+            priceCurrency: "PEN",
+            url: absoluta(`/tienda/${product.slug}`),
+        },
+        ...(product.reviewCount >= MINIMO_RESENAS_SCHEMA &&
+        product.avgRating
+            ? {
+                  aggregateRating: {
+                      "@type": "AggregateRating",
+                      ratingValue: Number(product.avgRating).toFixed(1),
+                      reviewCount: product.reviewCount,
+                      bestRating: 5,
+                      worstRating: 1,
+                  },
+              }
+            : {}),
+    };
+
+    // Migas: exactamente los niveles que se ven arriba.
+    /*
+      Las mismas migas que se ven debajo de la cabecera, con
+      los mismos nombres y los mismos destinos. Si el schema
+      declarara un nivel que el visitante no ve, sería una
+      jerarquía inventada para el buscador.
+    */
+    const migas = migasSchema([
+        { nombre: "Tienda", ruta: "/tienda" },
+        {
+            nombre: product.category.name,
+            ruta: `/tienda?categoria=${product.category.slug}`,
+        },
+        { nombre: product.name, ruta: `/tienda/${product.slug}` },
+    ]);
     return (
         <>
             <Navbar />
+            {/*
+              JSON-LD. Se genera en el servidor y solo contiene
+              datos que ya son públicos en esta misma página.
+            */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(productoSchema),
+                }}
+            />
+
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(migas),
+                }}
+            />
 
             <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-5 sm:px-5 lg:pb-20 lg:pt-8">
 
@@ -297,6 +422,38 @@ export default async function ProductPage({
                         <h1 className="rk-title mt-2.5 text-[1.6rem] sm:text-3xl lg:text-[2.1rem]">
                             {product.name}
                         </h1>
+
+                        {/*
+                          VALORACIÓN
+                          Solo aparece si hay reseñas de verdad.
+                          Sin ellas no se pintan cinco estrellas
+                          vacías: darían a entender que el recurso
+                          fue valorado mal.
+                        */}
+                        {product.reviewCount > 0 && product.avgRating && (
+                            <a
+                                href="#valoraciones"
+                                className="rk-press-sm mt-3 inline-flex min-h-[2.75rem] items-center gap-2 text-sm"
+                            >
+                                <Estrellas
+                                    valor={Number(product.avgRating)}
+                                    tamano={15}
+                                />
+
+                                <span className="font-medium tabular-nums">
+                                    {Number(product.avgRating)
+                                        .toFixed(1)
+                                        .replace(".", ",")}
+                                </span>
+
+                                <span className="text-ink/55 underline underline-offset-4">
+                                    {product.reviewCount}
+                                    {product.reviewCount === 1
+                                        ? " valoración"
+                                        : " valoraciones"}
+                                </span>
+                            </a>
+                        )}
 
                         {/* CATEGORÍA Y ACCESO: datos reales */}
                         <div className="mt-3.5 flex flex-wrap items-center gap-2">
@@ -507,21 +664,142 @@ export default async function ProductPage({
                     </div>
                 </div>
 
-                {/* ══════════ MÁS RECURSOS ══════════ */}
-                {suggestions.length > 0 && (
-                    <section className="rk-fade-up rk-enter-2 mt-14 lg:mt-20">
+                {/* ══════════ VALORACIONES ══════════ */}
+                <section className="rk-fade-up rk-enter-1 mt-14 scroll-mt-28" id="valoraciones">
+                    <h2 className="rk-title text-xl sm:text-2xl">
+                        Valoraciones
+                    </h2>
+
+                    <Valoraciones
+                        productId={product.id}
+                        productSlug={product.slug}
+                    />
+                </section>
+
+                {/* ══════════ HISTORIAL DE VERSIONES ══════════ */}
+                {versiones.length > 0 && (
+                    <section className="rk-fade-up rk-enter-1 mt-14">
+                        <h2 className="rk-title text-xl sm:text-2xl">
+                            Historial de versiones
+                        </h2>
+
+                        <p className="mt-2 text-[15px] leading-7 text-ink/60">
+                            Quien compra este recurso descarga siempre la
+                            versión vigente, también si compró antes.
+                        </p>
+
+                        <ol className="mt-6 space-y-4">
+                            {versiones.map((v) => (
+                                <li
+                                    key={v.id}
+                                    className="border-t border-line/10 pt-4 first:border-t-0 first:pt-0"
+                                >
+                                    <p className="flex flex-wrap items-center gap-2">
+                                        <span className="font-semibold tabular-nums">
+                                            {mostrarVersion(v.version)}
+                                        </span>
+
+                                        {v.isCurrent && (
+                                            <span className="rk-badge rk-badge-neutral">
+                                                Vigente
+                                            </span>
+                                        )}
+
+                                        <span className="text-xs text-ink/45">
+                                            {new Intl.DateTimeFormat("es-PE", {
+                                                dateStyle: "medium",
+                                            }).format(new Date(v.createdAt))}
+                                        </span>
+                                    </p>
+
+                                    {v.changelog && (
+                                        <p className="mt-1.5 whitespace-pre-line break-words text-[15px] leading-7 text-ink/65">
+                                            {v.changelog}
+                                        </p>
+                                    )}
+                                </li>
+                            ))}
+                        </ol>
+                    </section>
+                )}
+
+                {/* ══════════ ETIQUETAS ══════════ */}
+                {etiquetasVisibles.length > 0 && (
+                    <section className="rk-fade-up rk-enter-1 mt-12">
+                        <h2 className="rk-kicker">Etiquetas</h2>
+
+                        <ul className="mt-3 flex flex-wrap gap-2">
+                            {etiquetasVisibles.map((tag) => (
+                                <li key={tag.slug}>
+                                    <Link
+                                        href={`/tienda?tag=${encodeURIComponent(
+                                            tag.slug
+                                        )}`}
+                                        className="rk-press-sm inline-flex min-h-[2.75rem] items-center rounded-full border border-line/15 px-4 text-sm transition-colors duration-fast ease-rk hover:border-ink/40 hover:bg-ink/[0.04]"
+                                    >
+                                        {tag.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                )}
+
+                {/* ══════════ PACKS QUE LO INCLUYEN ══════════ */}
+                {packsConEste.length > 0 && (
+                    <section className="rk-fade-up rk-enter-2 mt-14">
+                        <p className="rk-eyebrow">Sale más barato</p>
+
+                        <h2 className="rk-title mt-2 text-xl sm:text-2xl">
+                            {packsConEste.length === 1
+                                ? "Este recurso está en un pack"
+                                : "Este recurso está en varios packs"}
+                        </h2>
+
+                        <p className="mt-1.5 text-sm text-ink/60">
+                            Comprando el pack completo obtienes este recurso
+                            y los demás que incluye.
+                        </p>
+
+                        <div className="rk-divider mt-4" />
+
+                        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
+                            {packsConEste.map((pack) => (
+                                <PackCard key={pack.id} pack={pack} />
+                            ))}
+                        </div>
+                    </section>
+                )}
+                {/* ══════════ RECOMENDACIONES ══════════ */}
+                {bloques.map((bloque, indice) => (
+                    <section
+                        key={bloque.titulo}
+                        className={`rk-fade-up rk-enter-2 ${
+                            indice === 0 ? "mt-14 lg:mt-20" : "mt-12"
+                        }`}
+                    >
                         <div className="flex flex-wrap items-end justify-between gap-3">
-                            <div>
-                                <p className="rk-eyebrow">Sigue explorando</p>
+                            <div className="min-w-0">
+                                {indice === 0 && (
+                                    <p className="rk-eyebrow">
+                                        Sigue explorando
+                                    </p>
+                                )}
 
                                 <h2 className="rk-title mt-2 text-xl sm:text-2xl">
-                                    También te puede interesar
+                                    {bloque.titulo}
                                 </h2>
+
+                                {bloque.subtitulo && (
+                                    <p className="mt-1.5 text-sm text-ink/60">
+                                        {bloque.subtitulo}
+                                    </p>
+                                )}
                             </div>
 
                             <Link
                                 href="/tienda"
-                                className="rk-press text-sm font-medium text-ink/60 transition-colors hover:text-ink"
+                                className="rk-press-sm inline-flex min-h-[2.75rem] shrink-0 items-center text-sm font-medium text-ink/60 transition-colors hover:text-ink"
                             >
                                 Ver todos
                             </Link>
@@ -529,35 +807,13 @@ export default async function ProductPage({
 
                         <div className="rk-divider mt-4" />
 
-                        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-6">
-                            {suggestions.map((item) => (
-                                <ProductCard
-                                    key={item.id}
-                                    product={{
-                                        id: item.id,
-                                        name: item.name,
-                                        slug: item.slug,
-                                        price: Number(item.price),
-                                        coverUrl: item.coverUrl,
-                                        image: item.images[0] ?? null,
-                                        category: item.category,
-                                        creator: {
-                                            name:
-                                                item.creator.publicName ||
-                                                item.creator.name ||
-                                                "Creador",
-                                            username:
-                                                item.creator.creatorStatus ===
-                                                "APPROVED"
-                                                    ? item.creator.username
-                                                    : null,
-                                        },
-                                    }}
-                                />
+                        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+                            {bloque.productos.map((item) => (
+                                <ProductCard key={item.id} product={item} />
                             ))}
                         </div>
                     </section>
-                )}
+                ))}
             </main>
 
             <Footer />

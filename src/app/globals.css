@@ -827,6 +827,31 @@ input[type="search"]::-webkit-search-results-decoration {
     }
   }
 
+  /* ========== ÁREA TÁCTIL ==========
+     Para controles pequeños que van dentro de otro control y
+     no pueden crecer sin descolocarlo: la X de limpiar dentro
+     del campo de búsqueda, por ejemplo.
+
+     El botón conserva su tamaño visual y gana por debajo un
+     rectángulo transparente de 44x44, que es el mínimo que
+     pide WCAG. Solo se activa con puntero grueso: con ratón
+     no hace falta y podría solapar controles vecinos. */
+  .rk-touch {
+    position: relative;
+  }
+
+  @media (pointer: coarse) {
+    .rk-touch::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 2.75rem;
+      height: 2.75rem;
+      transform: translate(-50%, -50%);
+    }
+  }
+
   /* Estado seleccionado: tinta sólida, como los botones. */
   .rk-chip-active {
     background: rgb(var(--rk-foreground));

@@ -6,9 +6,12 @@ import { Suspense } from "react";
 import {
   ClipboardCheck,
   LayoutDashboard,
+  Layers,
   Package,
   UserPlus,
   UserRound,
+  Star,
+  Tag,
   Users,
   Wallet,
 } from "lucide-react";
@@ -61,6 +64,21 @@ const SECTIONS: Section[] = [
     label: "Revisiones",
     icon: ClipboardCheck,
     match: { path: "/admin/recursos", query: "estado=PENDING_REVIEW" },
+  },
+  {
+    href: "/admin/packs",
+    label: "Packs",
+    icon: Layers,
+  },
+  {
+    href: "/admin/resenas",
+    label: "Valoraciones",
+    icon: Star,
+  },
+  {
+    href: "/admin/tags",
+    label: "Etiquetas",
+    icon: Tag,
   },
   {
     href: "/admin/retiros",

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { notificarAdmins } from "@/lib/notificaciones";
 import { verifySessionToken } from "@/lib/auth";
 import { Prisma, WithdrawalStatus } from "@prisma/client";
 
@@ -252,6 +253,15 @@ export async function POST(request: Request) {
                 amount,
                 status: WithdrawalStatus.REQUESTED,
             },
+        });
+
+        // Cada solicitud crea su propia fila, así que un aviso
+        // por solicitud: no hay estado que repetir.
+        await notificarAdmins({
+            type: "WITHDRAWAL_REQUESTED",
+            title: "Nueva solicitud de retiro",
+            body: `S/ ${Number(withdrawal.amount).toFixed(2)}`,
+            href: "/admin/retiros",
         });
 
         return NextResponse.json(

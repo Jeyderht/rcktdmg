@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifySessionToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { crearNotificacion } from "@/lib/notificaciones";
 
 export async function POST(
   request: Request,
@@ -73,6 +74,19 @@ export async function POST(
         status: "REJECTED",
         rejectionReason,
       },
+    });
+
+    /*
+      El motivo viaja en el cuerpo del aviso: es lo que el
+      creador necesita para corregir, y evita que tenga que
+      abrir el recurso solo para leerlo.
+    */
+    await crearNotificacion({
+      userId: product.creatorId,
+      type: "PRODUCT_REJECTED",
+      title: "Recurso rechazado",
+      body: rejectionReason,
+      href: `/creadores/productos/${product.id}`,
     });
 
     return NextResponse.json({

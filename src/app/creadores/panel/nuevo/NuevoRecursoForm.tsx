@@ -3,6 +3,13 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 
+import TagsInput from "@/components/TagsInput";
+import {
+  LICENCIAS,
+  TIPOS_LICENCIA,
+  type TipoLicencia,
+} from "@/lib/licencias-comun";
+
 import { subirArchivoDeProducto } from "@/lib/storage/client-upload";
 import { COLORES } from "@/lib/catalogo";
 import {
@@ -39,6 +46,9 @@ export default function NuevoRecursoForm({
   const [accessType, setAccessType] = useState("BOTH");
   const [color, setColor] = useState("");
   const [esPack, setEsPack] = useState(false);
+  const [tags, setTags] = useState<string[]>([]);
+  const [licenseType, setLicenseType] =
+    useState<TipoLicencia>("PERSONAL");
   const [coverUrl, setCoverUrl] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [fileUrl, setFileUrl] = useState("");
@@ -113,6 +123,8 @@ export default function NuevoRecursoForm({
           accessType,
           color: color || null,
           esPack,
+          tags,
+          licenseType,
           coverUrl,
           previewUrl,
           fileUrl,
@@ -297,6 +309,45 @@ export default function NuevoRecursoForm({
 
                 <option value="BOTH">Compra + planes</option>
               </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="licenseType"
+                className="mb-2 block text-sm font-medium"
+              >
+                Licencia de uso
+              </label>
+            
+              <select
+                id="licenseType"
+                value={licenseType}
+                onChange={(e) => setLicenseType(e.target.value as TipoLicencia)}
+                className="rk-select w-full"
+              >
+                {TIPOS_LICENCIA.map((tipo) => (
+                  <option key={tipo} value={tipo}>
+                    {LICENCIAS[tipo].etiqueta}
+                  </option>
+                ))}
+              </select>
+            
+              <p className="mt-2 text-xs leading-5 text-ink/60">
+                {LICENCIAS[licenseType].resumen} Se copia en la
+                licencia de cada comprador, y cambiarla no afecta a
+                quien ya compró.
+              </p>
+            </div>
+
+            <div>
+              <p className="mb-2 block text-sm font-medium">
+                Etiquetas
+                <span className="ml-1.5 font-normal text-ink/45">
+                  (opcional)
+                </span>
+              </p>
+
+              <TagsInput valor={tags} onChange={setTags} disabled={loading} />
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">

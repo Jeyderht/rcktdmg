@@ -38,6 +38,10 @@ type DashboardData = {
     sales: number;
     downloads: number;
     favorites: number;
+    followers: number;
+    reviews: number;
+    /** Media de sus reseñas publicadas. null si no tiene. */
+    rating: number | null;
     revenue: number;
   };
 
@@ -549,7 +553,7 @@ export default function CreatorDashboard() {
           )}
 
           {/* ACTIVIDAD REAL */}
-          <div className="mt-3 grid grid-cols-3 gap-2.5 sm:gap-3">
+          <div className="mt-3 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-5">
             {[
               {
                 label: "Ventas",
@@ -565,6 +569,19 @@ export default function CreatorDashboard() {
                 label: "Favoritos",
                 value: stats.favorites,
                 hint: "Veces que te guardaron",
+              },
+              {
+                label: "Seguidores",
+                value: stats.followers,
+                hint: "Siguen tu perfil",
+              },
+              {
+                label: "Valoraciones",
+                value: stats.reviews,
+                hint:
+                  stats.rating !== null
+                    ? `Media ${stats.rating.toFixed(1).replace(".", ",")} de 5`
+                    : "Todavía sin valorar",
               },
             ].map((item) => (
               <div key={item.label} className="rk-card p-4 sm:p-5">
@@ -792,7 +809,7 @@ export default function CreatorDashboard() {
         <section className="rk-fade-up mt-10 grid gap-5 lg:grid-cols-2 sm:mt-12">
 
           {/* RECURSOS RECIENTES */}
-          <div>
+          <div className="min-w-0">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <h2 className="rk-title text-xl">
                 Recursos recientes
@@ -884,7 +901,7 @@ export default function CreatorDashboard() {
           </div>
 
           {/* VENTAS RECIENTES */}
-          <div>
+          <div className="min-w-0">
             <h2 className="rk-title text-xl">Ventas recientes</h2>
 
             <div className="rk-divider mt-3" />

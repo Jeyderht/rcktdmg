@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
+import { notificarAdmins } from "@/lib/notificaciones";
 import { createSession } from "@/lib/auth";
 
 export async function POST(request: Request) {
@@ -64,6 +65,19 @@ export async function POST(request: Request) {
         passwordHash,
         role: "CLIENT",
       },
+    });
+
+    /*
+      Aviso a administración. Va sin correo: para saber quién
+      es está el panel de usuarios, que ya exige rol ADMIN.
+      El correo en el cuerpo lo dejaría a la vista en la
+      campana de cualquier pantalla compartida.
+    */
+    await notificarAdmins({
+      type: "USER_REGISTERED",
+      title: "Nuevo usuario registrado",
+      body: user.name || "Cuenta nueva en RCKTDMG",
+      href: "/admin/usuarios",
     });
 
     await createSession({

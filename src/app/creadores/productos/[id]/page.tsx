@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ExternalLink,
   ImageIcon,
+  History,
   Pencil,
 } from "lucide-react";
 
@@ -311,6 +312,19 @@ export default async function CreatorProductPage({
           >
             <ImageIcon size={15} />
             Imágenes
+          </Link>
+
+          {/*
+            Las versiones se administran en cualquier estado:
+            publicar una mejora no debería obligar a devolver
+            el recurso a borrador.
+          */}
+          <Link
+            href={`/creadores/productos/${product.id}/versiones`}
+            className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2.5 !text-sm"
+          >
+            <History size={15} />
+            Versiones
           </Link>
 
           {(product.status === "DRAFT" ||

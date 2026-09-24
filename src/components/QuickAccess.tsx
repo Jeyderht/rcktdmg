@@ -7,15 +7,18 @@ import {
   ArrowRight,
   BarChart3,
   ClipboardCheck,
+  Bell,
   CreditCard,
   Download,
   FolderHeart,
   Heart,
   LayoutDashboard,
   LogOut,
+  Layers,
   Package,
   Plus,
   Receipt,
+  ScrollText,
   Settings,
   Shield,
   ShoppingBag,
@@ -78,11 +81,21 @@ const CREATOR_LINKS: QuickLink[] = [
     icon: Plus,
   },
   {
+    href: "/creadores/panel/packs",
+    label: "Packs",
+    icon: Layers,
+  },
+  {
     // Ganancias y estadísticas se muestran en el panel:
     // no existe una página independiente.
     href: "/creadores/panel",
     label: "Ganancias",
     icon: BarChart3,
+  },
+  {
+    href: "/creadores/panel/seguidores",
+    label: "Seguidores",
+    icon: Users,
   },
   {
     href: "/creadores/panel/retiros",
@@ -115,10 +128,28 @@ const CLIENT_LINKS: QuickLink[] = [
     description: "Descarga lo que ya tienes disponible",
   },
   {
+    href: "/mi-cuenta/licencias",
+    label: "Licencias",
+    icon: ScrollText,
+    description: "Qué puedes hacer con lo que compraste",
+  },
+  {
     href: "/mi-cuenta/favoritos",
     label: "Favoritos",
     icon: Heart,
     description: "Recursos que guardaste para después",
+  },
+  {
+    href: "/notificaciones",
+    label: "Notificaciones",
+    icon: Bell,
+    description: "Tu actividad y avisos",
+  },
+  {
+    href: "/mi-cuenta/siguiendo",
+    label: "Siguiendo",
+    icon: UserRound,
+    description: "Creadores a los que sigues",
   },
   {
     href: "/mi-cuenta/colecciones",

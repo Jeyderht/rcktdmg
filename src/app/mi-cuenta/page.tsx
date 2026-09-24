@@ -14,6 +14,7 @@ import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import QuickAccess from "@/components/QuickAccess";
+import RecomendadosCliente from "@/components/RecomendadosCliente";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useSessionUser } from "@/components/useSessionUser";
 
@@ -280,6 +281,9 @@ export default function Account() {
 
         {/* ========== ACCESOS RAPIDOS (POR ROL) ========== */}
         <QuickAccess user={user} />
+
+        {/* Recomendaciones: personales si hay historial real. */}
+        <RecomendadosCliente />
 
         {/* ========== ACTIVIDAD ========== */}
         <section className="rk-fade-up rk-enter-4 mt-10 sm:mt-12">

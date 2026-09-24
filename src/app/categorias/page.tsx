@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+
+import { paginaPublica } from "@/lib/seo";
 import { ArrowUpRight, LayoutGrid } from "lucide-react";
 
 import EmptyState from "@/components/EmptyState";
@@ -8,11 +10,12 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { prisma } from "@/lib/prisma";
 
-export const metadata: Metadata = {
-  title: "Categorías",
-  description:
+export const metadata: Metadata = paginaPublica({
+  titulo: "Categorías",
+  descripcion:
     "Explora los recursos digitales de RCKTDMG por categoría.",
-};
+  ruta: "/categorias",
+});
 
 export const dynamic = "force-dynamic";
 

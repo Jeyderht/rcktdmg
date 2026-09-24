@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
 import { getPrivate, esReferenciaBlob, esRutaPrivadaLocal } from "@/lib/storage";
 import { nombreDeArchivoLocal } from "@/lib/storage/local";
+import { licenciaRetirada } from "@/lib/licencias";
+import { versionVigente } from "@/lib/versiones";
 
 export const runtime = "nodejs";
 
@@ -80,14 +82,62 @@ export async function GET(
       );
     }
 
-    if (!download.product.fileUrl) {
+    /*
+      LICENCIA
+
+      Cuarta comprobación, añadida sobre las tres anteriores:
+      ninguna se ha tocado, así que lo que se podía descargar
+      antes se sigue pudiendo descargar.
+
+      Solo BLOQUEA si existe una licencia y está retirada. Si
+      no hay ninguna, se deja pasar: las descargas anteriores a
+      esta etapa no tienen licencia y negárselas rompería
+      compras ya pagadas. El relleno de licencias históricas
+      cierra ese hueco; hasta entonces, el permiso lo siguen
+      dando el pedido pagado y la descarga activa.
+    */
+    const retirada = await licenciaRetirada(
+      session.userId,
+      download.productId
+    );
+
+    if (retirada) {
+      return NextResponse.json(
+        {
+          error:
+            retirada.revokedReason ||
+            "Tu licencia sobre este recurso ya no está vigente.",
+        },
+        { status: 403 }
+      );
+    }
+
+    /*
+      QUÉ VERSIÓN SE ENTREGA
+
+      La VIGENTE, también a quien compró antes de que existiera:
+      una corrección publicada hoy no puede quedar fuera del
+      alcance de quien pagó ayer.
+
+      Se resuelve aquí de forma explícita en lugar de confiar
+      en `Product.fileUrl`, que es su espejo: si el espejo se
+      desincronizara, esto seguiría sirviendo el archivo
+      correcto.
+
+      Un recurso sin versiones —los anteriores a esta etapa—
+      cae al archivo único de siempre, y la descarga funciona
+      exactamente igual que antes.
+    */
+    const vigente = await versionVigente(download.productId);
+
+    const fileUrl = vigente?.fileUrl ?? download.product.fileUrl;
+
+    if (!fileUrl) {
       return NextResponse.json(
         { error: "El archivo todavía no está disponible." },
         { status: 404 }
       );
     }
-
-    const fileUrl = download.product.fileUrl;
 
     /*
       Tres formatos conviven a propósito durante la migración:

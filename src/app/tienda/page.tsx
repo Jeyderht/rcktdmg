@@ -1,10 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+
+import { paginaPrivada, paginaPublica } from "@/lib/seo";
 import { Suspense } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BuscadorSugerencias from "@/components/BuscadorSugerencias";
 import FiltrosMoviles from "./FiltrosMoviles";
 import FiltrosSidebar from "./FiltrosSidebar";
 import StoreResults, {
@@ -13,25 +16,95 @@ import StoreResults, {
 import { prisma } from "@/lib/prisma";
 import {
   COLORES,
-  ORDENES,
   RANGOS_PRECIO,
   TAG_PACK,
   leerParametros,
+  ordenPorDefecto,
+  paginaActual,
+  ordenesDisponibles,
   urlTienda,
   type ParametrosTienda,
 } from "@/lib/catalogo";
-
-export const metadata: Metadata = {
-  title: "Recursos",
-  description:
-    "Explora y compra recursos digitales en RCKTDMG.",
-};
+import { esTagProtegido } from "@/lib/tags-comun";
 
 export const dynamic = "force-dynamic";
 
 type StoreProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+/**
+ * Metadata de la tienda.
+ *
+ * La tienda tiene nueve parámetros combinables (búsqueda,
+ * categoría, etiqueta, formato, color, precio, packs, orden y
+ * página). Si cada combinación declarase su propia canónica,
+ * el mismo catálogo aparecería en los buscadores miles de
+ * veces. Aquí solo dos filtros generan URL propia:
+ *
+ *   · categoria · es la única navegación por secciones del
+ *     sitio y es la que publica el sitemap.
+ *   · tag       · son los enlaces de /tags, que también se
+ *     indexa.
+ *
+ * El resto (orden, color, formato, precio, packs) reordena o
+ * recorta un listado que ya existe, así que canoniza al
+ * listado del que sale. `page` se conserva porque la página 2
+ * enseña recursos distintos: quitarla los dejaría fuera.
+ *
+ * La búsqueda (`q`) no se indexa: son resultados generados
+ * por quien escribe en la caja, no páginas del catálogo.
+ */
+export async function generateMetadata({
+  searchParams,
+}: StoreProps): Promise<Metadata> {
+  const parametros = leerParametros(await searchParams);
+
+  if (parametros.q) {
+    return paginaPrivada("Buscar recursos");
+  }
+
+  const categoria = parametros.categoria
+    ? await prisma.category.findUnique({
+        where: { slug: parametros.categoria },
+        select: { name: true, slug: true },
+      })
+    : null;
+
+  // Una categoría que no existe no merece página propia.
+  const etiqueta = parametros.tag && !categoria ? parametros.tag : null;
+
+  const canonicos = new URLSearchParams();
+
+  if (categoria) canonicos.set("categoria", categoria.slug);
+  else if (etiqueta) canonicos.set("tag", etiqueta);
+
+  if (parametros.page) canonicos.set("page", parametros.page);
+
+  const consulta = canonicos.toString();
+  const ruta = consulta ? `/tienda?${consulta}` : "/tienda";
+
+  const pagina = paginaActual(parametros);
+
+  const titulo = categoria
+    ? categoria.name
+    : etiqueta
+      ? `Recursos con la etiqueta ${etiqueta}`
+      : "Recursos";
+
+  const descripcion = categoria
+    ? `Recursos digitales de la categoría ${categoria.name} en RCKTDMG, listos para descargar.`
+    : etiqueta
+      ? `Recursos digitales etiquetados como ${etiqueta} en RCKTDMG.`
+      : "Explora y compra recursos digitales en RCKTDMG.";
+
+  return paginaPublica({
+    // La página 2 en adelante lo dice en el título.
+    titulo: pagina > 1 ? `${titulo} · Página ${pagina}` : titulo,
+    descripcion,
+    ruta,
+  });
+}
 
 export default async function Store({ searchParams }: StoreProps) {
   const parametros = leerParametros(await searchParams);
@@ -45,8 +118,13 @@ export default async function Store({ searchParams }: StoreProps) {
     publicados detrás, para que ningún filtro lleve a una
     lista vacía.
   */
-  const [categories, formatosCrudos, coloresCrudos, totalPacks] =
-    await Promise.all([
+  const [
+    categories,
+    formatosCrudos,
+    coloresCrudos,
+    etiquetasCrudas,
+    totalPacks,
+  ] = await Promise.all([
       prisma.category.findMany({
         where: {
           products: {
@@ -83,6 +161,26 @@ export default async function Store({ searchParams }: StoreProps) {
         _count: { _all: true },
       }),
 
+      /*
+        Etiquetas con recursos publicados detrás, las más
+        usadas primero. Igual que formatos y colores: ninguna
+        opción del panel puede llevar a una lista vacía.
+      */
+      prisma.tag.findMany({
+        where: { products: { some: { product: { status: "PUBLISHED" } } } },
+        orderBy: [{ products: { _count: "desc" } }, { name: "asc" }],
+        take: 12,
+        select: {
+          name: true,
+          slug: true,
+          _count: {
+            select: {
+              products: { where: { product: { status: "PUBLISHED" } } },
+            },
+          },
+        },
+      }),
+
       prisma.product.count({
         where: {
           status: "PUBLISHED",
@@ -117,12 +215,22 @@ export default async function Store({ searchParams }: StoreProps) {
     ];
   });
 
+  /*
+    La etiqueta "pack" no se ofrece aquí como una etiqueta
+    más: ya tiene su propio interruptor ("Solo packs") y
+    verla dos veces con nombres distintos confundiría.
+  */
+  const etiquetas = etiquetasCrudas
+    .filter((fila) => !esTagProtegido(fila.slug))
+    .map((fila) => ({
+      valor: fila.slug,
+      etiqueta: fila.name,
+      conteo: fila._count.products,
+    }));
+
   const activeCategory = categories.find(
     (category) => category.slug === categorySlug
   );
-
-  // Quitar solo la búsqueda, conservando el resto de filtros.
-  const clearQueryHref = urlTienda(parametros, { q: undefined });
 
   /* Filtros aplicados, cada uno con su propia forma de quitarse. */
   const aplicados: { clave: keyof ParametrosTienda; etiqueta: string }[] =
@@ -145,6 +253,21 @@ export default async function Store({ searchParams }: StoreProps) {
     }
   }
 
+  if (parametros.tag) {
+    /*
+      El nombre bonito sale de la lista ya consultada; si la
+      etiqueta de la URL no existe, se enseña el slug tal cual
+      en vez de esconder el filtro y dejar los resultados sin
+      explicación.
+    */
+    const etiqueta = etiquetas.find((e) => e.valor === parametros.tag);
+
+    aplicados.push({
+      clave: "tag",
+      etiqueta: etiqueta?.etiqueta ?? parametros.tag,
+    });
+  }
+
   if (parametros.formato) {
     aplicados.push({
       clave: "formato",
@@ -164,8 +287,16 @@ export default async function Store({ searchParams }: StoreProps) {
     aplicados.push({ clave: "pack", etiqueta: "Solo packs" });
   }
 
+  const hayBusqueda = Boolean(parametros.q);
+
+  const disponibles = ordenesDisponibles(hayBusqueda);
+
   const ordenActual =
-    ORDENES.find((o) => o.valor === parametros.sort) ?? ORDENES[0];
+    disponibles.find((o) => o.valor === parametros.sort) ??
+    disponibles.find(
+      (o) => o.valor === ordenPorDefecto(hayBusqueda)
+    ) ??
+    disponibles[0];
 
   return (
     <>
@@ -195,62 +326,24 @@ export default async function Store({ searchParams }: StoreProps) {
 
         {/* ══════════ BUSCADOR ══════════ */}
         <section className="rk-fade-up rk-enter-1 mt-7">
-          <form action="/tienda" method="GET">
-            {/*
-              Una búsqueda nueva no debe tirar los filtros que ya
-              estaban puestos: viajan como campos ocultos.
-            */}
-            {(
-              ["categoria", "formato", "color", "precio", "pack", "sort"] as const
-            ).map((clave) =>
-              parametros[clave] ? (
-                <input
-                  key={clave}
-                  type="hidden"
-                  name={clave}
-                  value={parametros[clave]}
-                />
-              ) : null
-            )}
-
-            <div className="relative max-w-2xl">
-              <Search
-                size={18}
-                className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-ink/60"
-              />
-
-              <input
-                type="search"
-                name="q"
-                defaultValue={query}
-                placeholder="Buscar recursos..."
-                aria-label="Buscar recursos"
-                autoComplete="off"
-                className="h-14 w-full rounded-rk-md border border-line/10 bg-surface/70 pl-14 pr-[6.5rem] text-[15px] outline-none backdrop-blur-rk transition-colors duration-normal ease-rk placeholder:text-ink/60 hover:border-line/20 focus:border-ink/40 focus:bg-surface focus:shadow-[0_0_0_4px_var(--rk-accent-soft)]"
-              />
-
-              <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
-                {/* Limpiar: navegación real, conserva los filtros. */}
-                {query && (
-                  <Link
-                    href={clearQueryHref}
-                    aria-label="Limpiar búsqueda"
-                    title="Limpiar búsqueda"
-                    className="rk-press flex h-9 w-9 items-center justify-center rounded-full text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
-                  >
-                    <X size={15} />
-                  </Link>
-                )}
-
-                <button
-                  type="submit"
-                  className="rk-btn rk-btn-ink !px-4 !py-3 !text-sm"
-                >
-                  Buscar
-                </button>
-              </div>
-            </div>
-          </form>
+          {/*
+            Una búsqueda nueva no debe tirar los filtros que ya
+            estaban puestos: viajan como campos ocultos dentro
+            del formulario.
+          */}
+          <BuscadorSugerencias
+            valorInicial={query}
+            className="max-w-2xl"
+            ocultos={{
+              categoria: parametros.categoria,
+              tag: parametros.tag,
+              formato: parametros.formato,
+              color: parametros.color,
+              precio: parametros.precio,
+              pack: parametros.pack,
+              sort: parametros.sort,
+            }}
+          />
         </section>
 
         {/* ══════════ CATEGORÍAS ══════════ */}
@@ -311,6 +404,7 @@ export default async function Store({ searchParams }: StoreProps) {
             actuales={parametros}
             formatos={formatos}
             colores={colores}
+            etiquetas={etiquetas}
             totalPacks={totalPacks}
           />
 
@@ -320,6 +414,7 @@ export default async function Store({ searchParams }: StoreProps) {
               actuales={parametros}
               formatos={formatos}
               colores={colores}
+              etiquetas={etiquetas}
               totalPacks={totalPacks}
             />
 

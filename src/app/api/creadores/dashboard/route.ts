@@ -131,6 +131,39 @@ export async function GET() {
         });
 
         // =========================
+        // SEGUIDORES
+        // =========================
+
+        const followers = await prisma.follow.count({
+            where: {
+                creatorId: userId,
+            },
+        });
+        // =========================
+        // VALORACIONES RECIBIDAS
+        // =========================
+
+        // Solo las publicadas: una reseña oculta por
+        // moderación no cuenta para la media del creador.
+        const reviewsResult = await prisma.review.aggregate({
+            where: {
+                status: "PUBLISHED",
+                product: {
+                    creatorId: userId,
+                },
+            },
+            _avg: { rating: true },
+            _count: { _all: true },
+        });
+
+        const reviews = reviewsResult._count._all;
+
+        const rating =
+            reviews > 0 && reviewsResult._avg.rating !== null
+                ? Number(reviewsResult._avg.rating.toFixed(2))
+                : null;
+
+        // =========================
         // VENTAS
         // =========================
 
@@ -371,6 +404,9 @@ export async function GET() {
                 sales,
                 downloads,
                 favorites,
+                followers,
+                reviews,
+                rating,
                 revenue,
             },
 
