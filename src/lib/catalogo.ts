@@ -173,6 +173,15 @@ export type FiltrosCatalogo = {
   color?: string;
   precio?: string;
   soloPacks?: boolean;
+  /**
+   * Categoría que se EXCLUYE del listado.
+   *
+   * Existe para que "Diseños generales" signifique de verdad
+   * "todo menos eventos". Sin esto, los dos caminos del
+   * selector de la portada llevaban a listados que se
+   * solapaban y las etiquetas no decían la verdad.
+   */
+  sinCategoria?: string;
 };
 
 /**
@@ -188,6 +197,10 @@ export function construirWhere(
 
   if (filtros.categoria) {
     where.category = { slug: filtros.categoria };
+  } else if (filtros.sinCategoria) {
+    // Excluir e incluir a la vez no tiene sentido: si se pide
+    // una categoría concreta, esa manda.
+    where.category = { slug: { not: filtros.sinCategoria } };
   }
 
   if (filtros.formato) {
@@ -352,6 +365,8 @@ export type ParametrosTienda = {
   precio?: string;
   /** "true" cuando se piden únicamente packs. */
   pack?: string;
+  /** Slug de la categoría que se deja fuera del listado. */
+  sin?: string;
   sort?: string;
   /** Página actual, como texto. Ausente significa la 1. */
   page?: string;
@@ -397,6 +412,7 @@ export function leerParametros(
       ? precio
       : undefined,
     pack: texto(crudos.pack) === "true" ? "true" : undefined,
+    sin: texto(crudos.sin)?.toLowerCase(),
     sort: esOrden(sort) ? sort : undefined,
     // Una página inválida, negativa o enorme no rompe nada.
     page:
@@ -425,6 +441,7 @@ export function filtrosDesde(
     color: parametros.color,
     precio: parametros.precio,
     soloPacks: parametros.pack === "true",
+    sinCategoria: parametros.sin,
   };
 }
 

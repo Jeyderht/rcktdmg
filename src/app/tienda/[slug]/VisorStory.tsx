@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
+  ArrowUpRight,
   BadgeCheck,
+  Check,
   ChevronLeft,
   ChevronRight,
   Heart,
@@ -14,11 +16,8 @@ import {
 } from "lucide-react";
 
 import PreviewProtegido from "@/components/PreviewProtegido";
-import { formatPrice } from "@/lib/pricing";
-import {
-  CART_STORAGE_KEY,
-  CART_UPDATED_EVENT,
-} from "@/components/useCartCount";
+import { ASPECTO_STORY } from "@/lib/home";
+import { anadirAlCarrito } from "@/components/useCartCount";
 
 /** Cuánto dura cada imagen antes de pasar sola. */
 const DURACION = 4500;
@@ -154,7 +153,25 @@ export default function VisorStory({
       onPointerDown={() => setPausado(true)}
       onPointerUp={() => setPausado(false)}
       onPointerCancel={() => setPausado(false)}
-      className="fixed inset-0 z-[80] flex flex-col bg-ink/96 backdrop-blur-sm"
+      /*
+        FONDO DEL VISOR
+
+        Negro explícito, no el token `ink`. Dos motivos, los
+        dos comprobados en el navegador:
+
+        1. `bg-ink/96` no generaba NADA. La escala de opacidad
+           de Tailwind no incluye 96, así que la regla no se
+           creaba y el diálogo quedaba transparente: se veía la
+           ficha del producto por debajo.
+
+        2. `ink` se invierte con el tema. En oscuro vale
+           243 245 248, casi blanco, de modo que el fondo de la
+           story habría sido claro justo donde debe ser negro.
+
+        Una story es negra en los dos temas. Por eso el color va
+        fijo y no depende de ningún token.
+      */
+      className="fixed inset-0 z-[80] flex flex-col bg-[#0a0a0c]"
       style={{ height: "100dvh", width: "100vw" }}
     >
       {/* ══════════ PROGRESO ══════════ */}
@@ -165,10 +182,10 @@ export default function VisorStory({
         {imagenes.map((img, i) => (
           <span
             key={img.key}
-            className="h-0.5 flex-1 overflow-hidden rounded-full bg-surface/25"
+            className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/25"
           >
             <span
-              className="block h-full rounded-full bg-surface"
+              className="block h-full rounded-full bg-white"
               style={{
                 width: i <= indice ? "100%" : "0%",
                 transition:
@@ -183,7 +200,7 @@ export default function VisorStory({
 
       {/* ══════════ CREADOR ══════════ */}
       <div className="flex shrink-0 items-center gap-2.5 px-4 py-3">
-        <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface/15">
+        <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/15">
           {producto.creador.avatarUrl ? (
             <Image
               src={producto.creador.avatarUrl}
@@ -193,7 +210,7 @@ export default function VisorStory({
               sizes="36px"
             />
           ) : (
-            <span className="text-xs font-semibold text-surface">
+            <span className="text-xs font-semibold text-white">
               {producto.creador.nombre.charAt(0).toUpperCase()}
             </span>
           )}
@@ -203,7 +220,7 @@ export default function VisorStory({
           {producto.creador.username ? (
             <Link
               href={`/creadores/${producto.creador.username}`}
-              className="flex min-h-[2.75rem] min-w-0 items-center gap-1 text-sm font-semibold text-surface underline-offset-4 hover:underline"
+              className="flex min-h-[2.75rem] min-w-0 items-center gap-1 text-sm font-semibold text-white underline-offset-4 hover:underline"
             >
               <span className="truncate">{producto.creador.nombre}</span>
 
@@ -216,20 +233,20 @@ export default function VisorStory({
               )}
             </Link>
           ) : (
-            <p className="truncate text-sm font-semibold text-surface">
+            <p className="truncate text-sm font-semibold text-white">
               {producto.creador.nombre}
             </p>
           )}
 
           {producto.creador.username && (
-            <p className="truncate text-[12px] text-surface/60">
+            <p className="truncate text-[12px] text-white/60">
               @{producto.creador.username}
             </p>
           )}
         </div>
 
         {total > 1 && (
-          <span className="shrink-0 text-[12px] tabular-nums text-surface/60">
+          <span className="shrink-0 text-[12px] tabular-nums text-white/60">
             {indice + 1} / {total}
           </span>
         )}
@@ -239,7 +256,7 @@ export default function VisorStory({
           type="button"
           onClick={alCerrar}
           aria-label="Cerrar"
-          className="rk-press rk-touch grid h-11 w-11 shrink-0 place-items-center rounded-full text-surface transition-colors hover:bg-surface/10"
+          className="rk-press rk-touch grid h-11 w-11 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10"
         >
           <X size={20} aria-hidden />
         </button>
@@ -247,17 +264,33 @@ export default function VisorStory({
 
       {/* ══════════ IMAGEN ══════════ */}
       <div className="relative flex min-h-0 flex-1 items-center justify-center px-3">
-        <span className="relative flex max-h-full max-w-full items-center justify-center">
+        {/*
+          El contenedor tiene altura propia (h-full dentro de un
+          padre flex-1). Sin ella, una imagen con `fill` se
+          queda en 0 × 0 y no se ve nada.
+        */}
+        {/*
+          El marco tiene la proporción de una story y se centra.
+
+          Antes ocupaba todo el ancho disponible: con
+          object-contain el flyer salía bien, pero la marca de
+          agua —anclada a la esquina del MARCO— acababa pegada
+          al borde de la pantalla, a medio metro de la imagen.
+          Ahora el marco abraza al flyer y la marca va donde
+          tiene que ir.
+        */}
+        <span
+          className="relative mx-auto block h-full w-auto"
+          style={{ aspectRatio: ASPECTO_STORY }}
+        >
           <PreviewProtegido
             key={imagen.key}
             src={imagen.url}
             alt={`${imagen.label} de ${producto.name}`}
-            ancho={imagen.ancho}
-            alto={imagen.alto}
             contener
             priority
             sizes="(max-width: 768px) 100vw, 40rem"
-            className="max-h-[68dvh] w-auto rounded-rk-md"
+            className="rounded-rk-md"
           />
         </span>
 
@@ -267,7 +300,7 @@ export default function VisorStory({
               type="button"
               onClick={anterior}
               aria-label="Imagen anterior"
-              className="rk-press absolute left-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-ink/50 text-surface backdrop-blur transition-colors hover:bg-ink/70"
+              className="rk-press absolute left-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition-colors hover:bg-black/70"
             >
               <ChevronLeft size={20} aria-hidden />
             </button>
@@ -276,7 +309,7 @@ export default function VisorStory({
               type="button"
               onClick={siguiente}
               aria-label="Imagen siguiente"
-              className="rk-press absolute right-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-ink/50 text-surface backdrop-blur transition-colors hover:bg-ink/70"
+              className="rk-press absolute right-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition-colors hover:bg-black/70"
             >
               <ChevronRight size={20} aria-hidden />
             </button>
@@ -284,27 +317,29 @@ export default function VisorStory({
         )}
       </div>
 
-      {/* ══════════ ACCIONES ══════════ */}
+      {/*
+        ══════════ ACCIONES ══════════
+
+        Guardar, comprar y abrir la ficha. Sin título ni precio:
+        una story es la pieza a pantalla completa, no una ficha
+        de producto encogida.
+      */}
       <div className="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
-        <div className="mx-auto flex w-full max-w-md flex-col gap-2.5">
-          <div className="flex items-baseline justify-between gap-3">
-            <p className="min-w-0 truncate text-[15px] font-semibold text-surface">
-              {producto.name}
-            </p>
+        <div className="mx-auto flex w-full max-w-md items-center justify-center gap-3">
+          <BotonFavorito productId={producto.id} slug={producto.slug} />
 
-            <p className="shrink-0 text-lg font-semibold tabular-nums text-surface">
-              {formatPrice(producto.price)}
-            </p>
-          </div>
+          <BotonCarrito
+            producto={producto}
+            imagen={imagenes[0] ? imagenes[0].url : null}
+          />
 
-          <div className="flex items-center gap-2">
-            <BotonFavorito productId={producto.id} slug={producto.slug} />
-
-            <BotonCarrito
-              producto={producto}
-              imagen={imagenes[0]?.url ?? null}
-            />
-          </div>
+          <Link
+            href={`/tienda/${producto.slug}`}
+            aria-label="Ver el recurso"
+            className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
+          >
+            <ArrowUpRight size={18} aria-hidden />
+          </Link>
         </div>
       </div>
     </div>,
@@ -313,6 +348,67 @@ export default function VisorStory({
 }
 
 /* ══════════════ ACCIONES ══════════════ */
+
+/**
+ * Añadir al carrito desde la story.
+ *
+ * Usa `anadirAlCarrito`, la misma función que el resto del
+ * sitio: el mismo `rcktdmg_cart`, el mismo evento y las mismas
+ * reglas de duplicados. Aquí no hay ninguna lógica de carrito
+ * propia.
+ *
+ * La story NO se cierra al añadir: quien está mirando sigue
+ * mirando, y el botón se limita a confirmar lo que hizo.
+ */
+function BotonCarrito({
+  producto,
+  imagen,
+}: {
+  producto: { id: string; name: string; slug: string; price: number };
+  imagen: string | null;
+}) {
+  const [anadido, setAnadido] = useState(false);
+
+  useEffect(() => {
+    if (!anadido) return;
+
+    const t = window.setTimeout(() => setAnadido(false), 2400);
+
+    return () => window.clearTimeout(t);
+  }, [anadido]);
+
+  function anadir() {
+    anadirAlCarrito({
+      id: producto.id,
+      kind: "PRODUCT",
+      name: producto.name,
+      price: producto.price,
+      slug: producto.slug,
+      coverUrl: imagen,
+    });
+
+    setAnadido(true);
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={anadir}
+      aria-label={anadido ? "Agregado al carrito" : "Añadir al carrito"}
+      className={`rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border transition-colors ${
+        anadido
+          ? "border-white bg-white text-[#0a0a0c]"
+          : "border-white/25 text-white hover:bg-white/10"
+      }`}
+    >
+      {anadido ? (
+        <Check size={18} aria-hidden />
+      ) : (
+        <ShoppingBag size={18} aria-hidden />
+      )}
+    </button>
+  );
+}
 
 function BotonFavorito({
   productId,
@@ -357,69 +453,10 @@ function BotonFavorito({
       onClick={alternar}
       aria-pressed={guardado}
       aria-label={guardado ? "Quitar de guardados" : "Guardar"}
-      className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-surface/25 text-surface transition-colors hover:bg-surface/10"
+      className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
     >
       <Heart size={18} aria-hidden className={guardado ? "fill-current" : ""} />
     </button>
   );
 }
 
-function BotonCarrito({
-  producto,
-  imagen,
-}: {
-  producto: { id: string; name: string; price: number; slug: string };
-  imagen: string | null;
-}) {
-  const [anadido, setAnadido] = useState(false);
-
-  function anadir() {
-    try {
-      const guardado = localStorage.getItem(CART_STORAGE_KEY);
-
-      const lista = guardado ? JSON.parse(guardado) : [];
-
-      const carrito = Array.isArray(lista) ? lista : [];
-
-      const yaEsta = carrito.some(
-        (item: { id: string; kind?: string }) =>
-          item.id === producto.id &&
-          item.kind !== "PACK" &&
-          item.kind !== "COLLECTION"
-      );
-
-      if (!yaEsta) {
-        carrito.push({
-          id: producto.id,
-          kind: "PRODUCT",
-          name: producto.name,
-          price: producto.price,
-          slug: producto.slug,
-          coverUrl: imagen,
-          quantity: 1,
-        });
-
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
-
-        window.dispatchEvent(new Event(CART_UPDATED_EVENT));
-      }
-
-      setAnadido(true);
-
-      setTimeout(() => setAnadido(false), 2400);
-    } catch {
-      // Si el navegador bloquea localStorage no se rompe nada.
-    }
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={anadir}
-      className="rk-press inline-flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-surface px-4 text-sm font-semibold text-ink transition-opacity hover:opacity-90"
-    >
-      <ShoppingBag size={16} aria-hidden />
-      {anadido ? "Añadido al carrito" : "Añadir al carrito"}
-    </button>
-  );
-}

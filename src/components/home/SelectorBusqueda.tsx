@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Shapes } from "lucide-react";
 
+import { CATEGORIA_EVENTOS } from "@/lib/home";
+
 /**
  * "¿Qué estás buscando?"
  *
@@ -13,19 +15,35 @@ import { ArrowRight, CalendarDays, Shapes } from "lucide-react";
  * ninguna sección nueva ni se toca el catálogo.
  */
 
+/*
+  DESTINOS
+
+  Asignación pedida expresamente por el responsable del
+  proyecto:
+
+    "Eventos"           → /tienda?sin=eventos
+    "Diseños generales" → /tienda?categoria=eventos
+
+  Queda anotado que la etiqueta y el destino no coinciden
+  entre sí: la tarjeta de Eventos lleva al listado que EXCLUYE
+  los eventos, y la de Diseños generales lleva justo a la
+  categoría Eventos. Se ha confirmado dos veces que es lo
+  deseado, así que se respeta tal cual; si algún día se
+  invierte, solo hay que intercambiar estos dos `href`.
+*/
 const OPCIONES = [
   {
-    titulo: "Flyers de eventos",
+    titulo: "Eventos",
     texto:
-      "Fiestas, conciertos y fechas señaladas. Listos para publicar.",
-    href: "/tienda?categoria=eventos",
+      "Flyers de fiestas, conciertos y fechas señaladas. Listos para publicar.",
+    href: `/tienda?sin=${CATEGORIA_EVENTOS}`,
     icono: CalendarDays,
   },
   {
     titulo: "Diseños generales",
     texto:
-      "Corporativos, social media, plantillas y colecciones completas.",
-    href: "/tienda",
+      "Todo lo demás: corporativos, social media, plantillas y colecciones.",
+    href: `/tienda?categoria=${CATEGORIA_EVENTOS}`,
     icono: Shapes,
   },
 ] as const;

@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Library } from "lucide-react";
 
 import ColeccionCard from "@/components/ColeccionCard";
+import EmptyState from "@/components/EmptyState";
 import type { ColeccionVista } from "@/lib/colecciones-comerciales-comun";
 
 /**
@@ -20,7 +21,8 @@ export default function SeccionColecciones({
 }: {
   colecciones: ColeccionVista[];
 }) {
-  if (colecciones.length === 0) return null;
+  // La sección se pinta siempre; sin datos, lo dice.
+  const vacia = colecciones.length === 0;
 
   return (
     <section className="border-t border-line/10">
@@ -52,11 +54,22 @@ export default function SeccionColecciones({
           </Link>
         </div>
 
-        <div className="rk-fade-up rk-enter-1 mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {colecciones.map((coleccion) => (
-            <ColeccionCard key={coleccion.id} coleccion={coleccion} />
-          ))}
-        </div>
+        {vacia ? (
+          <div className="rk-fade-up rk-enter-1 mt-8">
+            <EmptyState
+              icon={Library}
+              title="Próximamente"
+              description="Aquí aparecerán las colecciones completas en cuanto un creador publique la primera."
+              action={{ href: "/packs", label: "Ver los packs" }}
+            />
+          </div>
+        ) : (
+          <div className="rk-fade-up rk-enter-1 mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {colecciones.map((coleccion) => (
+              <ColeccionCard key={coleccion.id} coleccion={coleccion} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

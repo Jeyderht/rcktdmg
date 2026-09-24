@@ -24,15 +24,16 @@ import Image from "next/image";
  *
  * PROPORCIÓN
  *
- * Con `ancho` y `alto` reales la imagen se enseña ENTERA, con
- * su forma. Sin ellos se recorta al marco, que es como se
- * comportaba antes. Nunca se estira.
+ * `contener` decide si la imagen se enseña ENTERA dentro del
+ * marco (object-contain) o si lo rellena recortando
+ * (object-cover). Nunca se estira.
+ *
+ * El contenedor DEBE tener tamaño propio: la imagen usa
+ * `fill` y sin altura en el padre se pinta a 0 × 0.
  */
 export default function PreviewProtegido({
   src,
   alt,
-  ancho,
-  alto,
   sizes,
   priority = false,
   contener = false,
@@ -41,10 +42,6 @@ export default function PreviewProtegido({
 }: {
   src: string;
   alt: string;
-  /** Ancho real en píxeles, si se conoce. */
-  ancho?: number | null;
-  /** Alto real en píxeles, si se conoce. */
-  alto?: number | null;
   sizes?: string;
   priority?: boolean;
   /** true para ver la imagen completa; false para recortarla al marco. */
@@ -58,40 +55,47 @@ export default function PreviewProtegido({
     "arriba-derecha": "top-2 right-2",
   }[esquina];
 
-  const conMedidas = Boolean(ancho && alto);
-
   return (
     <>
-      {conMedidas && contener ? (
-        <Image
-          src={src}
-          alt={alt}
-          width={ancho as number}
-          height={alto as number}
-          priority={priority}
-          sizes={sizes}
-          className={`h-full w-full object-contain ${className}`}
-        />
-      ) : (
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          priority={priority}
-          sizes={sizes}
-          className={`${contener ? "object-contain" : "object-cover"} ${className}`}
-        />
-      )}
+      {/*
+        SIEMPRE `fill`, y el recorte lo decide `contener`.
+
+        Antes había una segunda rama que usaba `width`/`height`
+        cuando se conocían las dimensiones. El problema estaba
+        en el caso contrario: sin dimensiones se caía a `fill`,
+        y si el contenedor no tenía altura propia la imagen se
+        pintaba a 0 × 0 —cargada, pero invisible—. Eso es lo que
+        dejaba las stories en negro.
+
+        Con una sola rama la regla es clara: quien monta este
+        componente da un contenedor con tamaño. Ya no hay un
+        camino que funcione y otro que no según qué datos haya
+        en la base.
+      */}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        priority={priority}
+        sizes={sizes}
+        className={`${contener ? "object-contain" : "object-cover"} ${className}`}
+      />
 
       {/*
         La marca va en un span aparte y no dentro de la imagen:
         así no participa del recorte ni se deforma con ella.
         `aria-hidden` porque no aporta nada a quien usa lector
         de pantalla; el alt ya dice qué es la imagen.
+
+        Los colores NO usan los tokens del tema. La marca va
+        siempre sobre una imagen, que es igual en claro y en
+        oscuro; con `text-surface` acababa siendo texto casi
+        negro sobre una pastilla oscura en tema oscuro, o sea
+        invisible. Blanco sobre negro translúcido, siempre.
       */}
       <span
         aria-hidden
-        className={`pointer-events-none absolute ${posicion} select-none rounded-full bg-ink/35 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-surface/85 backdrop-blur-[2px] sm:text-[10px]`}
+        className={`pointer-events-none absolute ${posicion} select-none rounded-full bg-black/35 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/85 backdrop-blur-[2px] sm:text-[10px]`}
       >
         RCKTDMG
       </span>

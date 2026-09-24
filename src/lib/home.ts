@@ -168,6 +168,95 @@ export function flyersDeEventos(tope = 12): Promise<TarjetaHome[]> {
 }
 
 /**
+ * Proporción de cada sección. NO se mezclan.
+ *
+ *   Stories      1080 × 1920 · 9:16 · vertical de historia
+ *   Corporativos 1080 × 1350 · 4:5  · vertical de publicación
+ *
+ * Están aquí, en un solo sitio, porque antes la tira de
+ * Stories usaba 4:5 —la de Corporativos— y las dos secciones
+ * se veían con la misma forma pese a ser formatos distintos.
+ */
+export const ASPECTO_STORY = "9/16";
+export const ASPECTO_CORPORATIVO = "4/5";
+
+/**
+ * Recursos para el carrusel de Corporativos, con demostración.
+ *
+ * La fuente real sigue siendo estricta: categoría Corporativos
+ * y formato 1080 × 1350 exacto. Solo si no hay ninguno se
+ * devuelven otros recursos publicados, marcados con `esDemo`,
+ * para poder revisar el diseño del carrusel.
+ *
+ * Los recursos de la demo NO cumplen el formato y la interfaz
+ * lo dice: no se insinúa que sean corporativos ni que midan
+ * 1080 × 1350.
+ */
+export async function corporativosParaSlice(
+  tope = 9
+): Promise<{ recursos: TarjetaHome[]; esDemo: boolean }> {
+  const reales = await recursosCorporativos(tope);
+
+  if (reales.length > 0) {
+    return { recursos: reales, esDemo: false };
+  }
+
+  const demo = await prisma.product.findMany({
+    where: {
+      status: "PUBLISHED",
+      OR: [{ images: { some: {} } }, { coverUrl: { not: null } }],
+    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    take: tope,
+    select: SELECCION,
+  });
+
+  return { recursos: (demo as Fila[]).map(aTarjetaHome), esDemo: true };
+}
+
+/**
+ * Flyers para la sección de Stories, con demostración visual.
+ *
+ * La fuente real es SIEMPRE la categoría Eventos: el filtro no
+ * se relaja nunca. Lo que cambia es qué se hace cuando esa
+ * categoría todavía no tiene nada publicado.
+ *
+ * En ese caso se devuelven recursos que YA existen para poder
+ * revisar el diseño del componente, marcados con `esDemo`.
+ * La interfaz lo dice con todas las letras, y ningún dato de
+ * esos recursos se modifica: se leen y se pintan, nada más.
+ *
+ * En cuanto exista el primer flyer de Eventos publicado, la
+ * demo desaparece sola y no queda rastro de ella.
+ */
+export async function flyersParaStories(
+  tope = 12
+): Promise<{ flyers: TarjetaHome[]; esDemo: boolean }> {
+  const reales = await flyersDeEventos(tope);
+
+  if (reales.length > 0) {
+    return { flyers: reales, esDemo: false };
+  }
+
+  /*
+    Demostración: recursos publicados con imagen, de cualquier
+    categoría. NO se les cambia la categoría ni nada más; solo
+    se usan para que el componente tenga algo que enseñar.
+  */
+  const demo = await prisma.product.findMany({
+    where: {
+      status: "PUBLISHED",
+      OR: [{ images: { some: {} } }, { coverUrl: { not: null } }],
+    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    take: tope,
+    select: SELECCION,
+  });
+
+  return { flyers: (demo as Fila[]).map(aTarjetaHome), esDemo: true };
+}
+
+/**
  * Recursos corporativos para el carrusel en perspectiva.
  *
  * Solo los que miden REALMENTE 1080 × 1350. El filtro va

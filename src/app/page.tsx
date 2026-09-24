@@ -23,8 +23,8 @@ import ConvierteteEnCreador from "@/components/home/ConvierteteEnCreador";
 import {
   conteosDeDisenos,
   creadoresDestacados,
-  flyersDeEventos,
-  recursosCorporativos,
+  corporativosParaSlice,
+  flyersParaStories,
 } from "@/lib/home";
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
 import { getSession } from "@/lib/session";
@@ -181,9 +181,9 @@ export default async function Home() {
       no tres viajes extra en serie. Cada una con su tope y su
       select mínimo.
     */
-    flyersDeEventos(12),
+    flyersParaStories(12),
 
-    recursosCorporativos(9),
+    corporativosParaSlice(9),
 
     listarColeccionesPublicas(6),
 
@@ -420,13 +420,16 @@ export default async function Home() {
         <SelectorBusqueda />
 
         {/* ══════════ STORIES DE EVENTOS ══════════ */}
-        <StoriesEventos flyers={flyers} />
+        <StoriesEventos flyers={flyers.flyers} esDemo={flyers.esDemo} />
 
         {/* ══════════ COLECCIONES ══════════ */}
         <SeccionColecciones colecciones={colecciones} />
 
         {/* ══════════ CORPORATIVOS ══════════ */}
-        <SliceCorporativos recursos={corporativos} />
+        <SliceCorporativos
+          recursos={corporativos.recursos}
+          esDemo={corporativos.esDemo}
+        />
 
         {/* ══════════ CATEGORÍAS ══════════ */}
         {categories.length > 0 && (

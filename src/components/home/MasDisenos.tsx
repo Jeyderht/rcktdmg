@@ -59,9 +59,18 @@ export default function MasDisenos({
       cuantos: conteos.packs,
       unidad: ["pack", "packs"],
     },
-  ].filter((camino) => camino.cuantos > 0);
+  ];
 
-  if (CAMINOS.length === 0) return null;
+  /*
+    Los caminos se enseñan TODOS, tengan contenido o no.
+
+    Antes se filtraban los vacíos y, si se vaciaban todos, la
+    sección entera desaparecía. El efecto era que alguien podía
+    concluir que RCKTDMG no vende colecciones, cuando lo que
+    pasa es que aún no hay ninguna publicada. Un camino sin
+    contenido lo dice y sigue llevando a su sección, que es
+    donde aparecerá lo que se publique.
+  */
 
   return (
     <section className="border-t border-line/10">
@@ -109,7 +118,9 @@ export default function MasDisenos({
                 </p>
 
                 <p className="mt-2 text-[12px] tabular-nums text-ink/45">
-                  {cuantos} {cuantos === 1 ? unidad[0] : unidad[1]}
+                  {cuantos > 0
+                    ? `${cuantos} ${cuantos === 1 ? unidad[0] : unidad[1]}`
+                    : "Próximamente"}
                 </p>
               </div>
             </Link>

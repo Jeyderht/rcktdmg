@@ -106,9 +106,17 @@ export default function ProductGallery({
     [total]
   );
 
-  // Navegación con teclado entre imágenes.
+  /*
+    Navegación con teclado entre imágenes.
+
+    Se APAGA mientras el modo story está abierto. Los dos
+    componentes escuchaban las flechas en `window`, así que con
+    la story abierta una flecha movía la galería de debajo —que
+    ni siquiera se ve— en lugar de la story. Mientras hay un
+    diálogo a pantalla completa, el teclado es suyo.
+  */
   useEffect(() => {
-    if (total < 2) return;
+    if (total < 2 || storyAbierta) return;
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "ArrowLeft") {
@@ -123,7 +131,7 @@ export default function ProductGallery({
     window.addEventListener("keydown", onKeyDown);
 
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [total]);
+  }, [total, storyAbierta]);
 
   if (total === 0) {
     return (
@@ -155,8 +163,6 @@ export default function ProductGallery({
             key={selectedImage.key}
             src={selectedImage.url}
             alt={`${selectedImage.label} de ${name}`}
-            ancho={selectedImage.ancho}
-            alto={selectedImage.alto}
             contener={Boolean(selectedImage.ancho && selectedImage.alto)}
             priority
             sizes="(max-width: 1024px) 90vw, 45vw"

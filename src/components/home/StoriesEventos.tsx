@@ -7,20 +7,20 @@ import { createPortal } from "react-dom";
 import {
   ArrowUpRight,
   BadgeCheck,
+  CalendarClock,
   ChevronLeft,
+  Check,
   ChevronRight,
   Heart,
   ShoppingBag,
   X,
 } from "lucide-react";
 
+import EmptyState from "@/components/EmptyState";
 import { formatPrice } from "@/lib/pricing";
 import PreviewProtegido from "@/components/PreviewProtegido";
-import {
-  CART_STORAGE_KEY,
-  CART_UPDATED_EVENT,
-} from "@/components/useCartCount";
-import type { TarjetaHome } from "@/lib/home";
+import { ASPECTO_STORY, type TarjetaHome } from "@/lib/home";
+import { anadirAlCarrito } from "@/components/useCartCount";
 
 /**
  * Stories de eventos.
@@ -41,12 +41,29 @@ const DURACION_STORY = 4500;
 
 export default function StoriesEventos({
   flyers,
+  esDemo = false,
 }: {
   flyers: TarjetaHome[];
+  /**
+   * true cuando lo que se ve NO son flyers de eventos reales,
+   * sino otros recursos usados para poder revisar el diseño.
+   * Se anuncia en pantalla: nadie debe confundirlos con
+   * contenido real de la sección.
+   */
+  esDemo?: boolean;
 }) {
   const [abierta, setAbierta] = useState<number | null>(null);
 
-  if (flyers.length === 0) return null;
+  /*
+    La sección SIEMPRE se pinta.
+
+    Antes devolvía null sin flyers, y el efecto era que una
+    parte del sitio desaparecía sin explicación: quien entraba
+    no podía saber si no había eventos o si la función no
+    existía. Ahora, sin datos reales, se dice exactamente eso
+    y no se inventa ningún flyer.
+  */
+  const vacia = flyers.length === 0;
 
   return (
     <section className="border-t border-line/10">
@@ -60,9 +77,22 @@ export default function StoriesEventos({
             </h2>
 
             <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">
-              Los últimos flyers de eventos publicados. Pulsa uno para
-              verlo a pantalla completa.
+              {esDemo
+                ? "Todavía no hay flyers de eventos publicados. Esto es una muestra del diseño con otros recursos del catálogo."
+                : "Los últimos flyers de eventos publicados. Pulsa uno para verlo a pantalla completa."}
             </p>
+
+            {/*
+              El distintivo de demostración es deliberadamente
+              visible. Una sección que enseña recursos de otra
+              categoría sin avisar haría creer que ya hay
+              eventos publicados cuando no los hay.
+            */}
+            {esDemo && (
+              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-warning/40 bg-warning/[0.08] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-ink/70">
+                Demostración · no son recursos de Eventos
+              </p>
+            )}
           </div>
 
           <Link
@@ -79,6 +109,16 @@ export default function StoriesEventos({
         </div>
 
         {/* ══════════ TIRA ══════════ */}
+        {vacia ? (
+          <div className="rk-fade-up rk-enter-1 mt-8">
+            <EmptyState
+              icon={CalendarClock}
+              title="Próximamente"
+              description="Aquí aparecerán los flyers de eventos en cuanto se publique el primero."
+              action={{ href: "/tienda", label: "Ver todo el catálogo" }}
+            />
+          </div>
+        ) : (
         <ul className="rk-fade-up rk-enter-1 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {flyers.map((flyer, indice) => (
             <li key={flyer.id} className="snap-start">
@@ -86,15 +126,22 @@ export default function StoriesEventos({
                 type="button"
                 onClick={() => setAbierta(indice)}
                 aria-label={`Ver ${flyer.name} a pantalla completa`}
-                className="rk-press group block w-[9.5rem] text-left sm:w-[11rem]"
+                className="rk-press group block w-[8.5rem] text-left sm:w-[10rem]"
               >
-                <span className="rk-frame relative block aspect-[4/5] w-full overflow-hidden rounded-rk-md">
+                {/*
+                  9:16, el formato de una story (1080 × 1920).
+                  Antes era 4:5, que es el de Corporativos, y
+                  las dos secciones se veían con la misma forma
+                  pese a ser formatos distintos.
+                */}
+                <span
+                  className="rk-frame relative block w-full overflow-hidden rounded-rk-md"
+                  style={{ aspectRatio: ASPECTO_STORY }}
+                >
                   {flyer.imagen && (
                     <PreviewProtegido
                       src={flyer.imagen}
                       alt={flyer.name}
-                      ancho={flyer.ancho}
-                      alto={flyer.alto}
                       sizes="(max-width: 640px) 40vw, 11rem"
                       className="transition-transform duration-normal ease-rk group-hover:scale-[1.03]"
                       esquina="arriba-derecha"
@@ -117,6 +164,7 @@ export default function StoriesEventos({
             </li>
           ))}
         </ul>
+        )}
       </div>
 
       {abierta !== null && (
@@ -236,7 +284,25 @@ function VisorStories({
       onPointerDown={() => setPausado(true)}
       onPointerUp={() => setPausado(false)}
       onPointerCancel={() => setPausado(false)}
-      className="fixed inset-0 z-[70] flex flex-col bg-ink/95 backdrop-blur-sm"
+      /*
+        FONDO DEL VISOR
+
+        Negro explícito, no el token `ink`. Dos motivos, los
+        dos comprobados en el navegador:
+
+        1. `bg-ink/96` no generaba NADA. La escala de opacidad
+           de Tailwind no incluye 96, así que la regla no se
+           creaba y el diálogo quedaba transparente: se veía la
+           ficha del producto por debajo.
+
+        2. `ink` se invierte con el tema. En oscuro vale
+           243 245 248, casi blanco, de modo que el fondo de la
+           story habría sido claro justo donde debe ser negro.
+
+        Una story es negra en los dos temas. Por eso el color va
+        fijo y no depende de ningún token.
+      */
+      className="fixed inset-0 z-[80] flex flex-col bg-[#0a0a0c]"
       style={{ height: "100dvh", width: "100vw" }}
     >
       {/* ══════════ BARRA DE PROGRESO ══════════ */}
@@ -247,7 +313,7 @@ function VisorStories({
         {flyers.map((f, i) => (
           <span
             key={f.id}
-            className="h-0.5 flex-1 overflow-hidden rounded-full bg-surface/25"
+            className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/25"
           >
             {/*
               La barra de la story actual se llena durante su
@@ -255,7 +321,7 @@ function VisorStories({
               quedan llenas; las siguientes, vacías.
             */}
             <span
-              className="block h-full rounded-full bg-surface"
+              className="block h-full rounded-full bg-white"
               style={{
                 width: i < indice ? "100%" : i === indice ? "100%" : "0%",
                 transition:
@@ -271,7 +337,7 @@ function VisorStories({
 
       {/* ══════════ CABECERA ══════════ */}
       <div className="flex shrink-0 items-center gap-2.5 px-4 py-3">
-        <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface/15">
+        <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/15">
           {flyer.creador.avatarUrl ? (
             <Image
               src={flyer.creador.avatarUrl}
@@ -281,7 +347,7 @@ function VisorStories({
               sizes="36px"
             />
           ) : (
-            <span className="text-xs font-semibold text-surface">
+            <span className="text-xs font-semibold text-white">
               {flyer.creador.nombre.charAt(0).toUpperCase()}
             </span>
           )}
@@ -291,7 +357,7 @@ function VisorStories({
           {flyer.creador.username ? (
             <Link
               href={`/creadores/${flyer.creador.username}`}
-              className="flex min-h-[2.75rem] min-w-0 items-center gap-1 text-sm font-semibold text-surface underline-offset-4 hover:underline"
+              className="flex min-h-[2.75rem] min-w-0 items-center gap-1 text-sm font-semibold text-white underline-offset-4 hover:underline"
             >
               <span className="truncate">{flyer.creador.nombre}</span>
 
@@ -304,24 +370,36 @@ function VisorStories({
               )}
             </Link>
           ) : (
-            <p className="truncate text-sm font-semibold text-surface">
+            <p className="truncate text-sm font-semibold text-white">
               {flyer.creador.nombre}
             </p>
           )}
 
           {flyer.creador.username && (
-            <p className="truncate text-[12px] text-surface/60">
+            <p className="truncate text-[12px] text-white/60">
               @{flyer.creador.username}
             </p>
           )}
         </div>
+
+        {/*
+          Contador 1 / N. La barra de progreso ya dice por
+          dónde va, pero con muchas stories las franjas se
+          vuelven finas y el número es lo único que se lee de
+          un vistazo.
+        */}
+        {flyers.length > 1 && (
+          <span className="shrink-0 text-[12px] tabular-nums text-white/60">
+            {indice + 1} / {flyers.length}
+          </span>
+        )}
 
         <button
           ref={cerrarRef}
           type="button"
           onClick={alCerrar}
           aria-label="Cerrar"
-          className="rk-press rk-touch grid h-11 w-11 shrink-0 place-items-center rounded-full text-surface transition-colors hover:bg-surface/10"
+          className="rk-press rk-touch grid h-11 w-11 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10"
         >
           <X size={20} aria-hidden />
         </button>
@@ -335,17 +413,23 @@ function VisorStories({
           cuadrado se ve cuadrado y uno panorámico, panorámico.
           El marco se adapta a la imagen, no al revés.
         */}
+        {/*
+          El contenedor tiene altura propia (h-full dentro de un
+          padre flex-1). Sin ella, una imagen con `fill` se
+          queda en 0 × 0: cargada pero invisible.
+        */}
         {flyer.imagen && (
-          <span className="relative flex max-h-full max-w-full items-center justify-center">
+          <span
+            className="relative mx-auto block h-full w-auto"
+            style={{ aspectRatio: ASPECTO_STORY }}
+          >
             <PreviewProtegido
               src={flyer.imagen}
               alt={flyer.name}
-              ancho={flyer.ancho}
-              alto={flyer.alto}
               contener
               priority
               sizes="(max-width: 768px) 100vw, 40rem"
-              className="max-h-[70dvh] w-auto rounded-rk-md"
+              className="rounded-rk-md"
             />
           </span>
         )}
@@ -357,7 +441,7 @@ function VisorStories({
             type="button"
             onClick={anterior}
             aria-label="Anterior"
-            className="rk-press absolute left-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-ink/50 text-surface backdrop-blur transition-colors hover:bg-ink/70"
+            className="rk-press absolute left-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition-colors hover:bg-black/70"
           >
             <ChevronLeft size={20} aria-hidden />
           </button>
@@ -368,39 +452,39 @@ function VisorStories({
             type="button"
             onClick={siguiente}
             aria-label="Siguiente"
-            className="rk-press absolute right-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-ink/50 text-surface backdrop-blur transition-colors hover:bg-ink/70"
+            className="rk-press absolute right-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition-colors hover:bg-black/70"
           >
             <ChevronRight size={20} aria-hidden />
           </button>
         )}
       </div>
 
-      {/* ══════════ ACCIONES ══════════ */}
+      {/*
+        ══════════ ACCIONES ══════════
+
+        Guardar, comprar y abrir la ficha. Sin título ni
+        precio: una story es la pieza a pantalla completa, no
+        una ficha de producto encogida.
+      */}
       <div className="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
-        <div className="mx-auto flex w-full max-w-md flex-col gap-2.5">
-          <div className="flex items-baseline justify-between gap-3">
-            <p className="min-w-0 truncate text-[15px] font-semibold text-surface">
-              {flyer.name}
-            </p>
+        <div className="mx-auto flex w-full max-w-md items-center justify-center gap-3">
+          <BotonFavorito productId={flyer.id} />
 
-            <p className="shrink-0 text-lg font-semibold tabular-nums text-surface">
-              {formatPrice(flyer.price)}
-            </p>
-          </div>
+          {/*
+            La `key` es la del flyer que se está viendo: al
+            pasar de story el botón se reinicia y vuelve a su
+            estado normal, en vez de arrastrar el "Agregado"
+            del anterior.
+          */}
+          <BotonCarrito key={flyer.id} flyer={flyer} />
 
-          <div className="flex items-center gap-2">
-            <BotonFavorito productId={flyer.id} />
-
-            <BotonCarrito flyer={flyer} />
-
-            <Link
-              href={`/tienda/${flyer.slug}`}
-              className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-surface/25 text-surface transition-colors hover:bg-surface/10"
-              aria-label={`Ver la ficha de ${flyer.name}`}
-            >
-              <ArrowUpRight size={18} aria-hidden />
-            </Link>
-          </div>
+          <Link
+            href={`/tienda/${flyer.slug}`}
+            className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
+            aria-label="Ver el recurso"
+          >
+            <ArrowUpRight size={18} aria-hidden />
+          </Link>
         </div>
       </div>
     </div>,
@@ -409,6 +493,61 @@ function VisorStories({
 }
 
 /* ══════════════ ACCIONES ══════════════ */
+
+/**
+ * Añadir al carrito desde la story.
+ *
+ * Usa `anadirAlCarrito`, la misma función que el resto del
+ * sitio: el mismo `rcktdmg_cart`, el mismo evento y las mismas
+ * reglas de duplicados. Aquí no hay lógica de carrito propia.
+ *
+ * Añade SIEMPRE el flyer que se está viendo, porque recibe el
+ * de `flyers[indice]` y no una referencia fija. La story no se
+ * cierra: quien está mirando sigue mirando.
+ */
+function BotonCarrito({ flyer }: { flyer: TarjetaHome }) {
+  const [anadido, setAnadido] = useState(false);
+
+  useEffect(() => {
+    if (!anadido) return;
+
+    const t = window.setTimeout(() => setAnadido(false), 2400);
+
+    return () => window.clearTimeout(t);
+  }, [anadido]);
+
+  function anadir() {
+    anadirAlCarrito({
+      id: flyer.id,
+      kind: "PRODUCT",
+      name: flyer.name,
+      price: flyer.price,
+      slug: flyer.slug,
+      coverUrl: flyer.imagen,
+    });
+
+    setAnadido(true);
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={anadir}
+      aria-label={anadido ? "Agregado al carrito" : "Añadir al carrito"}
+      className={`rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border transition-colors ${
+        anadido
+          ? "border-white bg-white text-[#0a0a0c]"
+          : "border-white/25 text-white hover:bg-white/10"
+      }`}
+    >
+      {anadido ? (
+        <Check size={18} aria-hidden />
+      ) : (
+        <ShoppingBag size={18} aria-hidden />
+      )}
+    </button>
+  );
+}
 
 /**
  * Favorito.
@@ -452,7 +591,7 @@ function BotonFavorito({ productId }: { productId: string }) {
       onClick={alternar}
       aria-pressed={guardado}
       aria-label={guardado ? "Quitar de guardados" : "Guardar"}
-      className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-surface/25 text-surface transition-colors hover:bg-surface/10"
+      className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
     >
       <Heart
         size={18}
@@ -463,56 +602,3 @@ function BotonFavorito({ productId }: { productId: string }) {
   );
 }
 
-/** Añade el recurso al carrito de siempre. */
-function BotonCarrito({ flyer }: { flyer: TarjetaHome }) {
-  const [anadido, setAnadido] = useState(false);
-
-  function anadir() {
-    try {
-      const guardado = localStorage.getItem(CART_STORAGE_KEY);
-
-      const lista = guardado ? JSON.parse(guardado) : [];
-
-      const carrito = Array.isArray(lista) ? lista : [];
-
-      const yaEsta = carrito.some(
-        (item: { id: string; kind?: string }) =>
-          item.id === flyer.id && item.kind !== "PACK" &&
-          item.kind !== "COLLECTION"
-      );
-
-      if (!yaEsta) {
-        carrito.push({
-          id: flyer.id,
-          kind: "PRODUCT",
-          name: flyer.name,
-          price: flyer.price,
-          slug: flyer.slug,
-          coverUrl: flyer.imagen,
-          quantity: 1,
-        });
-
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
-
-        window.dispatchEvent(new Event(CART_UPDATED_EVENT));
-      }
-
-      setAnadido(true);
-
-      setTimeout(() => setAnadido(false), 2400);
-    } catch {
-      // Si el navegador bloquea localStorage no se rompe nada.
-    }
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={anadir}
-      className="rk-press inline-flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-surface px-4 text-sm font-semibold text-ink transition-opacity hover:opacity-90"
-    >
-      <ShoppingBag size={16} aria-hidden />
-      {anadido ? "Añadido" : "Añadir al carrito"}
-    </button>
-  );
-}

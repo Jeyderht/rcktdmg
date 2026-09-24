@@ -2,22 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   BadgeCheck,
+  Briefcase,
   ChevronLeft,
   ChevronRight,
   Heart,
   ShoppingBag,
 } from "lucide-react";
 
+import EmptyState from "@/components/EmptyState";
 import { formatPrice } from "@/lib/pricing";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
 } from "@/components/useCartCount";
-import type { TarjetaHome } from "@/lib/home";
+import { ASPECTO_CORPORATIVO, type TarjetaHome } from "@/lib/home";
 
 /**
  * Carrusel en perspectiva para los recursos corporativos.
@@ -35,28 +37,65 @@ import type { TarjetaHome } from "@/lib/home";
  * Todo lo que se ve es real: imagen, nombre, creador y precio
  * salen del catálogo.
  */
+/** Cada cuánto avanza solo el carrusel. */
+const INTERVALO = 3800;
+
+/** Cuánto dura el desplazamiento entre una pieza y la siguiente. */
+const TRANSICION = 600;
+
 export default function SliceCorporativos({
   recursos,
+  esDemo = false,
 }: {
   recursos: TarjetaHome[];
+  /** true si lo que se ve no son corporativos 1080 × 1350 reales. */
+  esDemo?: boolean;
 }) {
+  /*
+    ÍNDICE VIRTUAL
+
+    `centro` crece o decrece sin límite: 0, 1, 2, … y también
+    -1, -2. Lo que se pinta sale de normalizarlo con el resto
+    de la división, así que el carrusel no tiene principio ni
+    final y nunca hay que "saltar" de la última a la primera.
+    Ese salto es justo lo que se nota como un tirón.
+  */
   const [centro, setCentro] = useState(0);
 
-  if (recursos.length === 0) return null;
+  // La sección se pinta siempre; sin datos, lo dice.
+  const vacia = recursos.length === 0;
 
-  const actual = recursos[centro];
+  const total = recursos.length;
 
-  const mover = (paso: number) => {
-    setCentro((i) => {
-      const siguiente = i + paso;
+  /** Posición real dentro del array, venga el índice que venga. */
+  const normalizar = (i: number) =>
+    total === 0 ? 0 : ((i % total) + total) % total;
 
-      if (siguiente < 0) return 0;
+  const actual = recursos[normalizar(centro)];
 
-      if (siguiente > recursos.length - 1) return recursos.length - 1;
+  const mover = (paso: number) => setCentro((i) => i + paso);
 
-      return siguiente;
-    });
-  };
+  /*
+    AUTOPLAY
+
+    Avanza cada INTERVALO. El temporizador depende de `centro`,
+    así que cualquier movimiento manual lo reinicia solo: no
+    puede ocurrir que pulses la flecha y medio segundo después
+    salte otra vez por su cuenta.
+
+    Se detiene mientras el puntero está encima, porque aquí sí
+    tiene sentido: el carrusel vive dentro de la página y quien
+    se para sobre él está mirando una pieza concreta.
+  */
+  const [pausado, setPausado] = useState(false);
+
+  useEffect(() => {
+    if (vacia || total < 2 || pausado) return;
+
+    const t = window.setTimeout(() => setCentro((i) => i + 1), INTERVALO);
+
+    return () => window.clearTimeout(t);
+  }, [centro, pausado, vacia, total]);
 
   return (
     <section className="overflow-hidden border-t border-line/10">
@@ -70,9 +109,16 @@ export default function SliceCorporativos({
             </h2>
 
             <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">
-              Piezas para comunicar con una marca detrás: anuncios,
-              presentaciones y campañas.
+              {esDemo
+                ? "Todavía no hay piezas corporativas en 1080 × 1350. Esto es una muestra del diseño con otros recursos del catálogo."
+                : "Piezas para comunicar con una marca detrás: anuncios, presentaciones y campañas."}
             </p>
+
+            {esDemo && (
+              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-warning/40 bg-warning/[0.08] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-ink/70">
+                Demostración · no son recursos de Corporativos
+              </p>
+            )}
           </div>
 
           <Link
@@ -88,13 +134,42 @@ export default function SliceCorporativos({
           </Link>
         </div>
 
+        {vacia && (
+          <div className="rk-fade-up rk-enter-1 mt-10">
+            <EmptyState
+              icon={Briefcase}
+              title="Próximamente"
+              description="Aquí aparecerán las piezas corporativas en formato 1080 × 1350 en cuanto se publique la primera."
+              action={{ href: "/tienda", label: "Ver todo el catálogo" }}
+            />
+          </div>
+        )}
+
         {/* ══════════ ESCENARIO ══════════ */}
+        {!vacia && (
         <div
-          className="rk-fade-up rk-enter-1 relative mt-10 flex h-[19rem] items-center justify-center sm:h-[23rem] lg:h-[26rem]"
+          onMouseEnter={() => setPausado(true)}
+          onMouseLeave={() => setPausado(false)}
+          className="rk-fade-up rk-enter-1 relative mt-10 flex h-[20rem] items-center justify-center sm:h-[25rem] lg:h-[29rem]"
           style={{ perspective: "1400px" }}
         >
           {recursos.map((recurso, indice) => {
-            const distancia = indice - centro;
+            /*
+              Distancia MÁS CORTA alrededor del círculo. Con 5
+              recursos, la 4 está a -1 de la 0, no a +4: así la
+              que sale por un lado entra por el otro y el bucle
+              se ve continuo.
+            */
+            const crudo = indice - normalizar(centro);
+
+            const distancia =
+              total === 0
+                ? 0
+                : crudo > total / 2
+                  ? crudo - total
+                  : crudo < -total / 2
+                    ? crudo + total
+                    : crudo;
 
             const lejania = Math.abs(distancia);
 
@@ -115,8 +190,17 @@ export default function SliceCorporativos({
                 }
                 aria-current={seleccionado}
                 tabIndex={lejania > 1 ? -1 : 0}
-                className="absolute h-[16rem] w-[12.5rem] transition-all duration-normal ease-rk sm:h-[20rem] sm:w-[15.5rem] lg:h-[23rem] lg:w-[18rem]"
+                /*
+                  4:5 EXACTO (1080 × 1350), el formato de
+                  Corporativos. Las Stories son 9:16 y no se
+                  mezclan: cada sección conserva la suya.
+                */
+                className="absolute w-[12.5rem] ease-rk sm:w-[15.5rem] lg:w-[18rem]"
                 style={{
+                  aspectRatio: ASPECTO_CORPORATIVO,
+                  transitionProperty: "transform, opacity",
+                  transitionDuration: `${TRANSICION}ms`,
+                  transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
                   transform: [
                     `translateX(${distancia * 42}%)`,
                     `translateZ(${-lejania * 130}px)`,
@@ -144,8 +228,8 @@ export default function SliceCorporativos({
             );
           })}
 
-          {/* NAVEGACIÓN */}
-          {centro > 0 && (
+          {/* NAVEGACIÓN · siempre, porque el carrusel no acaba */}
+          {total > 1 && (
             <button
               type="button"
               onClick={() => mover(-1)}
@@ -156,7 +240,7 @@ export default function SliceCorporativos({
             </button>
           )}
 
-          {centro < recursos.length - 1 && (
+          {total > 1 && (
             <button
               type="button"
               onClick={() => mover(1)}
@@ -167,6 +251,7 @@ export default function SliceCorporativos({
             </button>
           )}
         </div>
+        )}
 
         {/* ══════════ FICHA DEL SELECCIONADO ══════════ */}
         {actual && (
