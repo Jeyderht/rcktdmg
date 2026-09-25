@@ -8,6 +8,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import AnadirColeccionAlCarrito from "@/components/AnadirColeccionAlCarrito";
+import YaAdquirido from "@/components/YaAdquirido";
+import { getSession } from "@/lib/session";
+import { tieneColeccion } from "@/lib/adquisiciones";
 import { obtenerColeccionPublica } from "@/lib/colecciones-comerciales";
 import { formatPrice } from "@/lib/pricing";
 import {
@@ -70,6 +73,18 @@ export default async function ColeccionComercialPage({
   if (!coleccion) {
     notFound();
   }
+
+  /*
+    ¿Ya la compró quien está mirando?
+
+    Se resuelve en el servidor, junto a la colección, para que
+    la página se pinte una sola vez y ya correcta. Para
+    cualquier otra persona —y para quien no ha entrado— sigue
+    estando a la venta con normalidad.
+  */
+  const session = await getSession();
+
+  const yaEsSuya = await tieneColeccion(session?.userId, coleccion.id);
 
   /*
     La portada es la que subió el creador. Si no hay, el marco
@@ -265,20 +280,38 @@ export default async function ColeccionComercialPage({
                 con su descarga y su licencia.
               </p>
 
-              <div className="mt-5">
-                <AnadirColeccionAlCarrito
-                  coleccion={{
-                    id: coleccion.id,
-                    name: coleccion.name,
-                    price: coleccion.price,
-                    slug: coleccion.slug,
-                    coverUrl: portada,
-                  }}
-                />
+              {/*
+                COMPRA ÚNICA
+
+                Se dice antes del botón, no debajo en letra
+                pequeña: es la diferencia entre una colección y
+                una suscripción, y es lo primero que alguien
+                necesita saber antes de decidir.
+              */}
+              <p className="mt-4 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/70">
+                Compra única
+              </p>
+
+              <div className="mt-3">
+                {yaEsSuya ? (
+                  <YaAdquirido que="colección" />
+                ) : (
+                  <AnadirColeccionAlCarrito
+                    coleccion={{
+                      id: coleccion.id,
+                      name: coleccion.name,
+                      price: coleccion.price,
+                      slug: coleccion.slug,
+                      coverUrl: portada,
+                    }}
+                  />
+                )}
               </div>
 
               <p className="mt-3 text-center text-[13px] text-ink/55">
-                Se paga una sola vez.
+                {yaEsSuya
+                  ? "Ya la pagaste. Descárgala cuantas veces quieras."
+                  : "Un solo pago. Sin suscripción ni cobros por recurso."}
               </p>
             </div>
           </div>

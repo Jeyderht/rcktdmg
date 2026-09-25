@@ -19,6 +19,7 @@ import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
 } from "@/components/useCartCount";
+import { useSwipe } from "@/components/useSwipe";
 import { ASPECTO_CORPORATIVO, type TarjetaHome } from "@/lib/home";
 
 /**
@@ -74,6 +75,16 @@ export default function SliceCorporativos({
   const actual = recursos[normalizar(centro)];
 
   const mover = (paso: number) => setCentro((i) => i + paso);
+
+  /*
+    En móvil el carrusel se pasa con el dedo. Se mueve una
+    pieza por gesto, igual que con las flechas, y el
+    temporizador se reinicia solo porque depende de `centro`.
+  */
+  const swipe = useSwipe({
+    alIzquierda: () => mover(1),
+    alDerecha: () => mover(-1),
+  });
 
   /*
     AUTOPLAY
@@ -148,10 +159,15 @@ export default function SliceCorporativos({
         {/* ══════════ ESCENARIO ══════════ */}
         {!vacia && (
         <div
+          {...swipe}
           onMouseEnter={() => setPausado(true)}
           onMouseLeave={() => setPausado(false)}
           className="rk-fade-up rk-enter-1 relative mt-10 flex h-[20rem] items-center justify-center sm:h-[25rem] lg:h-[29rem]"
-          style={{ perspective: "1400px" }}
+          style={{
+            perspective: "1400px",
+            /* Que el dedo hacia la derecha no dispare el "atrás". */
+            overscrollBehaviorX: "contain",
+          }}
         >
           {recursos.map((recurso, indice) => {
             /*

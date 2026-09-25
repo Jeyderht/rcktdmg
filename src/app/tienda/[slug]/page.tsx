@@ -36,6 +36,8 @@ import { listarVersiones, mostrarVersion } from "@/lib/versiones";
 import { paraProducto, packsQueIncluyen } from "@/lib/recomendaciones";
 import PackCard from "@/components/PackCard";
 import { getSession } from "@/lib/session";
+import { tieneProducto } from "@/lib/adquisiciones";
+import YaAdquirido from "@/components/YaAdquirido";
 
 export const dynamic = "force-dynamic";
 
@@ -254,6 +256,16 @@ export default async function ProductPage({
     const session = await getSession();
 
     const packsConEste = await packsQueIncluyen(product.id);
+
+    /*
+      ¿Ya es suyo?
+
+      Se consulta aquí, en el servidor, y no en el botón: el
+      navegador no puede saberlo sin una llamada más, y la
+      respuesta llegaría después de pintar un botón "Añadir al
+      carrito" que acto seguido tendría que desaparecer.
+    */
+    const yaEsSuyo = await tieneProducto(session?.userId, product.id);
 
     const bloques = await paraProducto(
         {
@@ -545,18 +557,22 @@ export default async function ProductPage({
                             </div>
 
                             <div className="mt-5 space-y-2">
-                                <AddToCartButton
-                                    product={{
-                                        id: product.id,
-                                        name: product.name,
-                                        price: Number(product.price),
-                                        slug: product.slug,
-                                        coverUrl:
-                                            product.coverUrl ||
-                                            product.images[0]?.url ||
-                                            null,
-                                    }}
-                                />
+                                {yaEsSuyo ? (
+                                    <YaAdquirido que="recurso" />
+                                ) : (
+                                    <AddToCartButton
+                                        product={{
+                                            id: product.id,
+                                            name: product.name,
+                                            price: Number(product.price),
+                                            slug: product.slug,
+                                            coverUrl:
+                                                product.coverUrl ||
+                                                product.images[0]?.url ||
+                                                null,
+                                        }}
+                                    />
+                                )}
 
                                 <AddToCollectionButton productId={product.id} />
                             </div>

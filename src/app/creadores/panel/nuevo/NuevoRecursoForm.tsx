@@ -4,6 +4,13 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 import TagsInput from "@/components/TagsInput";
+import SubidorImagen, { type EstadoImagen } from "@/components/SubidorImagen";
+import {
+  TIPOS_PUBLICACION,
+  esRecursoSuelto,
+  type ClaveTipo,
+  type TipoPublicacion,
+} from "@/lib/tipos-publicacion";
 import {
   LICENCIAS,
   TIPOS_LICENCIA,
@@ -12,18 +19,23 @@ import {
 
 import { subirArchivoDeProducto } from "@/lib/storage/client-upload";
 import { COLORES } from "@/lib/catalogo";
+import Image from "next/image";
 import {
+  ArrowUpRight,
+  Check,
   CheckCircle2,
   ChevronLeft,
   FileUp,
   ImageIcon,
   Info,
   UploadCloud,
+  X,
 } from "lucide-react";
 
 type Category = {
   id: string;
   name: string;
+  slug: string;
 };
 
 /**
@@ -39,6 +51,26 @@ export default function NuevoRecursoForm({
 }: {
   categories: Category[];
 }) {
+  /*
+    TIPO DE PUBLICACIÓN
+
+    Es lo primero que se elige y lo que manda sobre el resto:
+    fija la categoría, decide qué formatos caben y qué medidas
+    se exigen. Antes había que deducirlo eligiendo una
+    categoría a mano, y nada comprobaba que la pieza tuviera
+    el tamaño que su sitio en la web necesita.
+  */
+  const [claveTipo, setClaveTipo] = useState<ClaveTipo | "">("");
+  const [claveFormato, setClaveFormato] = useState("");
+
+  const tipo: TipoPublicacion | null =
+    TIPOS_PUBLICACION.find((t) => t.clave === claveTipo) ?? null;
+
+  const formato =
+    tipo?.formatos.find((f) => f.clave === claveFormato) ??
+    tipo?.formatos[0] ??
+    null;
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -49,8 +81,9 @@ export default function NuevoRecursoForm({
   const [tags, setTags] = useState<string[]>([]);
   const [licenseType, setLicenseType] =
     useState<TipoLicencia>("PERSONAL");
-  const [coverUrl, setCoverUrl] = useState("");
-  const [previewUrl, setPreviewUrl] = useState("");
+  const [portada, setPortada] = useState<EstadoImagen | null>(null);
+  const [preview, setPreview] = useState<EstadoImagen | null>(null);
+  const [galeria, setGaleria] = useState<EstadoImagen[]>([]);
   const [fileUrl, setFileUrl] = useState("");
   const [fileName, setFileName] = useState("");
   const [uploadingFile, setUploadingFile] = useState(false);
@@ -98,10 +131,28 @@ export default function NuevoRecursoForm({
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    if (!tipo || !esRecursoSuelto(tipo)) {
+      setError("Elige primero qué tipo de publicación vas a crear.");
+      return;
+    }
+
     if (!fileUrl) {
       setError(
         "Debes subir el archivo del producto antes de guardarlo."
       );
+      return;
+    }
+
+    /*
+      La portada deja de ser opcional. Sin ella el recurso no
+      se ve en ningún sitio —ni tarjeta, ni tienda, ni Home—,
+      así que pedirla al crear es mejor que descubrir el hueco
+      después. Tres de los ocho recursos que ya existían no la
+      tienen; a esos no les afecta, porque esto solo mira lo
+      que se está creando ahora.
+    */
+    if (!portada) {
+      setError("Sube la portada del recurso.");
       return;
     }
 
@@ -125,9 +176,19 @@ export default function NuevoRecursoForm({
           esPack,
           tags,
           licenseType,
-          coverUrl,
-          previewUrl,
+          coverUrl: portada.url,
+          previewUrl: preview?.url ?? "",
           fileUrl,
+          /*
+            El formato declarado viaja para que el servidor
+            aplique las mismas medidas que se comprobaron
+            aquí. No se guarda: la pieza queda identificada
+            por su categoría y por el tamaño real de su
+            portada, que es lo que leen Home y la tienda.
+          */
+          formato: formato?.clave ?? null,
+          /* Galería inicial, en el orden en que se subió. */
+          imagenes: galeria.map((imagen) => imagen.url),
         }),
       });
 
@@ -147,10 +208,13 @@ export default function NuevoRecursoForm({
       setAccessType("BOTH");
       setColor("");
       setEsPack(false);
-      setCoverUrl("");
-      setPreviewUrl("");
+      setPortada(null);
+      setPreview(null);
+      setGaleria([]);
       setFileUrl("");
       setFileName("");
+      setClaveTipo("");
+      setClaveFormato("");
     } catch (err) {
       console.error(err);
       setError("No se pudo conectar con el servidor.");
@@ -182,11 +246,143 @@ export default function NuevoRecursoForm({
         </p>
       </header>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-3">
+      {/* ========== TIPO DE PUBLICACIÓN ========== */}
+      <section className="rk-fade-up rk-enter-1 rk-card mt-8 p-5 sm:p-6">
+        <p className="rk-eyebrow">Paso 1</p>
+
+        <h2 className="rk-title mt-2 text-xl">Tipo de publicación</h2>
+
+        <p className="mt-2 text-sm leading-6 text-ink/60">
+          Decide dónde encaja la pieza y qué medidas se le piden.
+        </p>
+
+        <div className="rk-divider mt-4" />
+
+        <div
+          role="radiogroup"
+          aria-label="Tipo de publicación"
+          className="mt-5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {TIPOS_PUBLICACION.map((opcion) => {
+            const elegido = opcion.clave === claveTipo;
+
+            /*
+              Colección y pack no se crean aquí: se arman con
+              recursos YA publicados, así que su sitio es su
+              propia pantalla. Se enseñan igualmente para que
+              el creador sepa que existen, y llevan allí.
+            */
+            if (opcion.ruta) {
+              return (
+                <Link
+                  key={opcion.clave}
+                  href={opcion.ruta}
+                  className="rk-press flex flex-col rounded-rk-md border border-line/12 p-3.5 text-left transition-colors duration-fast ease-rk hover:border-ink/35"
+                >
+                  <span className="flex items-center gap-1.5 text-sm font-medium">
+                    {opcion.nombre}
+                    <ArrowUpRight
+                      size={13}
+                      aria-hidden
+                      className="text-ink/45"
+                    />
+                  </span>
+
+                  <span className="mt-1 text-xs leading-5 text-ink/60">
+                    {opcion.descripcion}
+                  </span>
+                </Link>
+              );
+            }
+
+            return (
+              <button
+                key={opcion.clave}
+                type="button"
+                role="radio"
+                aria-checked={elegido}
+                onClick={() => {
+                  setClaveTipo(opcion.clave);
+                  setClaveFormato(opcion.formatos[0]?.clave ?? "");
+                  setError("");
+
+                  /*
+                    La categoría la fija el tipo. Si no existe
+                    en el catálogo se deja vacía y se avisa, en
+                    vez de guardar la pieza en un sitio
+                    cualquiera.
+                  */
+                  const destino = categories.find(
+                    (c) => c.slug === opcion.categoriaSlug
+                  );
+
+                  setCategoryId(destino?.id ?? "");
+                }}
+                className={`rk-press flex flex-col rounded-rk-md border p-3.5 text-left transition-colors duration-fast ease-rk ${
+                  elegido
+                    ? "border-foreground bg-ink/[0.04]"
+                    : "border-line/12 hover:border-ink/35"
+                }`}
+              >
+                <span className="flex items-center gap-1.5 text-sm font-medium">
+                  {elegido && <Check size={13} aria-hidden />}
+                  {opcion.nombre}
+                </span>
+
+                <span className="mt-1 text-xs leading-5 text-ink/60">
+                  {opcion.descripcion}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* FORMATO, solo si el tipo ofrece más de uno */}
+        {tipo && tipo.formatos.length > 1 && (
+          <div className="mt-5">
+            <label htmlFor="formato" className="mb-2 block text-sm font-medium">
+              Pieza del evento
+            </label>
+
+            <select
+              id="formato"
+              value={formato?.clave ?? ""}
+              onChange={(e) => setClaveFormato(e.target.value)}
+              className="rk-input w-full"
+            >
+              {tipo.formatos.map((f) => (
+                <option key={f.clave} value={f.clave}>
+                  {f.nombre}
+                </option>
+              ))}
+            </select>
+
+            {formato?.medida && (
+              <p className="mt-2 text-xs text-ink/60">
+                Se exige {formato.medida.ancho} × {formato.medida.alto} px (
+                {formato.medida.proporcion}): es el tamaño con el que se
+                muestra a pantalla completa.
+              </p>
+            )}
+          </div>
+        )}
+
+        {tipo && !categoryId && (
+          <p
+            role="alert"
+            className="mt-4 rounded-rk-sm border border-warning/30 bg-warning/[0.08] px-3 py-2 text-xs leading-5"
+          >
+            No existe la categoría «{tipo.categoriaSlug}» en el catálogo.
+            Elígela abajo a mano o pide al equipo que la cree.
+          </p>
+        )}
+      </section>
+
+      <form onSubmit={handleSubmit} className="mt-3 space-y-3">
 
         {/* ========== INFORMACIÓN ========== */}
-        <section className="rk-fade-up rk-enter-1 rk-card p-5 sm:p-6">
-          <p className="rk-eyebrow">Paso 1</p>
+        <section className="rk-fade-up rk-enter-2 rk-card p-5 sm:p-6">
+          <p className="rk-eyebrow">Paso 2</p>
 
           <h2 className="rk-title mt-2 text-xl">Información</h2>
 
@@ -422,8 +618,8 @@ export default function NuevoRecursoForm({
         </section>
 
         {/* ========== ARCHIVOS ========== */}
-        <section className="rk-fade-up rk-enter-2 rk-card p-5 sm:p-6">
-          <p className="rk-eyebrow">Paso 2</p>
+        <section className="rk-fade-up rk-enter-3 rk-card p-5 sm:p-6">
+          <p className="rk-eyebrow">Paso 3</p>
 
           <h2 className="rk-title mt-2 text-xl">Archivos</h2>
 
@@ -485,54 +681,127 @@ export default function NuevoRecursoForm({
               </div>
             </div>
 
-            {/* IMÁGENES POR URL */}
+            {/*
+              PORTADA Y PREVIEW
+
+              Se suben aquí, en el mismo paso que el archivo, y
+              no pegando la URL de un sitio al que había que
+              subirlas antes. La portada es la imagen con la
+              que la pieza existe en la web; el preview es lo
+              que se enseña protegido.
+            */}
             <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <label
-                  htmlFor="coverUrl"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  URL de portada
-                </label>
+              <SubidorImagen
+                id="portada"
+                etiqueta="Portada"
+                obligatorio
+                medida={formato?.medida ?? null}
+                valor={portada}
+                alCambiar={setPortada}
+                ayuda={
+                  formato?.medida
+                    ? `Exacta: ${formato.medida.ancho} × ${formato.medida.alto} px`
+                    : "La imagen de la tarjeta y de la tienda"
+                }
+              />
 
-                <input
-                  id="coverUrl"
-                  value={coverUrl}
-                  onChange={(e) => setCoverUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="rk-input w-full"
-                />
-              </div>
+              <SubidorImagen
+                id="preview"
+                etiqueta="Vista previa"
+                valor={preview}
+                alCambiar={setPreview}
+                ayuda="Se muestra con marca de agua. Opcional."
+              />
+            </div>
 
-              <div>
-                <label
-                  htmlFor="previewUrl"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  URL de vista previa
-                </label>
+            {/* GALERÍA */}
+            <div>
+              <p className="mb-2 text-sm font-medium">Galería</p>
 
-                <input
-                  id="previewUrl"
-                  value={previewUrl}
-                  onChange={(e) => setPreviewUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="rk-input w-full"
-                />
-              </div>
+              {galeria.length > 0 && (
+                <ul className="mb-3 grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+                  {galeria.map((imagen, indice) => (
+                    <li
+                      key={imagen.url}
+                      className="rk-media relative aspect-square overflow-hidden rounded-rk-sm"
+                    >
+                      <Image
+                        src={imagen.url}
+                        alt={`Imagen ${indice + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="120px"
+                        unoptimized
+                      />
+
+                      {/* El número dice el orden en que se verán. */}
+                      <span className="absolute left-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-black/60 text-[10px] font-semibold tabular-nums text-white">
+                        {indice + 1}
+                      </span>
+
+                      <div className="absolute bottom-1 right-1 flex gap-1">
+                        {indice > 0 && (
+                          <button
+                            type="button"
+                            aria-label={`Adelantar imagen ${indice + 1}`}
+                            onClick={() =>
+                              setGaleria((lista) => {
+                                const copia = [...lista];
+
+                                [copia[indice - 1], copia[indice]] = [
+                                  copia[indice],
+                                  copia[indice - 1],
+                                ];
+
+                                return copia;
+                              })
+                            }
+                            className="rk-press grid h-6 w-6 place-items-center rounded-full bg-black/60 text-white"
+                          >
+                            <ChevronLeft size={12} aria-hidden />
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          aria-label={`Quitar imagen ${indice + 1}`}
+                          onClick={() =>
+                            setGaleria((lista) =>
+                              lista.filter((x) => x.url !== imagen.url)
+                            )
+                          }
+                          className="rk-press grid h-6 w-6 place-items-center rounded-full bg-black/60 text-white"
+                        >
+                          <X size={12} aria-hidden />
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <SubidorImagen
+                id="galeria"
+                etiqueta="Imagen de galería"
+                valor={null}
+                alCambiar={(imagen) => {
+                  if (imagen) setGaleria((lista) => [...lista, imagen]);
+                }}
+                ayuda="Añade las que quieras, una a una."
+              />
             </div>
 
             <p className="flex items-start gap-2 text-xs leading-5 text-ink/60">
               <ImageIcon size={14} className="mt-0.5 shrink-0" />
-              La galería completa se gestiona desde el recurso,
-              una vez creado.
+              Después de crearlo podrás seguir añadiendo y reordenando
+              imágenes desde el propio recurso.
             </p>
           </div>
         </section>
 
         {/* ========== PUBLICACIÓN ========== */}
-        <section className="rk-fade-up rk-enter-3 rk-card p-5 sm:p-6">
-          <p className="rk-eyebrow">Paso 3</p>
+        <section className="rk-fade-up rk-enter-4 rk-card p-5 sm:p-6">
+          <p className="rk-eyebrow">Paso 4</p>
 
           <h2 className="rk-title mt-2 text-xl">Publicación</h2>
 

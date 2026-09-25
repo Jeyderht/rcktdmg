@@ -9,6 +9,12 @@ export type ArchivoSubido = {
   fileName: string;
 };
 
+/** Quien quiera enterarse del avance de la subida. */
+export type OpcionesSubida = {
+  /** Porcentaje 0–100, o `null` cuando no se puede saber. */
+  alProgresar?: (porcentaje: number | null) => void;
+};
+
 /**
  * Sube el archivo vendible de un recurso.
  *
@@ -24,12 +30,24 @@ export type ArchivoSubido = {
  * en ambos caminos: esto solo elige por dónde va el archivo.
  */
 export async function subirArchivoDeProducto(
-  file: File
+  file: File,
+  opciones?: OpcionesSubida
 ): Promise<ArchivoSubido> {
   const usarBlob =
     process.env.NEXT_PUBLIC_STORAGE_DRIVER === "blob";
 
   if (!usarBlob) {
+    // Con quien escuche, se informa del avance real de los bytes.
+    if (opciones?.alProgresar) {
+      const data = await enviarConProgreso(
+        "/api/uploads/product",
+        file,
+        opciones.alProgresar
+      );
+
+      return { fileUrl: data.fileUrl, fileName: data.fileName };
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -49,6 +67,13 @@ export async function subirArchivoDeProducto(
     return { fileUrl: data.fileUrl, fileName: data.fileName };
   }
 
+  /*
+    Subida directa al almacén privado. El SDK sí publica el
+    avance de la carga por partes, así que aquí el porcentaje
+    es real y no una barra indeterminada.
+  */
+  opciones?.alProgresar?.(0);
+
   const punto = file.name.lastIndexOf(".");
 
   const extension =
@@ -65,7 +90,12 @@ export async function subirArchivoDeProducto(
     // Multipart a partir de unos megas: sube por partes y
     // reintenta solo la parte que falle.
     multipart: file.size > 8 * 1024 * 1024,
+    onUploadProgress: opciones?.alProgresar
+      ? ({ percentage }) => opciones.alProgresar?.(Math.round(percentage))
+      : undefined,
   });
+
+  opciones?.alProgresar?.(100);
 
   return { fileUrl: blob.url, fileName: file.name };
 }
@@ -90,6 +120,64 @@ const CAMPO_RESPUESTA: Record<TipoImagen, string> = {
 };
 
 /**
+ * Envío con barra de progreso real.
+ *
+ * `XMLHttpRequest` sigue siendo la única forma de conocer los
+ * bytes enviados desde el navegador. Se usa solo para eso.
+ */
+function enviarConProgreso(
+  endpoint: string,
+  file: File,
+  alProgresar: (porcentaje: number | null) => void
+): Promise<Record<string, string>> {
+  return new Promise((resolver, rechazar) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const peticion = new XMLHttpRequest();
+
+    peticion.open("POST", endpoint);
+
+    peticion.upload.addEventListener("progress", (evento) => {
+      if (!evento.lengthComputable) {
+        alProgresar(null);
+        return;
+      }
+
+      alProgresar(Math.round((evento.loaded / evento.total) * 100));
+    });
+
+    peticion.addEventListener("load", () => {
+      let cuerpo: Record<string, string> = {};
+
+      try {
+        cuerpo = JSON.parse(peticion.responseText);
+      } catch {
+        rechazar(new Error("El servidor devolvió una respuesta ilegible."));
+        return;
+      }
+
+      if (peticion.status < 200 || peticion.status >= 300) {
+        rechazar(new Error(cuerpo.error || "No se pudo subir la imagen."));
+        return;
+      }
+
+      resolver(cuerpo);
+    });
+
+    peticion.addEventListener("error", () =>
+      rechazar(new Error("No se pudo conectar con el servidor."))
+    );
+
+    peticion.addEventListener("abort", () =>
+      rechazar(new Error("Subida cancelada."))
+    );
+
+    peticion.send(formData);
+  });
+}
+
+/**
  * Sube una imagen pública.
  *
  * Con Blob activo va directa del navegador al almacén público
@@ -107,7 +195,8 @@ const CAMPO_RESPUESTA: Record<TipoImagen, string> = {
 export async function subirImagen(
   tipo: TipoImagen,
   file: File,
-  userId?: string
+  userId?: string,
+  opciones?: OpcionesSubida
 ): Promise<ImagenSubida> {
   const endpoint = ENDPOINT_POR_TIPO[tipo];
   const campo = CAMPO_RESPUESTA[tipo];
@@ -116,24 +205,42 @@ export async function subirImagen(
     process.env.NEXT_PUBLIC_STORAGE_DRIVER === "blob";
 
   if (!usarBlob) {
-    const formData = new FormData();
-    formData.append("file", file);
+    /*
+      Por el endpoint propio se puede informar del avance real,
+      que es lo que hace `XMLHttpRequest` y `fetch` todavía no.
+      Sin quien escuche, se comporta igual que antes.
+    */
+    const data = opciones?.alProgresar
+      ? await enviarConProgreso(endpoint, file, opciones.alProgresar)
+      : await (async () => {
+          const formData = new FormData();
+          formData.append("file", file);
 
-    const response = await fetch(endpoint, {
-      method: "POST",
-      body: formData,
-    });
+          const response = await fetch(endpoint, {
+            method: "POST",
+            body: formData,
+          });
 
-    const data = await response.json();
+          const cuerpo = await response.json();
 
-    if (!response.ok) {
-      throw new Error(
-        data.error || "No se pudo subir la imagen."
-      );
-    }
+          if (!response.ok) {
+            throw new Error(
+              cuerpo.error || "No se pudo subir la imagen."
+            );
+          }
+
+          return cuerpo;
+        })();
 
     return { url: data[campo], fileName: data.fileName };
   }
+
+  /*
+    Subida directa al almacén: el porcentaje no lo publica el
+    SDK, así que se avisa de que empieza y de que termina, y
+    la barra se enseña indeterminada mientras tanto.
+  */
+  opciones?.alProgresar?.(null);
 
   const regla = REGLAS[tipo];
 

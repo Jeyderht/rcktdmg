@@ -123,7 +123,7 @@ function SearchField({
               activo >= 0 ? `${listaId}-${activo}` : undefined
             }
             autoComplete="off"
-            className="h-12 w-full rounded-full border border-line/10 bg-surface/60 pl-11 pr-24 text-sm outline-none backdrop-blur-xl transition duration-300 ease-rk placeholder:text-ink/60 focus:border-ink/40 focus:bg-surface"
+            className="h-12 w-full rounded-full border border-line/10 bg-surface/60 pl-11 pr-24 text-sm outline-none backdrop-blur-xl transition duration-normal ease-rk placeholder:text-ink/60 focus:border-ink/40 focus:bg-surface"
           />
 
           <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
@@ -266,7 +266,7 @@ function NavbarContent() {
     <>
       <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4 sm:pt-4">
         <div
-          className={`mx-auto w-full max-w-7xl rounded-rk-xl transition-all duration-500 ease-rk ${
+          className={`mx-auto w-full max-w-7xl rounded-rk-xl transition-all duration-slow ease-rk ${
             scrolled
               ? "rk-glass shadow-rk-lg"
               : "border border-line/10 bg-surface/45 shadow-rk-sm backdrop-blur-xl"
@@ -294,7 +294,7 @@ function NavbarContent() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`rk-press-sm rounded-full px-3.5 py-2 text-sm transition-colors duration-200 ${
+                  className={`rk-press-sm rounded-full px-3.5 py-2 text-sm transition-colors duration-fast ${
                     isActive(link.href)
                       ? "bg-ink/[0.07] font-semibold text-ink"
                       : "text-ink/60 hover:bg-ink/[0.04] hover:text-ink"

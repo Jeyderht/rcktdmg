@@ -1,7 +1,10 @@
 import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
-import { crearNotificaciones } from "@/lib/notificaciones";
+import {
+  crearNotificaciones,
+  notificarAdmins,
+} from "@/lib/notificaciones";
 import {
   LARGO_DESCRIPCION_COLECCION,
   LARGO_NOMBRE_COLECCION,
@@ -47,6 +50,8 @@ export async function coleccionEditablePor(
       status: true,
       description: true,
       price: true,
+      previewUrl: true,
+      zipUrl: true,
     },
   });
 
@@ -235,6 +240,11 @@ async function puedePublicarse(
   return { ok: true };
 }
 
+/** Cadena limpia, o null si viene vacía. Nunca guarda "". */
+function textoONulo(valor: unknown): string | null {
+  return typeof valor === "string" && valor.trim() ? valor.trim() : null;
+}
+
 /* ══════════════ ESCRITURA ══════════════ */
 
 export async function crearColeccion(
@@ -244,6 +254,8 @@ export async function crearColeccion(
     description?: unknown;
     price?: unknown;
     coverUrl?: unknown;
+    previewUrl?: unknown;
+    zipUrl?: unknown;
     productIds?: unknown;
   }
 ): Promise<ResultadoColeccion> {
@@ -268,10 +280,9 @@ export async function crearColeccion(
       slug,
       description: texto.description,
       price: texto.price,
-      coverUrl:
-        typeof datos.coverUrl === "string" && datos.coverUrl.trim()
-          ? datos.coverUrl.trim()
-          : null,
+      coverUrl: textoONulo(datos.coverUrl),
+      previewUrl: textoONulo(datos.previewUrl),
+      zipUrl: textoONulo(datos.zipUrl),
       items: {
         create: recursos.ids.map((productId, indice) => ({
           productId,
@@ -293,6 +304,8 @@ export async function actualizarColeccion(
     description?: unknown;
     price?: unknown;
     coverUrl?: unknown;
+    previewUrl?: unknown;
+    zipUrl?: unknown;
     productIds?: unknown;
     status?: unknown;
   }
@@ -340,10 +353,25 @@ export async function actualizarColeccion(
 
   const estado = datos.status;
 
+  /*
+    Por esta vía el creador solo mueve la colección entre
+    borrador y archivada. Enviarla a revisión, publicarla o
+    rechazarla son actos con consecuencias —avisan a
+    seguidores, la ponen a la venta— y tienen cada uno su
+    propia función, con sus propias comprobaciones.
+
+    Administración conserva la llave de PUBLISHED por aquí
+    porque ya podía publicarlas antes y quitárselo sería una
+    regresión.
+  */
+  const esAdmin = usuario.role === "ADMIN";
+
   const nuevoEstado: EstadoColeccion | undefined =
-    estado === "DRAFT" || estado === "PUBLISHED" || estado === "ARCHIVED"
+    estado === "DRAFT" || estado === "ARCHIVED"
       ? estado
-      : undefined;
+      : estado === "PUBLISHED" && esAdmin
+        ? estado
+        : undefined;
 
   if (nuevoEstado === "PUBLISHED") {
     const apta = await puedePublicarse(
@@ -387,14 +415,23 @@ export async function actualizarColeccion(
         description: texto.description,
         price: texto.price,
         ...(datos.coverUrl !== undefined
-          ? {
-              coverUrl:
-                typeof datos.coverUrl === "string" && datos.coverUrl.trim()
-                  ? datos.coverUrl.trim()
-                  : null,
-            }
+          ? { coverUrl: textoONulo(datos.coverUrl) }
+          : {}),
+        ...(datos.previewUrl !== undefined
+          ? { previewUrl: textoONulo(datos.previewUrl) }
+          : {}),
+        ...(datos.zipUrl !== undefined
+          ? { zipUrl: textoONulo(datos.zipUrl) }
           : {}),
         ...(nuevoEstado ? { status: nuevoEstado } : {}),
+        /*
+          Editar una colección rechazada la devuelve a borrador
+          y borra el motivo: ese motivo hablaba de una versión
+          que ya no existe.
+        */
+        ...(coleccion.status === "REJECTED" && !nuevoEstado
+          ? { status: "DRAFT" as const, rejectionReason: null }
+          : {}),
       },
     });
   });
@@ -405,6 +442,173 @@ export async function actualizarColeccion(
   }
 
   return { ok: true, id: collectionId, slug };
+}
+
+/* ══════════════ REVISIÓN ══════════════ */
+
+/**
+ * El creador manda su colección a revisión.
+ *
+ * Se exigen las mismas condiciones que para publicarla, y por
+ * el mismo motivo: no tiene sentido ocupar la cola de
+ * administración con algo que no podría publicarse igualmente.
+ * Lo que administración revisa es lo propio de la colección
+ * —nombre, precio, portada, descripción—, que no lo ha mirado
+ * nadie aunque sus piezas ya estén moderadas.
+ */
+export async function enviarColeccionARevision(
+  collectionId: string,
+  usuario: { userId: string; role: string }
+): Promise<ResultadoColeccion> {
+  const { coleccion, permitido } = await coleccionEditablePor(
+    collectionId,
+    usuario.userId,
+    usuario.role
+  );
+
+  if (!coleccion) {
+    return { ok: false, estado: 404, error: "Colección no encontrada." };
+  }
+
+  if (!permitido) {
+    return { ok: false, estado: 403, error: "No es tuya." };
+  }
+
+  if (coleccion.status !== "DRAFT" && coleccion.status !== "REJECTED") {
+    return {
+      ok: false,
+      estado: 400,
+      error: `No se puede enviar a revisión una colección ${
+        coleccion.status === "PENDING_REVIEW"
+          ? "que ya está en revisión"
+          : "publicada o archivada"
+      }.`,
+    };
+  }
+
+  const apta = await puedePublicarse(collectionId, null);
+
+  if (!apta.ok) return { ok: false, estado: 400, error: apta.error };
+
+  await prisma.commercialCollection.update({
+    where: { id: collectionId },
+    data: { status: "PENDING_REVIEW", rejectionReason: null },
+  });
+
+  try {
+    await notificarAdmins({
+      type: "SYSTEM",
+      title: "Colección enviada a revisión",
+      body: coleccion.name,
+      href: "/admin/colecciones",
+    });
+  } catch (error) {
+    // Un aviso que falla no invalida el envío.
+    console.error("aviso de colección a revisión:", error);
+  }
+
+  return { ok: true, id: collectionId, slug: coleccion.slug };
+}
+
+/** Administración publica una colección que estaba en revisión. */
+export async function publicarColeccion(
+  collectionId: string
+): Promise<ResultadoColeccion> {
+  const coleccion = await prisma.commercialCollection.findUnique({
+    where: { id: collectionId },
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      status: true,
+      creatorId: true,
+    },
+  });
+
+  if (!coleccion) {
+    return { ok: false, estado: 404, error: "Colección no encontrada." };
+  }
+
+  const apta = await puedePublicarse(collectionId, null);
+
+  if (!apta.ok) return { ok: false, estado: 400, error: apta.error };
+
+  await prisma.commercialCollection.update({
+    where: { id: collectionId },
+    data: { status: "PUBLISHED", rejectionReason: null },
+  });
+
+  if (coleccion.status !== "PUBLISHED") {
+    await avisarSeguidores(coleccion.creatorId, coleccion.name, coleccion.slug);
+
+    try {
+      await crearNotificaciones([
+        {
+          userId: coleccion.creatorId,
+          type: "COLLECTION_PUBLISHED",
+          title: "Tu colección ya está publicada",
+          body: coleccion.name,
+          href: `/colecciones-comerciales/${coleccion.slug}`,
+        },
+      ]);
+    } catch (error) {
+      console.error("aviso de colección publicada:", error);
+    }
+  }
+
+  return { ok: true, id: collectionId, slug: coleccion.slug };
+}
+
+/**
+ * Administración rechaza una colección, con motivo.
+ *
+ * El motivo es obligatorio: un rechazo sin explicación deja al
+ * creador sin nada que corregir. Se guarda para que lo lea en
+ * su panel, y editarla lo borra junto con el estado.
+ */
+export async function rechazarColeccion(
+  collectionId: string,
+  motivo: string
+): Promise<ResultadoColeccion> {
+  const razon = String(motivo ?? "").trim().slice(0, 500);
+
+  if (!razon) {
+    return {
+      ok: false,
+      estado: 400,
+      error: "Debes indicar el motivo del rechazo.",
+    };
+  }
+
+  const coleccion = await prisma.commercialCollection.findUnique({
+    where: { id: collectionId },
+    select: { id: true, slug: true, name: true, creatorId: true },
+  });
+
+  if (!coleccion) {
+    return { ok: false, estado: 404, error: "Colección no encontrada." };
+  }
+
+  await prisma.commercialCollection.update({
+    where: { id: collectionId },
+    data: { status: "REJECTED", rejectionReason: razon },
+  });
+
+  try {
+    await crearNotificaciones([
+      {
+        userId: coleccion.creatorId,
+        type: "SYSTEM",
+        title: "Tu colección necesita cambios",
+        body: razon,
+        href: "/creadores/panel/colecciones",
+      },
+    ]);
+  } catch (error) {
+    console.error("aviso de colección rechazada:", error);
+  }
+
+  return { ok: true, id: collectionId, slug: coleccion.slug };
 }
 
 export async function borrarColeccion(
@@ -488,8 +692,11 @@ const SELECCION = {
   slug: true,
   description: true,
   coverUrl: true,
+  previewUrl: true,
+  zipUrl: true,
   price: true,
   status: true,
+  rejectionReason: true,
   createdAt: true,
   creator: {
     select: {
@@ -549,8 +756,11 @@ function aVista(fila: FilaColeccion): ColeccionVista {
     slug: fila.slug,
     description: fila.description,
     coverUrl: fila.coverUrl,
+    previewUrl: fila.previewUrl,
+    zipUrl: fila.zipUrl,
     price: precio,
     status: fila.status,
+    rejectionReason: fila.rejectionReason,
     createdAt: fila.createdAt.toISOString(),
     creador: {
       nombre: fila.creator.publicName || fila.creator.name || "Creador",
@@ -575,6 +785,23 @@ function aVista(fila: FilaColeccion): ColeccionVista {
   };
 }
 
+/**
+ * La misma vista, sin la referencia al archivo privado.
+ *
+ * `zipUrl` apunta al almacén privado y solo le sirve a su
+ * creador, para no perderla al editar la colección. En las
+ * páginas públicas no pinta nada, y hoy no se filtra solo
+ * porque quienes la reciben son componentes de servidor.
+ *
+ * Eso es una casualidad, no una garantía: el día que alguien
+ * pase la colección entera a un componente de cliente, la
+ * referencia viajaría al navegador dentro del payload. Se
+ * quita en origen para que ese día no llegue.
+ */
+function sinArchivoPrivado(vista: ColeccionVista): ColeccionVista {
+  return { ...vista, zipUrl: null };
+}
+
 /** Ficha pública. Solo si está publicada. */
 export async function obtenerColeccionPublica(
   slug: string
@@ -584,7 +811,7 @@ export async function obtenerColeccionPublica(
     select: SELECCION,
   });
 
-  return fila ? aVista(fila) : null;
+  return fila ? sinArchivoPrivado(aVista(fila)) : null;
 }
 
 /** Una colección concreta para su dueño o para administración. */
@@ -623,7 +850,7 @@ export async function listarColeccionesPublicas(
     select: SELECCION,
   });
 
-  return filas.map(aVista);
+  return filas.map((fila) => sinArchivoPrivado(aVista(fila)));
 }
 
 /** Todas las colecciones, para administración. */

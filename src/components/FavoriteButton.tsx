@@ -3,6 +3,8 @@
 import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { alternarFavorito, useEsFavorito } from "./favoritos-store";
+
 type FavoriteButtonProps = {
   productId: string;
   size?: "xs" | "sm" | "md";
@@ -19,46 +21,18 @@ export default function FavoriteButton({
   size = "md",
   onImage = false,
 }: FavoriteButtonProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [loading, setLoading] = useState(true);
+  /*
+    El estado lo lleva el almacén compartido: la lista de
+    favoritos se pide UNA vez por página y la usan todos los
+    corazones. Antes cada tarjeta pedía la lista entera para
+    sí: 21 peticiones idénticas en Home, medidas en el
+    navegador.
+  */
+  const { esFavorito: isFavorite, cargando: loading } =
+    useEsFavorito(productId);
+
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function checkFavorite() {
-      try {
-        const response = await fetch("/api/favoritos", {
-          cache: "no-store",
-        });
-
-        if (!response.ok) {
-          if (!cancelled) setIsFavorite(false);
-          return;
-        }
-
-        const data = await response.json();
-
-        const exists = (data.favorites || []).some(
-          (favorite: { productId: string }) =>
-            favorite.productId === productId
-        );
-
-        if (!cancelled) setIsFavorite(exists);
-      } catch {
-        if (!cancelled) setIsFavorite(false);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    checkFavorite();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [productId]);
 
   // El aviso se oculta solo, sin bloquear la interfaz.
   useEffect(() => {
@@ -77,44 +51,18 @@ export default function FavoriteButton({
 
     if (saving) return;
 
-    try {
-      setSaving(true);
+    setSaving(true);
 
-      const response = await fetch("/api/favoritos", {
-        method: isFavorite ? "DELETE" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          productId,
-        }),
-      });
+    /*
+      El corazón cambia YA, en el mismo fotograma del clic. Si
+      el servidor lo rechaza, el almacén lo devuelve a su sitio
+      y se dice por qué.
+    */
+    const resultado = await alternarFavorito(productId, isFavorite);
 
-      if (response.status === 401) {
-        setMessage("Inicia sesión para guardar");
-        return;
-      }
+    if (!resultado.ok) setMessage(resultado.mensaje);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.error || "No se pudo actualizar el favorito."
-        );
-      }
-
-      setIsFavorite(!isFavorite);
-    } catch (error) {
-      console.error(error);
-
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "No se pudo actualizar"
-      );
-    } finally {
-      setSaving(false);
-    }
+    setSaving(false);
   }
 
   // El cuadro visible se mantiene compacto, pero el área que
@@ -133,7 +81,13 @@ export default function FavoriteButton({
       <button
         type="button"
         onClick={toggleFavorite}
-        disabled={loading || saving}
+        /*
+          NO se deshabilita mientras guarda: el estado ya
+          cambió a la vista y bloquear el botón solo impide
+          rectificar. `saving` evita el envío repetido dentro
+          del manejador.
+        */
+        disabled={loading}
         aria-pressed={isFavorite}
         aria-label={
           isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"
@@ -148,7 +102,7 @@ export default function FavoriteButton({
         <Heart
           size={icon}
           strokeWidth={2}
-          className={`transition-all duration-300 ease-rk ${
+          className={`transition-all duration-normal ease-rk ${
             isFavorite
               ? "scale-110 fill-danger text-danger"
               : "text-ink/60"

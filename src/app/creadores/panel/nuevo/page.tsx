@@ -25,6 +25,8 @@ export default async function NuevoRecursoPage() {
     select: {
       id: true,
       name: true,
+      /* El slug es lo que enlaza cada tipo de publicación con su categoría. */
+      slug: true,
     },
   });
 

@@ -6,9 +6,31 @@ import { useEffect, useState } from "react";
 import { Download as DownloadIcon, Inbox } from "lucide-react";
 
 import AccountPageHeader from "@/components/AccountPageHeader";
+import BotonDescargarColeccion from "@/components/BotonDescargarColeccion";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+
+/**
+ * Colección comprada.
+ *
+ * Sus recursos ya aparecen uno a uno más abajo, con su propia
+ * descarga y su propia licencia. Esto es el conjunto del que
+ * salieron: sirve para reconocerlo y, si el creador subió el
+ * archivo único, para bajarlo todo de una vez.
+ */
+type ColeccionAdquirida = {
+    id: string;
+    name: string;
+    slug: string;
+    coverUrl: string | null;
+    precioPagado: number;
+    recursos: number;
+    tieneZip: boolean;
+    /** Hay archivo propio, o se puede armar uno con las piezas. */
+    puedeDescargarse: boolean;
+    compradaEl: string;
+};
 
 type Download = {
     id: string;
@@ -57,6 +79,7 @@ function getStatusBadge(status: string) {
 
 export default function MisDescargasPage() {
     const [downloads, setDownloads] = useState<Download[]>([]);
+    const [colecciones, setColecciones] = useState<ColeccionAdquirida[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [downloadingId, setDownloadingId] = useState<string | null>(
@@ -81,6 +104,7 @@ export default function MisDescargasPage() {
             }
 
             setDownloads(data.downloads || []);
+            setColecciones(data.colecciones || []);
         } catch (err) {
             setError(
                 err instanceof Error
@@ -202,8 +226,83 @@ export default function MisDescargasPage() {
                     </div>
                 )}
 
+                {/*
+                    ══════════ COLECCIONES ADQUIRIDAS ══════════
+
+                    Van antes que las piezas sueltas porque es
+                    lo que la persona compró: sus recursos
+                    aparecen debajo uno a uno, pero lo que
+                    reconoce es el conjunto.
+
+                    Aquí NO hay botón de comprar. Ya es suya.
+                */}
+                {!loading && !error && colecciones.length > 0 && (
+                    <section className="mt-8">
+                        <h2 className="rk-title text-lg">
+                            Colecciones adquiridas
+                        </h2>
+
+                        <ul className="mt-4 grid gap-3 md:grid-cols-2">
+                            {colecciones.map((coleccion) => (
+                                <li
+                                    key={coleccion.id}
+                                    className="rk-card flex gap-4 p-4"
+                                >
+                                    <span className="rk-media rk-aspect-product relative w-20 shrink-0 overflow-hidden rounded-rk-sm">
+                                        {coleccion.coverUrl && (
+                                            <Image
+                                                src={coleccion.coverUrl}
+                                                alt=""
+                                                fill
+                                                className="object-cover"
+                                                sizes="80px"
+                                            />
+                                        )}
+                                    </span>
+
+                                    <div className="flex min-w-0 flex-1 flex-col">
+                                        <p className="truncate text-[15px] font-semibold">
+                                            {coleccion.name}
+                                        </p>
+
+                                        <p className="mt-1 text-[13px] tabular-nums text-ink/55">
+                                            {coleccion.recursos} recursos ·{" "}
+                                            {formatDate(coleccion.compradaEl)}
+                                        </p>
+
+                                        <p className="mt-0.5 flex items-center gap-1.5 text-[13px] tabular-nums text-ink/55">
+                                            Pagado: S/{" "}
+                                            {coleccion.precioPagado.toFixed(2)}
+                                            <span className="rk-badge rk-badge-success">
+                                                Ya adquirida
+                                            </span>
+                                        </p>
+
+                                        <div className="mt-auto pt-3">
+                                            {coleccion.puedeDescargarse ? (
+                                                <BotonDescargarColeccion
+                                                    collectionId={coleccion.id}
+                                                    nombre={coleccion.name}
+                                                />
+                                            ) : (
+                                                <p className="text-[12px] leading-5 text-ink/55">
+                                                    Descarga cada recurso en la
+                                                    lista de abajo.
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+
+                        <div className="rk-divider mt-8" />
+                    </section>
+                )}
+
                 {/* VACÍO */}
-                {!loading && !error && downloads.length === 0 && (
+                {!loading && !error && downloads.length === 0 &&
+                    colecciones.length === 0 && (
                     <div className="mt-8">
                         <EmptyState
                             icon={Inbox}

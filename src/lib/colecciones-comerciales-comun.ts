@@ -15,7 +15,9 @@ export type EstadoColeccion = $Enums.CommercialCollectionStatus;
 
 export const ESTADOS_COLECCION = [
   "DRAFT",
+  "PENDING_REVIEW",
   "PUBLISHED",
+  "REJECTED",
   "ARCHIVED",
 ] as const satisfies readonly EstadoColeccion[];
 
@@ -30,7 +32,9 @@ void _sinOlvidos;
 
 export const ETIQUETA_ESTADO_COLECCION: Record<EstadoColeccion, string> = {
   DRAFT: "Borrador",
+  PENDING_REVIEW: "En revisión",
   PUBLISHED: "Publicada",
+  REJECTED: "Rechazada",
   ARCHIVED: "Archivada",
 };
 
@@ -56,6 +60,7 @@ export const LARGO_DESCRIPCION_COLECCION = 2000;
  * ponerla a la venta.
  */
 export const MINIMO_RECURSOS_COLECCION = 6;
+
 export const MAXIMO_RECURSOS_COLECCION = 60;
 
 /** Slug a partir del nombre. Mismo criterio que packs y recursos. */
@@ -103,8 +108,14 @@ export type ColeccionVista = {
   slug: string;
   description: string;
   coverUrl: string | null;
+  /** Muestra del contenido. Distinta de la portada. */
+  previewUrl: string | null;
+  /** Archivo único, privado. Null si el creador no lo subió. */
+  zipUrl: string | null;
   price: number;
   status: EstadoColeccion;
+  /** Por qué se rechazó. Solo lo escribe administración. */
+  rejectionReason: string | null;
   createdAt: string;
   creador: {
     nombre: string;

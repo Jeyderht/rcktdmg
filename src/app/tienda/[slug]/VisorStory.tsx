@@ -17,6 +17,11 @@ import {
 
 import PreviewProtegido from "@/components/PreviewProtegido";
 import { ASPECTO_STORY } from "@/lib/home";
+import { useSwipe } from "@/components/useSwipe";
+import {
+  alternarFavorito,
+  useEsFavorito,
+} from "@/components/favoritos-store";
 import { anadirAlCarrito } from "@/components/useCartCount";
 
 /** Cuánto dura cada imagen antes de pasar sola. */
@@ -87,6 +92,16 @@ export default function VisorStory({
     setIndice((i) => (i + 1) % total);
   }, [total]);
 
+  /*
+    Dedo a la izquierda → siguiente; a la derecha → anterior.
+    Se declara aquí, después de las dos funciones, para que el
+    gesto llame siempre a la versión vigente.
+  */
+  const swipe = useSwipe({
+    alIzquierda: siguiente,
+    alDerecha: anterior,
+  });
+
   /* Teclado y bloqueo del desplazamiento de fondo. */
   useEffect(() => {
     if (!abierto) return;
@@ -150,6 +165,17 @@ export default function VisorStory({
       role="dialog"
       aria-modal="true"
       aria-label={`${producto.name}, imagen ${indice + 1} de ${total}`}
+      /*
+        Dedo a la izquierda, siguiente; a la derecha, anterior.
+        Igual que en cualquier story de móvil, y sin estorbar
+        a los botones: un toque corto no llega al umbral.
+      */
+      {...swipe}
+      /*
+        Corta el gesto de "atrás" del navegador: sin esto, el
+        dedo hacia la derecha abandonaba la página en vez de
+        retroceder una imagen.
+      */
       onPointerDown={() => setPausado(true)}
       onPointerUp={() => setPausado(false)}
       onPointerCancel={() => setPausado(false)}
@@ -172,7 +198,16 @@ export default function VisorStory({
         fijo y no depende de ningún token.
       */
       className="fixed inset-0 z-[80] flex flex-col bg-[#0a0a0c]"
-      style={{ height: "100dvh", width: "100vw" }}
+      style={{
+        height: "100dvh",
+        width: "100vw",
+        /*
+          Corta el gesto de "atrás" del navegador: sin esto, el
+          dedo hacia la derecha abandonaba la página entera en
+          lugar de retroceder una imagen. Comprobado en Chrome.
+        */
+        overscrollBehaviorX: "contain",
+      }}
     >
       {/* ══════════ PROGRESO ══════════ */}
       <div
@@ -326,7 +361,7 @@ export default function VisorStory({
       */}
       <div className="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
         <div className="mx-auto flex w-full max-w-md items-center justify-center gap-3">
-          <BotonFavorito productId={producto.id} slug={producto.slug} />
+          <BotonFavorito productId={producto.id} />
 
           <BotonCarrito
             producto={producto}
@@ -410,14 +445,14 @@ function BotonCarrito({
   );
 }
 
-function BotonFavorito({
-  productId,
-  slug,
-}: {
-  productId: string;
-  slug: string;
-}) {
-  const [guardado, setGuardado] = useState(false);
+function BotonFavorito({ productId }: { productId: string }) {
+  /*
+    El mismo almacén que los corazones de las tarjetas: el
+    estado se comparte y el cambio se pinta ANTES de preguntar
+    al servidor, no después de que conteste.
+  */
+  const { esFavorito } = useEsFavorito(productId);
+
   const [enCurso, setEnCurso] = useState(false);
 
   async function alternar() {
@@ -425,37 +460,28 @@ function BotonFavorito({
 
     setEnCurso(true);
 
-    try {
-      const respuesta = await fetch("/api/favoritos", {
-        method: guardado ? "DELETE" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
-      });
+    const resultado = await alternarFavorito(productId, esFavorito);
 
-      if (respuesta.status === 401) {
-        window.location.href = `/login?redirect=${encodeURIComponent(
-          `/tienda/${slug}`
-        )}`;
-        return;
-      }
-
-      if (respuesta.ok) setGuardado((antes) => !antes);
-    } catch {
-      // Un fallo de red no cambia el estado pintado.
-    } finally {
-      setEnCurso(false);
+    if (!resultado.ok && resultado.mensaje.includes("Inicia sesión")) {
+      window.location.href = "/login";
     }
+
+    setEnCurso(false);
   }
 
   return (
     <button
       type="button"
       onClick={alternar}
-      aria-pressed={guardado}
-      aria-label={guardado ? "Quitar de guardados" : "Guardar"}
+      aria-pressed={esFavorito}
+      aria-label={esFavorito ? "Quitar de guardados" : "Guardar"}
       className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
     >
-      <Heart size={18} aria-hidden className={guardado ? "fill-current" : ""} />
+      <Heart
+        size={18}
+        aria-hidden
+        className={esFavorito ? "fill-current" : ""}
+      />
     </button>
   );
 }

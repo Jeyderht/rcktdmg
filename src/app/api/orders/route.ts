@@ -5,6 +5,7 @@ import { verifySessionToken } from "@/lib/auth";
 import { Prisma } from "@prisma/client";
 import { expandirPack } from "@/lib/packs";
 import { expandirColeccion } from "@/lib/colecciones-comerciales";
+import { yaAdquiridos } from "@/lib/adquisiciones";
 
 /**
  * Una línea del carrito.
@@ -83,6 +84,50 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Los productos enviados no son válidos." },
         { status: 400 }
+      );
+    }
+
+    /*
+      NADA SE COMPRA DOS VECES.
+
+      Un recurso digital no se agota ni se gasta: pagarlo otra
+      vez no le da nada nuevo a quien ya lo tiene, y sí le
+      genera una segunda licencia y una segunda descarga que
+      después hay que explicar. Se corta aquí, antes de crear
+      el pedido, porque es el último punto por el que pasan
+      todos los caminos —carrito, botón de compra directa y
+      cualquier cliente que llame a la API a mano—.
+
+      Solo se rechaza lo que YA es suyo; el resto del carrito
+      se dice con nombre y apellidos para que la interfaz
+      pueda retirarlo sin adivinar.
+    */
+    const repetidos = await yaAdquiridos(session.userId, {
+      productIds: cleanItems
+        .filter((item) => item.productId)
+        .map((item) => item.productId),
+      packIds: cleanItems
+        .filter((item) => item.packId)
+        .map((item) => item.packId as string),
+      collectionIds: cleanItems
+        .filter((item) => item.collectionId)
+        .map((item) => item.collectionId as string),
+    });
+
+    if (
+      repetidos.productos.length ||
+      repetidos.packs.length ||
+      repetidos.colecciones.length
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            repetidos.colecciones.length && !repetidos.productos.length
+              ? "Ya adquiriste esta colección."
+              : "Ya adquiriste uno de estos recursos.",
+          yaAdquiridos: repetidos,
+        },
+        { status: 409 }
       );
     }
 

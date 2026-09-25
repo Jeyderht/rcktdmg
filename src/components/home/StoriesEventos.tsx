@@ -21,6 +21,11 @@ import { formatPrice } from "@/lib/pricing";
 import PreviewProtegido from "@/components/PreviewProtegido";
 import { ASPECTO_STORY, type TarjetaHome } from "@/lib/home";
 import { anadirAlCarrito } from "@/components/useCartCount";
+import { useSwipe } from "@/components/useSwipe";
+import {
+  alternarFavorito,
+  useEsFavorito,
+} from "@/components/favoritos-store";
 
 /**
  * Stories de eventos.
@@ -221,6 +226,15 @@ function VisorStories({
   }, [flyers.length]);
 
   /*
+    Dedo a la izquierda → siguiente story; a la derecha →
+    anterior. El gesto que cualquiera espera de unas stories.
+  */
+  const swipe = useSwipe({
+    alIzquierda: siguiente,
+    alDerecha: anterior,
+  });
+
+  /*
     Teclado: flechas para moverse y Escape para salir. Una
     story que solo responde al dedo deja fuera a quien navega
     con teclado.
@@ -275,6 +289,7 @@ function VisorStories({
       role="dialog"
       aria-modal="true"
       aria-label={`${flyer.name}, ${indice + 1} de ${flyers.length}`}
+      {...swipe}
       /*
         Mantener pulsado pausa, soltar reanuda: el gesto de
         cualquier story. NO se usa `onMouseEnter`, porque en
@@ -303,7 +318,16 @@ function VisorStories({
         fijo y no depende de ningún token.
       */
       className="fixed inset-0 z-[80] flex flex-col bg-[#0a0a0c]"
-      style={{ height: "100dvh", width: "100vw" }}
+      style={{
+        height: "100dvh",
+        width: "100vw",
+        /*
+          Corta el gesto de "atrás" del navegador: sin esto, el
+          dedo hacia la derecha abandonaba la página entera en
+          lugar de retroceder una story. Comprobado en Chrome.
+        */
+        overscrollBehaviorX: "contain",
+      }}
     >
       {/* ══════════ BARRA DE PROGRESO ══════════ */}
       <div
@@ -557,7 +581,13 @@ function BotonCarrito({ flyer }: { flyer: TarjetaHome }) {
  * el navegador que después no exista en la cuenta.
  */
 function BotonFavorito({ productId }: { productId: string }) {
-  const [guardado, setGuardado] = useState(false);
+  /*
+    El mismo almacén que los corazones de las tarjetas: el
+    estado se comparte y el cambio se pinta ANTES de preguntar
+    al servidor, no después de que conteste.
+  */
+  const { esFavorito } = useEsFavorito(productId);
+
   const [enCurso, setEnCurso] = useState(false);
 
   async function alternar() {
@@ -565,38 +595,27 @@ function BotonFavorito({ productId }: { productId: string }) {
 
     setEnCurso(true);
 
-    try {
-      const respuesta = await fetch("/api/favoritos", {
-        method: guardado ? "DELETE" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
-      });
+    const resultado = await alternarFavorito(productId, esFavorito);
 
-      if (respuesta.status === 401) {
-        window.location.href = "/login?redirect=%2F";
-        return;
-      }
-
-      if (respuesta.ok) setGuardado((antes) => !antes);
-    } catch {
-      // Un fallo de red no cambia el estado pintado.
-    } finally {
-      setEnCurso(false);
+    if (!resultado.ok && resultado.mensaje.includes("Inicia sesión")) {
+      window.location.href = "/login";
     }
+
+    setEnCurso(false);
   }
 
   return (
     <button
       type="button"
       onClick={alternar}
-      aria-pressed={guardado}
-      aria-label={guardado ? "Quitar de guardados" : "Guardar"}
+      aria-pressed={esFavorito}
+      aria-label={esFavorito ? "Quitar de guardados" : "Guardar"}
       className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
     >
       <Heart
         size={18}
         aria-hidden
-        className={guardado ? "fill-current" : ""}
+        className={esFavorito ? "fill-current" : ""}
       />
     </button>
   );

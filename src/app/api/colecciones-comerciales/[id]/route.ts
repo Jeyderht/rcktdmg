@@ -80,6 +80,8 @@ export async function PATCH(request: Request, contexto: Contexto) {
         description: body.description,
         price: body.price,
         coverUrl: body.coverUrl,
+        previewUrl: body.previewUrl,
+        zipUrl: body.zipUrl,
         productIds: body.productIds,
         status: body.status,
       }

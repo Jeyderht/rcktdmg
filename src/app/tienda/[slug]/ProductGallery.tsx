@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import PreviewProtegido from "@/components/PreviewProtegido";
 import VisorStory, { type ImagenStory } from "./VisorStory";
+import { useSwipe } from "@/components/useSwipe";
 
 type ProductImage = {
   id: string;
@@ -93,6 +94,17 @@ export default function ProductGallery({
 
   const [storyAbierta, setStoryAbierta] = useState(false);
 
+  /*
+    La galería también se pasa con el dedo. Mientras la story
+    está abierta el gesto se apaga aquí: el diálogo está
+    encima y es él quien debe recibirlo.
+  */
+  const swipe = useSwipe({
+    alIzquierda: () => goTo(selectedIndex + 1),
+    alDerecha: () => goTo(selectedIndex - 1),
+    activo: !storyAbierta,
+  });
+
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const total = images.length;
@@ -152,7 +164,12 @@ export default function ProductGallery({
 
       {/* IMAGEN PRINCIPAL 9:16 */}
       <div className="rk-card mx-auto w-full max-w-[16rem] overflow-hidden rounded-rk-xl p-2 sm:max-w-sm lg:max-w-none">
-        <div className="rk-media rk-aspect-product relative overflow-hidden rounded-rk-lg">
+        <div
+          {...swipe}
+          /* Que el dedo hacia la derecha no dispare el "atrás". */
+          style={{ overscrollBehaviorX: "contain" }}
+          className="rk-media rk-aspect-product relative overflow-hidden rounded-rk-lg"
+        >
           {/*
             Con dimensiones conocidas la imagen se enseña
             ENTERA, con su forma. Sin ellas se recorta al

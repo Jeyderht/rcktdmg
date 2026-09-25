@@ -166,8 +166,19 @@
   --rk-glass-saturate: 180%;
 
   /* ---- MOVIMIENTO ---- */
+  /*
+    Duraciones de toda la interfaz.
+
+    `normal` bajó de 280 ms a 220 ms: por encima de ~250 ms un
+    botón empieza a sentirse lento aunque responda al instante,
+    y este token gobierna casi todo lo que reacciona a un clic
+    o a un hover. `slow` se reserva para cambios de tamaño de
+    bloques grandes, no para respuestas a una pulsación.
+
+    Quien prefiere menos movimiento las anula todas más abajo.
+  */
   --rk-transition-fast: 150ms;
-  --rk-transition-normal: 280ms;
+  --rk-transition-normal: 220ms;
   --rk-transition-slow: 500ms;
   --rk-ease: cubic-bezier(0.32, 0.72, 0, 1);
   --rk-ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
@@ -202,6 +213,18 @@ html {
   scroll-behavior: smooth;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+
+  /*
+    El sitio no se desplaza en horizontal en ningún sitio, así
+    que cualquier gesto lateral es intencionado: pasar una
+    story, una pieza del carrusel o una imagen de la galería.
+
+    Sin esta línea, ese mismo gesto lo recogía el navegador
+    como "volver atrás" y abandonaba la página entera. Estaba
+    comprobado: al pasar a la story anterior con el dedo, el
+    visor desaparecía y se salía del sitio.
+  */
+  overscroll-behavior-x: none;
 }
 
 body {

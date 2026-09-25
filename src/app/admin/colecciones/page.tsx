@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Library } from "lucide-react";
 
 import EmptyState from "@/components/EmptyState";
+import AccionesColeccion from "./AccionesColeccion";
 import { formatPrice } from "@/lib/pricing";
 import { listarTodasLasColecciones } from "@/lib/colecciones-comerciales";
 import { ETIQUETA_ESTADO_COLECCION } from "@/lib/colecciones-comerciales-comun";
@@ -15,21 +16,40 @@ export const dynamic = "force-dynamic";
 
 const TONO: Record<string, string> = {
   DRAFT: "rk-badge-neutral",
+  PENDING_REVIEW: "rk-badge-warning",
   PUBLISHED: "rk-badge-success",
-  ARCHIVED: "rk-badge-warning",
+  REJECTED: "rk-badge-danger",
+  ARCHIVED: "rk-badge-neutral",
 };
 
 /**
  * Colecciones comerciales, vista de administración.
  *
- * Es una vista de supervisión, no una segunda cola de
- * moderación: una colección solo puede contener recursos que
- * YA pasaron por revisión, así que no hay nada nuevo que
- * aprobar. Administración puede editarlas y archivarlas por la
- * misma API que el creador, que acepta el rol ADMIN.
+ * Es también la cola de moderación. Sus piezas ya pasaron por
+ * revisión una a una, pero el nombre, el precio, la portada y
+ * la descripción de la colección son suyos y no los ha mirado
+ * nadie, así que se publican desde aquí o se devuelven al
+ * creador con un motivo.
+ *
+ * Las que están en revisión van primero: son las que esperan
+ * una decisión.
  */
 export default async function AdminColeccionesPage() {
   const colecciones = await listarTodasLasColecciones();
+
+  /*
+    Lo que espera una decisión, arriba. El resto conserva el
+    orden que traía.
+  */
+  const enRevisionPrimero = [...colecciones].sort((a, b) =>
+    a.status === b.status
+      ? 0
+      : a.status === "PENDING_REVIEW"
+        ? -1
+        : b.status === "PENDING_REVIEW"
+          ? 1
+          : 0
+  );
 
   return (
     <div className="rk-fade-up">
@@ -57,7 +77,7 @@ export default async function AdminColeccionesPage() {
         </div>
       ) : (
         <ul className="mt-7 space-y-2.5">
-          {colecciones.map((coleccion) => (
+          {enRevisionPrimero.map((coleccion) => (
             <li
               key={coleccion.id}
               className="rk-card flex flex-wrap items-center justify-between gap-4 p-4"
@@ -76,7 +96,7 @@ export default async function AdminColeccionesPage() {
                 </p>
               </div>
 
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="flex shrink-0 flex-wrap items-center gap-2">
                 <span
                   className={`rk-badge ${
                     TONO[coleccion.status] ?? "rk-badge-neutral"
@@ -84,6 +104,13 @@ export default async function AdminColeccionesPage() {
                 >
                   {ETIQUETA_ESTADO_COLECCION[coleccion.status]}
                 </span>
+
+                {coleccion.status === "PENDING_REVIEW" && (
+                  <AccionesColeccion
+                    collectionId={coleccion.id}
+                    nombre={coleccion.name}
+                  />
+                )}
 
                 {coleccion.status === "PUBLISHED" && (
                   <Link

@@ -11,3 +11,6 @@ reset-admin.js
 rcktdmg-backup.dump
 .vercel
 .env*
+
+# Caché incremental de TypeScript: se regenera en cada `tsc`.
+tsconfig.tsbuildinfo

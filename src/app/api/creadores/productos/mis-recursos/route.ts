@@ -36,15 +36,44 @@ export async function GET() {
       );
     }
 
-    // Buscar recursos del creador
+    /*
+      Se piden columnas concretas, no el recurso entero.
+
+      Antes esto era un `include`, que en Prisma significa
+      "todas las columnas de Product más la relación". Traía
+      `fileUrl` —la referencia al almacén privado—, la
+      descripción completa de cada recurso y el resto de campos
+      que este panel no pinta. Ahora viaja solo lo que se
+      enseña.
+
+      `fileUrl` sigue sin salir hacia el navegador: para
+      descargar se usa /api/downloads/[id], que comprueba la
+      compra.
+    */
     const products = await prisma.product.findMany({
       where: {
         creatorId: userId,
       },
-      include: {
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        description: true,
+        price: true,
+        accessType: true,
+        status: true,
+        coverUrl: true,
+        /* Medidas reales: el selector de colecciones las enseña. */
+        coverWidth: true,
+        coverHeight: true,
+        rejectionReason: true,
+        previewUrl: true,
+        createdAt: true,
         category: {
           select: {
             name: true,
+            /* El slug identifica el tipo de pieza sin adivinar por el nombre. */
+            slug: true,
           },
         },
       },
@@ -56,27 +85,21 @@ export async function GET() {
     // Preparar respuesta
     const formattedProducts = products.map((product) => ({
       id: product.id,
-            slug: product.slug,name: product.name,
+      slug: product.slug,
+      name: product.name,
       description: product.description,
       price: product.price.toString(),
       accessType: product.accessType,
       status: product.status,
       coverUrl: product.coverUrl,
+      coverWidth: product.coverWidth,
+      coverHeight: product.coverHeight,
       rejectionReason: product.rejectionReason,
       previewUrl: product.previewUrl,
-      /*
-        `fileUrl` NO sale hacia el navegador.
-
-        Es la referencia al almacén privado del archivo que se
-        vende. El panel no la pintaba en ningún sitio —solo la
-        declaraba en su tipo—, así que enviarla solo servía
-        para que una referencia privada viajara sin motivo.
-        Para descargar se usa /api/downloads/[id], que
-        comprueba la compra.
-      */
       category: product.category
         ? {
           name: product.category.name,
+          slug: product.category.slug,
         }
         : null,
       createdAt: product.createdAt.toISOString(),

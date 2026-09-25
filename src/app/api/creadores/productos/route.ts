@@ -10,6 +10,11 @@ import {
 } from "@/lib/producto-metadata";
 import { sincronizarTagsProducto } from "@/lib/tags";
 import { esTipoLicencia } from "@/lib/licencias-comun";
+import {
+  CORPORATIVO,
+  revisarMedidas,
+  tipoPorClave,
+} from "@/lib/tipos-publicacion";
 
 function createSlug(text: string) {
   return text
@@ -64,6 +69,8 @@ export async function POST(req: NextRequest) {
       esPack,
       tags,
       licenseType,
+      formato,
+      imagenes,
     } = body;
 
     if (!name || !description || !categoryId || price === undefined) {
@@ -104,6 +111,40 @@ export async function POST(req: NextRequest) {
       ? await dimensionesDesdeUrl(coverUrl)
       : null;
 
+    /*
+      MEDIDAS OBLIGATORIAS SEGÚN EL TIPO
+
+      El formulario ya las comprueba antes de subir la imagen,
+      pero esa comprobación vive en el navegador y se puede
+      saltar. Aquí se repite sobre el archivo que de verdad
+      llegó, leyendo su cabecera.
+
+      Dos orígenes, a propósito:
+      - `formato`: lo que el creador declaró (una story de
+        evento, por ejemplo). No se guarda; solo dice qué
+        regla aplicar.
+      - la categoría: «corporativos» exige 1080 × 1350 sea lo
+        que sea que declare el cliente, porque el carrusel de
+        la portada es 4:5 exacto y una pieza de otra
+        proporción rompe la fila.
+    */
+    const exigida =
+      category.slug === "corporativos"
+        ? CORPORATIVO
+        : tipoPorClave("EVENTO")?.formatos.find((f) => f.clave === formato)
+            ?.medida ?? null;
+
+    const problemaMedidas = revisarMedidas(
+      exigida,
+      medidaPortada
+        ? { ancho: medidaPortada.width, alto: medidaPortada.height }
+        : null
+    );
+
+    if (problemaMedidas) {
+      return NextResponse.json({ error: problemaMedidas }, { status: 400 });
+    }
+
     const product = await prisma.product.create({
       data: {
         creatorId: session.userId as string,
@@ -138,6 +179,45 @@ export async function POST(req: NextRequest) {
     // La etiqueta "pack" es opcional y se puede quitar luego.
     if (esPack === true) {
       await aplicarEtiquetaPack(product.id, true);
+    }
+
+    /*
+      GALERÍA INICIAL
+
+      Antes había que crear el recurso y entrar a otra pantalla
+      para añadir imágenes. Ahora llegan con el resto del
+      formulario, en el orden en que el creador las colocó.
+
+      Cada una se mide igual que la portada, leyendo su
+      cabecera: de esos números dependen las Stories y el
+      carrusel de Corporativos. Un fallo aquí NO tumba la
+      creación —el recurso ya existe— y se puede reintentar
+      desde la pantalla de imágenes de siempre.
+    */
+    if (Array.isArray(imagenes) && imagenes.length) {
+      const urls = imagenes
+        .filter((url: unknown): url is string => typeof url === "string")
+        .map((url) => url.trim())
+        .filter(Boolean)
+        .slice(0, 20);
+
+      for (const [indice, url] of urls.entries()) {
+        try {
+          const medida = await dimensionesDesdeUrl(url);
+
+          await prisma.productImage.create({
+            data: {
+              productId: product.id,
+              url,
+              imageWidth: medida?.width ?? null,
+              imageHeight: medida?.height ?? null,
+              sortOrder: indice,
+            },
+          });
+        } catch (error) {
+          console.error("No se pudo guardar una imagen de galería:", error);
+        }
+      }
     }
 
     /*

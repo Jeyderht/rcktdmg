@@ -964,6 +964,26 @@ model CommercialCollection {
   coverUrl    String?
 
   /**
+   * Imagen que enseña QUÉ hay dentro, con marca de agua.
+   * No es la portada: la portada es el cartel de la colección
+   * en la tienda, y esta es la muestra del contenido. Nula
+   * mientras el creador no la suba.
+   */
+  previewUrl String?
+
+  /**
+   * Archivo único de la colección, privado.
+   * Opcional a propósito: sin él la compra sigue entregando
+   * cada recurso por separado con su descarga y su licencia,
+   * que es como funcionaba desde el principio. Con él, además,
+   * se puede bajar todo de una vez.
+   */
+  zipUrl String?
+
+  /// Motivo del rechazo. Solo lo escribe administración.
+  rejectionReason String?
+
+  /**
    * Precio propio, NO la suma de los recursos. Lo decide el
    * creador: una colección existe justamente para costar menos
    * que comprar sus piezas sueltas.
@@ -1000,12 +1020,21 @@ model CommercialCollectionItem {
 
 /**
  * Estado de una colección comercial.
- * Mismo criterio que los packs: sin cola de revisión, porque
- * solo puede contener recursos que YA están publicados y por
- * tanto ya pasaron por moderación.
+ *
+ * Pasa por la misma cola que un recurso: el creador la deja en
+ * DRAFT, la envía a revisión y administración la publica o la
+ * rechaza con un motivo. Sus piezas ya pasaron por moderación,
+ * pero la colección tiene precio, nombre, portada y descripción
+ * propios, y eso no lo ha revisado nadie.
+ *
+ * Las colecciones anteriores a esta etapa siguen en DRAFT,
+ * PUBLISHED o ARCHIVED sin tocarse: los estados nuevos se
+ * añaden, no sustituyen a ninguno.
  */
 enum CommercialCollectionStatus {
   DRAFT
+  PENDING_REVIEW
   PUBLISHED
+  REJECTED
   ARCHIVED
 }

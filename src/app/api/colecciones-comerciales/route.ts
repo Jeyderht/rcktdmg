@@ -65,6 +65,8 @@ export async function POST(request: Request) {
       description: body.description,
       price: body.price,
       coverUrl: body.coverUrl,
+      previewUrl: body.previewUrl,
+      zipUrl: body.zipUrl,
       productIds: body.productIds,
     });
 
