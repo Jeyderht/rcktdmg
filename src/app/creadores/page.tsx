@@ -99,17 +99,32 @@ export default async function CreatorsPage() {
                     <ArrowRight size={16} />
                   </Link>
                 ) : (
+                  /*
+                    Antes llevaba a "Mi cuenta" o a "Crear
+                    cuenta", que no es lo que viene a hacer
+                    quien entra aquí. Ahora lleva a la
+                    solicitud: es la acción de esta página.
+                    Quien no ha entrado pasa antes por el
+                    login, que después le devuelve aquí.
+                  */
                   <Link
-                    href={session ? "/mi-cuenta" : "/registro"}
+                    href={
+                      session
+                        ? "/creadores/unete"
+                        : "/login?redirect=%2Fcreadores%2Funete"
+                    }
                     className="rk-btn rk-btn-primary"
                   >
-                    {session ? "Mi cuenta" : "Crear cuenta"}
+                    Únete como creador
                     <ArrowRight size={16} />
                   </Link>
                 )}
 
-                <Link href="/tienda" className="rk-btn rk-btn-glass">
-                  Ver recursos
+                <Link
+                  href="/creadores/requisitos"
+                  className="rk-btn rk-btn-glass"
+                >
+                  Ver requisitos
                 </Link>
               </div>
 

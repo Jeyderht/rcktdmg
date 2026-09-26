@@ -42,6 +42,20 @@ export const LARGO_NOMBRE_PUBLICO = 60;
 export const LARGO_MOTIVO_RECHAZO = 500;
 export const MAXIMO_CATEGORIAS_SOLICITUD = 5;
 
+export const LARGO_EXPERIENCIA = 800;
+export const LARGO_DESCRIPCION_PORTAFOLIO = 600;
+
+/**
+ * Cuántos trabajos se aceptan en un portafolio.
+ *
+ * Doce es suficiente para juzgar a alguien y poco para que la
+ * revisión se vuelva una tarea eterna. Quien tenga más puede
+ * dejar además el enlace a su portafolio completo.
+ */
+export const MAXIMO_TRABAJOS_PORTAFOLIO = 12;
+export const LARGO_TITULO_TRABAJO = 80;
+export const LARGO_DESCRIPCION_TRABAJO = 300;
+
 /**
  * Nombre de usuario.
  *
@@ -128,6 +142,14 @@ export function normalizarUrl(valor: unknown): string | null {
 }
 
 /** Datos del formulario, tal y como viajan al servidor. */
+/** Un trabajo del portafolio, tal y como viaja. */
+export type TrabajoPortafolio = {
+  title: string;
+  description: string | null;
+  imageUrl: string | null;
+  linkUrl: string | null;
+};
+
 export type DatosSolicitud = {
   publicName: string;
   username: string;
@@ -152,15 +174,24 @@ export type SolicitudVista = {
   specialty: string;
   /** Enlace de portafolio, si lo dio. Público para administración. */
   portfolioUrl: string | null;
+  /** Qué es el portafolio, con las palabras del candidato. */
+  portfolioDescription: string | null;
+  /** Los trabajos presentados, en su orden. */
+  trabajos: TrabajoPortafolio[];
   /**
    * true si adjuntó un archivo. La URL NO viaja: vive en el
    * almacén privado y solo se abre desde administración.
    */
   tieneArchivo: boolean;
+  experience: string | null;
+  /** Cómo quiere verse en su perfil. Son imágenes públicas. */
+  avatarUrl: string | null;
+  coverUrl: string | null;
   websiteUrl: string | null;
   instagramUrl: string | null;
   facebookUrl: string | null;
   tiktokUrl: string | null;
+  otherUrl: string | null;
   categorias: { id: string; name: string; slug: string }[];
   rejectionReason: string | null;
   createdAt: string;

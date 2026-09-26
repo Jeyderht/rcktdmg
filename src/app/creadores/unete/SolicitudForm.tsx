@@ -5,15 +5,20 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CheckCircle2, Loader2, Upload } from "lucide-react";
 
+import EditorPortafolio from "@/components/EditorPortafolio";
+import SubidorImagen, { type EstadoImagen } from "@/components/SubidorImagen";
 import {
   LARGO_BIO_MAXIMO,
   LARGO_BIO_MINIMO,
+  LARGO_DESCRIPCION_PORTAFOLIO,
   LARGO_ESPECIALIDAD,
+  LARGO_EXPERIENCIA,
   LARGO_NOMBRE_PUBLICO,
   MAXIMO_CATEGORIAS_SOLICITUD,
   errorDeUsername,
   normalizarUsername,
   type SolicitudVista,
+  type TrabajoPortafolio,
 } from "@/lib/solicitudes-comun";
 
 type Categoria = { id: string; name: string; slug: string };
@@ -65,6 +70,32 @@ export default function SolicitudForm({
   const [instagramUrl, setInstagramUrl] = useState("");
   const [facebookUrl, setFacebookUrl] = useState("");
   const [tiktokUrl, setTiktokUrl] = useState("");
+  const [otherUrl, setOtherUrl] = useState("");
+
+  const [experience, setExperience] = useState(
+    rechazada ? (solicitudPrevia.experience ?? "") : ""
+  );
+
+  /*
+    Cómo quiere verse en su perfil. Se piden AQUÍ y no después
+    de aprobar: administración juzga la candidatura entera, y
+    un perfil sin cara no se puede valorar.
+  */
+  const [avatar, setAvatar] = useState<EstadoImagen | null>(null);
+  const [portadaPerfil, setPortadaPerfil] = useState<EstadoImagen | null>(null);
+
+  const [portfolioDescription, setPortfolioDescription] = useState(
+    rechazada ? (solicitudPrevia.portfolioDescription ?? "") : ""
+  );
+
+  /*
+    Al corregir una solicitud rechazada se recuperan los
+    trabajos que ya había presentado: rehacerlos desde cero
+    sería castigar dos veces por el mismo motivo.
+  */
+  const [trabajos, setTrabajos] = useState<TrabajoPortafolio[]>(
+    rechazada ? solicitudPrevia.trabajos : []
+  );
 
   const [error, setError] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -120,8 +151,22 @@ export default function SolicitudForm({
 
     setError("");
 
-    if (!portfolioUrl.trim() && !portfolioFileUrl) {
-      setError("Añade tu portafolio: un enlace o un archivo.");
+    if (!portfolioUrl.trim() && !portfolioFileUrl && trabajos.length === 0) {
+      setError(
+        "Añade tu portafolio: sube al menos un trabajo, o deja un enlace o un archivo."
+      );
+      return;
+    }
+
+    /* Se avisa antes de enviar de lo que el servidor va a rechazar. */
+    const incompleto = trabajos.findIndex(
+      (t) => !t.title.trim() || (!t.imageUrl && !t.linkUrl)
+    );
+
+    if (incompleto >= 0) {
+      setError(
+        `El trabajo ${incompleto + 1} necesita un título y una imagen o un enlace.`
+      );
       return;
     }
 
@@ -139,10 +184,16 @@ export default function SolicitudForm({
           portfolioUrl: portfolioUrl.trim(),
           portfolioFileUrl,
           categoryIds: elegidas,
+          portfolioDescription: portfolioDescription.trim(),
+          portfolioItems: trabajos,
+          experience: experience.trim(),
+          avatarUrl: avatar?.url ?? "",
+          coverUrl: portadaPerfil?.url ?? "",
           websiteUrl: websiteUrl.trim(),
           instagramUrl: instagramUrl.trim(),
           facebookUrl: facebookUrl.trim(),
           tiktokUrl: tiktokUrl.trim(),
+          otherUrl: otherUrl.trim(),
         }),
       });
 
@@ -331,9 +382,37 @@ export default function SolicitudForm({
         <legend className="rk-eyebrow">Portafolio (obligatorio)</legend>
 
         <p className="text-[13px] leading-6 text-ink/55">
-          Necesitamos ver tu trabajo para revisar la solicitud. Vale un
-          enlace, un archivo, o los dos.
+          Necesitamos ver tu trabajo para revisar la solicitud. Vale
+          cualquiera de las tres formas: subir tus piezas, dejar un
+          enlace o adjuntar un archivo.
         </p>
+
+        <EditorPortafolio trabajos={trabajos} alCambiar={setTrabajos} />
+
+        <div>
+          <label
+            htmlFor="portfolioDescription"
+            className="text-sm font-medium"
+          >
+            Sobre tu portafolio
+          </label>
+
+          <textarea
+            id="portfolioDescription"
+            value={portfolioDescription}
+            onChange={(e) => setPortfolioDescription(e.target.value)}
+            maxLength={LARGO_DESCRIPCION_PORTAFOLIO}
+            rows={3}
+            placeholder="Qué tipo de trabajo haces y qué vas a publicar en RCKTDMG."
+            className="rk-textarea mt-1.5 w-full"
+          />
+
+          <p className="mt-1.5 text-[13px] text-ink/50">
+            Opcional. Ayuda a entender lo que estamos viendo.
+          </p>
+        </div>
+
+        <div className="rk-divider" />
 
         <div>
           <label htmlFor="portfolioUrl" className="text-sm font-medium">
@@ -393,6 +472,56 @@ export default function SolicitudForm({
         </div>
       </fieldset>
 
+      {/* ══════════ TU PERFIL ══════════ */}
+      <fieldset className="space-y-4">
+        <legend className="rk-eyebrow">Tu perfil</legend>
+
+        <p className="text-[13px] leading-6 text-ink/55">
+          Así te verá la gente si aprobamos tu solicitud. Puedes
+          cambiarlo después desde tu panel.
+        </p>
+
+        <div>
+          <label htmlFor="experience" className="text-sm font-medium">
+            Experiencia
+          </label>
+
+          <textarea
+            id="experience"
+            value={experience}
+            onChange={(e) => setExperience(e.target.value)}
+            maxLength={LARGO_EXPERIENCIA}
+            rows={3}
+            placeholder="Años trabajando, clientes, estudios, premios…"
+            className="rk-textarea mt-1.5 w-full"
+          />
+
+          <p className="mt-1.5 text-[13px] text-ink/50">
+            Opcional. Si estás empezando, cuéntalo igual.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <SubidorImagen
+            id="avatar-solicitud"
+            etiqueta="Foto de perfil"
+            requisito="avatar"
+            valor={avatar}
+            alCambiar={setAvatar}
+            ayuda="Cuadrada. Se recorta en círculo."
+          />
+
+          <SubidorImagen
+            id="portada-solicitud"
+            etiqueta="Portada de tu perfil"
+            requisito="portada-perfil"
+            valor={portadaPerfil}
+            alCambiar={setPortadaPerfil}
+            ayuda="Apaisada. Encabeza tu perfil público."
+          />
+        </div>
+      </fieldset>
+
       {/* ══════════ REDES ══════════ */}
       <fieldset className="space-y-4">
         <legend className="rk-eyebrow">Enlaces (opcional)</legend>
@@ -403,6 +532,7 @@ export default function SolicitudForm({
             ["instagramUrl", "Instagram", instagramUrl, setInstagramUrl],
             ["facebookUrl", "Facebook", facebookUrl, setFacebookUrl],
             ["tiktokUrl", "TikTok", tiktokUrl, setTiktokUrl],
+            ["otherUrl", "Otra red", otherUrl, setOtherUrl],
           ] as const
         ).map(([id, etiqueta, valor, asignar]) => (
           <div key={id}>

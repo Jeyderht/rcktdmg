@@ -233,6 +233,16 @@ export default function SolicitudesManager() {
                 {s.bio}
               </p>
 
+              {s.experience && (
+                <div className="mt-3">
+                  <p className="rk-eyebrow">Experiencia</p>
+
+                  <p className="mt-1 whitespace-pre-line text-[14px] leading-6 text-ink/70">
+                    {s.experience}
+                  </p>
+                </div>
+              )}
+
               {s.categorias.length > 0 && (
                 <ul className="mt-3 flex flex-wrap gap-1.5">
                   {s.categorias.map((c) => (
@@ -243,7 +253,82 @@ export default function SolicitudesManager() {
                 </ul>
               )}
 
-              {/* ══════════ PORTAFOLIO ══════════ */}
+              {/*
+                ══════════ PORTAFOLIO ══════════
+
+                Los trabajos se enseñan aquí, enteros y en el
+                orden que eligió el candidato. Revisar una
+                candidatura sin ver su trabajo es firmar a
+                ciegas, y aprobar es irreversible: cambia el
+                rol de la cuenta.
+              */}
+              {s.trabajos.length > 0 && (
+                <section className="mt-5">
+                  <p className="rk-eyebrow">
+                    Portafolio · {s.trabajos.length} trabajo
+                    {s.trabajos.length === 1 ? "" : "s"}
+                  </p>
+
+                  {s.portfolioDescription && (
+                    <p className="mt-2 whitespace-pre-line text-[13px] leading-6 text-ink/60">
+                      {s.portfolioDescription}
+                    </p>
+                  )}
+
+                  <ol className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                    {s.trabajos.map((trabajo, indice) => (
+                      <li
+                        key={`${s.id}-${indice}`}
+                        className="rounded-rk-md border border-line/12 p-3"
+                      >
+                        <div className="flex gap-3">
+                          {trabajo.imageUrl && (
+                            <span className="rk-media relative h-16 w-16 shrink-0 overflow-hidden rounded-rk-sm">
+                              <Image
+                                src={trabajo.imageUrl}
+                                alt={trabajo.title}
+                                fill
+                                className="object-cover"
+                                sizes="64px"
+                                unoptimized
+                              />
+                            </span>
+                          )}
+
+                          <div className="min-w-0 flex-1">
+                            <p className="flex items-baseline gap-1.5 text-[13px] font-medium">
+                              <span className="shrink-0 tabular-nums text-ink/40">
+                                {indice + 1}.
+                              </span>
+                              <span className="truncate">{trabajo.title}</span>
+                            </p>
+
+                            {trabajo.description && (
+                              <p className="mt-1 text-[12px] leading-5 text-ink/60">
+                                {trabajo.description}
+                              </p>
+                            )}
+
+                            {trabajo.linkUrl && (
+                              <a
+                                href={trabajo.linkUrl}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                                className="mt-1.5 inline-flex items-center gap-1 text-[12px] font-medium underline underline-offset-4"
+                              >
+                                <ExternalLink size={11} aria-hidden />
+                                Abrir
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              )}
+
+              {/* Enlaces, archivo privado y redes. */}
               <div className="mt-4 flex flex-wrap gap-2">
                 {s.portfolioUrl && (
                   <a
@@ -272,6 +357,7 @@ export default function SolicitudesManager() {
                   ["Instagram", s.instagramUrl],
                   ["Facebook", s.facebookUrl],
                   ["TikTok", s.tiktokUrl],
+                  ["Otra", s.otherUrl],
                 ]
                   .filter(([, url]) => Boolean(url))
                   .map(([etiqueta, url]) => (

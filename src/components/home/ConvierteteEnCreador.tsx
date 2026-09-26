@@ -39,7 +39,7 @@ export default function ConvierteteEnCreador({
           </div>
 
           <Link
-            href="/conviertete-en-creador"
+            href="/creadores/unete"
             className="rk-btn rk-btn-primary shrink-0"
           >
             Enviar mi solicitud

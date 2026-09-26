@@ -115,6 +115,18 @@ const CREATOR_LINKS: QuickLink[] = [
 ];
 
 const CLIENT_LINKS: QuickLink[] = [
+  /*
+    Va primero a propósito: es lo único de esta lista que
+    cambia lo que esta persona PUEDE hacer en RCKTDMG, y a
+    quien ya es creador no se le enseña —la lista de creador
+    es otra—.
+  */
+  {
+    href: "/creadores/unete",
+    label: "Únete como creador",
+    icon: Sparkles,
+    description: "Vende tus propios recursos",
+  },
   {
     href: "/mi-cuenta/compras",
     label: "Mis compras",

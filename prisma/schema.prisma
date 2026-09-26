@@ -486,6 +486,25 @@ model Product {
    */
   licenseType LicenseType @default(PERSONAL)
 
+  /**
+   * Qué pieza es, dentro de un evento.
+   *
+   * NULL a propósito, y para siempre: los recursos anteriores
+   * a esta etapa nunca declararon su tipo y no se les va a
+   * inventar uno. Null significa «no se declaró», que es
+   * distinto de «es otra cosa» (EVENT_OTHER, que sí es una
+   * elección del creador).
+   *
+   * Lo elige QUIEN PUBLICA y no se deduce de las medidas: un
+   * flyer de 1080 × 1920 sigue siendo un flyer. Las medidas
+   * sirven para comprobar el tipo declarado, nunca para
+   * cambiarlo.
+   *
+   * Solo lo usan las piezas de la categoría «eventos». En las
+   * demás queda null.
+   */
+  pieceType PieceType?
+
   collectionItems CollectionItem[]
   downloads       Download[]
   favorites       Favorite[]
@@ -789,6 +808,26 @@ enum CreatorStatus {
   REJECTED
 }
 
+/**
+ * Pieza de un evento.
+ *
+ * Los valores llevan el prefijo EVENT_ porque hoy solo se
+ * aplican a esa categoría. Si mañana otra necesita sus propios
+ * tipos, se añaden con su prefijo y estos no estorban.
+ *
+ * Cada valor se corresponde con una opción del formulario; la
+ * traducción vive en src/lib/tipos-publicacion.ts, que es
+ * donde ya estaban las opciones.
+ */
+enum PieceType {
+  EVENT_STORY
+  EVENT_FLYER
+  EVENT_COVER
+  EVENT_PROFILE
+  EVENT_POST
+  EVENT_OTHER
+}
+
 enum ProductStatus {
   DRAFT
   PENDING_REVIEW
@@ -877,6 +916,26 @@ model CreatorApplication {
   specialty  String
 
   /**
+   * Trayectoria: años trabajando, clientes, estudios. Opcional
+   * porque hay creadores que empiezan, y exigirla dejaría
+   * fuera justo a quien más necesita una oportunidad.
+   */
+  experience String?
+
+  /**
+   * Cómo quiere verse en su perfil público.
+   * Se piden EN LA SOLICITUD y no después: administración
+   * juzga la candidatura entera, y un perfil sin cara ni
+   * portada no se puede valorar. Al aprobar se copian al
+   * usuario.
+   */
+  avatarUrl String?
+  coverUrl  String?
+
+  /// Qué es el portafolio y qué se está mirando, con sus palabras.
+  portfolioDescription String?
+
+  /**
    * Portafolio. Al menos uno de los dos es obligatorio y el
    * servidor lo exige.
    * `portfolioUrl` es un enlace público que el propio
@@ -891,6 +950,8 @@ model CreatorApplication {
   instagramUrl String?
   facebookUrl  String?
   tiktokUrl    String?
+  /// Behance, Dribbble, YouTube… una sola, la que quiera añadir.
+  otherUrl     String?
 
   status CreatorApplicationStatus @default(PENDING)
 
@@ -909,6 +970,9 @@ model CreatorApplication {
 
   /// Categorías en las que dice que va a publicar.
   categories CreatorApplicationCategory[]
+
+  /// Trabajos presentados, en el orden que eligió el candidato.
+  portfolioItems CreatorPortfolioItem[]
 
   /// Cola de administración: pendientes primero, por antigüedad.
   @@index([status, createdAt])
@@ -929,6 +993,39 @@ model CreatorApplicationCategory {
 
   @@id([applicationId, categoryId])
   @@index([categoryId])
+}
+
+/**
+ * Un trabajo del portafolio.
+ *
+ * Convive con `portfolioUrl` y `portfolioFileUrl`, que siguen
+ * siendo válidos: las solicitudes anteriores a esta etapa solo
+ * tienen aquellos dos campos y deben seguir viéndose igual.
+ * Esto es la forma nueva de presentar varios trabajos, no su
+ * sustituto.
+ *
+ * `imageUrl` apunta al almacén PÚBLICO: son piezas que el
+ * candidato quiere enseñar. El archivo privado sigue siendo
+ * `portfolioFileUrl`, que solo abre administración.
+ */
+model CreatorPortfolioItem {
+  id            String @id @default(cuid())
+  applicationId String
+
+  title       String
+  description String?
+  /// Imagen de la pieza. Al menos esto o `linkUrl`.
+  imageUrl    String?
+  /// Enlace al trabajo publicado, si vive en otro sitio.
+  linkUrl     String?
+
+  /// Orden en que el candidato quiere que se vean.
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  application CreatorApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId, sortOrder])
 }
 
 enum CreatorApplicationStatus {

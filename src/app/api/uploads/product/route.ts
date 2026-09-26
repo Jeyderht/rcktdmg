@@ -2,36 +2,25 @@
 import { cookies } from "next/headers";
 import { verifySessionToken } from "@/lib/auth";
 import { putPrivate } from "@/lib/storage";
+import {
+  EXTENSIONES_ARCHIVO,
+  MAXIMO_BYTES_ARCHIVO,
+} from "@/lib/requisitos-contenido";
 import path from "path";
 import crypto from "crypto";
 
 export const runtime = "nodejs";
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024;
+/*
+  El límite y las extensiones ya no se declaran aquí: vienen
+  de requisitos-contenido.ts, que es lo que también lee el
+  formulario del creador y la página de requisitos. Antes
+  estaban escritas en este archivo y repetidas en la interfaz,
+  así que podían dejar de coincidir sin que nadie lo notara.
+*/
+const MAX_FILE_SIZE = MAXIMO_BYTES_ARCHIVO;
 
-const ALLOWED_EXTENSIONS = [
-  ".zip",
-  ".rar",
-  ".7z",
-  ".pdf",
-  ".doc",
-  ".docx",
-  ".xls",
-  ".xlsx",
-  ".ppt",
-  ".pptx",
-  ".psd",
-  ".ai",
-  ".eps",
-  ".fig",
-  ".png",
-  ".jpg",
-  ".jpeg",
-  ".webp",
-  ".mp4",
-  ".mov",
-  ".txt",
-];
+const ALLOWED_EXTENSIONS: readonly string[] = EXTENSIONES_ARCHIVO;
 
 export async function POST(request: Request) {
   try {

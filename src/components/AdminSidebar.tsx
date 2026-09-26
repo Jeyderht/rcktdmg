@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import {
+  BookOpen,
   ClipboardCheck,
   LayoutDashboard,
   Layers,
@@ -69,9 +70,14 @@ const SECTIONS: Section[] = [
     match: { path: "/admin/recursos", query: "estado=PENDING_REVIEW" },
   },
   {
-    href: "/admin/solicitudes",
+    href: "/admin/creadores",
     label: "Solicitudes",
     icon: Inbox,
+  },
+  {
+    href: "/admin/requisitos",
+    label: "Requisitos",
+    icon: BookOpen,
   },
   {
     href: "/admin/packs",

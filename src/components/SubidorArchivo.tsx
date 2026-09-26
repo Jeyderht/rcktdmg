@@ -4,6 +4,11 @@ import { useRef, useState } from "react";
 import { CheckCircle2, FileArchive, RefreshCw, X } from "lucide-react";
 
 import { subirArchivoDeProducto } from "@/lib/storage/client-upload";
+import {
+  EXTENSIONES_COMPRIMIDO,
+  MAXIMO_BYTES_ARCHIVO,
+  enMegas as formatearMegas,
+} from "@/lib/requisitos-contenido";
 
 /**
  * Subir un archivo privado (el ZIP de una colección).
@@ -27,15 +32,16 @@ export type ArchivoGuardado = {
   bytes: number;
 };
 
-/** Lo que admite una colección. */
-const EXTENSIONES = [".zip", ".rar", ".7z"];
+/*
+  Las reglas vienen de requisitos-contenido.ts: las mismas que
+  se le enseñan al creador en la página de requisitos y las
+  mismas que comprueba el servidor.
+*/
+const EXTENSIONES: readonly string[] = EXTENSIONES_COMPRIMIDO;
 
-/** Igual que el del endpoint de recursos. */
-const MAXIMO_BYTES = 100 * 1024 * 1024;
+const MAXIMO_BYTES = MAXIMO_BYTES_ARCHIVO;
 
-function enMegas(bytes: number): string {
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
+const enMegas = formatearMegas;
 
 export default function SubidorArchivo({
   id,

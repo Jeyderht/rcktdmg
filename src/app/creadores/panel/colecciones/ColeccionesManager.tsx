@@ -389,6 +389,7 @@ export default function ColeccionesManager() {
             <SubidorImagen
               id="col-preview"
               etiqueta="Vista previa"
+              requisito="preview"
               valor={
                 preview ? { url: preview, ancho: null, alto: null } : null
               }

@@ -92,7 +92,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluta("/tienda"), lastModified: ahora, changeFrequency: "daily", priority: 0.9 },
     { url: absoluta("/packs"), lastModified: ahora, changeFrequency: "weekly", priority: 0.8 },
     { url: absoluta("/colecciones-comerciales"), lastModified: ahora, changeFrequency: "weekly", priority: 0.8 },
-    { url: absoluta("/conviertete-en-creador"), lastModified: ahora, changeFrequency: "monthly", priority: 0.4 },
+    { url: absoluta("/creadores/unete"), lastModified: ahora, changeFrequency: "monthly", priority: 0.4 },
     { url: absoluta("/categorias"), lastModified: ahora, changeFrequency: "weekly", priority: 0.7 },
     { url: absoluta("/creadores"), lastModified: ahora, changeFrequency: "weekly", priority: 0.7 },
     { url: absoluta("/tags"), lastModified: ahora, changeFrequency: "weekly", priority: 0.5 },

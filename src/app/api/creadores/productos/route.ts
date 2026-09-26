@@ -10,10 +10,12 @@ import {
 } from "@/lib/producto-metadata";
 import { sincronizarTagsProducto } from "@/lib/tags";
 import { esTipoLicencia } from "@/lib/licencias-comun";
+import { MAXIMO_IMAGENES_GALERIA } from "@/lib/requisitos-contenido";
 import {
   CORPORATIVO,
+  MEDIDA_DE_PIEZA,
+  piezaDeFormato,
   revisarMedidas,
-  tipoPorClave,
 } from "@/lib/tipos-publicacion";
 
 function createSlug(text: string) {
@@ -120,19 +122,24 @@ export async function POST(req: NextRequest) {
       llegó, leyendo su cabecera.
 
       Dos orígenes, a propósito:
-      - `formato`: lo que el creador declaró (una story de
-        evento, por ejemplo). No se guarda; solo dice qué
-        regla aplicar.
+      - la PIEZA que declaró el creador. Ahora sí se guarda,
+        en `pieceType`, y es la que manda: un flyer sigue
+        siendo un flyer aunque mida 1080 × 1920. Las medidas
+        comprueban el tipo elegido; nunca lo cambian.
       - la categoría: «corporativos» exige 1080 × 1350 sea lo
         que sea que declare el cliente, porque el carrusel de
         la portada es 4:5 exacto y una pieza de otra
         proporción rompe la fila.
     */
+    const pieza =
+      category.slug === "eventos" ? piezaDeFormato("EVENTO", formato) : null;
+
     const exigida =
       category.slug === "corporativos"
         ? CORPORATIVO
-        : tipoPorClave("EVENTO")?.formatos.find((f) => f.clave === formato)
-            ?.medida ?? null;
+        : pieza
+          ? MEDIDA_DE_PIEZA[pieza]
+          : null;
 
     const problemaMedidas = revisarMedidas(
       exigida,
@@ -173,6 +180,11 @@ export async function POST(req: NextRequest) {
         licenseType: esTipoLicencia(licenseType)
           ? licenseType
           : "PERSONAL",
+        /*
+          Qué pieza es. Null fuera de eventos y null también si
+          el creador no declaró ninguna: no se le inventa una.
+        */
+        pieceType: pieza,
       },
     });
 
@@ -199,7 +211,7 @@ export async function POST(req: NextRequest) {
         .filter((url: unknown): url is string => typeof url === "string")
         .map((url) => url.trim())
         .filter(Boolean)
-        .slice(0, 20);
+        .slice(0, MAXIMO_IMAGENES_GALERIA);
 
       for (const [indice, url] of urls.entries()) {
         try {

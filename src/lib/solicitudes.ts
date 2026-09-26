@@ -5,10 +5,15 @@ import { crearNotificacion } from "@/lib/notificaciones";
 import {
   LARGO_BIO_MAXIMO,
   LARGO_BIO_MINIMO,
+  LARGO_DESCRIPCION_PORTAFOLIO,
+  LARGO_DESCRIPCION_TRABAJO,
   LARGO_ESPECIALIDAD,
+  LARGO_EXPERIENCIA,
   LARGO_MOTIVO_RECHAZO,
   LARGO_NOMBRE_PUBLICO,
+  LARGO_TITULO_TRABAJO,
   MAXIMO_CATEGORIAS_SOLICITUD,
+  MAXIMO_TRABAJOS_PORTAFOLIO,
   errorDeUsername,
   normalizarUrl,
   normalizarUsername,
@@ -39,10 +44,16 @@ type Validada = {
   specialty: string;
   portfolioUrl: string | null;
   portfolioFileUrl: string | null;
+  portfolioDescription: string | null;
+  portfolioItems: TrabajoValidado[];
+  experience: string | null;
+  avatarUrl: string | null;
+  coverUrl: string | null;
   websiteUrl: string | null;
   instagramUrl: string | null;
   facebookUrl: string | null;
   tiktokUrl: string | null;
+  otherUrl: string | null;
   categoryIds: string[];
 };
 
@@ -135,7 +146,22 @@ async function validar(
 
   const portfolioFileUrl = archivoCrudo || null;
 
-  if (!portfolioUrl && !portfolioFileUrl) {
+  /*
+    TRABAJOS DEL PORTAFOLIO
+
+    La forma nueva de presentar el trabajo: varias piezas, en
+    el orden que elija el candidato. Cada una necesita título
+    y, al menos, una imagen o un enlace: un título suelto no
+    enseña nada.
+
+    Convive con el enlace y el archivo de siempre, que siguen
+    siendo válidos. Basta con UNA de las tres formas.
+  */
+  const trabajos = validarTrabajos(datos.portfolioItems);
+
+  if (!trabajos.ok) return trabajos;
+
+  if (!portfolioUrl && !portfolioFileUrl && trabajos.items.length === 0) {
     if (String(datos.portfolioUrl ?? "").trim()) {
       return {
         ok: false,
@@ -148,7 +174,8 @@ async function validar(
     return {
       ok: false,
       estado: 400,
-      error: "Añade tu portafolio: un enlace o un archivo.",
+      error:
+        "Añade tu portafolio: sube al menos un trabajo, o deja un enlace o un archivo.",
     };
   }
 
@@ -160,6 +187,7 @@ async function validar(
     "instagramUrl",
     "facebookUrl",
     "tiktokUrl",
+    "otherUrl",
   ] as const) {
     const crudo = String(datos[campo] ?? "").trim();
 
@@ -241,13 +269,109 @@ async function validar(
       specialty,
       portfolioUrl,
       portfolioFileUrl,
+      portfolioDescription: textoCorto(
+        datos.portfolioDescription,
+        LARGO_DESCRIPCION_PORTAFOLIO
+      ),
+      portfolioItems: trabajos.items,
+      experience: textoCorto(datos.experience, LARGO_EXPERIENCIA),
+      avatarUrl: textoCorto(datos.avatarUrl, 500),
+      coverUrl: textoCorto(datos.coverUrl, 500),
       websiteUrl: redes.websiteUrl,
       instagramUrl: redes.instagramUrl,
       facebookUrl: redes.facebookUrl,
       tiktokUrl: redes.tiktokUrl,
+      otherUrl: redes.otherUrl,
       categoryIds: pedidas,
     },
   };
+}
+
+/** Texto recortado, o null si venía vacío. Nunca guarda "". */
+function textoCorto(valor: unknown, largo: number): string | null {
+  const limpio = String(valor ?? "")
+    .trim()
+    /*
+      Espacios repetidos a uno solo. `\s`, no `s`: escrito sin
+      la barra esto borraba TODAS las eses del texto, y una URL
+      guardada así dejaba de ser una URL.
+    */
+    .replace(/\s+/g, " ")
+    .slice(0, largo);
+
+  return limpio || null;
+}
+
+type TrabajoValidado = {
+  title: string;
+  description: string | null;
+  imageUrl: string | null;
+  linkUrl: string | null;
+};
+
+/**
+ * Revisa los trabajos que llegan del formulario.
+ *
+ * Se exige título y algo que mirar. El orden lo da la posición
+ * en la lista, no un número que mande el cliente: así no puede
+ * colar dos piezas en el mismo puesto.
+ */
+function validarTrabajos(
+  crudo: unknown
+):
+  | { ok: true; items: TrabajoValidado[] }
+  | { ok: false; estado: number; error: string } {
+  if (crudo === undefined || crudo === null) return { ok: true, items: [] };
+
+  if (!Array.isArray(crudo)) {
+    return { ok: false, estado: 400, error: "El portafolio no es válido." };
+  }
+
+  if (crudo.length > MAXIMO_TRABAJOS_PORTAFOLIO) {
+    return {
+      ok: false,
+      estado: 400,
+      error: `El portafolio admite hasta ${MAXIMO_TRABAJOS_PORTAFOLIO} trabajos.`,
+    };
+  }
+
+  const items: TrabajoValidado[] = [];
+
+  for (const [indice, fila] of crudo.entries()) {
+    if (!fila || typeof fila !== "object") continue;
+
+    const dato = fila as Record<string, unknown>;
+
+    const title = textoCorto(dato.title, LARGO_TITULO_TRABAJO);
+
+    const imageUrl = textoCorto(dato.imageUrl, 500);
+    const linkUrl = normalizarUrl(dato.linkUrl);
+
+    if (!title) {
+      return {
+        ok: false,
+        estado: 400,
+        error: `Ponle título al trabajo ${indice + 1}.`,
+      };
+    }
+
+    if (!imageUrl && !linkUrl) {
+      return {
+        ok: false,
+        estado: 400,
+        error: `El trabajo «${title}» necesita una imagen o un enlace.`,
+      };
+    }
+
+    items.push({
+      title,
+      description: textoCorto(dato.description, LARGO_DESCRIPCION_TRABAJO),
+      imageUrl,
+      linkUrl,
+    });
+  }
+
+  return { ok: true, items };
 }
 
 /* ══════════════ ENVÍO ══════════════ */
@@ -311,12 +435,24 @@ export async function enviarSolicitud(
         specialty: v.specialty,
         portfolioUrl: v.portfolioUrl,
         portfolioFileUrl: v.portfolioFileUrl,
+        portfolioDescription: v.portfolioDescription,
+        experience: v.experience,
+        avatarUrl: v.avatarUrl,
+        coverUrl: v.coverUrl,
         websiteUrl: v.websiteUrl,
         instagramUrl: v.instagramUrl,
         facebookUrl: v.facebookUrl,
         tiktokUrl: v.tiktokUrl,
+        otherUrl: v.otherUrl,
         categories: {
           create: v.categoryIds.map((categoryId) => ({ categoryId })),
+        },
+        /* El orden lo fija la posición, no un número del cliente. */
+        portfolioItems: {
+          create: v.portfolioItems.map((trabajo, indice) => ({
+            ...trabajo,
+            sortOrder: indice,
+          })),
         },
       },
       select: { id: true },
@@ -356,7 +492,7 @@ async function avisarAdministracion(
         type: "CREATOR_APPLICATION_SUBMITTED",
         title: "Nueva solicitud de creador",
         body: `${nombre} quiere publicar en RCKTDMG.`,
-        href: `/admin/solicitudes?id=${solicitudId}`,
+        href: `/admin/creadores?id=${solicitudId}`,
       });
     }
   } catch (error) {
@@ -388,15 +524,44 @@ export async function aprobarSolicitud(
       publicName: true,
       username: true,
       bio: true,
+      avatarUrl: true,
+      coverUrl: true,
       websiteUrl: true,
       instagramUrl: true,
       facebookUrl: true,
       tiktokUrl: true,
+      /* Para comprobar que hay algo que revisar. */
+      portfolioUrl: true,
+      portfolioFileUrl: true,
+      _count: { select: { portfolioItems: true } },
     },
   });
 
   if (!solicitud) {
     return { ok: false, estado: 404, error: "Solicitud no encontrada." };
+  }
+
+  /*
+    SIN PORTAFOLIO NO SE APRUEBA.
+
+    El formulario ya lo exige al enviar, así que en la práctica
+    no debería llegar aquí ninguna sin él. Se comprueba
+    igualmente porque aprobar es irreversible —cambia el rol—
+    y porque las solicitudes viejas se crearon con otras
+    reglas: más vale un 409 que un creador aprobado sin que
+    nadie haya visto su trabajo.
+  */
+  if (
+    !solicitud.portfolioUrl &&
+    !solicitud.portfolioFileUrl &&
+    solicitud._count.portfolioItems === 0
+  ) {
+    return {
+      ok: false,
+      estado: 409,
+      error:
+        "Esta solicitud no tiene portafolio. Pídele al candidato que lo añada antes de aprobarla.",
+    };
   }
 
   if (solicitud.status !== "PENDING") {
@@ -446,6 +611,12 @@ export async function aprobarSolicitud(
           username: solicitud.username,
           publicName: solicitud.publicName,
           bio: solicitud.bio,
+          /*
+            La foto y la portada solo se copian si las envió:
+            un null aquí borraría las que ya tuviera puestas.
+          */
+          ...(solicitud.avatarUrl ? { avatarUrl: solicitud.avatarUrl } : {}),
+          ...(solicitud.coverUrl ? { coverUrl: solicitud.coverUrl } : {}),
           websiteUrl: solicitud.websiteUrl,
           instagramUrl: solicitud.instagramUrl,
           facebookUrl: solicitud.facebookUrl,
@@ -550,7 +721,7 @@ export async function rechazarSolicitud(
       type: "CREATOR_APPLICATION_REJECTED",
       title: "Tu solicitud no fue aprobada",
       body: motivo,
-      href: "/conviertete-en-creador",
+      href: "/creadores/unete",
     });
   } catch (error) {
     console.error("aviso de rechazo:", error);
@@ -570,11 +741,25 @@ const SELECCION = {
   specialty: true,
   portfolioUrl: true,
   portfolioFileUrl: true,
+  portfolioDescription: true,
+  experience: true,
+  avatarUrl: true,
+  coverUrl: true,
   websiteUrl: true,
   instagramUrl: true,
   facebookUrl: true,
   tiktokUrl: true,
+  otherUrl: true,
   rejectionReason: true,
+  portfolioItems: {
+    orderBy: { sortOrder: "asc" as const },
+    select: {
+      title: true,
+      description: true,
+      imageUrl: true,
+      linkUrl: true,
+    },
+  },
   createdAt: true,
   reviewedAt: true,
   user: {
@@ -600,6 +785,12 @@ function aVista(fila: Fila): SolicitudVista {
     bio: fila.bio,
     specialty: fila.specialty,
     portfolioUrl: fila.portfolioUrl,
+    portfolioDescription: fila.portfolioDescription,
+    trabajos: fila.portfolioItems,
+    experience: fila.experience,
+    avatarUrl: fila.avatarUrl,
+    coverUrl: fila.coverUrl,
+    otherUrl: fila.otherUrl,
     /*
       La URL del archivo NO sale de aquí: apunta al almacén
       privado. La interfaz solo sabe que existe, y para abrirlo

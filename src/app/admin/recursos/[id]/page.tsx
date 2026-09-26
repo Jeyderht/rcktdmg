@@ -7,6 +7,33 @@ import { ChevronLeft, ExternalLink } from "lucide-react";
 import ResourceActions from "../ResourceActions";
 import { verifySessionToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { enMegas, evaluarRecurso } from "@/lib/requisitos-contenido";
+
+/**
+ * Cuánto pesa un archivo público, sin descargarlo.
+ *
+ * Devuelve el texto listo para enseñar, o «sin medir» si no
+ * se puede averiguar: ni se supone un tamaño ni se deja el
+ * hueco vacío sin explicar por qué.
+ */
+async function pesoDe(url: string | null): Promise<string> {
+  if (!url) return "sin archivo";
+
+  try {
+    const respuesta = await fetch(url, {
+      method: "HEAD",
+      cache: "no-store",
+    });
+
+    const largo = respuesta.headers.get("content-length");
+
+    if (!respuesta.ok || !largo) return "sin medir";
+
+    return enMegas(Number(largo));
+  } catch {
+    return "sin medir";
+  }
+}
 import { COLORES, TAG_PACK } from "@/lib/catalogo";
 
 type Props = {
@@ -130,6 +157,40 @@ export default async function AdminRecursoPage({ params }: Props) {
       }).format(resource.updatedAt),
     },
   ];
+
+  /*
+    ¿CUMPLE LO QUE SE LE PIDE?
+
+    Se aplica la misma función que documenta los requisitos y
+    la misma que rechaza una subida. Quien revisa ve el
+    veredicto y el motivo, en vez de tener que descargar la
+    portada y medirla.
+  */
+  /*
+    PESO REAL DE LA PORTADA
+
+    No está guardado en la base, así que se pregunta al
+    almacén con un HEAD: trae la cabecera, no el archivo. Se
+    hace aquí y no en la lista porque esta página ya es
+    dinámica y se mira de una en una.
+
+    Si el almacén no contesta o no dice el tamaño, se admite
+    no saberlo. Enseñar el límite permitido en lugar del peso
+    real sería peor que dejarlo en blanco: parecería un dato.
+  */
+  const pesoPortada = await pesoDe(resource.coverUrl);
+
+  const veredicto = evaluarRecurso({
+    categoriaSlug: resource.category.slug,
+    pieceType: resource.pieceType,
+    coverUrl: resource.coverUrl,
+    coverWidth: resource.coverWidth,
+    coverHeight: resource.coverHeight,
+    previewUrl: resource.previewUrl,
+    fileUrl: resource.fileUrl,
+    fileFormat: resource.fileFormat,
+    imagenes: resource.images.length,
+  });
 
   // Estado real de cada archivo, sin suponer nada.
   const files = [
@@ -310,6 +371,73 @@ export default async function AdminRecursoPage({ params }: Props) {
         </section>
 
         {/* ========== ARCHIVOS ========== */}
+        {/* ══════════ ¿CUMPLE? ══════════ */}
+        <section className="rk-fade-up mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="rk-eyebrow">Requisitos de contenido</p>
+
+            <Link
+              href="/admin/requisitos"
+              className="text-[13px] font-medium underline underline-offset-4"
+            >
+              Ver las reglas
+            </Link>
+          </div>
+
+          <div className="rk-card mt-3 p-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={`rk-badge ${
+                  veredicto.valido ? "rk-badge-success" : "rk-badge-danger"
+                }`}
+              >
+                {veredicto.valido ? "Válido" : "No válido"}
+              </span>
+
+              {veredicto.problemas.length > 0 && (
+                <span className="rk-badge rk-badge-warning">
+                  {veredicto.problemas.length} aviso
+                  {veredicto.problemas.length === 1 ? "" : "s"}
+                </span>
+              )}
+            </div>
+
+            <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                ["Tipo", veredicto.tipo],
+                ["Pieza", veredicto.pieza ?? "sin declarar"],
+                ["Dimensiones", veredicto.medidas ?? "sin registrar"],
+                ["Esperado", veredicto.exigido ?? "cualquiera"],
+                ["Formato", veredicto.formato ?? "sin archivo"],
+                ["Peso de la portada", pesoPortada],
+              ].map(([etiqueta, valor]) => (
+                <div key={etiqueta}>
+                  <dt className="text-[12px] uppercase tracking-wide text-ink/50">
+                    {etiqueta}
+                  </dt>
+
+                  <dd className="mt-0.5 text-[14px] font-medium tabular-nums">
+                    {valor}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            {veredicto.problemas.length > 0 && (
+              <ul className="mt-4 space-y-1.5 border-t border-line/12 pt-4">
+                {veredicto.problemas.map((problema) => (
+                  <li
+                    key={problema}
+                    className="text-[13px] leading-6 text-ink/70"
+                  >
+                    · {problema}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+
         <section className="rk-fade-up mt-8">
           <p className="rk-eyebrow">Archivos</p>
 

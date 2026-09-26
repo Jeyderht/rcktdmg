@@ -6,6 +6,8 @@ import { FormEvent, useState } from "react";
 import TagsInput from "@/components/TagsInput";
 import SubidorImagen, { type EstadoImagen } from "@/components/SubidorImagen";
 import {
+  CORPORATIVO,
+  STORY,
   TIPOS_PUBLICACION,
   esRecursoSuelto,
   type ClaveTipo,
@@ -694,6 +696,13 @@ export default function NuevoRecursoForm({
               <SubidorImagen
                 id="portada"
                 etiqueta="Portada"
+                requisito={
+                  formato?.medida === STORY
+                    ? "story"
+                    : formato?.medida === CORPORATIVO
+                      ? "corporativo"
+                      : "portada"
+                }
                 obligatorio
                 medida={formato?.medida ?? null}
                 valor={portada}
@@ -708,6 +717,7 @@ export default function NuevoRecursoForm({
               <SubidorImagen
                 id="preview"
                 etiqueta="Vista previa"
+                requisito="preview"
                 valor={preview}
                 alCambiar={setPreview}
                 ayuda="Se muestra con marca de agua. Opcional."
@@ -783,6 +793,7 @@ export default function NuevoRecursoForm({
               <SubidorImagen
                 id="galeria"
                 etiqueta="Imagen de galería"
+                requisito="galeria"
                 valor={null}
                 alCambiar={(imagen) => {
                   if (imagen) setGaleria((lista) => [...lista, imagen]);

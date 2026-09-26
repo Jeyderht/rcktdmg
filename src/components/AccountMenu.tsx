@@ -7,6 +7,7 @@ import {
   LogIn,
   LogOut,
   Settings,
+  Sparkles,
   UserPlus,
   UserRound,
 } from "lucide-react";
@@ -166,6 +167,23 @@ export default function AccountMenu({
           <Settings size={15} className="shrink-0 text-ink/60" />
           Ajustes
         </Link>
+
+        {/*
+          Solo se ofrece a quien AÚN no puede publicar. A un
+          creador o a un administrador esta entrada no le dice
+          nada, y llenar el menú de opciones que no sirven es
+          la forma más rápida de que nadie lo lea.
+        */}
+        {user.role !== "CREATOR" && user.role !== "ADMIN" && (
+          <Link
+            href="/creadores/unete"
+            onClick={() => setOpen(false)}
+            className="rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
+          >
+            <Sparkles size={15} className="shrink-0 text-ink/60" />
+            Únete como creador
+          </Link>
+        )}
 
         <button
           type="button"

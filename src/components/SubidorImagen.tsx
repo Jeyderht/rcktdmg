@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { CheckCircle2, ImageIcon, RefreshCw, X } from "lucide-react";
 
 import { subirImagen } from "@/lib/storage/client-upload";
+import AvisoRequisitos from "@/components/AvisoRequisitos";
 import {
   revisarMedidas,
   type MedidaExigida,
@@ -70,6 +71,7 @@ export default function SubidorImagen({
   valor,
   alCambiar,
   obligatorio = false,
+  requisito,
 }: {
   id: string;
   etiqueta: string;
@@ -79,6 +81,11 @@ export default function SubidorImagen({
   valor: EstadoImagen | null;
   alCambiar: (estado: EstadoImagen | null) => void;
   obligatorio?: boolean;
+  /**
+   * Clave de requisitos-contenido.ts. Con ella, junto a la
+   * etiqueta aparece un ⓘ con las reglas exactas del campo.
+   */
+  requisito?: string;
 }) {
   const [subiendo, setSubiendo] = useState(false);
   const [progreso, setProgreso] = useState<number | null>(null);
@@ -159,6 +166,8 @@ export default function SubidorImagen({
             {medida.ancho} × {medida.alto}
           </span>
         )}
+
+        {requisito && <AvisoRequisitos clave={requisito} medida={medida} />}
       </p>
 
       <input
