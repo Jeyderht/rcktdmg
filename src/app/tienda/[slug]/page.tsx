@@ -35,6 +35,7 @@ import {
 import { listarVersiones, mostrarVersion } from "@/lib/versiones";
 import { paraProducto, packsQueIncluyen } from "@/lib/recomendaciones";
 import PackCard from "@/components/PackCard";
+import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 import { getSession } from "@/lib/session";
 import { tieneProducto } from "@/lib/adquisiciones";
 import YaAdquirido from "@/components/YaAdquirido";
@@ -419,6 +420,16 @@ export default async function ProductPage({
                     {/* ══════════ GALERÍA ══════════ */}
                     <div className="rk-fade-up w-full min-w-0">
                         <ProductGallery
+                            /*
+                              9:16 solo para la story de evento;
+                              4:5 para el resto del catálogo. Lo
+                              decide la misma función que exige
+                              la medida al subir la portada.
+                            */
+                            proporcion={proporcionDeRecurso(
+                                product.category.slug,
+                                product.pieceType
+                            )}
                             name={product.name}
                             coverUrl={product.coverUrl}
                             coverWidth={product.coverWidth}
@@ -563,6 +574,7 @@ export default async function ProductPage({
                                     <AddToCartButton
                                         product={{
                                             id: product.id,
+                                            pieceType: product.pieceType,
                                             name: product.name,
                                             price: Number(product.price),
                                             slug: product.slug,

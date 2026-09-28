@@ -9,6 +9,7 @@ import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { prisma } from "@/lib/prisma";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 
 export const metadata: Metadata = paginaPublica({
   titulo: "Categorías",
@@ -50,6 +51,8 @@ export default async function CategoriesPage() {
         take: 1,
         select: {
           coverUrl: true,
+          /* Decide el marco de la miniatura de la categoría. */
+          pieceType: true,
 
           images: {
             orderBy: {
@@ -119,8 +122,12 @@ export default async function CategoriesPage() {
                 >
                   <div className="flex items-center gap-4 p-3.5">
                     {/* Portada real del recurso más reciente,
-                        en 9:16 y siempre nítida. */}
-                    <div className="rk-media rk-aspect-product relative w-16 shrink-0 overflow-hidden rounded-rk-sm">
+                        en su marco y siempre nítida. */}
+                    <div
+                      className={`rk-media ${claseProporcion(
+                        category.products[0]?.pieceType
+                      )} relative w-16 shrink-0 overflow-hidden rounded-rk-sm`}
+                    >
                       {preview ? (
                         <Image
                           src={preview}

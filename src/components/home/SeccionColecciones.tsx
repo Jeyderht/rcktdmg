@@ -43,7 +43,7 @@ export default function SeccionColecciones({
 
           <Link
             href="/colecciones-comerciales"
-            className="rk-press group inline-flex items-center gap-2 text-sm font-semibold"
+            className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
           >
             Ver todas
             <ArrowUpRight

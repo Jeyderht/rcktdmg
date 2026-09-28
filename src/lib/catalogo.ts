@@ -289,6 +289,8 @@ export const SELECCION_TARJETA = {
   coverUrl: true,
   fileFormat: true,
   color: true,
+  /* Con la categoría, decide la proporción del marco. */
+  pieceType: true,
   createdAt: true,
   avgRating: true,
   reviewCount: true,
@@ -330,6 +332,7 @@ export function aTarjeta(producto: ProductoTarjeta) {
     coverUrl: producto.coverUrl,
     image: producto.images[0] ?? null,
     category: producto.category,
+    pieceType: producto.pieceType,
     fileFormat: producto.fileFormat,
     esPack: producto.tags.length > 0,
     // null si todavía no tiene reseñas publicadas.

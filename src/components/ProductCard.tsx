@@ -1,4 +1,9 @@
 import Image from "next/image";
+
+import {
+  proporcionDeRecurso,
+  type TipoPieza,
+} from "@/lib/tipos-publicacion";
 import Link from "next/link";
 
 import FavoriteButton from "@/components/FavoriteButton";
@@ -20,6 +25,12 @@ export type ProductCardData = {
   image?: { url: string; alt?: string | null } | null;
   /** El slug es opcional: la tarjeta solo pinta el nombre. */
   category?: { name: string; slug?: string } | null;
+  /**
+   * Pieza declarada, cuando la hay. Junto a la categoría
+   * decide con qué proporción se enseña la tarjeta: una story
+   * es 9:16 y el resto del catálogo 4:5.
+   */
+  pieceType?: TipoPieza | null;
   /** Autor real del recurso. Opcional: solo se pinta si llega. */
   creator?: { name: string; username: string | null } | null;
   /** Formato real del archivo. Solo se pinta si existe. */
@@ -70,13 +81,35 @@ export default function ProductCard({
         className="relative block"
         aria-label={product.name}
       >
-        <div className="rk-frame rk-aspect-product w-full">
+        {/*
+          EL MARCO LO DECIDE EL RECURSO, no una proporción
+          fija. Antes todas las tarjetas eran 9:16, así que una
+          pieza 4:5 —hoy, casi todas— perdía por recorte la
+          quinta parte de su alto. Social Media y los recursos
+          sin tipo declarado conservan el 4:5 como marco por
+          defecto: es el del catálogo, y recortar un poco es
+          mejor que estirar.
+        */}
+        <div
+          className="rk-frame w-full"
+          style={{
+            aspectRatio:
+              proporcionDeRecurso(
+                product.category?.slug,
+                product.pieceType
+              ) ?? "1080 / 1350",
+          }}
+        >
           {image ? (
             <Image
               src={image}
               alt={imageAlt}
               fill
-              /* El contenido es 9:16; `cover` recorta sin deformar. */
+              /*
+                `cover` recorta lo que sobre, nunca estira. Con
+                el marco ya ajustado al recurso, en la mayoría
+                de los casos no sobra nada.
+              */
               className="object-cover"
               sizes="(max-width: 480px) 45vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 15vw"
             />

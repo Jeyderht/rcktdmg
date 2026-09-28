@@ -27,6 +27,7 @@ import {
   flyersParaStories,
 } from "@/lib/home";
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
@@ -172,6 +173,8 @@ export default async function Home() {
         name: true,
         slug: true,
         coverUrl: true,
+        /* Decide el marco de cada portada del hero. */
+        pieceType: true,
       },
     }),
 
@@ -397,7 +400,11 @@ export default async function Home() {
                               : ""
                         }`}
                       >
-                        <div className="rk-frame rk-aspect-product w-full shadow-rk-lg">
+                        <div
+                          className={`rk-frame ${claseProporcion(
+                            recurso.pieceType
+                          )} w-full shadow-rk-lg`}
+                        >
                           <Image
                             src={recurso.coverUrl as string}
                             alt={recurso.name}
@@ -446,7 +453,7 @@ export default async function Home() {
 
                 <Link
                   href="/categorias"
-                  className="rk-press group inline-flex items-center gap-2 text-sm font-semibold"
+                  className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
                 >
                   Ver todas
                   <ArrowRight
@@ -557,7 +564,7 @@ export default async function Home() {
 
               <Link
                 href="/tienda"
-                className="rk-press group inline-flex items-center gap-2 text-sm font-semibold"
+                className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
               >
                 Ver los {productCount}
                 <ArrowUpRight

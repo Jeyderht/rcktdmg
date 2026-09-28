@@ -66,6 +66,8 @@ export async function GET() {
         /* Medidas reales: el selector de colecciones las enseña. */
         coverWidth: true,
         coverHeight: true,
+        /* Con ella, el panel enseña cada recurso en su marco. */
+        pieceType: true,
         rejectionReason: true,
         previewUrl: true,
         createdAt: true,
@@ -94,6 +96,7 @@ export async function GET() {
       coverUrl: product.coverUrl,
       coverWidth: product.coverWidth,
       coverHeight: product.coverHeight,
+      pieceType: product.pieceType,
       rejectionReason: product.rejectionReason,
       previewUrl: product.previewUrl,
       category: product.category

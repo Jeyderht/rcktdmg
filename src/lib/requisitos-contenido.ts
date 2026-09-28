@@ -4,10 +4,10 @@ import {
   type TipoImagen,
 } from "@/lib/storage/imagenes";
 import {
-  CORPORATIVO,
+  CUATRO_QUINTOS,
   ETIQUETA_PIEZA,
-  MEDIDA_DE_PIEZA,
   STORY,
+  medidaExigidaPara,
   type MedidaExigida,
   type TipoPieza,
 } from "@/lib/tipos-publicacion";
@@ -154,9 +154,9 @@ export const REQUISITO_PORTADA: Requisito = {
 
 export const REQUISITO_STORY: Requisito = {
   clave: "story",
-  nombre: "Story de evento",
+  nombre: "Story de evento · 9:16",
   paraQue:
-    "Se muestra a pantalla completa en Home, como una story de móvil.",
+    "La ÚNICA pieza vertical: se muestra a pantalla completa en Home, como una story de móvil.",
   medida: STORY,
   formatos: formatosDeImagen("product-image"),
   maxBytes: REGLAS["product-image"].maxBytes,
@@ -166,16 +166,25 @@ export const REQUISITO_STORY: Requisito = {
   ],
 };
 
+/**
+ * El formato estándar del catálogo.
+ *
+ * Deja de ser exclusivo de Corporativos: lo comparten el
+ * diseño general y todas las piezas de un evento menos la
+ * story. La clave se conserva para no romper los ⓘ que ya
+ * apuntan a "corporativo".
+ */
 export const REQUISITO_CORPORATIVO: Requisito = {
   clave: "corporativo",
-  nombre: "Pieza corporativa",
-  paraQue: "Ocupa el carrusel de Corporativos de la portada.",
-  medida: CORPORATIVO,
+  nombre: "Formato estándar · 4:5",
+  paraQue:
+    "Corporativos, diseño general y las piezas de evento que no son story.",
+  medida: CUATRO_QUINTOS,
   formatos: formatosDeImagen("product-image"),
   maxBytes: REGLAS["product-image"].maxBytes,
   notas: [
-    "La medida es exacta: el carrusel es 4:5 y una pieza distinta rompe la fila.",
-    "Se exige por categoría, aunque el formulario diga otra cosa.",
+    "La medida es exacta: las rejillas y el carrusel son 4:5, y una pieza distinta rompe la fila.",
+    "Social Media es la única categoría sin medida fija.",
   ],
 };
 
@@ -380,23 +389,13 @@ export type Veredicto = {
 export function evaluarRecurso(recurso: RecursoAEvaluar): Veredicto {
   const problemas: string[] = [];
 
-  /*
-    LA MEDIDA SALE DEL TIPO DECLARADO, NO DE LA CATEGORÍA.
-
-    Antes, estando en «eventos» se suponía que la pieza era una
-    story y se avisaba por si acaso. Ahora el creador dice qué
-    es, así que se le exige exactamente lo de su tipo: a una
-    story, 1080 × 1920; a un flyer, nada.
-
-    Corporativos sigue siendo una regla de categoría: ahí la
-    medida la impone el carrusel, no quien publica.
+/*
+    La MISMA función que usa el formulario y la API. Aquí no
+    se recalcula nada: si administración aplicara su propio
+    criterio, podría marcar como inválido algo que el sistema
+    aceptó, o al revés.
   */
-  const exigida =
-    recurso.categoriaSlug === "corporativos"
-      ? CORPORATIVO
-      : recurso.pieceType
-        ? MEDIDA_DE_PIEZA[recurso.pieceType]
-        : null;
+  const exigida = medidaExigidaPara(recurso.categoriaSlug, recurso.pieceType);
 
   const tipo =
     recurso.categoriaSlug === "eventos"

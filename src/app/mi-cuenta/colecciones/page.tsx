@@ -17,6 +17,7 @@ import AccountPageHeader from "@/components/AccountPageHeader";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 
 type Product = {
   id: string;
@@ -24,6 +25,8 @@ type Product = {
   slug: string;
   price: number | string;
   coverUrl: string | null;
+  /** Decide el marco de la miniatura. */
+  pieceType?: string | null;
   status: string;
 };
 
@@ -352,7 +355,9 @@ export default function ColeccionesPage() {
                         {preview.map((item) => (
                           <div
                             key={item.product.id}
-                            className="rk-media rk-aspect-product relative overflow-hidden rounded-rk-sm"
+                            className={`rk-media ${claseProporcion(
+                              item.product.pieceType as never
+                            )} relative overflow-hidden rounded-rk-sm`}
                           >
                             {item.product.coverUrl ? (
                               <Image

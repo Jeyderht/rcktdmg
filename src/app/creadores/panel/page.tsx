@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import { useSessionUser } from "@/components/useSessionUser";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 
 type DashboardData = {
   creator: {
@@ -80,6 +81,8 @@ type DashboardData = {
     status: string;
     price: number;
     coverUrl: string | null;
+    /** Decide el marco de la miniatura. */
+    pieceType?: string | null;
     createdAt: string;
   }[];
 };
@@ -893,7 +896,11 @@ export default function CreatorDashboard() {
                     className="rk-card flex items-center gap-3.5 p-3"
                   >
                     {/* Miniatura 9:16, siempre nítida. */}
-                    <div className="rk-media rk-aspect-product relative w-12 shrink-0 overflow-hidden rounded-rk-sm">
+                    <div
+                      className={`rk-media ${claseProporcion(
+                        product.pieceType as never
+                      )} relative w-12 shrink-0 overflow-hidden rounded-rk-sm`}
+                    >
                       {product.coverUrl ? (
                         <Image
                           src={product.coverUrl}

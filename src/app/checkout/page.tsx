@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Lock, ShoppingBag } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
@@ -17,6 +18,12 @@ type CartItem = {
   price: number;
   slug: string;
   coverUrl: string | null;
+  /**
+   * Pieza del recurso, cuando el carrito la guardó. Decide el
+   * marco de la miniatura. Ausente en los carritos anteriores,
+   * que caen al marco del catálogo.
+   */
+  pieceType?: string | null;
   kind?: "PRODUCT" | "PACK" | "COLLECTION";
   quantity: number;
 };
@@ -348,7 +355,11 @@ export default function CheckoutPage() {
                 className="flex items-center gap-4 py-4 first:pt-0 last:pb-0"
               >
                 {/* Contenido visual 9:16, siempre nítido. */}
-                <div className="rk-media rk-aspect-product relative w-14 shrink-0 overflow-hidden rounded-rk-sm">
+                <div
+                  className={`rk-media ${claseProporcion(
+                    item.pieceType as never
+                  )} relative w-14 shrink-0 overflow-hidden rounded-rk-sm`}
+                >
                   {item.coverUrl ? (
                     <Image
                       src={item.coverUrl}

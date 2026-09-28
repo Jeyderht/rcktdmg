@@ -10,9 +10,13 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, ImagePlus, Trash2 } from "lucide-react";
 
+import { claseProporcion } from "@/lib/tipos-publicacion";
+
 import { subirImagen } from "@/lib/storage/client-upload";
 
 type Product = {
+  /** Decide el marco con el que se previsualiza. */
+  pieceType?: string | null;
   id: string;
   name: string;
   coverUrl: string | null;
@@ -600,7 +604,11 @@ export default function EditarImagenesPage() {
               </p>
             </div>
 
-            <div className="rk-media rk-aspect-product relative mx-auto mt-5 w-full max-w-[14rem] overflow-hidden rounded-rk-md">
+            <div
+              className={`rk-media ${claseProporcion(
+                product?.pieceType as never
+              )} relative mx-auto mt-5 w-full max-w-[14rem] overflow-hidden rounded-rk-md`}
+            >
               {coverUrl ? (
                 <Image
                   src={coverUrl}
@@ -668,7 +676,11 @@ export default function EditarImagenesPage() {
               </p>
             </div>
 
-            <div className="rk-media rk-aspect-product relative mx-auto mt-5 w-full max-w-[14rem] overflow-hidden rounded-rk-md">
+            <div
+              className={`rk-media ${claseProporcion(
+                product?.pieceType as never
+              )} relative mx-auto mt-5 w-full max-w-[14rem] overflow-hidden rounded-rk-md`}
+            >
               {previewUrl ? (
                 <Image
                   src={previewUrl}
@@ -801,7 +813,11 @@ export default function EditarImagenesPage() {
                       className="rk-card group relative overflow-hidden !rounded-rk-md !p-0"
                     >
                       {/* IMAGEN: 9:16 y siempre nítida */}
-                      <div className="rk-media rk-aspect-product relative">
+                      <div
+                        className={`rk-media ${claseProporcion(
+                          product?.pieceType as never
+                        )} relative`}
+                      >
                         <Image
                           src={image.url}
                           alt={

@@ -8,6 +8,7 @@ import { FolderOpen, Globe, Lock, Trash2 } from "lucide-react";
 
 import AccountPageHeader from "@/components/AccountPageHeader";
 import EmptyState from "@/components/EmptyState";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 
 type Product = {
     id: string;
@@ -15,6 +16,8 @@ type Product = {
     slug: string;
     price: number;
     coverUrl: string | null;
+    /** Decide el marco de la miniatura. */
+    pieceType?: string | null;
     status: string;
 };
 
@@ -329,13 +332,17 @@ export default function CollectionDetailPage() {
                                 key={product.id}
                                 className="rk-card flex gap-4 p-4"
                             >
-                                {/* Contenido visual 9:16, sin desenfoque. */}
+                                {/* El marco lo decide la pieza; sin desenfoque. */}
                                 <Link
                                     href={`/tienda/${product.slug}`}
                                     className="rk-press-sm shrink-0"
                                     aria-label={product.name}
                                 >
-                                    <div className="rk-media rk-aspect-product relative w-16 overflow-hidden rounded-rk-sm">
+                                    <div
+                                        className={`rk-media ${claseProporcion(
+                                            product.pieceType as never
+                                        )} relative w-16 overflow-hidden rounded-rk-sm`}
+                                    >
                                         {product.coverUrl ? (
                                             <Image
                                                 src={product.coverUrl}

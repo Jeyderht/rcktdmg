@@ -55,7 +55,7 @@ function Cabecera({
       {href && etiquetaEnlace && (
         <Link
           href={href}
-          className="rk-press group inline-flex shrink-0 items-center gap-2 text-sm font-semibold"
+          className="rk-press rk-link-seccion group shrink-0 gap-2 text-sm font-semibold"
         >
           {etiquetaEnlace}
           <ArrowRight

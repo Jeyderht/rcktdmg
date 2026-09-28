@@ -17,6 +17,7 @@ import QuickAccess from "@/components/QuickAccess";
 import RecomendadosCliente from "@/components/RecomendadosCliente";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useSessionUser } from "@/components/useSessionUser";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 
 type Download = {
   id: string;
@@ -49,6 +50,8 @@ type Order = {
       name: string;
       slug: string;
       coverUrl: string | null;
+      /** Decide el marco de la miniatura. */
+      pieceType?: string | null;
     };
   }[];
 };
@@ -346,7 +349,11 @@ export default function Account() {
                     className="rk-card rk-card-hover rk-press-sm flex items-center gap-4 p-3"
                   >
                     {/* Miniatura 9:16, siempre nitida. */}
-                    <div className="rk-media rk-aspect-product relative w-12 shrink-0 overflow-hidden rounded-rk-sm">
+                    <div
+                      className={`rk-media ${claseProporcion(
+                        order.items[0]?.product.pieceType as never
+                      )} relative w-12 shrink-0 overflow-hidden rounded-rk-sm`}
+                    >
                       {cover ? (
                         <Image
                           src={cover}

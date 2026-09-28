@@ -8,6 +8,7 @@ import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 import {
     CART_STORAGE_KEY,
     CART_UPDATED_EVENT,
@@ -24,6 +25,12 @@ type CartItem = {
     name: string;
     price: number;
     slug: string;
+    /**
+     * Pieza del recurso, cuando el carrito la guardó. Decide el
+     * marco de la miniatura. Ausente en los carritos anteriores,
+     * que caen al marco del catálogo.
+     */
+    pieceType?: string | null;
     coverUrl: string | null;
     quantity: number;
 };
@@ -200,7 +207,11 @@ export default function Cart() {
                                         aria-label={item.name}
                                     >
                                         {/* Contenido visual 9:16, siempre nítido. */}
-                                        <div className="rk-media rk-aspect-product relative w-16 overflow-hidden rounded-rk-sm sm:w-[4.5rem]">
+                                        <div
+                                            className={`rk-media ${claseProporcion(
+                                                item.pieceType as never
+                                            )} relative w-16 overflow-hidden rounded-rk-sm sm:w-[4.5rem]`}
+                                        >
                                             {item.coverUrl ? (
                                                 <Image
                                                     src={item.coverUrl}

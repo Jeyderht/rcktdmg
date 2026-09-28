@@ -9,6 +9,7 @@ import AccountPageHeader from "@/components/AccountPageHeader";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 
 type Product = {
     id: string;
@@ -16,6 +17,8 @@ type Product = {
     slug: string;
     coverUrl: string | null;
     price: number;
+    /** Decide el marco de la miniatura. */
+    pieceType?: string | null;
 };
 
 type OrderItem = {
@@ -237,7 +240,11 @@ export default function MisComprasPage() {
                                                 className="rk-press-sm shrink-0"
                                                 aria-label={item.product.name}
                                             >
-                                                <div className="rk-media rk-aspect-product relative w-14 overflow-hidden rounded-rk-sm sm:w-16">
+                                                <div
+                                                    className={`rk-media ${claseProporcion(
+                                                        item.product.pieceType as never
+                                                    )} relative w-14 overflow-hidden rounded-rk-sm sm:w-16`}
+                                                >
                                                     {item.product.coverUrl ? (
                                                         <Image
                                                             src={

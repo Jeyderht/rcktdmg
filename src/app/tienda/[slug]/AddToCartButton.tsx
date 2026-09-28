@@ -15,6 +15,8 @@ type Props = {
     price: number;
     slug: string;
     coverUrl: string | null;
+    /** Pieza del recurso: decide el marco de su miniatura. */
+    pieceType?: string | null;
   };
 };
 
@@ -50,6 +52,7 @@ export default function AddToCartButton({ product }: Props) {
           price: product.price,
           slug: product.slug,
           coverUrl: product.coverUrl,
+          pieceType: product.pieceType ?? null,
           quantity: 1,
         });
       }

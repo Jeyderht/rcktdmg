@@ -5,6 +5,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ExternalLink, Package, Plus, Send } from "lucide-react";
 
+import {
+  claseProporcion,
+  type TipoPieza,
+} from "@/lib/tipos-publicacion";
+
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 
@@ -23,6 +28,8 @@ type Product = {
   rejectionReason: string | null;
   accessType: "INDIVIDUAL" | "PLAN" | "BOTH";
   coverUrl: string | null;
+  /** Con ella se elige el marco: 9:16 solo si es una story. */
+  pieceType: TipoPieza | null;
   previewUrl: string | null;
   category: {
     name: string;
@@ -289,8 +296,12 @@ export default function RecursosPage() {
                   className={`rk-card p-4 sm:p-5 ${status.edge}`}
                 >
                   <div className="flex gap-4">
-                    {/* Contenido visual 9:16, siempre nítido. */}
-                    <div className="rk-media rk-aspect-product relative w-20 shrink-0 overflow-hidden rounded-rk-sm sm:w-24">
+                    {/* El marco lo decide la pieza; la imagen, nítida. */}
+                    <div
+                      className={`rk-media ${claseProporcion(
+                        product.pieceType
+                      )} relative w-20 shrink-0 overflow-hidden rounded-rk-sm sm:w-24`}
+                    >
                       {product.coverUrl ? (
                         <Image
                           src={product.coverUrl}

@@ -96,6 +96,8 @@ export async function GET(
         status: product.status,
         rejectionReason: product.rejectionReason,
         coverUrl: product.coverUrl,
+        /* Con ella, cada pantalla enseña el recurso en su marco. */
+        pieceType: product.pieceType,
         previewUrl: product.previewUrl,
         fileUrl: product.fileUrl,
         fileFormat: product.fileFormat,

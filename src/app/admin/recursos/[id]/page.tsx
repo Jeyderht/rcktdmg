@@ -7,6 +7,7 @@ import { ChevronLeft, ExternalLink } from "lucide-react";
 import ResourceActions from "../ResourceActions";
 import { verifySessionToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 import { enMegas, evaluarRecurso } from "@/lib/requisitos-contenido";
 
 /**
@@ -336,7 +337,9 @@ export default async function AdminRecursoPage({ params }: Props) {
               {gallery.map((item) => (
                 <div
                   key={item.key}
-                  className="rk-media rk-aspect-product relative overflow-hidden rounded-rk-sm"
+                  className={`rk-media ${claseProporcion(
+                    resource.pieceType
+                  )} relative overflow-hidden rounded-rk-sm`}
                 >
                   {/* La imagen se ve nítida: el vidrio va solo
                       en la etiqueta que flota encima. */}

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 import { verifySessionToken } from "@/lib/auth";
 
 type PageProps = {
@@ -84,6 +85,8 @@ export default async function CreatorProductPage({
       status: true,
       rejectionReason: true,
       coverUrl: true,
+      /* Decide el marco de la miniatura. */
+      pieceType: true,
       previewUrl: true,
       fileUrl: true,
       createdAt: true,
@@ -169,7 +172,11 @@ export default async function CreatorProductPage({
         <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 gap-4">
             {/* Contenido visual 9:16, siempre nítido. */}
-            <div className="rk-media rk-aspect-product relative w-20 shrink-0 overflow-hidden rounded-rk-md sm:w-24">
+            <div
+              className={`rk-media ${claseProporcion(
+                product.pieceType
+              )} relative w-20 shrink-0 overflow-hidden rounded-rk-md sm:w-24`}
+            >
               {product.coverUrl ? (
                 <Image
                   src={product.coverUrl}

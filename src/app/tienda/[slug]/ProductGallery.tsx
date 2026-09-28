@@ -20,6 +20,16 @@ type ProductImage = {
 };
 
 type ProductGalleryProps = {
+  /**
+   * Con qué proporción se enseña el recurso. La calcula la
+   * ficha con `proporcionDeRecurso`, que es la misma regla
+   * que exige la medida al subirlo.
+   *
+   * Null —Social Media y los recursos sin tipo declarado—
+   * cae al 4:5 del catálogo: recortar un poco es mejor que
+   * estirar, y estirar es lo único que nunca se hace.
+   */
+  proporcion?: string | null;
   name: string;
   coverUrl: string | null;
   coverWidth?: number | null;
@@ -49,6 +59,7 @@ type ProductGalleryProps = {
  * encima de ella.
  */
 export default function ProductGallery({
+  proporcion,
   name,
   coverUrl,
   coverWidth,
@@ -148,7 +159,10 @@ export default function ProductGallery({
   if (total === 0) {
     return (
       <div className="rk-card mx-auto w-full max-w-[16rem] overflow-hidden rounded-rk-xl p-2 sm:max-w-sm lg:max-w-none">
-        <div className="rk-media rk-aspect-product flex w-full items-center justify-center rounded-rk-lg">
+        <div
+          className="rk-media flex w-full items-center justify-center rounded-rk-lg"
+          style={{ aspectRatio: proporcion ?? "1080 / 1350" }}
+        >
           <span className="text-[10px] uppercase tracking-[0.3em] text-ink/45">
             RCKTDMG
           </span>
@@ -162,13 +176,16 @@ export default function ProductGallery({
   return (
     <div className="w-full min-w-0">
 
-      {/* IMAGEN PRINCIPAL 9:16 */}
+      {/* IMAGEN PRINCIPAL · la proporción la marca el recurso */}
       <div className="rk-card mx-auto w-full max-w-[16rem] overflow-hidden rounded-rk-xl p-2 sm:max-w-sm lg:max-w-none">
         <div
           {...swipe}
-          /* Que el dedo hacia la derecha no dispare el "atrás". */
-          style={{ overscrollBehaviorX: "contain" }}
-          className="rk-media rk-aspect-product relative overflow-hidden rounded-rk-lg"
+          style={{
+            /* Que el dedo hacia la derecha no dispare el "atrás". */
+            overscrollBehaviorX: "contain",
+            aspectRatio: proporcion ?? "1080 / 1350",
+          }}
+          className="rk-media relative overflow-hidden rounded-rk-lg"
         >
           {/*
             Con dimensiones conocidas la imagen se enseña
@@ -264,7 +281,8 @@ export default function ProductGallery({
                 aria-selected={active}
                 aria-label={`Ver ${image.label}`}
                 onClick={() => setSelectedIndex(index)}
-                className={`rk-press rk-media rk-aspect-product relative w-16 shrink-0 overflow-hidden rounded-rk-sm transition-all duration-normal ease-rk sm:w-20 ${
+                style={{ aspectRatio: proporcion ?? "1080 / 1350" }}
+                className={`rk-press rk-media relative w-16 shrink-0 overflow-hidden rounded-rk-sm transition-all duration-normal ease-rk sm:w-20 ${
                   active
                     ? "ring-2 ring-foreground ring-offset-2 ring-offset-transparent"
                     : "opacity-55 hover:opacity-100"

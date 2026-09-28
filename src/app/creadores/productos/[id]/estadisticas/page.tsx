@@ -8,6 +8,7 @@ import { BarChart3, ChevronLeft, ExternalLink } from "lucide-react";
 
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 
 type StatsData = {
     product: {
@@ -18,6 +19,8 @@ type StatsData = {
         price: number;
         status: string;
         coverUrl: string | null;
+        /** Decide el marco de la miniatura. */
+        pieceType?: string | null;
         createdAt: string;
     };
 
@@ -225,7 +228,11 @@ export default function ProductStatisticsPage() {
                     <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                         <div className="flex min-w-0 gap-4">
                             {/* Contenido visual 9:16, siempre nítido. */}
-                            <div className="rk-media rk-aspect-product relative w-16 shrink-0 overflow-hidden rounded-rk-md sm:w-20">
+                            <div
+                                className={`rk-media ${claseProporcion(
+                                    product.pieceType as never
+                                )} relative w-16 shrink-0 overflow-hidden rounded-rk-md sm:w-20`}
+                            >
                                 {product.coverUrl ? (
                                     <Image
                                         src={product.coverUrl}

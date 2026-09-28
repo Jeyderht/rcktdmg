@@ -77,6 +77,7 @@ export type FormatoPieza = {
  */
 export type TipoPieza = $Enums.PieceType;
 
+
 /** Sin exigencia de medidas. */
 const LIBRE: FormatoPieza = {
   clave: "LIBRE",
@@ -90,10 +91,42 @@ export const STORY: MedidaExigida = {
   proporcion: "9:16",
 };
 
-export const CORPORATIVO: MedidaExigida = {
+/**
+ * La medida estándar del catálogo: 1080 × 1350, 4:5.
+ *
+ * La usan TODAS las piezas salvo la story de evento y Social
+ * Media: corporativos, diseño general y el resto de piezas de
+ * un evento (flyer, portada, perfil, post y otras).
+ *
+ * Se llama por su proporción y no por una categoría porque ya
+ * no pertenece a ninguna en particular.
+ */
+export const CUATRO_QUINTOS: MedidaExigida = {
   ancho: 1080,
   alto: 1350,
   proporcion: "4:5",
+};
+
+/**
+ * Nombre anterior de la misma medida.
+ *
+ * Se conserva porque varios módulos ya la importaban así
+ * cuando era exclusiva de Corporativos. Es la MISMA constante,
+ * no una copia: cambiar una cambia las dos.
+ */
+export const CORPORATIVO = CUATRO_QUINTOS;
+
+/**
+ * Formato estándar del catálogo.
+ *
+ * Lo usan diseño general y corporativos: la misma pieza con
+ * el mismo marco. Social Media es el único que sigue sin
+ * medida fija.
+ */
+const ESTANDAR: FormatoPieza = {
+  clave: "ESTANDAR",
+  nombre: "1080 × 1350 · 4:5",
+  medida: CUATRO_QUINTOS,
 };
 
 export const TIPOS_PUBLICACION: TipoPublicacion[] = [
@@ -119,32 +152,32 @@ export const TIPOS_PUBLICACION: TipoPublicacion[] = [
       },
       {
         clave: "FLYER",
-        nombre: "Flyer principal",
-        medida: null,
+        nombre: "Flyer principal · 1080 × 1350",
+        medida: CUATRO_QUINTOS,
         pieza: "EVENT_FLYER",
       },
       {
         clave: "PORTADA",
-        nombre: "Portada",
-        medida: null,
+        nombre: "Portada · 1080 × 1350",
+        medida: CUATRO_QUINTOS,
         pieza: "EVENT_COVER",
       },
       {
         clave: "PERFIL",
-        nombre: "Foto de perfil",
-        medida: null,
+        nombre: "Foto de perfil · 1080 × 1350",
+        medida: CUATRO_QUINTOS,
         pieza: "EVENT_PROFILE",
       },
       {
         clave: "POST",
-        nombre: "Post",
-        medida: null,
+        nombre: "Post · 1080 × 1350",
+        medida: CUATRO_QUINTOS,
         pieza: "EVENT_POST",
       },
       {
         clave: "OTRO",
-        nombre: "Otra pieza del evento",
-        medida: null,
+        nombre: "Otra pieza · 1080 × 1350",
+        medida: CUATRO_QUINTOS,
         pieza: "EVENT_OTHER",
       },
     ],
@@ -183,7 +216,7 @@ export const TIPOS_PUBLICACION: TipoPublicacion[] = [
       "Cualquier diseño que no pertenezca a una campaña ni a un evento.",
     categoriaSlug: "general",
     ruta: null,
-    formatos: [LIBRE],
+    formatos: [ESTANDAR],
   },
   {
     clave: "COLECCION",
@@ -225,14 +258,77 @@ export const ETIQUETA_PIEZA: Record<TipoPieza, string> = {
 };
 
 /** Qué medidas exige cada pieza. Solo la story exige unas. */
+/**
+ * Qué medida exige cada pieza.
+ *
+ * Solo la story se sale de la norma: se muestra a pantalla
+ * completa y necesita el vertical de 9:16. Las demás piezas de
+ * un evento comparten el 4:5 del resto del catálogo, para que
+ * una rejilla mezclada no salte de una proporción a otra.
+ */
 export const MEDIDA_DE_PIEZA: Record<TipoPieza, MedidaExigida | null> = {
   EVENT_STORY: STORY,
-  EVENT_FLYER: null,
-  EVENT_COVER: null,
-  EVENT_PROFILE: null,
-  EVENT_POST: null,
-  EVENT_OTHER: null,
+  EVENT_FLYER: CUATRO_QUINTOS,
+  EVENT_COVER: CUATRO_QUINTOS,
+  EVENT_PROFILE: CUATRO_QUINTOS,
+  EVENT_POST: CUATRO_QUINTOS,
+  EVENT_OTHER: CUATRO_QUINTOS,
 };
+
+/**
+ * Qué medida se le exige a un recurso. LA ÚNICA.
+ *
+ * La usan el formulario antes de subir, la API antes de
+ * guardar y administración al revisar. Si alguna de las tres
+ * calculara la suya por su cuenta, tarde o temprano una
+ * aceptaría lo que otra rechaza.
+ *
+ * El orden importa:
+ *
+ * 1. Dentro de eventos manda la PIEZA que declaró el creador.
+ *    Una story pide 9:16; el resto, 4:5.
+ * 2. Fuera de eventos manda la categoría.
+ * 3. Social Media no exige medida, y una pieza de evento sin
+ *    tipo declarado tampoco: son los recursos anteriores a
+ *    que esto se guardara y no se les inventa una regla.
+ */
+export function medidaExigidaPara(
+  categoriaSlug: string | null | undefined,
+  pieceType: TipoPieza | null | undefined
+): MedidaExigida | null {
+  if (categoriaSlug === "eventos") {
+    return pieceType ? MEDIDA_DE_PIEZA[pieceType] : null;
+  }
+
+  if (categoriaSlug === "corporativos" || categoriaSlug === "general") {
+    return CUATRO_QUINTOS;
+  }
+
+  // social-media y cualquier categoría futura: sin medida fija.
+  return null;
+}
+
+/**
+ * Con qué proporción se enseña un recurso.
+ *
+ * Es la cara visible de la regla de arriba: el marco de una
+ * tarjeta, de la ficha o del visor. Devuelve el valor tal y
+ * como lo entiende CSS.
+ *
+ * Null significa «lo que traiga la imagen»: Social Media y los
+ * recursos antiguos sin tipo. Quien lo reciba debe elegir un
+ * marco por defecto en vez de estirar nada.
+ */
+export function proporcionDeRecurso(
+  categoriaSlug: string | null | undefined,
+  pieceType: TipoPieza | null | undefined
+): string | null {
+  const medida = medidaExigidaPara(categoriaSlug, pieceType);
+
+  if (!medida) return null;
+
+  return `${medida.ancho} / ${medida.alto}`;
+}
 
 export function esTipoPieza(valor: unknown): valor is TipoPieza {
   return (
@@ -291,4 +387,28 @@ export function revisarMedidas(
   }
 
   return `El archivo debe ser ${medida.ancho} × ${medida.alto} px (${medida.proporcion}). El que subiste es ${reales.ancho} × ${reales.alto} px.`;
+}
+
+/**
+ * Qué clase de marco le corresponde a un recurso.
+ *
+ * Existe para que ningún componente tenga que preguntarse
+ * «¿esto es una story?». Se le pasa lo que sabe del recurso y
+ * devuelve la clase; la proporción concreta vive en el CSS y
+ * la decisión, aquí. Una sola fuente para las dos cosas.
+ *
+ * Sin datos —una miniatura de un carrito guardado antes de
+ * que esto existiera— devuelve el marco del catálogo, que es
+ * lo correcto para casi todo y nunca deforma: recorta.
+ */
+export function claseProporcion(
+  pieceType?: TipoPieza | null
+): string {
+  /*
+    La pieza basta: EVENT_STORY solo existe dentro de eventos,
+    así que comprobar también la categoría era redundante.
+  */
+  return pieceType === "EVENT_STORY"
+    ? "rk-aspect-story"
+    : "rk-aspect-product";
 }

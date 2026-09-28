@@ -1011,9 +1011,32 @@ input[type="search"]::-webkit-search-results-decoration {
     box-shadow: var(--rk-shadow-lg);
   }
 
-  /* Proporción vertical 9:16 del contenido de producto. */
+  /*
+    LA PROPORCIÓN DEL CATÁLOGO: 4:5.
+
+    Era 9:16, de cuando todo el contenido era vertical. Hoy la
+    única pieza 9:16 es la story de evento; corporativos,
+    diseño general y el resto de piezas de un evento son 4:5.
+    Con el valor antiguo, cada marco recortaba a esas piezas
+    un quinto de su alto.
+
+    Es el marco POR DEFECTO: lo usan los esqueletos de carga,
+    las portadas de packs y colecciones y las miniaturas de
+    recursos cuyo tipo no se conoce. Quien sí conoce el
+    recurso elige con `claseProporcion()`, en
+    src/lib/tipos-publicacion.ts.
+  */
   .rk-aspect-product {
-    aspect-ratio: 9 / 16;
+    aspect-ratio: 1080 / 1350;
+  }
+
+  /*
+    La excepción: la story de evento, que se muestra vertical
+    a pantalla completa. No se usa suelta — la elige
+    `claseProporcion()` a partir del recurso.
+  */
+  .rk-aspect-story {
+    aspect-ratio: 1080 / 1920;
   }
 
   .rk-dock-pad {
@@ -1068,5 +1091,79 @@ input[type="search"]::-webkit-search-results-decoration {
   .rk-card-hover:hover,
   .rk-hover-lift:hover {
     transform: none;
+  }
+}
+
+@layer components {
+  /*
+    ENLACE DE CABECERA DE SECCIÓN — "Ver todos", "Ver todas"…
+
+    El texto sigue siendo pequeño; lo que crece es el área que
+    responde al dedo. Medido antes: 88 × 20 px, por debajo de
+    los 44 px mínimos.
+
+    `min-height` la sube a 44 y el margen negativo devuelve al
+    bloque el alto que tenía, así que ni la cabecera ni el
+    espaciado se mueven: el enlace se ve exactamente igual y se
+    puede pulsar.
+  */
+  .rk-link-seccion {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    margin-top: -0.75rem;
+    margin-bottom: -0.75rem;
+  }
+}
+
+@layer components {
+  /*
+    ÁREA TÁCTIL DE 44 px SIN CAMBIAR EL CONTROL
+
+    Mismo propósito que `.rk-link-seccion`, otra técnica: allí
+    bastaba con crecer y compensar con margen porque el enlace
+    iba solo en una cabecera. Aquí los controles viven dentro
+    de píldoras y barras donde crecer movería el diseño, así
+    que el área la aporta un pseudo-elemento que NO ocupa
+    espacio.
+
+    Es el mismo recurso que ya usaba FavoriteButton; esto solo
+    le pone nombre para poder reutilizarlo.
+  */
+  .rk-hit-44 {
+    position: relative;
+  }
+
+  .rk-hit-44::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2.75rem;
+    height: 2.75rem;
+    transform: translate(-50%, -50%);
+  }
+
+  /*
+    Solo en vertical.
+
+    Para controles pegados unos a otros —los tres del selector
+    de tema, que suman 104 px— ensanchar a 44 haría que cada
+    uno invadiera 10 px de su vecino y le robara las
+    pulsaciones del borde. Se gana el alto, que está libre, y
+    el ancho se queda en el del propio control.
+  */
+  .rk-hit-44-y {
+    position: relative;
+  }
+
+  .rk-hit-44-y::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2.75rem;
+    transform: translateY(-50%);
   }
 }

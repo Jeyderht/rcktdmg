@@ -1,3 +1,4 @@
+import type { TipoPieza } from "@/lib/tipos-publicacion";
 import { prisma } from "@/lib/prisma";
 import {
   ALTO_CORPORATIVO,
@@ -138,12 +139,15 @@ function aTarjetaHome(fila: Fila): TarjetaHome {
 async function porCategoria(
   slug: string,
   tope: number,
-  soloConImagen: boolean
+  soloConImagen: boolean,
+  /** Cuando se indica, solo esa pieza. */
+  pieza?: TipoPieza
 ): Promise<TarjetaHome[]> {
   const filas = await prisma.product.findMany({
     where: {
       status: "PUBLISHED",
       category: { slug },
+      ...(pieza ? { pieceType: pieza } : {}),
       ...(soloConImagen
         ? {
             OR: [
@@ -162,7 +166,23 @@ async function porCategoria(
   return (filas as Fila[]).map(aTarjetaHome);
 }
 
-/** Flyers de eventos para las Stories y para su sección. */
+/**
+ * Las STORIES de eventos. Solo esas.
+ *
+ * Antes traía la categoría Eventos entera, así que un flyer o
+ * un post —4:5— acababa en un visor a pantalla completa
+ * pensado para 9:16. Ahora se pide la pieza exacta: la única
+ * que tiene esa forma.
+ *
+ * Los recursos anteriores a que la pieza se guardara tienen
+ * `pieceType` nulo y quedan fuera, que es lo correcto: nadie
+ * declaró que fueran stories y no se les va a suponer.
+ */
+export function storiesDeEventos(tope = 12): Promise<TarjetaHome[]> {
+  return porCategoria(CATEGORIA_EVENTOS, tope, true, "EVENT_STORY");
+}
+
+/** Toda la categoría Eventos, para su propia sección. */
 export function flyersDeEventos(tope = 12): Promise<TarjetaHome[]> {
   return porCategoria(CATEGORIA_EVENTOS, tope, true);
 }
@@ -232,7 +252,7 @@ export async function corporativosParaSlice(
 export async function flyersParaStories(
   tope = 12
 ): Promise<{ flyers: TarjetaHome[]; esDemo: boolean }> {
-  const reales = await flyersDeEventos(tope);
+  const reales = await storiesDeEventos(tope);
 
   if (reales.length > 0) {
     return { flyers: reales, esDemo: false };

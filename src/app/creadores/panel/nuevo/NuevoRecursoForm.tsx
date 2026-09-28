@@ -6,7 +6,6 @@ import { FormEvent, useState } from "react";
 import TagsInput from "@/components/TagsInput";
 import SubidorImagen, { type EstadoImagen } from "@/components/SubidorImagen";
 import {
-  CORPORATIVO,
   STORY,
   TIPOS_PUBLICACION,
   esRecursoSuelto,
@@ -696,10 +695,17 @@ export default function NuevoRecursoForm({
               <SubidorImagen
                 id="portada"
                 etiqueta="Portada"
+                /*
+                  Qué ficha de requisitos se enseña: la de la
+                  story si pide 9:16, la del formato estándar
+                  si pide 4:5, y la genérica si no exige
+                  medida. Se compara por la medida, no por la
+                  categoría: es la medida lo que cambia.
+                */
                 requisito={
                   formato?.medida === STORY
                     ? "story"
-                    : formato?.medida === CORPORATIVO
+                    : formato?.medida
                       ? "corporativo"
                       : "portada"
                 }

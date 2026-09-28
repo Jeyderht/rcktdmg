@@ -83,7 +83,13 @@ export default function ThemeToggle({
             aria-label={`Tema ${option.label.toLowerCase()}`}
             title={option.label}
             onClick={() => setPreference(option.value)}
-            className={`rk-press flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+            /*
+              El botón sigue midiendo 32 px a la vista; el área
+              que responde al dedo llega a 44 de alto. No se
+              ensancha porque los tres segmentos están pegados
+              y se robarían las pulsaciones entre ellos.
+            */
+            className={`rk-press rk-hit-44-y flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
               active
                 ? "bg-surface text-foreground shadow-rk-sm"
                 : "text-muted/50 hover:text-foreground"

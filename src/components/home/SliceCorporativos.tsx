@@ -134,7 +134,7 @@ export default function SliceCorporativos({
 
           <Link
             href="/tienda?categoria=corporativos"
-            className="rk-press group inline-flex items-center gap-2 text-sm font-semibold"
+            className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
           >
             Ver todos
             <ArrowUpRight

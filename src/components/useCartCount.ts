@@ -23,6 +23,15 @@ export type ArticuloCarrito = {
   price: number;
   slug: string;
   coverUrl: string | null;
+  /**
+   * Pieza del recurso, cuando se sabe. Decide con qué marco se
+   * pinta la miniatura en el carrito y en el pago.
+   *
+   * Opcional a propósito: los carritos guardados en el
+   * navegador antes de que esto existiera no la traen, y esos
+   * caen al marco del catálogo sin romperse.
+   */
+  pieceType?: string | null;
 };
 
 /**

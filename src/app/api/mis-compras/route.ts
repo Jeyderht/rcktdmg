@@ -40,6 +40,8 @@ export async function GET() {
                                 name: true,
                                 slug: true,
                                 coverUrl: true,
+                                /* Decide el marco de la miniatura. */
+                                pieceType: true,
                                 price: true,
                             },
                         },

@@ -10,6 +10,7 @@ import BotonDescargarColeccion from "@/components/BotonDescargarColeccion";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 
 /**
  * Colección comprada.
@@ -42,6 +43,8 @@ type Download = {
         name: string;
         slug: string;
         coverUrl: string | null;
+        /** Decide el marco de la miniatura. */
+        pieceType?: string | null;
         description: string | null;
     };
     order: {
@@ -360,7 +363,11 @@ export default function MisDescargasPage() {
                                                 download.product.name
                                             }
                                         >
-                                            <div className="rk-media rk-aspect-product relative w-20 overflow-hidden rounded-rk-sm sm:w-24">
+                                            <div
+                                        className={`rk-media ${claseProporcion(
+                                            download.product.pieceType as never
+                                        )} relative w-20 overflow-hidden rounded-rk-sm sm:w-24`}
+                                    >
                                                 {download.product
                                                     .coverUrl ? (
                                                     <Image

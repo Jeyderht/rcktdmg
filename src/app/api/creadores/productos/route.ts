@@ -12,8 +12,7 @@ import { sincronizarTagsProducto } from "@/lib/tags";
 import { esTipoLicencia } from "@/lib/licencias-comun";
 import { MAXIMO_IMAGENES_GALERIA } from "@/lib/requisitos-contenido";
 import {
-  CORPORATIVO,
-  MEDIDA_DE_PIEZA,
+  medidaExigidaPara,
   piezaDeFormato,
   revisarMedidas,
 } from "@/lib/tipos-publicacion";
@@ -121,25 +120,21 @@ export async function POST(req: NextRequest) {
       saltar. Aquí se repite sobre el archivo que de verdad
       llegó, leyendo su cabecera.
 
-      Dos orígenes, a propósito:
-      - la PIEZA que declaró el creador. Ahora sí se guarda,
-        en `pieceType`, y es la que manda: un flyer sigue
-        siendo un flyer aunque mida 1080 × 1920. Las medidas
-        comprueban el tipo elegido; nunca lo cambian.
-      - la categoría: «corporativos» exige 1080 × 1350 sea lo
-        que sea que declare el cliente, porque el carrusel de
-        la portada es 4:5 exacto y una pieza de otra
-        proporción rompe la fila.
+      La medida NO se decide aquí: la decide
+      `medidaExigidaPara`, que es la misma función que usa el
+      formulario antes de subir y la que usa administración al
+      revisar. Si este endpoint calculara la suya, acabaría
+      aceptando lo que el formulario rechaza, o al revés.
+
+      La pieza declarada manda dentro de eventos y se guarda
+      tal cual: un flyer sigue siendo un flyer aunque mida
+      1080 × 1920. Las medidas comprueban el tipo elegido;
+      nunca lo cambian.
     */
     const pieza =
       category.slug === "eventos" ? piezaDeFormato("EVENTO", formato) : null;
 
-    const exigida =
-      category.slug === "corporativos"
-        ? CORPORATIVO
-        : pieza
-          ? MEDIDA_DE_PIEZA[pieza]
-          : null;
+    const exigida = medidaExigidaPara(category.slug, pieza);
 
     const problemaMedidas = revisarMedidas(
       exigida,

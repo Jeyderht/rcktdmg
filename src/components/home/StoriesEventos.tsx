@@ -102,7 +102,7 @@ export default function StoriesEventos({
 
           <Link
             href="/tienda?categoria=eventos"
-            className="rk-press group inline-flex items-center gap-2 text-sm font-semibold"
+            className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
           >
             Ver todos
             <ArrowUpRight

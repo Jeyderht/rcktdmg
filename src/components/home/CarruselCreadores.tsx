@@ -102,7 +102,7 @@ export default function CarruselCreadores({
 
             <Link
               href="/creadores"
-              className="rk-press group ml-1 inline-flex items-center gap-2 text-sm font-semibold"
+              className="rk-press rk-link-seccion group ml-1 gap-2 text-sm font-semibold"
             >
               Ver todos
               <ArrowUpRight

@@ -6,6 +6,7 @@ import { ClipboardCheck, Inbox } from "lucide-react";
 
 import EmptyState from "@/components/EmptyState";
 import { prisma } from "@/lib/prisma";
+import { claseProporcion } from "@/lib/tipos-publicacion";
 import { requireRole } from "@/lib/session";
 import ResourceActions from "./ResourceActions";
 
@@ -240,8 +241,16 @@ export default async function RecursosAdminPage({
               >
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
 
-                  {/* CONTENIDO VISUAL 9:16, SIEMPRE NÍTIDO */}
-                  <div className="rk-media rk-aspect-product relative w-20 shrink-0 overflow-hidden rounded-rk-sm sm:w-24">
+                  {/*
+                    El marco lo decide la pieza: 9:16 solo si
+                    es una story, 4:5 para el resto. La imagen
+                    sigue nítida y `cover` recorta, no estira.
+                  */}
+                  <div
+                    className={`rk-media ${claseProporcion(
+                      resource.pieceType
+                    )} relative w-20 shrink-0 overflow-hidden rounded-rk-sm sm:w-24`}
+                  >
                     {image ? (
                       <Image
                         src={image}

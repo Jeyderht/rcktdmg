@@ -138,9 +138,15 @@ function SearchField({
               </button>
             )}
 
+            {/*
+              El botón conserva su tamaño y su sitio dentro del
+              campo; el área táctil crece a 44 px de alto con un
+              pseudo-elemento, que no ocupa espacio y no altera
+              la altura de la barra.
+            */}
             <button
               type="submit"
-              className="rk-btn rk-btn-ink rk-btn-compact !rounded-full !px-4 !py-2 !text-xs"
+              className="rk-btn rk-btn-ink rk-btn-compact rk-hit-44-y !rounded-full !px-4 !py-2 !text-xs"
             >
               Buscar
             </button>
