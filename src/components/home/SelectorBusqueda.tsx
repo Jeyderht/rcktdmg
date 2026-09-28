@@ -18,32 +18,31 @@ import { CATEGORIA_EVENTOS } from "@/lib/home";
 /*
   DESTINOS
 
-  Asignación pedida expresamente por el responsable del
-  proyecto:
+    "Eventos"           → /tienda?categoria=eventos
+    "Diseños generales" → /tienda?sin=eventos
 
-    "Eventos"           → /tienda?sin=eventos
-    "Diseños generales" → /tienda?categoria=eventos
+  Cada tarjeta lleva a lo que dice su etiqueta: `categoria`
+  filtra POR esa categoría y `sin` la EXCLUYE, así que los dos
+  caminos se reparten el catálogo entero sin solaparse.
 
-  Queda anotado que la etiqueta y el destino no coinciden
-  entre sí: la tarjeta de Eventos lleva al listado que EXCLUYE
-  los eventos, y la de Diseños generales lleva justo a la
-  categoría Eventos. Se ha confirmado dos veces que es lo
-  deseado, así que se respeta tal cual; si algún día se
-  invierte, solo hay que intercambiar estos dos `href`.
+  Antes estaban al revés —"Eventos" llevaba al listado que
+  excluye los eventos— y se veían tarjetas 4:5 donde se
+  esperaban las verticales 9:16. La proporción nunca estuvo
+  mal: se estaba mirando el listado equivocado.
 */
 const OPCIONES = [
   {
     titulo: "Eventos",
     texto:
       "Flyers de fiestas, conciertos y fechas señaladas. Listos para publicar.",
-    href: `/tienda?sin=${CATEGORIA_EVENTOS}`,
+    href: `/tienda?categoria=${CATEGORIA_EVENTOS}`,
     icono: CalendarDays,
   },
   {
     titulo: "Diseños generales",
     texto:
       "Todo lo demás: corporativos, social media, plantillas y colecciones.",
-    href: `/tienda?categoria=${CATEGORIA_EVENTOS}`,
+    href: `/tienda?sin=${CATEGORIA_EVENTOS}`,
     icono: Shapes,
   },
 ] as const;
