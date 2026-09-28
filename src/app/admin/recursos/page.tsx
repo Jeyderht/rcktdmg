@@ -73,6 +73,8 @@ export default async function RecursosAdminPage({
         category: {
           select: {
             name: true,
+            /* Con él se decide la proporción de la miniatura. */
+            slug: true,
           },
         },
         images: {
@@ -248,7 +250,10 @@ export default async function RecursosAdminPage({
                   */}
                   <div
                     className={`rk-media ${claseProporcion(
-                      resource.pieceType
+                      {
+                      categoriaSlug: resource.category.slug,
+                      pieceType: resource.pieceType,
+                    }
                     )} relative w-20 shrink-0 overflow-hidden rounded-rk-sm sm:w-24`}
                   >
                     {image ? (

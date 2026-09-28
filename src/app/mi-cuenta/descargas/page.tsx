@@ -45,6 +45,8 @@ type Download = {
         coverUrl: string | null;
         /** Decide el marco de la miniatura. */
         pieceType?: string | null;
+        /** Categoría del recurso: decide su proporción. */
+        category?: { slug?: string | null } | null;
         description: string | null;
     };
     order: {
@@ -365,7 +367,10 @@ export default function MisDescargasPage() {
                                         >
                                             <div
                                         className={`rk-media ${claseProporcion(
-                                            download.product.pieceType as never
+                                            {
+                                            categoriaSlug: download.product.category?.slug,
+                                            pieceType: download.product.pieceType as never,
+                                        }
                                         )} relative w-20 overflow-hidden rounded-rk-sm sm:w-24`}
                                     >
                                                 {download.product

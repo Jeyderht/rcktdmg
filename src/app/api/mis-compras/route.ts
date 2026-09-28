@@ -42,6 +42,7 @@ export async function GET() {
                                 coverUrl: true,
                                 /* Decide el marco de la miniatura. */
                                 pieceType: true,
+                                category: { select: { slug: true } },
                                 price: true,
                             },
                         },

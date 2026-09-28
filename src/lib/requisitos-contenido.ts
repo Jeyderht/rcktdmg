@@ -154,36 +154,36 @@ export const REQUISITO_PORTADA: Requisito = {
 
 export const REQUISITO_STORY: Requisito = {
   clave: "story",
-  nombre: "Story de evento · 9:16",
+  nombre: "Eventos · 9:16",
   paraQue:
-    "La ÚNICA pieza vertical: se muestra a pantalla completa en Home, como una story de móvil.",
+    "TODAS las piezas de un evento: story, flyer, portada, perfil, post y cualquier otra.",
   medida: STORY,
   formatos: formatosDeImagen("product-image"),
   maxBytes: REGLAS["product-image"].maxBytes,
   notas: [
-    "La medida es exacta: otra proporción se vería recortada o con bandas.",
+    "La medida es exacta: un evento se ve a pantalla completa en el móvil y otra proporción saldría con bandas.",
+    "No depende de la pieza que elijas: la categoría Eventos es vertical entera.",
     "Se comprueba en el navegador antes de subir y otra vez en el servidor.",
   ],
 };
 
 /**
- * El formato estándar del catálogo.
+ * El formato horizontal del catálogo.
  *
- * Deja de ser exclusivo de Corporativos: lo comparten el
- * diseño general y todas las piezas de un evento menos la
- * story. La clave se conserva para no romper los ⓘ que ya
- * apuntan a "corporativo".
+ * Lo comparten Corporativos y Diseño general. Eventos NO: esa
+ * categoría es vertical entera. La clave se conserva para no
+ * romper los ⓘ que ya apuntan a "corporativo".
  */
 export const REQUISITO_CORPORATIVO: Requisito = {
   clave: "corporativo",
-  nombre: "Formato estándar · 4:5",
-  paraQue:
-    "Corporativos, diseño general y las piezas de evento que no son story.",
+  nombre: "Corporativos y Diseño general · 4:5",
+  paraQue: "Las dos categorías horizontales del catálogo.",
   medida: CUATRO_QUINTOS,
   formatos: formatosDeImagen("product-image"),
   maxBytes: REGLAS["product-image"].maxBytes,
   notas: [
     "La medida es exacta: las rejillas y el carrusel son 4:5, y una pieza distinta rompe la fila.",
+    "Eventos NO usa esta medida: es vertical, 1080 × 1920.",
     "Social Media es la única categoría sin medida fija.",
   ],
 };

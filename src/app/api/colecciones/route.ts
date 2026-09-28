@@ -48,6 +48,7 @@ export async function GET() {
                 coverUrl: true,
                 /* Decide el marco de cada miniatura. */
                 pieceType: true,
+                category: { select: { slug: true } },
                 status: true,
               },
             },

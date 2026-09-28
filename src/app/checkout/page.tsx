@@ -24,6 +24,12 @@ type CartItem = {
    * que caen al marco del catálogo.
    */
   pieceType?: string | null;
+  /**
+   * Categoría del recurso, cuando el carrito la guardó. Con la
+   * pieza, decide el marco de la miniatura. Ausente en los
+   * carritos anteriores.
+   */
+  categorySlug?: string | null;
   kind?: "PRODUCT" | "PACK" | "COLLECTION";
   quantity: number;
 };
@@ -357,7 +363,10 @@ export default function CheckoutPage() {
                 {/* Contenido visual 9:16, siempre nítido. */}
                 <div
                   className={`rk-media ${claseProporcion(
-                    item.pieceType as never
+                    {
+                    categoriaSlug: item.categorySlug,
+                    pieceType: item.pieceType as never,
+                  }
                   )} relative w-14 shrink-0 overflow-hidden rounded-rk-sm`}
                 >
                   {item.coverUrl ? (

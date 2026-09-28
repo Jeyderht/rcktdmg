@@ -52,6 +52,8 @@ type Order = {
       coverUrl: string | null;
       /** Decide el marco de la miniatura. */
       pieceType?: string | null;
+      /** Categoría del recurso: decide su proporción. */
+      category?: { slug?: string | null } | null;
     };
   }[];
 };
@@ -351,7 +353,10 @@ export default function Account() {
                     {/* Miniatura 9:16, siempre nitida. */}
                     <div
                       className={`rk-media ${claseProporcion(
-                        order.items[0]?.product.pieceType as never
+                        {
+                        categoriaSlug: order.items[0]?.product.category?.slug,
+                        pieceType: order.items[0]?.product.pieceType as never,
+                      }
                       )} relative w-12 shrink-0 overflow-hidden rounded-rk-sm`}
                     >
                       {cover ? (

@@ -33,6 +33,8 @@ type Product = {
   previewUrl: string | null;
   category: {
     name: string;
+    /** Decide la proporción de la miniatura. */
+    slug?: string | null;
   } | null;
   createdAt: string;
 };
@@ -299,7 +301,10 @@ export default function RecursosPage() {
                     {/* El marco lo decide la pieza; la imagen, nítida. */}
                     <div
                       className={`rk-media ${claseProporcion(
-                        product.pieceType
+                        {
+                        categoriaSlug: product.category?.slug,
+                        pieceType: product.pieceType,
+                      }
                       )} relative w-20 shrink-0 overflow-hidden rounded-rk-sm sm:w-24`}
                     >
                       {product.coverUrl ? (

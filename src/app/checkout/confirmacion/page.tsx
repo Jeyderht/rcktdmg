@@ -12,6 +12,12 @@ function ConfirmationContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("order");
 
+  /*
+    Lo resuelve el compilador: en producción es `false` y el
+    bloque de prueba desaparece del paquete.
+  */
+  const EN_DESARROLLO = process.env.NODE_ENV === "development";
+
   const [loading, setLoading] = useState(false);
   const [paid, setPaid] = useState(false);
   const [error, setError] = useState("");
@@ -117,7 +123,20 @@ function ConfirmationContent() {
             </div>
           )}
 
-          {!paid && orderId && (
+          {/*
+            EL BOTÓN DE PRUEBA SOLO EXISTE EN DESARROLLO.
+
+            Antes se pintaba también en producción, donde el
+            endpoint responde 403: un botón que parecía pagar y
+            solo devolvía un error. Ahora, sin pasarela
+            conectada, se dice lo que de verdad ocurre —el
+            pedido queda pendiente— en lugar de ofrecer una
+            acción que no existe.
+
+            `NODE_ENV` lo resuelve el compilador, así que en el
+            paquete de producción este bloque ni siquiera viaja.
+          */}
+          {!paid && orderId && EN_DESARROLLO && (
             <div className="mx-auto mt-8 max-w-md">
               <button
                 type="button"
@@ -131,8 +150,28 @@ function ConfirmationContent() {
               </button>
 
               <p className="mt-3 text-xs text-ink/60">
-                Modo desarrollo · No se realizará ningún cobro real.
+                Solo en desarrollo · No se realizará ningún cobro real.
               </p>
+            </div>
+          )}
+
+          {!paid && orderId && !EN_DESARROLLO && (
+            <div className="mx-auto mt-8 max-w-md rounded-rk-md border border-warning/30 bg-warning/[0.08] p-5 text-left">
+              <p className="text-sm font-medium">Pendiente de pago</p>
+
+              <p className="mt-2 text-sm leading-6 text-ink/70">
+                Tu pedido está guardado con este número. Todavía no hay
+                una pasarela de pago conectada, así que el cobro se
+                gestiona aparte; en cuanto se registre, tus descargas se
+                habilitan solas.
+              </p>
+
+              <Link
+                href="/mi-cuenta/compras"
+                className="rk-btn rk-btn-line mt-4"
+              >
+                Ver mis pedidos
+              </Link>
             </div>
           )}
 

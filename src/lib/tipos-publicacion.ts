@@ -134,7 +134,7 @@ export const TIPOS_PUBLICACION: TipoPublicacion[] = [
     clave: "EVENTO",
     nombre: "Evento",
     descripcion:
-      "Piezas de una fiesta, concierto o fecha concreta: story, flyer, portada, perfil o post.",
+      "Piezas de una fiesta, concierto o fecha concreta. Todas verticales, 1080 × 1920.",
     categoriaSlug: "eventos",
     ruta: null,
     /*
@@ -152,32 +152,32 @@ export const TIPOS_PUBLICACION: TipoPublicacion[] = [
       },
       {
         clave: "FLYER",
-        nombre: "Flyer principal · 1080 × 1350",
-        medida: CUATRO_QUINTOS,
+        nombre: "Flyer principal · 1080 × 1920",
+        medida: STORY,
         pieza: "EVENT_FLYER",
       },
       {
         clave: "PORTADA",
-        nombre: "Portada · 1080 × 1350",
-        medida: CUATRO_QUINTOS,
+        nombre: "Portada · 1080 × 1920",
+        medida: STORY,
         pieza: "EVENT_COVER",
       },
       {
         clave: "PERFIL",
-        nombre: "Foto de perfil · 1080 × 1350",
-        medida: CUATRO_QUINTOS,
+        nombre: "Foto de perfil · 1080 × 1920",
+        medida: STORY,
         pieza: "EVENT_PROFILE",
       },
       {
         clave: "POST",
-        nombre: "Post · 1080 × 1350",
-        medida: CUATRO_QUINTOS,
+        nombre: "Post · 1080 × 1920",
+        medida: STORY,
         pieza: "EVENT_POST",
       },
       {
         clave: "OTRO",
-        nombre: "Otra pieza · 1080 × 1350",
-        medida: CUATRO_QUINTOS,
+        nombre: "Otra pieza · 1080 × 1920",
+        medida: STORY,
         pieza: "EVENT_OTHER",
       },
     ],
@@ -261,18 +261,19 @@ export const ETIQUETA_PIEZA: Record<TipoPieza, string> = {
 /**
  * Qué medida exige cada pieza.
  *
- * Solo la story se sale de la norma: se muestra a pantalla
- * completa y necesita el vertical de 9:16. Las demás piezas de
- * un evento comparten el 4:5 del resto del catálogo, para que
- * una rejilla mezclada no salte de una proporción a otra.
+ * Todas las de un evento son verticales: la categoría entera
+ * lo es. La tabla se conserva porque documenta pieza a pieza
+ * lo que `medidaExigidaPara` resuelve por categoría, y porque
+ * el guardia de exhaustividad avisa si mañana aparece un tipo
+ * de pieza nuevo sin medida asignada.
  */
 export const MEDIDA_DE_PIEZA: Record<TipoPieza, MedidaExigida | null> = {
   EVENT_STORY: STORY,
-  EVENT_FLYER: CUATRO_QUINTOS,
-  EVENT_COVER: CUATRO_QUINTOS,
-  EVENT_PROFILE: CUATRO_QUINTOS,
-  EVENT_POST: CUATRO_QUINTOS,
-  EVENT_OTHER: CUATRO_QUINTOS,
+  EVENT_FLYER: STORY,
+  EVENT_COVER: STORY,
+  EVENT_PROFILE: STORY,
+  EVENT_POST: STORY,
+  EVENT_OTHER: STORY,
 };
 
 /**
@@ -296,8 +297,31 @@ export function medidaExigidaPara(
   categoriaSlug: string | null | undefined,
   pieceType: TipoPieza | null | undefined
 ): MedidaExigida | null {
-  if (categoriaSlug === "eventos") {
-    return pieceType ? MEDIDA_DE_PIEZA[pieceType] : null;
+  /*
+    EVENTOS ES VERTICAL, ENTERO.
+
+    Manda la CATEGORÍA, no la pieza. Un evento se consume en el
+    móvil a pantalla completa —da igual que la pieza sea una
+    story, un flyer o un post—, así que todas sus piezas
+    comparten el 9:16.
+
+    Que dependa de la categoría y no del `pieceType` tiene una
+    consecuencia buscada: los recursos de Eventos anteriores a
+    que la pieza se guardara, con `pieceType` nulo, también se
+    reconocen y se tratan como verticales.
+  */
+  /*
+    La pieza también identifica al evento: EVENT_* solo existe
+    dentro de Eventos. Así una llamada que solo conozca la
+    pieza —una miniatura de carrito, por ejemplo— llega a la
+    misma conclusión que una que conozca la categoría.
+  */
+  const esEvento =
+    categoriaSlug === "eventos" ||
+    (typeof pieceType === "string" && pieceType.startsWith("EVENT_"));
+
+  if (esEvento) {
+    return STORY;
   }
 
   if (categoriaSlug === "corporativos" || categoriaSlug === "general") {
@@ -401,14 +425,53 @@ export function revisarMedidas(
  * que esto existiera— devuelve el marco del catálogo, que es
  * lo correcto para casi todo y nunca deforma: recorta.
  */
-export function claseProporcion(
-  pieceType?: TipoPieza | null
-): string {
+export function claseProporcion({
+  categoriaSlug,
+  pieceType,
+}: {
+  /** Slug de la categoría del recurso, si se conoce. */
+  categoriaSlug?: string | null;
+  /** Pieza declarada, si se conoce. */
+  pieceType?: TipoPieza | null;
+}): string {
   /*
-    La pieza basta: EVENT_STORY solo existe dentro de eventos,
-    así que comprobar también la categoría era redundante.
+    El argumento es un OBJETO a propósito. Con dos parámetros
+    sueltos, el día que cambie el orden una llamada antigua
+    seguiría compilando y pasaría la pieza donde va la
+    categoría, en silencio. Así el compilador obliga a mirar
+    cada sitio.
+
+    La decisión la toma `medidaExigidaPara`, la MISMA función
+    que exige la medida al subir: el marco y la validación no
+    pueden discrepar.
   */
-  return pieceType === "EVENT_STORY"
-    ? "rk-aspect-story"
-    : "rk-aspect-product";
+  const medida = medidaExigidaPara(categoriaSlug, pieceType);
+
+  return medida === STORY ? "rk-aspect-story" : "rk-aspect-product";
+}
+
+/**
+ * Slugs de los que depende el comportamiento del sistema.
+ *
+ * No son una lista aparte: salen de los propios tipos de
+ * publicación, que es donde ya estaban declarados. Se añade
+ * `social-media` porque Home lo consulta por su slug aunque no
+ * exija medidas.
+ *
+ * Renombrar una de estas categorías está permitido; cambiarle
+ * el SLUG no, porque es lo que decide qué medidas se exigen.
+ * Un evento cuyo slug dejara de ser «eventos» pasaría a
+ * aceptar 4:5 sin que nadie lo hubiera pedido.
+ */
+export const SLUGS_DEL_SISTEMA: readonly string[] = [
+  ...new Set(
+    TIPOS_PUBLICACION.map((t) => t.categoriaSlug).filter(
+      (s): s is string => Boolean(s)
+    )
+  ),
+  "social-media",
+];
+
+export function esSlugDelSistema(slug: string): boolean {
+  return SLUGS_DEL_SISTEMA.includes(slug);
 }

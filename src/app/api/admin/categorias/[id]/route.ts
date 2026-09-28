@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
+import { esSlugDelSistema } from "@/lib/tipos-publicacion";
 import { slugificarCategoria, validarCategoria } from "@/lib/categorias";
 
 export const dynamic = "force-dynamic";
@@ -68,14 +69,57 @@ export async function PATCH(request: Request, contexto: Contexto) {
     }
 
     /*
-      El SLUG no cambia aunque cambie el nombre.
+      EL SLUG SÍ SE PUEDE CAMBIAR, pero solo a propósito.
 
-      Es lo que viaja en `/tienda?categoria=…`, en el sitemap y
-      en los enlaces que la gente ya compartió. Renombrar una
-      categoría es corregir cómo se lee, no mudar la sección a
-      otra dirección.
+      Cambiarlo NO es un efecto secundario de renombrar: hay
+      que enviarlo. Es lo que viaja en `/tienda?categoria=…`,
+      en el sitemap y en los enlaces que la gente ya compartió,
+      así que un cambio accidental rompe direcciones vivas.
+
+      Y hay cuatro que no se tocan. De ellos depende qué
+      medidas se exigen: «eventos» es 1080 × 1920,
+      «corporativos» y «general» son 1080 × 1350. Si el slug
+      de Eventos dejara de ser «eventos», esa categoría
+      empezaría a aceptar 4:5 en silencio. Renombrarlas se
+      permite; mudarlas de dirección, no.
     */
-    const slug = actual.slug || slugificarCategoria(validada.name);
+    let slug = actual.slug || slugificarCategoria(validada.name);
+
+    if (typeof body.slug === "string" && body.slug.trim()) {
+      const pedido = slugificarCategoria(body.slug);
+
+      if (!pedido) {
+        return NextResponse.json(
+          { error: "El slug no es válido." },
+          { status: 400 }
+        );
+      }
+
+      if (pedido !== actual.slug) {
+        if (esSlugDelSistema(actual.slug)) {
+          return NextResponse.json(
+            {
+              error: `«${actual.slug}» no puede cambiar de dirección: de este slug dependen las medidas que se exigen a sus recursos. Puedes cambiar el nombre.`,
+            },
+            { status: 409 }
+          );
+        }
+
+        const ocupado = await prisma.category.findFirst({
+          where: { slug: pedido, id: { not: id } },
+          select: { id: true },
+        });
+
+        if (ocupado) {
+          return NextResponse.json(
+            { error: "Ya existe otra categoría con ese slug." },
+            { status: 409 }
+          );
+        }
+
+        slug = pedido;
+      }
+    }
 
     const activa =
       typeof body.isActive === "boolean" ? { isActive: body.isActive } : {};

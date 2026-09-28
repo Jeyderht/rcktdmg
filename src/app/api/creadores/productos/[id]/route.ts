@@ -98,6 +98,7 @@ export async function GET(
         coverUrl: product.coverUrl,
         /* Con ella, cada pantalla enseña el recurso en su marco. */
         pieceType: product.pieceType,
+        categorySlug: product.category?.slug ?? null,
         previewUrl: product.previewUrl,
         fileUrl: product.fileUrl,
         fileFormat: product.fileFormat,

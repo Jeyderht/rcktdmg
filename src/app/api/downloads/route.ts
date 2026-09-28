@@ -41,8 +41,9 @@ export async function GET() {
               name: true,
               slug: true,
               coverUrl: true,
-              /* Decide el marco de la miniatura: story o catálogo. */
+              /* Deciden el marco de la miniatura. */
               pieceType: true,
+              category: { select: { slug: true } },
               description: true,
               /*
               fileUrl NO se devuelve: es la referencia al

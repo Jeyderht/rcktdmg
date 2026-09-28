@@ -125,7 +125,10 @@ export default async function CategoriesPage() {
                         en su marco y siempre nítida. */}
                     <div
                       className={`rk-media ${claseProporcion(
-                        category.products[0]?.pieceType
+                        {
+                        categoriaSlug: category.slug,
+                        pieceType: category.products[0]?.pieceType,
+                      }
                       )} relative w-16 shrink-0 overflow-hidden rounded-rk-sm`}
                     >
                       {preview ? (

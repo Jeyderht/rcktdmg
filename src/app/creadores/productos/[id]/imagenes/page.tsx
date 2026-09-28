@@ -17,6 +17,8 @@ import { subirImagen } from "@/lib/storage/client-upload";
 type Product = {
   /** Decide el marco con el que se previsualiza. */
   pieceType?: string | null;
+  /** Categoría del recurso: decide su proporción. */
+  categorySlug?: string | null;
   id: string;
   name: string;
   coverUrl: string | null;
@@ -606,7 +608,10 @@ export default function EditarImagenesPage() {
 
             <div
               className={`rk-media ${claseProporcion(
-                product?.pieceType as never
+                {
+                  categoriaSlug: product?.categorySlug,
+                  pieceType: product?.pieceType as never,
+                }
               )} relative mx-auto mt-5 w-full max-w-[14rem] overflow-hidden rounded-rk-md`}
             >
               {coverUrl ? (
@@ -678,7 +683,10 @@ export default function EditarImagenesPage() {
 
             <div
               className={`rk-media ${claseProporcion(
-                product?.pieceType as never
+                {
+                  categoriaSlug: product?.categorySlug,
+                  pieceType: product?.pieceType as never,
+                }
               )} relative mx-auto mt-5 w-full max-w-[14rem] overflow-hidden rounded-rk-md`}
             >
               {previewUrl ? (
@@ -815,7 +823,10 @@ export default function EditarImagenesPage() {
                       {/* IMAGEN: 9:16 y siempre nítida */}
                       <div
                         className={`rk-media ${claseProporcion(
-                          product?.pieceType as never
+                          {
+                  categoriaSlug: product?.categorySlug,
+                  pieceType: product?.pieceType as never,
+                }
                         )} relative`}
                       >
                         <Image

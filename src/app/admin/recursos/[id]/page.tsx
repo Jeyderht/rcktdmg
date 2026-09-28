@@ -338,7 +338,10 @@ export default async function AdminRecursoPage({ params }: Props) {
                 <div
                   key={item.key}
                   className={`rk-media ${claseProporcion(
-                    resource.pieceType
+                    {
+                    categoriaSlug: resource.category.slug,
+                    pieceType: resource.pieceType,
+                  }
                   )} relative overflow-hidden rounded-rk-sm`}
                 >
                   {/* La imagen se ve nítida: el vidrio va solo

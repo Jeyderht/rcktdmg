@@ -381,6 +381,9 @@ export async function GET() {
                 price: true,
                 createdAt: true,
                 coverUrl: true,
+            /* Deciden la proporción de la miniatura. */
+            pieceType: true,
+            category: { select: { slug: true } },
             },
             orderBy: {
                 createdAt: "desc",
@@ -423,6 +426,8 @@ export async function GET() {
                 status: product.status,
                 price: Number(product.price),
                 coverUrl: product.coverUrl,
+                pieceType: product.pieceType,
+                categorySlug: product.category?.slug ?? null,
                 createdAt: product.createdAt.toISOString(),
             })),
         });

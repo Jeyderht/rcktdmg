@@ -32,6 +32,8 @@ export type ArticuloCarrito = {
    * caen al marco del catálogo sin romperse.
    */
   pieceType?: string | null;
+  /** Categoría del recurso: con la pieza decide su marco. */
+  categorySlug?: string | null;
 };
 
 /**

@@ -21,6 +21,8 @@ type StatsData = {
         coverUrl: string | null;
         /** Decide el marco de la miniatura. */
         pieceType?: string | null;
+        /** Categoría del recurso: decide su proporción. */
+        categorySlug?: string | null;
         createdAt: string;
     };
 
@@ -230,7 +232,10 @@ export default function ProductStatisticsPage() {
                             {/* Contenido visual 9:16, siempre nítido. */}
                             <div
                                 className={`rk-media ${claseProporcion(
-                                    product.pieceType as never
+                                    {
+                                    categoriaSlug: product.categorySlug,
+                                    pieceType: product.pieceType as never,
+                                }
                                 )} relative w-16 shrink-0 overflow-hidden rounded-rk-md sm:w-20`}
                             >
                                 {product.coverUrl ? (

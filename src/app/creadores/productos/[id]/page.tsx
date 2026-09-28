@@ -174,7 +174,10 @@ export default async function CreatorProductPage({
             {/* Contenido visual 9:16, siempre nítido. */}
             <div
               className={`rk-media ${claseProporcion(
-                product.pieceType
+                {
+                categoriaSlug: product.category.slug,
+                pieceType: product.pieceType,
+              }
               )} relative w-20 shrink-0 overflow-hidden rounded-rk-md sm:w-24`}
             >
               {product.coverUrl ? (

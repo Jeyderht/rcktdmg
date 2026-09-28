@@ -17,6 +17,8 @@ type Props = {
     coverUrl: string | null;
     /** Pieza del recurso: decide el marco de su miniatura. */
     pieceType?: string | null;
+    /** Categoría del recurso: con la pieza decide su marco. */
+    categorySlug?: string | null;
   };
 };
 
@@ -53,6 +55,7 @@ export default function AddToCartButton({ product }: Props) {
           slug: product.slug,
           coverUrl: product.coverUrl,
           pieceType: product.pieceType ?? null,
+          categorySlug: product.categorySlug ?? null,
           quantity: 1,
         });
       }

@@ -19,6 +19,8 @@ type Product = {
     price: number;
     /** Decide el marco de la miniatura. */
     pieceType?: string | null;
+    /** Categoría del recurso: decide su proporción. */
+    category?: { slug?: string | null } | null;
 };
 
 type OrderItem = {
@@ -242,7 +244,10 @@ export default function MisComprasPage() {
                                             >
                                                 <div
                                                     className={`rk-media ${claseProporcion(
-                                                        item.product.pieceType as never
+                                                        {
+                                                        categoriaSlug: item.product.category?.slug,
+                                                        pieceType: item.product.pieceType as never,
+                                                    }
                                                     )} relative w-14 overflow-hidden rounded-rk-sm sm:w-16`}
                                                 >
                                                     {item.product.coverUrl ? (

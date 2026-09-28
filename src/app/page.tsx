@@ -173,8 +173,9 @@ export default async function Home() {
         name: true,
         slug: true,
         coverUrl: true,
-        /* Decide el marco de cada portada del hero. */
+        /* Deciden el marco de cada portada del hero. */
         pieceType: true,
+        category: { select: { slug: true } },
       },
     }),
 
@@ -402,7 +403,10 @@ export default async function Home() {
                       >
                         <div
                           className={`rk-frame ${claseProporcion(
-                            recurso.pieceType
+                            {
+                            categoriaSlug: recurso.category?.slug,
+                            pieceType: recurso.pieceType,
+                          }
                           )} w-full shadow-rk-lg`}
                         >
                           <Image

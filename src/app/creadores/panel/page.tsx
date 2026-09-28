@@ -83,6 +83,8 @@ type DashboardData = {
     coverUrl: string | null;
     /** Decide el marco de la miniatura. */
     pieceType?: string | null;
+    /** Categoría del recurso: decide su proporción. */
+    categorySlug?: string | null;
     createdAt: string;
   }[];
 };
@@ -898,7 +900,10 @@ export default function CreatorDashboard() {
                     {/* Miniatura 9:16, siempre nítida. */}
                     <div
                       className={`rk-media ${claseProporcion(
-                        product.pieceType as never
+                        {
+                        categoriaSlug: product.categorySlug,
+                        pieceType: product.pieceType as never,
+                      }
                       )} relative w-12 shrink-0 overflow-hidden rounded-rk-sm`}
                     >
                       {product.coverUrl ? (

@@ -27,6 +27,8 @@ type Product = {
   coverUrl: string | null;
   /** Decide el marco de la miniatura. */
   pieceType?: string | null;
+  /** Categoría del recurso: decide su proporción. */
+  category?: { slug?: string | null } | null;
   status: string;
 };
 
@@ -356,7 +358,10 @@ export default function ColeccionesPage() {
                           <div
                             key={item.product.id}
                             className={`rk-media ${claseProporcion(
-                              item.product.pieceType as never
+                              {
+                              categoriaSlug: item.product.category?.slug,
+                              pieceType: item.product.pieceType as never,
+                            }
                             )} relative overflow-hidden rounded-rk-sm`}
                           >
                             {item.product.coverUrl ? (

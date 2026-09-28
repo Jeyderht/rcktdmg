@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { timingSafeEqual } from "node:crypto";
 
 import { prisma } from "@/lib/prisma";
 import { fulfillPaidOrder } from "@/lib/orders";
@@ -6,34 +7,72 @@ import { sincronizarLicenciasDePedido } from "@/lib/licencias";
 
 export const runtime = "nodejs";
 
+
+/*
+  Comparación en tiempo constante: una comparación normal
+  se corta en el primer byte distinto, y ese tiempo delata
+  cuánto se acertó de la firma.
+*/
+function firmaValida(recibida: string, esperada: string) {
+  const a = Buffer.from(recibida);
+  const b = Buffer.from(esperada);
+
+  if (a.length !== b.length) return false;
+
+  return timingSafeEqual(a, b);
+}
+
 /**
  * Webhook de la pasarela de pago.
  *
  * El estado del pedido NUNCA se confirma desde el frontend:
  * solo este webhook (o el pago de prueba en desarrollo)
  * puede marcar un pedido como pagado.
+ *
+ * Y este webhook solo acepta eventos si hay una pasarela
+ * conectada, es decir, si CULQI_WEBHOOK_SECRET está puesta
+ * y la firma del evento coincide. Sin eso responde 503 y no
+ * toca ningún pedido.
  */
 export async function POST(request: Request) {
   try {
-    // Verificación opcional por token compartido. Si
-    // CULQI_WEBHOOK_SECRET está configurado, se exige.
+    /*
+      Este webhook es el único camino por el que un pedido
+      llega a PAID en producción, así que va cerrado por
+      defecto: sin secreto configurado no hay pasarela
+      conectada y no se acepta ningún evento.
+
+      Antes la comprobación era opcional —solo se exigía la
+      firma si CULQI_WEBHOOK_SECRET estaba puesta—, y esa
+      variable no existe mientras no haya pasarela. Con ella
+      vacía cualquiera podía marcar un pedido como pagado
+      con un POST sin sesión: basta el transactionId, que el
+      propio comprador recibe en /api/mis-compras.
+    */
     const webhookSecret = process.env.CULQI_WEBHOOK_SECRET;
 
-    if (webhookSecret) {
-      const provided =
-        request.headers.get("x-rcktdmg-webhook-secret") ||
-        request.headers.get("x-culqi-signature");
+    if (!webhookSecret) {
+      console.warn(
+        "Webhook de pago rechazado: no hay pasarela conectada."
+      );
 
-      if (provided !== webhookSecret) {
-        console.warn(
-          "Webhook Culqi rechazado: firma no válida."
-        );
+      return NextResponse.json(
+        { error: "No hay ninguna pasarela de pago conectada." },
+        { status: 503 }
+      );
+    }
 
-        return NextResponse.json(
-          { error: "Firma no válida." },
-          { status: 401 }
-        );
-      }
+    const provided =
+      request.headers.get("x-rcktdmg-webhook-secret") ||
+      request.headers.get("x-culqi-signature");
+
+    if (!provided || !firmaValida(provided, webhookSecret)) {
+      console.warn("Webhook de pago rechazado: firma no válida.");
+
+      return NextResponse.json(
+        { error: "Firma no válida." },
+        { status: 401 }
+      );
     }
 
     const body = await request.json();

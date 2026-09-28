@@ -575,6 +575,7 @@ export default async function ProductPage({
                                         product={{
                                             id: product.id,
                                             pieceType: product.pieceType,
+                                            categorySlug: product.category.slug,
                                             name: product.name,
                                             price: Number(product.price),
                                             slug: product.slug,

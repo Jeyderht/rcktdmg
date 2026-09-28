@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Check, Loader2, Plus, Power, Trash2, X } from "lucide-react";
 
 import SubirPortada from "@/components/SubirPortada";
+import { esSlugDelSistema } from "@/lib/tipos-publicacion";
 import {
   LARGO_DESCRIPCION_CATEGORIA,
   LARGO_NOMBRE_CATEGORIA,
@@ -44,6 +45,8 @@ export default function CategoriasManager() {
 
   const [editando, setEditando] = useState<string | null>(null);
   const [nombreEdit, setNombreEdit] = useState("");
+  const [slugEdit, setSlugEdit] = useState("");
+  const [descripcionEdit, setDescripcionEdit] = useState("");
   const [portadaEdit, setPortadaEdit] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
@@ -272,6 +275,40 @@ export default function CategoriasManager() {
                       className="rk-input w-full max-w-sm"
                     />
 
+                    {/*
+                      El slug es la dirección de la categoría.
+                      Las cuatro de las que depende el sistema
+                      —eventos, corporativos, general y social
+                      media— no lo cambian: de él salen las
+                      medidas que se exigen a sus recursos. El
+                      nombre sí se puede cambiar en todas.
+                    */}
+                    <div className="max-w-sm">
+                      <input
+                        value={slugEdit}
+                        onChange={(e) => setSlugEdit(e.target.value)}
+                        disabled={esSlugDelSistema(categoria.slug)}
+                        aria-label="Slug de la categoría"
+                        placeholder="slug-de-la-categoria"
+                        className="rk-input w-full disabled:opacity-60"
+                      />
+
+                      <p className="mt-1 text-[12px] leading-5 text-ink/55">
+                        {esSlugDelSistema(categoria.slug)
+                          ? "Esta dirección no se puede cambiar: de ella dependen las medidas que se exigen a sus recursos."
+                          : "Es la dirección pública. Cambiarla rompe los enlaces que ya se hayan compartido."}
+                      </p>
+                    </div>
+
+                    <textarea
+                      value={descripcionEdit}
+                      onChange={(e) => setDescripcionEdit(e.target.value)}
+                      rows={2}
+                      aria-label="Descripción de la categoría"
+                      placeholder="Para qué sirve esta categoría."
+                      className="rk-textarea w-full max-w-sm"
+                    />
+
                     <SubirPortada
                       valor={portadaEdit}
                       alCambiar={setPortadaEdit}
@@ -303,6 +340,8 @@ export default function CategoriasManager() {
                             method: "PATCH",
                             body: JSON.stringify({
                               name: nombreEdit,
+                              slug: slugEdit,
+                              description: descripcionEdit,
                               coverUrl: portadaEdit ?? "",
                             }),
                           },
@@ -333,6 +372,8 @@ export default function CategoriasManager() {
                       onClick={() => {
                         setEditando(categoria.id);
                         setNombreEdit(categoria.name);
+                        setSlugEdit(categoria.slug);
+                        setDescripcionEdit(categoria.description ?? "");
                         setPortadaEdit(categoria.coverUrl);
                       }}
                       className="rk-btn rk-btn-line !px-4 !py-2 !text-[13px]"
