@@ -55,10 +55,10 @@ export default function StoriesEventos({
 
     Antes se rellenaba con recursos de otras categorías bajo un
     rótulo de demostración. El rótulo era honesto, pero la
-    sección seguía enseñando Social Media y Plantillas donde
-    dice «Eventos», y eso da una idea falsa del catálogo. Una
-    portada que crece con lo que hay publicado se entiende
-    sola: si no hay eventos, no hay sección de eventos.
+    sección seguía enseñando recursos que no encajaban en el
+    rótulo, y eso da una idea falsa del catálogo. Una portada
+    que crece con lo que hay publicado se entiende sola: sin
+    recursos verticales, no hay tira de stories.
   */
   if (flyers.length === 0) return null;
 
@@ -67,20 +67,20 @@ export default function StoriesEventos({
       <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
         <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="rk-kicker">Eventos</p>
+            <p className="rk-kicker">Formato vertical</p>
 
             <h2 className="rk-title mt-3 text-[2rem] sm:text-4xl">
-              Flyers al momento
+              Stories
             </h2>
 
             <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">
-              Los últimos flyers de eventos publicados. Pulsa uno
-              para verlo a pantalla completa.
+              Piezas verticales 1080 × 1920, listas para publicar.
+              Pulsa una para verla a pantalla completa.
             </p>
           </div>
 
           <Link
-            href="/tienda?categoria=eventos"
+            href="/tienda"
             className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
           >
             Ver todos

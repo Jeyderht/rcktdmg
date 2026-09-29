@@ -273,7 +273,7 @@ export default async function CreatorPublicProfile({
 
                 {/* FOTO */}
                 <div className="-mt-16 shrink-0 sm:-mt-20">
-                  <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rk-media rounded-rk-lg border-4 border-surface shadow-rk-float sm:h-36 sm:w-36 sm:rounded-rk-xl">
+                  <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rk-media rounded-full border-4 border-surface shadow-rk-float sm:h-36 sm:w-36 sm:rounded-rk-xl">
                     {creator.avatarUrl ? (
                       <Image
                         src={creator.avatarUrl}

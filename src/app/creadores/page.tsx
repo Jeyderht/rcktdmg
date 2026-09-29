@@ -175,7 +175,7 @@ export default async function CreatorsPage() {
 
                     <div className="px-5 pb-5">
                       {/* AVATAR */}
-                      <div className="rk-media relative -mt-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-rk-md border-[3px] border-surface shadow-rk">
+                      <div className="rk-media relative -mt-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-[3px] border-surface shadow-rk">
                         {creator.avatarUrl ? (
                           <Image
                             src={creator.avatarUrl}

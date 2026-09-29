@@ -14,6 +14,8 @@
  * Corporativos.
  */
 
+import { medidaExigidaPara } from "@/lib/tipos-publicacion";
+
 export type Dimensiones = { width: number; height: number };
 
 /** Formato 1080 × 1350, el vertical 4:5 que usa Corporativos. */
@@ -25,6 +27,27 @@ export function esFormatoCorporativo(
   height: number | null | undefined
 ): boolean {
   return width === ANCHO_CORPORATIVO && height === ALTO_CORPORATIVO;
+}
+
+/*
+  Formato 1080 × 1920, el vertical 9:16.
+
+  Es la medida que se exige a TODA la categoría Eventos, y
+  también la forma que sabe enseñar el visor de stories a
+  pantalla completa. Los números no se escriben a mano aquí:
+  salen de `medidaExigidaPara`, la misma función que valida las
+  subidas, para que no puedan separarse nunca.
+*/
+const VERTICAL = medidaExigidaPara("eventos", null);
+
+export const ANCHO_VERTICAL = VERTICAL?.ancho ?? 1080;
+export const ALTO_VERTICAL = VERTICAL?.alto ?? 1920;
+
+export function esFormatoVertical(
+  width: number | null | undefined,
+  height: number | null | undefined
+): boolean {
+  return width === ANCHO_VERTICAL && height === ALTO_VERTICAL;
 }
 
 /* ══════════════ LECTURA ══════════════ */

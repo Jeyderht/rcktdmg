@@ -16,6 +16,11 @@ import {
 } from "@/lib/storage/client-upload";
 import Link from "next/link";
 import { COLORES } from "@/lib/catalogo";
+import {
+  medidaExigidaPara,
+  revisarMedidas,
+  type TipoPieza,
+} from "@/lib/tipos-publicacion";
 import { useParams, useRouter } from "next/navigation";
 
 type Product = {
@@ -36,6 +41,12 @@ type Product = {
   tags: string[];
   licenseType: TipoLicencia;
   categoryId: string;
+  /*
+    La API ya los devolvía; hacían falta aquí para saber qué
+    medida exige este recurso antes de subir nada.
+  */
+  categorySlug: string | null;
+  pieceType: TipoPieza | null;
   category: {
     id: string;
     name: string;
@@ -82,6 +93,16 @@ export default function EditarRecursoPage() {
   const [tags, setTags] = useState<string[]>([]);
   const [licenseType, setLicenseType] =
     useState<TipoLicencia>("PERSONAL");
+
+  /*
+    Medidas de la portada que se está viendo, para poder
+    decirle al creador si cumple ANTES de guardar. Se rellenan
+    al elegir un archivo nuevo y al cargar el recurso.
+  */
+  const [medidaPortada, setMedidaPortada] = useState<{
+    ancho: number;
+    alto: number;
+  } | null>(null);
 
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingPreview, setUploadingPreview] = useState(false);
@@ -185,14 +206,55 @@ export default function EditarRecursoPage() {
 
     if (!file) return;
 
+    setError("");
+    setMessage("");
+
+    /*
+      La portada se mide ANTES de subirla.
+
+      Así el creador se entera del formato incorrecto en el
+      momento, y no se sube al almacén un archivo que el
+      servidor va a rechazar igualmente. La comprobación de
+      verdad sigue estando en la API: esto solo ahorra el
+      viaje y explica el problema antes.
+    */
+    if (type === "cover") {
+      const exigida = medidaExigidaPara(
+        product?.categorySlug,
+        product?.pieceType ?? null
+      );
+
+      let reales: { ancho: number; alto: number } | null = null;
+
+      try {
+        const bitmap = await createImageBitmap(file);
+
+        reales = { ancho: bitmap.width, alto: bitmap.height };
+        bitmap.close();
+      } catch {
+        reales = null;
+      }
+
+      setMedidaPortada(reales);
+
+      const problema = revisarMedidas(exigida, reales);
+
+      if (problema) {
+        setError(
+          `Formato incorrecto para ${product?.category?.name ?? "esta categoría"}. ${problema}`
+        );
+
+        e.target.value = "";
+
+        return;
+      }
+    }
+
     if (type === "cover") {
       setUploadingCover(true);
     } else {
       setUploadingPreview(true);
     }
-
-    setError("");
-    setMessage("");
 
     try {
       // Con Blob activo la imagen va directa al almacén.
@@ -838,6 +900,53 @@ export default function EditarRecursoPage() {
                       ? "Cambiar portada"
                       : "Subir portada"}
                 </label>
+
+                {/*
+                  QUÉ MIDE Y SI CUMPLE
+
+                  Se dice antes de guardar: qué tamaño tiene la
+                  imagen que hay ahora y si le vale a esta
+                  categoría. Sin esto, el creador solo se
+                  enteraba al intentar enviar a revisión.
+                */}
+                {(() => {
+                  const exigida = medidaExigidaPara(
+                    product?.categorySlug,
+                    product?.pieceType ?? null
+                  );
+
+                  if (!exigida) {
+                    return medidaPortada ? (
+                      <p className="mt-3 text-[13px] text-ink/60">
+                        Dimensiones detectadas: {medidaPortada.ancho} ×{" "}
+                        {medidaPortada.alto} px. Esta categoría no exige
+                        una medida concreta.
+                      </p>
+                    ) : null;
+                  }
+
+                  const cumple =
+                    medidaPortada !== null &&
+                    medidaPortada.ancho === exigida.ancho &&
+                    medidaPortada.alto === exigida.alto;
+
+                  return (
+                    <div className="mt-3 text-[13px] leading-6">
+                      {medidaPortada && (
+                        <p className="text-ink/60">
+                          Dimensiones detectadas: {medidaPortada.ancho} ×{" "}
+                          {medidaPortada.alto} px
+                        </p>
+                      )}
+
+                      <p className={cumple ? "text-success" : "text-ink/60"}>
+                        {cumple
+                          ? `✓ Portada válida — ${exigida.ancho} × ${exigida.alto} px (${exigida.proporcion})`
+                          : `Los recursos de ${product?.category?.name ?? "esta categoría"} necesitan una portada de ${exigida.ancho} × ${exigida.alto} px (${exigida.proporcion}).`}
+                      </p>
+                    </div>
+                  );
+                })()}
 
                 <div className="mt-5">
                   <label

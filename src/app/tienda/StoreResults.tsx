@@ -91,7 +91,7 @@ export default async function StoreResults({
           {conFiltros && (
             <Link
               href="/tienda"
-              className="rk-press inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-4 transition-opacity hover:opacity-60"
+              className="rk-press rk-hit-44-y inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-4 transition-opacity hover:opacity-60"
             >
               <X size={14} />
               Limpiar filtros

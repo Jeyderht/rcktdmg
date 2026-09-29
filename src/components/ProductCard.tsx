@@ -91,7 +91,13 @@ export default function ProductCard({
           mejor que estirar.
         */}
         <div
-          className="rk-frame w-full"
+          /*
+            `rk-card-glow` lleva el resplandor y la elevación;
+            `overflow-hidden` es lo que impide que el
+            acercamiento de la imagen se salga del marco y
+            rompa la proporción que acaba de fijarse.
+          */
+          className="rk-frame rk-card-glow w-full overflow-hidden"
           style={{
             aspectRatio:
               proporcionDeRecurso(
@@ -110,7 +116,7 @@ export default function ProductCard({
                 el marco ya ajustado al recurso, en la mayoría
                 de los casos no sobra nada.
               */
-              className="object-cover"
+              className="rk-card-zoom object-cover"
               sizes="(max-width: 480px) 45vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 15vw"
             />
           ) : (

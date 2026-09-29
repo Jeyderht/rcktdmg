@@ -1,5 +1,4 @@
 import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
 
 /**
  * La navegación y el pie viven en el layout para que también
@@ -12,7 +11,6 @@ export default function CollectionDetailLayout({
 }) {
   return (
     <>
-      <Navbar />
       {children}
       <Footer />
     </>

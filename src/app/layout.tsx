@@ -6,6 +6,7 @@ import {
   ThemeProvider,
   themeInitScript,
 } from "@/components/ThemeProvider";
+import RevelarAlEntrar from "@/components/RevelarAlEntrar";
 import { SITIO, absoluta, urlBase } from "@/lib/seo";
 
 const inter = Inter({
@@ -114,7 +115,16 @@ export default function RootLayout({
       </head>
 
       <body className={`${inter.variable} ${sora.variable} antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+
+          {/*
+            Va después del contenido a propósito: cuando su
+            efecto se ejecuta, las secciones ya están en el DOM
+            y puede medir cuáles quedan por debajo del pliegue.
+          */}
+          <RevelarAlEntrar />
+        </ThemeProvider>
       </body>
     </html>
   );

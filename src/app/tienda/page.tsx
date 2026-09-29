@@ -429,7 +429,7 @@ export default async function Store({ searchParams }: StoreProps) {
                     href={urlTienda(parametros, {
                       [filtro.clave]: undefined,
                     })}
-                    className="rk-chip rk-chip-active"
+                    className="rk-chip rk-chip-active rk-hit-44-y"
                   >
                     {filtro.etiqueta}
                     <X size={12} aria-hidden />

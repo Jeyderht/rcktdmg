@@ -383,11 +383,30 @@ input[type="search"]::-webkit-search-results-decoration {
     box-shadow: var(--rk-shadow);
   }
 
-  /* Reacción al puntero: elevación sutil. */
-  .rk-card-hover:hover {
+  /*
+    Reacción al puntero: elevación sutil y el mismo halo azul
+    que usan las tarjetas de recurso.
+
+    Se añade aquí, en la clase compartida, en lugar de en cada
+    panel: los tres tableros —cliente, creador y administración—
+    ya usaban `rk-card-hover`, así que heredan el mismo lenguaje
+    visual sin tocar su estructura ni sus consultas.
+
+    `:focus-within` entra para quien navega con teclado, y
+    `:active` para el dedo, donde no hay puntero que pase por
+    encima.
+  */
+  .rk-card-hover:hover,
+  .rk-card-hover:focus-within {
     transform: translateY(-3px);
-    box-shadow: var(--rk-shadow-lg);
+    box-shadow:
+      var(--rk-shadow-lg),
+      0 14px 36px -20px rgb(var(--rk-accent) / 0.35);
     border-color: var(--rk-border-strong);
+  }
+
+  .rk-card-hover:active {
+    transform: translateY(-1px);
   }
 
   /* Superficie plana, sin elevación. */
@@ -1089,6 +1108,8 @@ input[type="search"]::-webkit-search-results-decoration {
   .rk-btn:active:not(:disabled),
   .rk-chip:active,
   .rk-card-hover:hover,
+  .rk-card-hover:focus-within,
+  .rk-card-hover:active,
   .rk-hover-lift:hover {
     transform: none;
   }
@@ -1165,5 +1186,292 @@ input[type="search"]::-webkit-search-results-decoration {
     top: 50%;
     height: 2.75rem;
     transform: translateY(-50%);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   CARGA ENTRE RUTAS
+
+   La marca entra con un desvanecido corto y la barra recorre
+   su carril en bucle. Ambas usan transform y opacity, que el
+   compositor resuelve sin volver a maquetar la página.
+   ══════════════════════════════════════════════════════════ */
+@layer components {
+  .rk-carga {
+    animation: rk-fade var(--rk-transition-normal) var(--rk-ease) both;
+  }
+
+  .rk-carga-pulso {
+    animation: rk-carga-recorrido 1.15s var(--rk-ease) infinite;
+    will-change: transform;
+  }
+}
+
+@keyframes rk-carga-recorrido {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   APARICIÓN AL ENTRAR EN PANTALLA
+
+   La clase la pone JavaScript, nunca el HTML servido. Es
+   deliberado: si el script no llega a ejecutarse, o el
+   navegador no tiene IntersectionObserver, no hay nada oculto
+   que reaparecer y la página se lee igual. Ocultar primero y
+   revelar después habría dejado la web en blanco ante el
+   menor fallo.
+   ══════════════════════════════════════════════════════════ */
+@layer components {
+  .rk-revelar {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    transition:
+      opacity var(--rk-transition-slow) var(--rk-ease),
+      transform var(--rk-transition-slow) var(--rk-ease);
+    will-change: opacity, transform;
+  }
+
+  .rk-revelar.rk-visto {
+    opacity: 1;
+    transform: none;
+    /* Ya no se va a mover más: se libera la capa. */
+    will-change: auto;
+  }
+}
+
+/*
+  Con el movimiento reducido no se oculta nada en ningún
+  momento: la regla anula el estado de partida, no solo la
+  duración de la transición.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .rk-revelar,
+  .rk-revelar.rk-visto {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   GLOW — BOTONES Y TARJETAS
+
+   El resplandor usa el azul de firma que ya existe
+   (`--rk-accent`), no un color nuevo: la identidad sigue
+   siendo tinta sobre papel con el azul como acento.
+
+   Se aplica con `box-shadow`, que el compositor resuelve sin
+   volver a maquetar, y solo donde aporta: el botón primario y
+   la tarjeta de recurso. Las demás variantes se quedan como
+   estaban, para que el glow siga significando algo.
+   ══════════════════════════════════════════════════════════ */
+@layer components {
+  /*
+    BOTÓN PRIMARIO CON RESPLANDOR
+
+    Se suma a la sombra que ya tenía en lugar de sustituirla,
+    así el botón conserva su peso sobre fondos claros y gana
+    el halo sobre los oscuros.
+  */
+  .rk-btn-primary,
+  .rk-btn-glow {
+    box-shadow:
+      var(--rk-shadow-sm),
+      0 0 0 0 rgb(var(--rk-accent) / 0);
+  }
+
+  .rk-btn-primary:hover:not(:disabled),
+  .rk-btn-glow:hover:not(:disabled) {
+    box-shadow:
+      var(--rk-shadow),
+      0 6px 22px -6px rgb(var(--rk-accent) / 0.45);
+  }
+
+  .rk-btn-primary:focus-visible,
+  .rk-btn-glow:focus-visible {
+    box-shadow:
+      var(--rk-shadow),
+      0 6px 22px -6px rgb(var(--rk-accent) / 0.45);
+  }
+
+  /* Un botón desactivado no promete nada: tampoco resplandece. */
+  .rk-btn-primary:disabled,
+  .rk-btn-glow:disabled {
+    box-shadow: none;
+  }
+
+  /*
+    TARJETA DE RECURSO CON RESPLANDOR
+
+    El halo sale por debajo de la tarjeta, no de su borde: un
+    resplandor pegado al contorno se lee como un borde de
+    color, que es justo lo que no se quiere.
+
+    `:focus-within` entra para que quien navega con teclado
+    reciba la misma respuesta que con el ratón, y `:active`
+    para el dedo: en una pantalla táctil no hay hover, así que
+    sin esto la tarjeta no reaccionaría al tocarla.
+  */
+  .rk-card-glow {
+    /*
+      Sombra en reposo, no solo al pasar el ratón.
+
+      Sin ella la tarjeta se veía plana hasta que alguien la
+      señalaba, y en un teléfono no hay ratón: la tienda móvil
+      perdía toda la profundidad. Es suave a propósito; el
+      resplandor de verdad sigue llegando con la interacción.
+    */
+    box-shadow: var(--rk-shadow-sm);
+    transition:
+      transform var(--rk-transition-slow) var(--rk-ease),
+      box-shadow var(--rk-transition-slow) var(--rk-ease),
+      border-color var(--rk-transition-normal) var(--rk-ease-soft);
+  }
+
+  .rk-card-glow:hover,
+  .rk-card-glow:focus-within {
+    transform: translateY(-3px);
+    box-shadow:
+      var(--rk-shadow-lg),
+      0 14px 36px -18px rgb(var(--rk-accent) / 0.4);
+    border-color: var(--rk-border-strong);
+  }
+
+  .rk-card-glow:active {
+    transform: translateY(-1px);
+    box-shadow:
+      var(--rk-shadow),
+      0 8px 24px -14px rgb(var(--rk-accent) / 0.35);
+  }
+
+  /* Acercamiento de la imagen, contenido por el marco. */
+  .rk-card-glow .rk-card-zoom {
+    transition: transform var(--rk-transition-slow) var(--rk-ease);
+  }
+
+  .rk-card-glow:hover .rk-card-zoom,
+  .rk-card-glow:focus-within .rk-card-zoom {
+    transform: scale(1.04);
+  }
+}
+
+/*
+  Con el movimiento reducido se conserva el cambio de sombra
+  —que informa sin moverse— y se retiran los desplazamientos y
+  el acercamiento.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .rk-card-glow:hover,
+  .rk-card-glow:focus-within,
+  .rk-card-glow:active {
+    transform: none;
+  }
+
+  .rk-card-glow:hover .rk-card-zoom,
+  .rk-card-glow:focus-within .rk-card-zoom {
+    transform: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   TABLEROS — SIDEBAR, CAJÓN Y BARRA
+
+   Mismo lenguaje que las tarjetas: superficie translúcida,
+   borde fino y el azul de firma solo para marcar dónde estás.
+   ══════════════════════════════════════════════════════════ */
+@layer components {
+  .rk-panel-lateral {
+    background: rgb(var(--rk-card) / var(--rk-card-alpha));
+    -webkit-backdrop-filter: saturate(150%) blur(12px);
+    backdrop-filter: saturate(150%) blur(12px);
+    border-right: 1px solid var(--rk-border-color);
+  }
+
+  .rk-panel-barra {
+    background: rgb(var(--rk-card) / var(--rk-card-alpha));
+    -webkit-backdrop-filter: saturate(150%) blur(12px);
+    backdrop-filter: saturate(150%) blur(12px);
+    border-bottom: 1px solid var(--rk-border-color);
+  }
+
+  .rk-panel-cajon {
+    background: rgb(var(--rk-surface-elevated));
+    border-right: 1px solid var(--rk-border-color);
+    box-shadow: var(--rk-shadow-lg);
+  }
+
+  /*
+    Sección activa.
+
+    Se marca con fondo, una barra a la izquierda y un halo muy
+    corto del azul de firma. El color solo no bastaba: sobre
+    fondo oscuro la diferencia entre activo y hover era casi
+    imperceptible.
+  */
+  .rk-panel-activo {
+    position: relative;
+    background: rgb(var(--rk-accent) / 0.1);
+    box-shadow: inset 0 0 0 1px rgb(var(--rk-accent) / 0.22);
+  }
+
+  .rk-panel-activo::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 22%;
+    bottom: 22%;
+    width: 2px;
+    border-radius: 2px;
+    background: rgb(var(--rk-accent));
+  }
+
+  /*
+    TABLA DEL PANEL
+
+    El desplazamiento horizontal vive DENTRO de la tabla, no en
+    la página: una tabla ancha no debería obligar a mover el
+    sitio entero de lado.
+  */
+  .rk-panel-tabla {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rk-panel-tabla > table {
+    width: 100%;
+    min-width: 34rem;
+    border-collapse: collapse;
+  }
+
+  .rk-panel-tabla th {
+    text-align: left;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(var(--rk-foreground) / 0.5);
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid var(--rk-border-color);
+    white-space: nowrap;
+  }
+
+  .rk-panel-tabla td {
+    padding: 0.75rem;
+    font-size: 0.8125rem;
+    border-bottom: 1px solid rgb(var(--rk-foreground) / 0.06);
+  }
+
+  .rk-panel-tabla tbody tr {
+    transition: background-color 160ms var(--rk-ease-soft);
+  }
+
+  .rk-panel-tabla tbody tr:hover {
+    background: rgb(var(--rk-foreground) / 0.035);
   }
 }

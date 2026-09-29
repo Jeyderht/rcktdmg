@@ -2,7 +2,9 @@ import type { TipoPieza } from "@/lib/tipos-publicacion";
 import { prisma } from "@/lib/prisma";
 import {
   ALTO_CORPORATIVO,
+  ALTO_VERTICAL,
   ANCHO_CORPORATIVO,
+  ANCHO_VERTICAL,
 } from "@/lib/dimensiones";
 
 /**
@@ -166,25 +168,46 @@ async function porCategoria(
   return (filas as Fila[]).map(aTarjetaHome);
 }
 
-/**
- * Las STORIES de eventos. Solo esas.
- *
- * Antes traía la categoría Eventos entera, así que un flyer o
- * un post —4:5— acababa en un visor a pantalla completa
- * pensado para 9:16. Ahora se pide la pieza exacta: la única
- * que tiene esa forma.
- *
- * Los recursos anteriores a que la pieza se guardara tienen
- * `pieceType` nulo y quedan fuera, que es lo correcto: nadie
- * declaró que fueran stories y no se les va a suponer.
- */
-export function storiesDeEventos(tope = 12): Promise<TarjetaHome[]> {
-  return porCategoria(CATEGORIA_EVENTOS, tope, true, "EVENT_STORY");
-}
-
 /** Toda la categoría Eventos, para su propia sección. */
 export function flyersDeEventos(tope = 12): Promise<TarjetaHome[]> {
   return porCategoria(CATEGORIA_EVENTOS, tope, true);
+}
+
+/**
+ * Recursos VERTICALES, para el visor de stories.
+ *
+ * «Story» no es una categoría, es una forma: 1080 × 1920, que
+ * es lo que el visor a pantalla completa sabe enseñar sin
+ * recortar ni deformar. Por eso el filtro va contra las
+ * dimensiones REALES guardadas al subir la imagen, no contra
+ * la categoría ni contra el `pieceType`.
+ *
+ * Eso mantiene separadas dos ideas que no son la misma:
+ *
+ *   · Eventos  es una CATEGORÍA, y toda ella mide 1080 × 1920,
+ *     así que entra entera aquí.
+ *   · Story    es un FORMATO, y lo cumple cualquier recurso
+ *     vertical, sea de la categoría que sea.
+ *
+ * Antes esta sección pedía `pieceType: "EVENT_STORY"` y dejaba
+ * fuera recursos que encajan perfectamente en el visor. Y un
+ * recurso sin dimensiones leídas queda fuera a propósito: sin
+ * el dato no se puede afirmar que sea vertical.
+ */
+export function recursosVerticales(tope = 12): Promise<TarjetaHome[]> {
+  return prisma.product
+    .findMany({
+      where: {
+        status: "PUBLISHED",
+        coverWidth: ANCHO_VERTICAL,
+        coverHeight: ALTO_VERTICAL,
+        OR: [{ images: { some: {} } }, { coverUrl: { not: null } }],
+      },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      take: tope,
+      select: SELECCION,
+    })
+    .then((filas) => (filas as Fila[]).map(aTarjetaHome));
 }
 
 /**
@@ -196,9 +219,27 @@ export function flyersDeEventos(tope = 12): Promise<TarjetaHome[]> {
  * Están aquí, en un solo sitio, porque antes la tira de
  * Stories usaba 4:5 —la de Corporativos— y las dos secciones
  * se veían con la misma forma pese a ser formatos distintos.
+ *
+ * Y ahora SE CALCULAN a partir de las medidas reales, en vez
+ * de escribirse a mano. Antes ponía "9/16" y "4/5" como texto:
+ * coincidían con la regla por costumbre, no porque nada lo
+ * garantizara. Si un día cambiara la medida exigida, aquellos
+ * literales no se habrían enterado.
  */
-export const ASPECTO_STORY = "9/16";
-export const ASPECTO_CORPORATIVO = "4/5";
+function proporcion(ancho: number, alto: number): string {
+  /* Máximo común divisor, para que 1080 × 1920 se lea "9/16". */
+  const mcd = (a: number, b: number): number => (b === 0 ? a : mcd(b, a % b));
+
+  const d = mcd(ancho, alto);
+
+  return `${ancho / d}/${alto / d}`;
+}
+
+export const ASPECTO_STORY = proporcion(ANCHO_VERTICAL, ALTO_VERTICAL);
+export const ASPECTO_CORPORATIVO = proporcion(
+  ANCHO_CORPORATIVO,
+  ALTO_CORPORATIVO
+);
 
 /**
  * Recursos para el carrusel de Corporativos.
@@ -216,23 +257,22 @@ export async function corporativosParaSlice(
 }
 
 /**
- * Recursos de Eventos para la sección de la portada.
+ * Recursos para el visor de stories de la portada.
  *
- * Se pide la categoría ENTERA, no solo `EVENT_STORY`. Cuando
- * las piezas de Eventos podían medir 4:5 había que apartarlas
- * del visor a pantalla completa, que es 9:16; desde que la
- * regla de Eventos es 1080 × 1920 para TODAS sus piezas, un
- * flyer, una portada o un post encajan igual que una story, y
- * dejarlos fuera escondía recursos legítimos de la sección que
- * les corresponde.
+ * La sección va por FORMATO, no por categoría: entra todo lo
+ * publicado que mida 1080 × 1920, venga de donde venga. La
+ * categoría Eventos entra entera —toda ella mide eso— y
+ * también cualquier vertical de otra categoría, porque el
+ * visor solo necesita que la pieza sea 9:16.
  *
- * Si la categoría está vacía se devuelve vacío y la sección
- * desaparece. No se rellena con recursos de otras categorías.
+ * Si no hay ningún recurso vertical publicado se devuelve
+ * vacío y la sección desaparece. No se rellena con recursos de
+ * otro formato.
  */
 export async function flyersParaStories(
   tope = 12
 ): Promise<{ flyers: TarjetaHome[] }> {
-  return { flyers: await flyersDeEventos(tope) };
+  return { flyers: await recursosVerticales(tope) };
 }
 
 /**

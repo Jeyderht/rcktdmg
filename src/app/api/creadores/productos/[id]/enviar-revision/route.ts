@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import { notificarAdmins } from "@/lib/notificaciones";
+import { revisarPortadaDelRecurso } from "@/lib/portada-exigida";
 
 /**
  * Envía un recurso a revisión.
@@ -89,6 +90,24 @@ export async function POST(
         "Debes cargar el archivo principal antes de enviar el recurso a revisión.",
         400
       );
+    }
+
+    /*
+      La portada tiene que cumplir la medida de su categoría.
+
+      Se comprueba AQUÍ y no al guardar: un borrador puede
+      existir a medias mientras el creador lo prepara, pero en
+      cuanto pide revisión está diciendo que ya está listo, y
+      un evento con portada horizontal no lo está.
+
+      Va en el servidor porque el formulario no es la única
+      puerta: sin esto, una llamada directa a la API colaría
+      una portada de cualquier proporción.
+    */
+    const problemaPortada = await revisarPortadaDelRecurso(product.id);
+
+    if (problemaPortada) {
+      return fail(problemaPortada, 400);
     }
 
     const updatedProduct = await prisma.product.update({

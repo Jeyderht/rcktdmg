@@ -257,7 +257,7 @@ export default async function Admin() {
       <section className="rk-fade-up rk-enter-1 mt-6">
         <div className="rk-card flex flex-wrap items-center justify-between gap-4 p-4">
           <div className="flex min-w-0 items-center gap-3.5">
-            <span className="rk-media relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-rk-sm text-base font-semibold text-ink/70">
+            <span className="rk-media relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full text-base font-semibold text-ink/70">
               {adminUser?.avatarUrl ? (
                 <Image
                   src={adminUser.avatarUrl}

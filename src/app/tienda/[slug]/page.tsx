@@ -618,7 +618,7 @@ export default async function ProductPage({
 
                         {/* ── CREADOR ── */}
                         <div className="rk-card rk-hover-lift mt-4 flex items-center gap-3.5 p-3.5 sm:p-4">
-                            <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-rk-sm bg-primary text-lg font-semibold text-onprimary">
+                            <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-lg font-semibold text-onprimary">
                                 {product.creator.avatarUrl ? (
                                     <Image
                                         src={product.creator.avatarUrl}

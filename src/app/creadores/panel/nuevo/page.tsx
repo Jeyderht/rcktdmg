@@ -19,6 +19,16 @@ export const dynamic = "force-dynamic";
  */
 export default async function NuevoRecursoPage() {
   const categories = await prisma.category.findMany({
+    /*
+      Solo categorías activas. Una categoría retirada sigue
+      existiendo para no perder los recursos que ya cuelgan de
+      ella, pero no admite piezas nuevas: ofrecerla aquí sería
+      invitar a publicar en un sitio que el administrador ya
+      cerró. La API lo comprueba otra vez por su cuenta.
+    */
+    where: {
+      isActive: true,
+    },
     orderBy: {
       name: "asc",
     },

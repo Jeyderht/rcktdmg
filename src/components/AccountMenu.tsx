@@ -123,7 +123,7 @@ export default function AccountMenu({
     <>
       {/* IDENTIDAD */}
       <div className="flex items-center gap-3 rk-divider-b px-4 py-4">
-        <span className="rk-media relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-rk-sm text-sm font-semibold text-ink/70">
+        <span className="rk-media relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-ink/70">
           {user.avatarUrl ? (
             <Image
               src={user.avatarUrl}

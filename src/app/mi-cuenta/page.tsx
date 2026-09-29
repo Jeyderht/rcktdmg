@@ -12,7 +12,6 @@ import {
 
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
 import QuickAccess from "@/components/QuickAccess";
 import RecomendadosCliente from "@/components/RecomendadosCliente";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -166,7 +165,6 @@ export default function Account() {
 
   return (
     <>
-      <Navbar />
 
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
 
@@ -192,7 +190,7 @@ export default function Account() {
         <section className="rk-fade-up rk-enter-1 mt-6">
           <div className="rk-card flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div className="flex min-w-0 items-center gap-4">
-              <span className="rk-media relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-rk-md text-lg font-semibold text-ink/70 sm:h-16 sm:w-16 sm:text-xl">
+              <span className="rk-media relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full text-lg font-semibold text-ink/70 sm:h-16 sm:w-16 sm:text-xl">
                 {user?.avatarUrl ? (
                   <Image
                     src={user.avatarUrl}

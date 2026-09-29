@@ -289,7 +289,24 @@ function NavbarContent() {
                 R
               </span>
 
-              <span className="text-[15px] font-bold tracking-tight sm:text-base">
+              {/*
+                Por debajo de 375 px se deja solo el cuadro de
+                la marca.
+
+                Los dos lados de la barra son `shrink-0` —el
+                logotipo porque no debe partirse, y los botones
+                porque son objetivos táctiles de 44 px—, así
+                que cuando la suma no cabe nada cede y el grupo
+                de la derecha acaba fuera de la pantalla: la
+                cuenta y las notificaciones quedaban cortadas a
+                320 y 360 px.
+
+                Quitar el logotipo de texto libera unos 90 px,
+                que es justo lo que faltaba. La identidad se
+                mantiene con el cuadro, y a partir de 375 px
+                —donde ya cabía— no cambia nada.
+              */}
+              <span className="hidden text-[15px] font-bold tracking-tight min-[375px]:inline sm:text-base">
                 RCKTDMG
               </span>
             </Link>

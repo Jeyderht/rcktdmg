@@ -8,7 +8,6 @@ import { BadgeCheck, UserRound } from "lucide-react";
 import AccountPageHeader from "@/components/AccountPageHeader";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
 
 type Creador = {
   id: string;
@@ -73,7 +72,6 @@ export default function SiguiendoPage() {
 
   return (
     <>
-      <Navbar />
 
       <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:pb-20 lg:pt-8">
         <AccountPageHeader

@@ -72,6 +72,13 @@ export default function NuevoRecursoForm({
     tipo?.formatos[0] ??
     null;
 
+  /*
+    La categoría a la que irá el recurso, deducida del tipo.
+    Solo para enseñarla: quien decide de verdad es el servidor.
+  */
+  const categoriaDestino =
+    categories.find((c) => c.slug === tipo?.categoriaSlug) ?? null;
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -145,17 +152,18 @@ export default function NuevoRecursoForm({
     }
 
     /*
-      La portada deja de ser opcional. Sin ella el recurso no
-      se ve en ningún sitio —ni tarjeta, ni tienda, ni Home—,
-      así que pedirla al crear es mejor que descubrir el hueco
-      después. Tres de los ocho recursos que ya existían no la
-      tienen; a esos no les afecta, porque esto solo mira lo
-      que se está creando ahora.
+      La portada NO bloquea el borrador.
+
+      Lo que sale de este formulario es siempre un borrador, y
+      un borrador puede estar a medias: se apunta el nombre y
+      el precio y la portada se sube después. Exigirla aquí
+      obligaba a tenerlo todo listo antes de poder guardar
+      nada.
+
+      Quien la exige es enviar a revisión, y lo hace en el
+      servidor: ahí sí tiene que estar, y con la medida de su
+      categoría.
     */
-    if (!portada) {
-      setError("Sube la portada del recurso.");
-      return;
-    }
 
     setLoading(true);
     setMessage("");
@@ -170,6 +178,13 @@ export default function NuevoRecursoForm({
         body: JSON.stringify({
           name,
           description,
+          /*
+            El tipo manda. El servidor resuelve la categoría a
+            partir de él y rechaza la petición si `categoryId`
+            no es el que le corresponde, así que aquí no hay
+            forma de guardar una combinación incoherente.
+          */
+          tipo: claveTipo,
           categoryId,
           price,
           accessType,
@@ -177,7 +192,7 @@ export default function NuevoRecursoForm({
           esPack,
           tags,
           licenseType,
-          coverUrl: portada.url,
+          coverUrl: portada?.url ?? "",
           previewUrl: preview?.url ?? "",
           fileUrl,
           /*
@@ -428,32 +443,39 @@ export default function NuevoRecursoForm({
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">
+              {/*
+                CATEGORÍA — SE MUESTRA, NO SE ELIGE
+
+                Antes había aquí un desplegable con todas las
+                categorías, y el creador tenía que volver a
+                decidir algo que ya había decidido en el primer
+                paso. Podía además elegir una que no
+                correspondiera al tipo, y entonces el recurso
+                acababa con las medidas de una categoría y la
+                etiqueta de otra.
+
+                Ahora la categoría se deduce del tipo y se
+                enseña para que el creador sepa dónde va a
+                quedar su recurso. El servidor la vuelve a
+                deducir por su cuenta.
+              */}
               <div>
-                <label
-                  htmlFor="category"
-                  className="mb-2 block text-sm font-medium"
-                >
+                <span className="mb-2 block text-sm font-medium">
                   Categoría
-                </label>
+                </span>
 
-                <select
-                  id="category"
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
-                  required
-                  className="rk-select w-full"
-                >
-                  <option value="">
-                    Selecciona una categoría
-                  </option>
+                <p className="rk-input flex w-full items-center justify-between gap-2 text-sm">
+                  <span className={categoriaDestino ? "" : "text-ink/45"}>
+                    {categoriaDestino?.name ??
+                      "Elige antes un tipo de publicación"}
+                  </span>
 
-                  {/* Categorías reales de la base de datos. */}
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
+                  {categoriaDestino && (
+                    <span className="text-xs text-ink/45">
+                      la fija el tipo
+                    </span>
+                  )}
+                </p>
               </div>
 
               <div>
@@ -709,7 +731,6 @@ export default function NuevoRecursoForm({
                       ? "corporativo"
                       : "portada"
                 }
-                obligatorio
                 medida={formato?.medida ?? null}
                 valor={portada}
                 alCambiar={setPortada}
@@ -729,6 +750,21 @@ export default function NuevoRecursoForm({
                 ayuda="Se muestra con marca de agua. Opcional."
               />
             </div>
+
+            {/*
+              Sin portada el recurso se guarda igual, pero no
+              puede salir del borrador. Se dice aquí, junto al
+              campo, y no como un error al pulsar guardar.
+            */}
+            {!portada && (
+              <p className="mt-3 text-[13px] leading-6 text-ink/55">
+                Puedes guardar este recurso como borrador y completar
+                la portada más adelante.{" "}
+                {formato?.medida
+                  ? `Para enviarlo a revisión necesitarás una portada de ${formato.medida.ancho} × ${formato.medida.alto} px (${formato.medida.proporcion}).`
+                  : "Para enviarlo a revisión necesitarás una portada."}
+              </p>
+            )}
 
             {/* GALERÍA */}
             <div>

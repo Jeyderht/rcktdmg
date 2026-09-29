@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { dimensionesDesdeUrl } from "@/lib/dimensiones";
+import {
+  medidaExigidaPara,
+  revisarMedidas,
+} from "@/lib/tipos-publicacion";
 import { olvidarObjeto } from "@/lib/storage";
 import {
   aplicarEtiquetaPack,
@@ -192,21 +196,83 @@ export async function PATCH(
       );
     }
 
-    // Solo permitimos editar borradores y recursos rechazados.
-    if (
-      product.status !== "DRAFT" &&
-      product.status !== "REJECTED"
-    ) {
-      return NextResponse.json(
-        {
-          error:
-            "Este recurso no puede editarse mientras está pendiente de revisión o publicado.",
-        },
-        { status: 400 }
-      );
-    }
-
     const body = await req.json();
+
+    /*
+      EDITAR SOLO LA PORTADA DE UN RECURSO YA PUBLICADO
+
+      La edición completa sigue reservada a borradores y
+      rechazados: si un recurso aprobado pudiera cambiar de
+      nombre, precio o archivo, la revisión no serviría de
+      nada.
+
+      La portada es la excepción, y por un motivo concreto:
+      hay recursos publicados con una portada que no cumple la
+      medida de su categoría —o directamente sin portada— y sin
+      esta puerta su creador no tenía forma de arreglarlo salvo
+      volver a crear el recurso, perdiendo ventas, descargas y
+      licencias.
+
+      Aquí solo se toca `coverUrl` y sus medidas. Todo lo demás
+      del cuerpo se ignora a propósito: así, aunque la petición
+      traiga un nombre o un precio nuevos, no se aplican.
+    */
+    const soloPortada =
+      product.status !== "DRAFT" && product.status !== "REJECTED";
+
+    if (soloPortada) {
+      const nuevaPortada = body?.coverUrl;
+
+      if (typeof nuevaPortada !== "string" || !nuevaPortada) {
+        return NextResponse.json(
+          {
+            error:
+              "De un recurso publicado solo puede reemplazarse la portada.",
+          },
+          { status: 400 }
+        );
+      }
+
+      const categoriaActual = await prisma.category.findUnique({
+        where: { id: product.categoryId },
+        select: { slug: true, name: true },
+      });
+
+      const medidas = await dimensionesDesdeUrl(nuevaPortada);
+
+      const problema = revisarMedidas(
+        medidaExigidaPara(categoriaActual?.slug, product.pieceType),
+        medidas ? { ancho: medidas.width, alto: medidas.height } : null
+      );
+
+      if (problema) {
+        return NextResponse.json(
+          {
+            error: `Formato incorrecto para ${categoriaActual?.name ?? "esta categoría"}. ${problema}`,
+          },
+          { status: 400 }
+        );
+      }
+
+      const anterior = product.coverUrl;
+
+      const actualizado = await prisma.product.update({
+        where: { id: product.id },
+        data: {
+          coverUrl: nuevaPortada,
+          coverWidth: medidas?.width ?? null,
+          coverHeight: medidas?.height ?? null,
+        },
+        select: { id: true, coverUrl: true, coverWidth: true, coverHeight: true },
+      });
+
+      /* La portada vieja deja de estar referenciada. */
+      if (anterior && anterior !== nuevaPortada) {
+        await olvidarObjeto(anterior, "publico");
+      }
+
+      return NextResponse.json({ product: actualizado });
+    }
 
     const {
       name,
@@ -290,6 +356,41 @@ export async function PATCH(
       coverUrl !== undefined && coverUrl
         ? await dimensionesDesdeUrl(coverUrl)
         : null;
+
+    /*
+      LA PORTADA NUEVA TIENE QUE CUMPLIR LA MEDIDA
+
+      Se comprueba contra la categoría que va a quedar
+      guardada, no contra la que tenía antes: si en el mismo
+      guardado se cambia de categoría, manda la nueva.
+
+      Solo cuando de verdad llega una portada. Dejarla vacía
+      sigue permitido —un borrador puede estar a medias— y de
+      exigirla se encargan enviar a revisión y publicar.
+
+      La medida no se decide aquí: la decide `medidaExigidaPara`,
+      la misma función que usa la creación y la que mira
+      administración al revisar. Sin esto, reemplazar la
+      portada era la puerta por la que entraba una imagen
+      horizontal a un recurso de Eventos.
+    */
+    if (coverUrl !== undefined && coverUrl) {
+      const exigida = medidaExigidaPara(category.slug, product.pieceType);
+
+      const problema = revisarMedidas(
+        exigida,
+        medidaPortada
+          ? { ancho: medidaPortada.width, alto: medidaPortada.height }
+          : null
+      );
+
+      if (problema) {
+        return NextResponse.json(
+          { error: `Formato incorrecto para ${category.name}. ${problema}` },
+          { status: 400 }
+        );
+      }
+    }
 
     const updatedProduct = await prisma.product.update({
       where: {

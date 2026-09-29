@@ -6,7 +6,6 @@ import { Heart, X } from "lucide-react";
 import AccountPageHeader from "@/components/AccountPageHeader";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
 import ProductCard from "@/components/ProductCard";
 
 type Favorite = {
@@ -108,7 +107,6 @@ export default function FavoritosPage() {
 
   return (
     <>
-      <Navbar />
 
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
         <AccountPageHeader

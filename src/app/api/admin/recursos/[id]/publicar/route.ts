@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { verifySessionToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { crearNotificacion } from "@/lib/notificaciones";
+import { revisarPortadaDelRecurso } from "@/lib/portada-exigida";
 
 export async function POST(
   request: Request,
@@ -51,6 +52,25 @@ export async function POST(
     if (product.status !== "PENDING_REVIEW") {
       return NextResponse.json(
         { error: "El recurso no está pendiente de revisión." },
+        { status: 400 }
+      );
+    }
+
+    /*
+      Se vuelve a comprobar la portada antes de publicar.
+
+      Para llegar aquí el recurso ya pasó por revisión, donde
+      se comprobó lo mismo; pero entre una cosa y otra pudo
+      cambiarse la portada, y sobre todo hay recursos que
+      quedaron en PENDING_REVIEW antes de que esta regla
+      existiera. Publicar es la puerta que deja el recurso a la
+      vista de todos: conviene que sea la más estricta.
+    */
+    const problemaPortada = await revisarPortadaDelRecurso(id);
+
+    if (problemaPortada) {
+      return NextResponse.json(
+        { error: problemaPortada },
         { status: 400 }
       );
     }
