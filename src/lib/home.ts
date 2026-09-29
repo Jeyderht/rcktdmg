@@ -201,79 +201,38 @@ export const ASPECTO_STORY = "9/16";
 export const ASPECTO_CORPORATIVO = "4/5";
 
 /**
- * Recursos para el carrusel de Corporativos, con demostración.
+ * Recursos para el carrusel de Corporativos.
  *
- * La fuente real sigue siendo estricta: categoría Corporativos
- * y formato 1080 × 1350 exacto. Solo si no hay ninguno se
- * devuelven otros recursos publicados, marcados con `esDemo`,
- * para poder revisar el diseño del carrusel.
- *
- * Los recursos de la demo NO cumplen el formato y la interfaz
- * lo dice: no se insinúa que sean corporativos ni que midan
- * 1080 × 1350.
+ * Solo categoría Corporativos con formato 1080 × 1350 exacto.
+ * Si no hay ninguno se devuelve la lista vacía y la sección se
+ * oculta entera: una sección de Corporativos que enseña
+ * recursos de otra categoría no dice la verdad, por mucho que
+ * lo aclare un rótulo.
  */
 export async function corporativosParaSlice(
   tope = 9
-): Promise<{ recursos: TarjetaHome[]; esDemo: boolean }> {
-  const reales = await recursosCorporativos(tope);
-
-  if (reales.length > 0) {
-    return { recursos: reales, esDemo: false };
-  }
-
-  const demo = await prisma.product.findMany({
-    where: {
-      status: "PUBLISHED",
-      OR: [{ images: { some: {} } }, { coverUrl: { not: null } }],
-    },
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    take: tope,
-    select: SELECCION,
-  });
-
-  return { recursos: (demo as Fila[]).map(aTarjetaHome), esDemo: true };
+): Promise<{ recursos: TarjetaHome[] }> {
+  return { recursos: await recursosCorporativos(tope) };
 }
 
 /**
- * Flyers para la sección de Stories, con demostración visual.
+ * Recursos de Eventos para la sección de la portada.
  *
- * La fuente real es SIEMPRE la categoría Eventos: el filtro no
- * se relaja nunca. Lo que cambia es qué se hace cuando esa
- * categoría todavía no tiene nada publicado.
+ * Se pide la categoría ENTERA, no solo `EVENT_STORY`. Cuando
+ * las piezas de Eventos podían medir 4:5 había que apartarlas
+ * del visor a pantalla completa, que es 9:16; desde que la
+ * regla de Eventos es 1080 × 1920 para TODAS sus piezas, un
+ * flyer, una portada o un post encajan igual que una story, y
+ * dejarlos fuera escondía recursos legítimos de la sección que
+ * les corresponde.
  *
- * En ese caso se devuelven recursos que YA existen para poder
- * revisar el diseño del componente, marcados con `esDemo`.
- * La interfaz lo dice con todas las letras, y ningún dato de
- * esos recursos se modifica: se leen y se pintan, nada más.
- *
- * En cuanto exista el primer flyer de Eventos publicado, la
- * demo desaparece sola y no queda rastro de ella.
+ * Si la categoría está vacía se devuelve vacío y la sección
+ * desaparece. No se rellena con recursos de otras categorías.
  */
 export async function flyersParaStories(
   tope = 12
-): Promise<{ flyers: TarjetaHome[]; esDemo: boolean }> {
-  const reales = await storiesDeEventos(tope);
-
-  if (reales.length > 0) {
-    return { flyers: reales, esDemo: false };
-  }
-
-  /*
-    Demostración: recursos publicados con imagen, de cualquier
-    categoría. NO se les cambia la categoría ni nada más; solo
-    se usan para que el componente tenga algo que enseñar.
-  */
-  const demo = await prisma.product.findMany({
-    where: {
-      status: "PUBLISHED",
-      OR: [{ images: { some: {} } }, { coverUrl: { not: null } }],
-    },
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    take: tope,
-    select: SELECCION,
-  });
-
-  return { flyers: (demo as Fila[]).map(aTarjetaHome), esDemo: true };
+): Promise<{ flyers: TarjetaHome[] }> {
+  return { flyers: await flyersDeEventos(tope) };
 }
 
 /**

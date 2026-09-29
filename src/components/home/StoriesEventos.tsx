@@ -7,7 +7,6 @@ import { createPortal } from "react-dom";
 import {
   ArrowUpRight,
   BadgeCheck,
-  CalendarClock,
   ChevronLeft,
   Check,
   ChevronRight,
@@ -16,7 +15,6 @@ import {
   X,
 } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
 import { formatPrice } from "@/lib/pricing";
 import PreviewProtegido from "@/components/PreviewProtegido";
 import { ASPECTO_STORY, type TarjetaHome } from "@/lib/home";
@@ -46,29 +44,23 @@ const DURACION_STORY = 4500;
 
 export default function StoriesEventos({
   flyers,
-  esDemo = false,
 }: {
   flyers: TarjetaHome[];
-  /**
-   * true cuando lo que se ve NO son flyers de eventos reales,
-   * sino otros recursos usados para poder revisar el diseño.
-   * Se anuncia en pantalla: nadie debe confundirlos con
-   * contenido real de la sección.
-   */
-  esDemo?: boolean;
 }) {
   const [abierta, setAbierta] = useState<number | null>(null);
 
   /*
-    La sección SIEMPRE se pinta.
+    Sin flyers de Eventos publicados, la sección entera no se
+    pinta.
 
-    Antes devolvía null sin flyers, y el efecto era que una
-    parte del sitio desaparecía sin explicación: quien entraba
-    no podía saber si no había eventos o si la función no
-    existía. Ahora, sin datos reales, se dice exactamente eso
-    y no se inventa ningún flyer.
+    Antes se rellenaba con recursos de otras categorías bajo un
+    rótulo de demostración. El rótulo era honesto, pero la
+    sección seguía enseñando Social Media y Plantillas donde
+    dice «Eventos», y eso da una idea falsa del catálogo. Una
+    portada que crece con lo que hay publicado se entiende
+    sola: si no hay eventos, no hay sección de eventos.
   */
-  const vacia = flyers.length === 0;
+  if (flyers.length === 0) return null;
 
   return (
     <section className="border-t border-line/10">
@@ -82,22 +74,9 @@ export default function StoriesEventos({
             </h2>
 
             <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">
-              {esDemo
-                ? "Todavía no hay flyers de eventos publicados. Esto es una muestra del diseño con otros recursos del catálogo."
-                : "Los últimos flyers de eventos publicados. Pulsa uno para verlo a pantalla completa."}
+              Los últimos flyers de eventos publicados. Pulsa uno
+              para verlo a pantalla completa.
             </p>
-
-            {/*
-              El distintivo de demostración es deliberadamente
-              visible. Una sección que enseña recursos de otra
-              categoría sin avisar haría creer que ya hay
-              eventos publicados cuando no los hay.
-            */}
-            {esDemo && (
-              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-warning/40 bg-warning/[0.08] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-ink/70">
-                Demostración · no son recursos de Eventos
-              </p>
-            )}
           </div>
 
           <Link
@@ -114,16 +93,6 @@ export default function StoriesEventos({
         </div>
 
         {/* ══════════ TIRA ══════════ */}
-        {vacia ? (
-          <div className="rk-fade-up rk-enter-1 mt-8">
-            <EmptyState
-              icon={CalendarClock}
-              title="Próximamente"
-              description="Aquí aparecerán los flyers de eventos en cuanto se publique el primero."
-              action={{ href: "/tienda", label: "Ver todo el catálogo" }}
-            />
-          </div>
-        ) : (
         <ul className="rk-fade-up rk-enter-1 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {flyers.map((flyer, indice) => (
             <li key={flyer.id} className="snap-start">
@@ -169,7 +138,6 @@ export default function StoriesEventos({
             </li>
           ))}
         </ul>
-        )}
       </div>
 
       {abierta !== null && (

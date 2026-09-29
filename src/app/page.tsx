@@ -431,16 +431,13 @@ export default async function Home() {
         <SelectorBusqueda />
 
         {/* ══════════ STORIES DE EVENTOS ══════════ */}
-        <StoriesEventos flyers={flyers.flyers} esDemo={flyers.esDemo} />
+        <StoriesEventos flyers={flyers.flyers} />
 
         {/* ══════════ COLECCIONES ══════════ */}
         <SeccionColecciones colecciones={colecciones} />
 
         {/* ══════════ CORPORATIVOS ══════════ */}
-        <SliceCorporativos
-          recursos={corporativos.recursos}
-          esDemo={corporativos.esDemo}
-        />
+        <SliceCorporativos recursos={corporativos.recursos} />
 
         {/* ══════════ CATEGORÍAS ══════════ */}
         {categories.length > 0 && (

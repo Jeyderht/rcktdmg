@@ -17,6 +17,7 @@ export type ClaveTipo =
   | "EVENTO"
   | "GENERAL"
   | "SOCIAL_MEDIA"
+  | "PLANTILLA"
   | "CORPORATIVO"
   | "COLECCION"
   | "PACK";
@@ -206,6 +207,26 @@ export const TIPOS_PUBLICACION: TipoPublicacion[] = [
     nombre: "Social Media",
     descripcion: "Contenido para redes, sin atarse a un evento concreto.",
     categoriaSlug: "social-media",
+    ruta: null,
+    formatos: [LIBRE],
+  },
+  {
+    /*
+      Plantillas existe como categoría real del catálogo desde
+      el principio, pero no tenía tipo de publicación, y el
+      formulario construye sus opciones a partir de esta lista:
+      sin entrada aquí, un creador no podía publicar en
+      Plantillas por mucho que la categoría estuviera creada.
+
+      No se le impone medida: `medidaExigidaPara` no exige
+      ninguna a este slug, así que el formato es libre, igual
+      que en Social Media.
+    */
+    clave: "PLANTILLA",
+    nombre: "Plantilla",
+    descripcion:
+      "Archivos editables para reutilizar y adaptar a cada proyecto.",
+    categoriaSlug: "plantillas",
     ruta: null,
     formatos: [LIBRE],
   },

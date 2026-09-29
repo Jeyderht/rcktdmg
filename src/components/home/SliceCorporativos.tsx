@@ -6,14 +6,12 @@ import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   BadgeCheck,
-  Briefcase,
   ChevronLeft,
   ChevronRight,
   Heart,
   ShoppingBag,
 } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
 import { formatPrice } from "@/lib/pricing";
 import {
   CART_STORAGE_KEY,
@@ -46,11 +44,8 @@ const TRANSICION = 600;
 
 export default function SliceCorporativos({
   recursos,
-  esDemo = false,
 }: {
   recursos: TarjetaHome[];
-  /** true si lo que se ve no son corporativos 1080 × 1350 reales. */
-  esDemo?: boolean;
 }) {
   /*
     ÍNDICE VIRTUAL
@@ -62,9 +57,6 @@ export default function SliceCorporativos({
     Ese salto es justo lo que se nota como un tirón.
   */
   const [centro, setCentro] = useState(0);
-
-  // La sección se pinta siempre; sin datos, lo dice.
-  const vacia = recursos.length === 0;
 
   const total = recursos.length;
 
@@ -101,12 +93,20 @@ export default function SliceCorporativos({
   const [pausado, setPausado] = useState(false);
 
   useEffect(() => {
-    if (vacia || total < 2 || pausado) return;
+    if (total < 2 || pausado) return;
 
     const t = window.setTimeout(() => setCentro((i) => i + 1), INTERVALO);
 
     return () => window.clearTimeout(t);
-  }, [centro, pausado, vacia, total]);
+  }, [centro, pausado, total]);
+
+  /*
+    Sin piezas corporativas reales en 1080 × 1350 la sección no
+    se pinta, igual que la de Eventos. Antes se rellenaba con
+    recursos de otras categorías; el aviso era honesto, pero
+    seguía enseñando Social Media bajo el título «Corporativos».
+  */
+  if (total === 0) return null;
 
   return (
     <section className="overflow-hidden border-t border-line/10">
@@ -120,16 +120,9 @@ export default function SliceCorporativos({
             </h2>
 
             <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">
-              {esDemo
-                ? "Todavía no hay piezas corporativas en 1080 × 1350. Esto es una muestra del diseño con otros recursos del catálogo."
-                : "Piezas para comunicar con una marca detrás: anuncios, presentaciones y campañas."}
+              Piezas para comunicar con una marca detrás: anuncios,
+              presentaciones y campañas.
             </p>
-
-            {esDemo && (
-              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-warning/40 bg-warning/[0.08] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-ink/70">
-                Demostración · no son recursos de Corporativos
-              </p>
-            )}
           </div>
 
           <Link
@@ -145,19 +138,7 @@ export default function SliceCorporativos({
           </Link>
         </div>
 
-        {vacia && (
-          <div className="rk-fade-up rk-enter-1 mt-10">
-            <EmptyState
-              icon={Briefcase}
-              title="Próximamente"
-              description="Aquí aparecerán las piezas corporativas en formato 1080 × 1350 en cuanto se publique la primera."
-              action={{ href: "/tienda", label: "Ver todo el catálogo" }}
-            />
-          </div>
-        )}
-
         {/* ══════════ ESCENARIO ══════════ */}
-        {!vacia && (
         <div
           {...swipe}
           onMouseEnter={() => setPausado(true)}
@@ -267,7 +248,6 @@ export default function SliceCorporativos({
             </button>
           )}
         </div>
-        )}
 
         {/* ══════════ FICHA DEL SELECCIONADO ══════════ */}
         {actual && (
