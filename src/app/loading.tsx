@@ -22,7 +22,7 @@ export default function Loading() {
     >
       <div className="rk-carga flex flex-col items-center gap-4">
         <span className="flex items-center gap-2.5">
-          <span className="flex h-10 w-10 items-center justify-center rounded-rk-sm bg-marca shadow-rk-sm">
+          <span className="flex h-10 w-10 items-center justify-center">
             <Image
               src="/Isotipo.svg"
               alt=""
@@ -30,7 +30,7 @@ export default function Loading() {
               height={240}
               /* Sin deformar, y sin pasar por el optimizador:
                  Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-              className="h-full w-full object-contain p-[12%]"
+              className="h-full w-full object-contain"
               unoptimized
             />
           </span>

@@ -223,7 +223,7 @@ function PanelNavInterno({
                 aria-label="RCKTDMG"
                 className="rk-press-sm flex items-center rounded-full p-1"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-rk-sm bg-marca shadow-rk-sm">
+                <span className="flex h-8 w-8 items-center justify-center">
                   <Image
                     src="/Isotipo.svg"
                     alt=""
@@ -231,7 +231,7 @@ function PanelNavInterno({
                     height={240}
                     /* Sin deformar, y sin pasar por el optimizador:
                        Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-                    className="h-full w-full object-contain p-[12%]"
+                    className="h-full w-full object-contain"
                     unoptimized
                   />
                 </span>

@@ -297,7 +297,7 @@ function NavbarContent() {
               */
               className="rk-press-sm flex shrink-0 items-center rounded-full px-1 py-1.5"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-rk-sm bg-marca shadow-rk-sm">
+              <span className="flex h-8 w-8 items-center justify-center">
                 <Image
                   src="/Isotipo.svg"
                   alt=""
@@ -305,7 +305,7 @@ function NavbarContent() {
                   height={240}
                   /* Sin deformar, y sin pasar por el optimizador:
                      Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-                  className="h-full w-full object-contain p-[12%]"
+                  className="h-full w-full object-contain"
                   unoptimized
                 />
               </span>
@@ -546,7 +546,7 @@ export default function Navbar() {
         <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4 sm:pt-4">
           <div className="mx-auto w-full max-w-7xl rounded-rk-xl border border-line/10 bg-surface/45 shadow-rk-sm backdrop-blur-xl">
             <div className="flex h-[3.75rem] items-center gap-2 px-3 py-2.5 sm:px-4">
-              <span className="flex h-8 w-8 items-center justify-center rounded-rk-sm bg-marca">
+              <span className="flex h-8 w-8 items-center justify-center">
                 <Image
                   src="/Isotipo.svg"
                   alt=""
@@ -554,7 +554,7 @@ export default function Navbar() {
                   height={240}
                   /* Sin deformar, y sin pasar por el optimizador:
                      Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-                  className="h-full w-full object-contain p-[12%]"
+                  className="h-full w-full object-contain"
                   unoptimized
                 />
               </span>

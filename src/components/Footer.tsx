@@ -57,7 +57,7 @@ export default function Footer() {
               aria-label="RCKTDMG"
               className="rk-press-sm inline-flex items-center"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-rk-sm bg-marca">
+              <span className="flex h-9 w-9 items-center justify-center">
                 <Image
                   src="/Isotipo.svg"
                   alt=""
@@ -65,7 +65,7 @@ export default function Footer() {
                   height={240}
                   /* Sin deformar, y sin pasar por el optimizador:
                      Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-                  className="h-full w-full object-contain p-[12%]"
+                  className="h-full w-full object-contain"
                   unoptimized
                 />
               </span>

@@ -82,7 +82,7 @@ export default function LoginPage() {
         </Link>
 
         <div className="rk-enter mb-7 text-center">
-          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-marca shadow-rk">
+          <span className="mx-auto flex h-12 w-12 items-center justify-center">
             <Image
               src="/Isotipo.svg"
               alt=""
@@ -90,7 +90,7 @@ export default function LoginPage() {
               height={240}
               /* Sin deformar, y sin pasar por el optimizador:
                  Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-              className="h-full w-full object-contain p-[12%]"
+              className="h-full w-full object-contain"
               unoptimized
             />
           </span>
