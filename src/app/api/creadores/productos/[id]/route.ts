@@ -310,9 +310,38 @@ export async function PATCH(
       );
     }
 
+    /*
+      LA CATEGORÍA NO SE CAMBIA DESDE LA EDICIÓN
+
+      El alta ya deduce la categoría del tipo de publicación y
+      rechaza la que no corresponda. Aquí faltaba la otra mitad:
+      el formulario de edición solo ofrece la categoría actual,
+      pero `categoryId` viaja en el cuerpo de la petición, y el
+      cuerpo lo controla quien llama.
+
+      Importa porque de la categoría dependen las medidas que se
+      exigen —«eventos» es 1080 × 1920 y el resto 1080 × 1350—,
+      así que mover un recurso de categoría por esta vía lo
+      dejaría con las medidas de una y la etiqueta de otra.
+
+      Se compara contra la categoría que ya tiene el recurso, y
+      no se recalcula desde el tipo, porque en la edición no
+      llega el tipo: la pieza se decidió al crearlo y quedó
+      guardada.
+    */
+    if (categoryId !== product.categoryId) {
+      return NextResponse.json(
+        {
+          error:
+            "La categoría de un recurso no se cambia desde la edición: la decide el tipo de publicación al crearlo.",
+        },
+        { status: 400 }
+      );
+    }
+
     const category = await prisma.category.findUnique({
       where: {
-        id: categoryId,
+        id: product.categoryId,
       },
     });
 
