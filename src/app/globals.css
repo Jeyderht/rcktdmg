@@ -47,6 +47,20 @@
   --rk-primary: 10 11 14;
   --rk-on-primary: 255 255 255;
 
+  /*
+    Fondo del cuadro del isotipo.
+
+    Se declara aquí y NO se redefine en tema oscuro, a
+    diferencia de `--rk-primary`. El isotipo es un dibujo de
+    tono claro sobre transparente, así que necesita un fondo
+    oscuro siempre: colgado de `--rk-primary` desaparecía en
+    oscuro, donde ese token se invierte a casi blanco.
+
+    El valor es el mismo que tiene `--rk-primary` en claro, de
+    modo que el cuadro se ve exactamente como se veía antes.
+  */
+  --rk-marca: 10 11 14;
+
   /* Azul eléctrico: color de firma de RCKTDMG. */
   --rk-accent: 0 98 255;
   --rk-accent-hover: 0 80 224;

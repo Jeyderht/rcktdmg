@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 /**
  * Pantalla de carga entre rutas.
  *
@@ -5,7 +7,7 @@
  * la retira en cuanto llega: no hay estado propio que pueda
  * quedarse encendido, que es justo lo que se quería evitar.
  *
- * La marca es la MISMA del navbar —el cuadro con la R y el
+ * La marca es la MISMA del navbar —el cuadro con el isotipo y el
  * logotipo—, no un recurso nuevo: así el salto de la carga a
  * la página no cambia de identidad. Ocupa la altura de la
  * ventana menos la cabecera para que el logotipo caiga donde
@@ -20,12 +22,17 @@ export default function Loading() {
     >
       <div className="rk-carga flex flex-col items-center gap-4">
         <span className="flex items-center gap-2.5">
-          <span className="flex h-10 w-10 items-center justify-center rounded-rk-sm bg-primary text-[13px] font-bold tracking-tight text-onprimary shadow-rk-sm">
-            R
-          </span>
-
-          <span className="text-lg font-bold tracking-tight">
-            RCKTDMG
+          <span className="flex h-10 w-10 items-center justify-center rounded-rk-sm bg-marca shadow-rk-sm">
+            <Image
+              src="/Isotipo.svg"
+              alt=""
+              width={240}
+              height={240}
+              /* Sin deformar, y sin pasar por el optimizador:
+                 Next rechaza los SVG salvo con dangerouslyAllowSVG. */
+              className="h-full w-full object-contain p-[12%]"
+              unoptimized
+            />
           </span>
         </span>
 

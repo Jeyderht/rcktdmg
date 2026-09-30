@@ -97,6 +97,8 @@ const config: Config = {
         foreground: token("foreground"),
         primary: token("primary"),
         onprimary: token("on-primary"),
+        /* Fondo fijo del cuadro del isotipo, igual en los dos temas. */
+        marca: token("marca"),
 
         // Azul eléctrico: color de firma.
         accent: token("accent"),

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useId, useRef, useState } from "react";
@@ -283,31 +284,30 @@ function NavbarContent() {
             {/* LOGO */}
             <Link
               href="/"
-              className="rk-press-sm flex shrink-0 items-center gap-2 rounded-full py-1.5 pl-1 pr-2"
+              /*
+                El isotipo es decorativo, así que sin esto el
+                enlace se quedaría sin nombre: ya no hay texto
+                dentro que se lo dé.
+              */
+              aria-label="RCKTDMG"
+              /*
+                Relleno simétrico. El `pr-2` despegaba del borde
+                al logotipo de texto; sin él dejaba el isotipo
+                descentrado dentro del área pulsable.
+              */
+              className="rk-press-sm flex shrink-0 items-center rounded-full px-1 py-1.5"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-rk-sm bg-primary text-[11px] font-bold tracking-tight text-onprimary shadow-rk-sm">
-                R
-              </span>
-
-              {/*
-                Por debajo de 375 px se deja solo el cuadro de
-                la marca.
-
-                Los dos lados de la barra son `shrink-0` —el
-                logotipo porque no debe partirse, y los botones
-                porque son objetivos táctiles de 44 px—, así
-                que cuando la suma no cabe nada cede y el grupo
-                de la derecha acaba fuera de la pantalla: la
-                cuenta y las notificaciones quedaban cortadas a
-                320 y 360 px.
-
-                Quitar el logotipo de texto libera unos 90 px,
-                que es justo lo que faltaba. La identidad se
-                mantiene con el cuadro, y a partir de 375 px
-                —donde ya cabía— no cambia nada.
-              */}
-              <span className="hidden text-[15px] font-bold tracking-tight min-[375px]:inline sm:text-base">
-                RCKTDMG
+              <span className="flex h-8 w-8 items-center justify-center rounded-rk-sm bg-marca shadow-rk-sm">
+                <Image
+                  src="/Isotipo.svg"
+                  alt=""
+                  width={240}
+                  height={240}
+                  /* Sin deformar, y sin pasar por el optimizador:
+                     Next rechaza los SVG salvo con dangerouslyAllowSVG. */
+                  className="h-full w-full object-contain p-[12%]"
+                  unoptimized
+                />
               </span>
             </Link>
 
@@ -546,12 +546,17 @@ export default function Navbar() {
         <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4 sm:pt-4">
           <div className="mx-auto w-full max-w-7xl rounded-rk-xl border border-line/10 bg-surface/45 shadow-rk-sm backdrop-blur-xl">
             <div className="flex h-[3.75rem] items-center gap-2 px-3 py-2.5 sm:px-4">
-              <span className="flex h-8 w-8 items-center justify-center rounded-rk-sm bg-primary text-[11px] font-bold text-onprimary">
-                R
-              </span>
-
-              <span className="text-[15px] font-bold tracking-tight sm:text-base">
-                RCKTDMG
+              <span className="flex h-8 w-8 items-center justify-center rounded-rk-sm bg-marca">
+                <Image
+                  src="/Isotipo.svg"
+                  alt=""
+                  width={240}
+                  height={240}
+                  /* Sin deformar, y sin pasar por el optimizador:
+                     Next rechaza los SVG salvo con dangerouslyAllowSVG. */
+                  className="h-full w-full object-contain p-[12%]"
+                  unoptimized
+                />
               </span>
             </div>
           </div>

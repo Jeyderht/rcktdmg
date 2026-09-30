@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -62,15 +63,27 @@ export default function RegistroPage() {
         </Link>
 
         <div className="rk-enter mb-7 text-center">
-          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-primary text-sm font-bold text-onprimary shadow-rk">
-            R
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-marca shadow-rk">
+            <Image
+              src="/Isotipo.svg"
+              alt=""
+              width={240}
+              height={240}
+              /* Sin deformar, y sin pasar por el optimizador:
+                 Next rechaza los SVG salvo con dangerouslyAllowSVG. */
+              className="h-full w-full object-contain p-[12%]"
+              unoptimized
+            />
           </span>
 
-          <h1 className="mt-4 text-2xl font-bold tracking-tight">
-            RCKTDMG
-          </h1>
+          {/*
+            El nombre ya no se ve, pero el encabezado se queda:
+            es el `h1` de la página y sin él quedaría sin título
+            para quien la recorre con un lector de pantalla.
+          */}
+          <h1 className="sr-only">RCKTDMG</h1>
 
-          <p className="mt-1.5 text-sm text-ink/60">
+          <p className="mt-4 text-sm text-ink/60">
             Recursos creativos para profesionales
           </p>
         </div>

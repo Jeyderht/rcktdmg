@@ -220,14 +220,20 @@ function PanelNavInterno({
             <div className="flex items-center justify-between gap-2">
               <Link
                 href="/"
-                className="rk-press-sm flex items-center gap-2 rounded-full py-1 pl-0.5 pr-2"
+                aria-label="RCKTDMG"
+                className="rk-press-sm flex items-center rounded-full p-1"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-rk-sm bg-primary text-[11px] font-bold tracking-tight text-onprimary shadow-rk-sm">
-                  R
-                </span>
-
-                <span className="text-[15px] font-bold tracking-tight">
-                  RCKTDMG
+                <span className="flex h-8 w-8 items-center justify-center rounded-rk-sm bg-marca shadow-rk-sm">
+                  <Image
+                    src="/Isotipo.svg"
+                    alt=""
+                    width={240}
+                    height={240}
+                    /* Sin deformar, y sin pasar por el optimizador:
+                       Next rechaza los SVG salvo con dangerouslyAllowSVG. */
+                    className="h-full w-full object-contain p-[12%]"
+                    unoptimized
+                  />
                 </span>
               </Link>
 

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 /**
@@ -53,14 +54,20 @@ export default function Footer() {
           <div>
             <Link
               href="/"
-              className="rk-press-sm inline-flex items-center gap-2"
+              aria-label="RCKTDMG"
+              className="rk-press-sm inline-flex items-center"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-rk-sm bg-primary text-xs font-bold tracking-tight text-onprimary">
-                R
-              </span>
-
-              <span className="text-base font-bold tracking-tight">
-                RCKTDMG
+              <span className="flex h-9 w-9 items-center justify-center rounded-rk-sm bg-marca">
+                <Image
+                  src="/Isotipo.svg"
+                  alt=""
+                  width={240}
+                  height={240}
+                  /* Sin deformar, y sin pasar por el optimizador:
+                     Next rechaza los SVG salvo con dangerouslyAllowSVG. */
+                  className="h-full w-full object-contain p-[12%]"
+                  unoptimized
+                />
               </span>
             </Link>
 
