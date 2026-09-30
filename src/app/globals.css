@@ -53,6 +53,14 @@
   --rk-accent-contrast: 255 255 255;
   --rk-accent-soft: rgb(0 98 255 / 0.1);
 
+  /*
+    Morado de acompañamiento. Solo vive en los resplandores:
+    nunca en texto, fondo ni borde. Va una capa por detrás del
+    azul de firma, y es esa segunda capa la que convierte un
+    halo plano en profundidad.
+  */
+  --rk-accent-2: 109 62 235;
+
   /* ---- ESTADOS ---- */
   --rk-success: 9 135 87;
   --rk-warning: 166 105 6;
@@ -119,6 +127,9 @@
   --rk-accent-hover: 92 162 255;
   --rk-accent-contrast: 8 9 11;
   --rk-accent-soft: rgb(61 140 255 / 0.16);
+
+  /* El morado también gana luz sobre fondo oscuro. */
+  --rk-accent-2: 158 128 255;
 
   --rk-success: 45 190 130;
   --rk-warning: 226 160 44;
@@ -384,30 +395,17 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   /*
-    Reacción al puntero: elevación sutil y el mismo halo azul
-    que usan las tarjetas de recurso.
+    La reacción al puntero de `rk-card-hover` —elevación, halo y
+    borde— vive más abajo, en la sección GLOW, junto a la de
+    `rk-card-glow`: las dos comparten el mismo lenguaje visual y
+    describirlo dos veces era la forma segura de que acabaran
+    diciendo cosas distintas.
 
-    Se añade aquí, en la clase compartida, en lugar de en cada
-    panel: los tres tableros —cliente, creador y administración—
-    ya usaban `rk-card-hover`, así que heredan el mismo lenguaje
-    visual sin tocar su estructura ni sus consultas.
-
-    `:focus-within` entra para quien navega con teclado, y
-    `:active` para el dedo, donde no hay puntero que pase por
-    encima.
+    Se aplica en la clase compartida y no en cada panel porque
+    los tres tableros —cliente, creador y administración— ya
+    usaban `rk-card-hover`, así que lo heredan sin tocar su
+    estructura ni sus consultas.
   */
-  .rk-card-hover:hover,
-  .rk-card-hover:focus-within {
-    transform: translateY(-3px);
-    box-shadow:
-      var(--rk-shadow-lg),
-      0 14px 36px -20px rgb(var(--rk-accent) / 0.35);
-    border-color: var(--rk-border-strong);
-  }
-
-  .rk-card-hover:active {
-    transform: translateY(-1px);
-  }
 
   /* Superficie plana, sin elevación. */
   .rk-surface {
@@ -464,9 +462,13 @@ input[type="search"]::-webkit-search-results-decoration {
       opacity 200ms var(--rk-ease-soft);
   }
 
-  .rk-btn:active:not(:disabled) {
-    transform: scale(0.97);
-  }
+  /*
+    La elevación al pasar el puntero y el hundido al pulsar
+    viven juntos más abajo, en la sección GLOW: las dos reglas
+    comparten especificidad y el orden entre ellas es lo único
+    que decide cuál gana mientras se pulsa, así que tienen que
+    estar seguidas.
+  */
 
   .rk-btn:disabled {
     opacity: 0.45;
@@ -666,26 +668,44 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   /*
-    Marco de imagen con zoom al pasar el puntero.
+    Marco de imagen con acercamiento al pasar el puntero.
 
-    El zoom vive en el contenedor y la imagen se mantiene
-    nítida: aquí no hay filtros, solo una escala. El recorte lo
-    hace overflow, no una deformación de la imagen.
+    El recorte lo hace `overflow`, no una deformación: la imagen
+    crece dentro del marco y el marco no cambia de tamaño.
+
+    Cuánto crece y con qué matiz se declara aquí como dos
+    variables, y se aplica en una sola regla más abajo. Esa
+    separación es deliberada: una imagen concreta puede subir el
+    valor declarando la variable sobre sí misma —lo hace
+    `rk-card-zoom`— sin escribir una segunda regla que compita
+    en especificidad con esta. Antes había dos, y la que perdía
+    era código muerto que aparentaba estar aplicándose.
   */
   .rk-frame {
     position: relative;
     overflow: hidden;
     border-radius: var(--rk-radius-md);
     background: rgb(var(--rk-foreground) / 0.05);
+    --rk-zoom: 1.03;
+    --rk-zoom-filtro: saturate(1.06) brightness(1.02);
   }
 
   .rk-frame img {
-    transition: transform var(--rk-transition-slow) var(--rk-ease);
+    transition:
+      transform var(--rk-transition-slow) var(--rk-ease),
+      filter var(--rk-transition-slow) var(--rk-ease-soft);
   }
 
+  /*
+    `:focus-within` acompaña a `:hover` para que quien recorre la
+    tienda con el teclado vea lo mismo que con el ratón.
+  */
   .group:hover .rk-frame img,
-  .rk-frame:hover img {
-    transform: scale(1.03);
+  .group:focus-within .rk-frame img,
+  .rk-frame:hover img,
+  .rk-frame:focus-within img {
+    transform: scale(var(--rk-zoom));
+    filter: var(--rk-zoom-filtro);
   }
 
   /* Línea fina de sección, más discreta que un borde entero. */
@@ -1261,119 +1281,245 @@ input[type="search"]::-webkit-search-results-decoration {
 /* ══════════════════════════════════════════════════════════
    GLOW — BOTONES Y TARJETAS
 
-   El resplandor usa el azul de firma que ya existe
-   (`--rk-accent`), no un color nuevo: la identidad sigue
-   siendo tinta sobre papel con el azul como acento.
+   El resplandor se construye con dos tonos del mismo acento:
+   el azul de firma (`--rk-accent`) ceñido al contorno y un
+   morado de acompañamiento (`--rk-accent-2`) más abierto y más
+   tenue por detrás. Esa segunda capa es la que da profundidad;
+   con el azul solo, el halo se leía plano.
 
-   Se aplica con `box-shadow`, que el compositor resuelve sin
-   volver a maquetar, y solo donde aporta: el botón primario y
-   la tarjeta de recurso. Las demás variantes se quedan como
-   estaban, para que el glow siga significando algo.
+   Ninguno de los dos entra en texto, fondo ni borde real: la
+   identidad sigue siendo tinta sobre papel y el color vive
+   únicamente en la sombra.
+
+   Nada de esto cambia la caja. Solo se animan `box-shadow`,
+   `transform` y `filter`: tres propiedades que el compositor
+   resuelve sin volver a maquetar, así que ningún elemento
+   cambia de tamaño ni desplaza a sus vecinos.
    ══════════════════════════════════════════════════════════ */
 @layer components {
   /*
-    BOTÓN PRIMARIO CON RESPLANDOR
+    ELEVACIÓN DEL BOTÓN
 
-    Se suma a la sombra que ya tenía en lugar de sustituirla,
-    así el botón conserva su peso sobre fondos claros y gana
-    el halo sobre los oscuros.
+    Vale para todas las variantes, incluidas las de estado, que
+    no reciben halo de color pero sí deben acusar el puntero.
+
+    Se limita a quien tiene puntero fino: en una pantalla táctil
+    el hover se queda pegado después del toque y el botón
+    quedaría flotando sin motivo.
+  */
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+  }
+
+  /*
+    Al pulsar, el botón vuelve a su sitio y cede algo de escala.
+
+    Va después del hover a propósito: mientras se pulsa sigue
+    estando en hover, las dos reglas tienen la misma
+    especificidad y entonces el orden es lo único que decide.
+  */
+  .rk-btn:active:not(:disabled) {
+    transform: translateY(0) scale(0.97);
+  }
+
+  /*
+    BOTÓN PRINCIPAL CON RESPLANDOR
+
+    El halo se suma a la sombra que el botón ya tenía en lugar
+    de sustituirla: conserva su peso sobre fondos claros y gana
+    el resplandor sobre los oscuros.
+
+    En reposo se declaran las mismas capas con opacidad cero
+    para que la transición interpole capa por capa en vez de
+    aparecer de golpe.
   */
   .rk-btn-primary,
   .rk-btn-glow {
     box-shadow:
       var(--rk-shadow-sm),
-      0 0 0 0 rgb(var(--rk-accent) / 0);
+      0 0 0 0 rgb(var(--rk-accent) / 0),
+      0 0 0 0 rgb(var(--rk-accent-2) / 0);
   }
 
   .rk-btn-primary:hover:not(:disabled),
-  .rk-btn-glow:hover:not(:disabled) {
-    box-shadow:
-      var(--rk-shadow),
-      0 6px 22px -6px rgb(var(--rk-accent) / 0.45);
-  }
-
+  .rk-btn-glow:hover:not(:disabled),
   .rk-btn-primary:focus-visible,
   .rk-btn-glow:focus-visible {
     box-shadow:
       var(--rk-shadow),
-      0 6px 22px -6px rgb(var(--rk-accent) / 0.45);
-  }
-
-  /* Un botón desactivado no promete nada: tampoco resplandece. */
-  .rk-btn-primary:disabled,
-  .rk-btn-glow:disabled {
-    box-shadow: none;
+      0 6px 18px -8px rgb(var(--rk-accent) / 0.5),
+      0 12px 32px -12px rgb(var(--rk-accent-2) / 0.4);
   }
 
   /*
-    TARJETA DE RECURSO CON RESPLANDOR
+    VARIANTES NEUTRAS
+
+    Ink, paper, secondary y glass comparten un halo más
+    contenido: son acciones de segundo plano y su resplandor no
+    debe competir con el del botón principal.
+
+    Se repite `var(--rk-shadow)` porque esta regla reemplaza la
+    `box-shadow` que cada variante fijaba en su propio hover;
+    sin repetirla perderían la sombra neutra y quedaría solo el
+    color flotando.
+  */
+  .rk-btn-ink:hover:not(:disabled),
+  .rk-btn-paper:hover:not(:disabled),
+  .rk-btn-secondary:hover:not(:disabled),
+  .rk-btn-glass:hover:not(:disabled) {
+    box-shadow:
+      var(--rk-shadow),
+      0 4px 14px -8px rgb(var(--rk-accent) / 0.34),
+      0 9px 24px -14px rgb(var(--rk-accent-2) / 0.26);
+  }
+
+  /*
+    Line y ghost no tienen sombra propia en reposo —son las dos
+    variantes más discretas—, así que reciben la mínima para que
+    el halo tenga sobre qué apoyarse.
+  */
+  .rk-btn-line:hover:not(:disabled),
+  .rk-btn-ghost:hover:not(:disabled) {
+    box-shadow:
+      var(--rk-shadow-sm),
+      0 4px 14px -8px rgb(var(--rk-accent) / 0.3),
+      0 9px 24px -14px rgb(var(--rk-accent-2) / 0.22);
+  }
+
+  /*
+    Danger y success se quedan fuera del halo azul y morado: su
+    color ya dice lo que va a pasar, y teñirlo de otro tono
+    restaría claridad justo donde más importa. Sí acusan el
+    puntero, por la elevación de arriba.
+  */
+
+  /* Un botón desactivado no promete nada: tampoco resplandece. */
+  .rk-btn:disabled {
+    box-shadow: none;
+    transform: none;
+  }
+
+  /*
+    TARJETA CON RESPLANDOR
 
     El halo sale por debajo de la tarjeta, no de su borde: un
     resplandor pegado al contorno se lee como un borde de
-    color, que es justo lo que no se quiere.
+    color, que es justo lo que no se quiere. Lo que sí entra es
+    un aro de un píxel muy tenue que insinúa ese borde azul.
+    Es `box-shadow`, no `border`: la caja mide exactamente lo
+    mismo con aro y sin él.
 
-    `:focus-within` entra para que quien navega con teclado
-    reciba la misma respuesta que con el ratón, y `:active`
-    para el dedo: en una pantalla táctil no hay hover, así que
-    sin esto la tarjeta no reaccionaría al tocarla.
+    `:focus-within` entra para quien navega con teclado y
+    `:active` para el dedo: en una pantalla táctil no hay hover,
+    así que sin eso la tarjeta no reaccionaría al tocarla.
+
+    `.rk-card-hover` recibe el mismo trato. Los tres tableros
+    —cliente, creador y administración— ya la usaban, de modo
+    que heredan el resplandor sin tocar su marcado.
   */
   .rk-card-glow {
     /*
-      Sombra en reposo, no solo al pasar el ratón.
-
-      Sin ella la tarjeta se veía plana hasta que alguien la
-      señalaba, y en un teléfono no hay ratón: la tienda móvil
-      perdía toda la profundidad. Es suave a propósito; el
-      resplandor de verdad sigue llegando con la interacción.
+      Sombra en reposo, no solo al pasar el ratón. Sin ella la
+      tarjeta se veía plana hasta que alguien la señalaba, y en
+      un teléfono no hay ratón: la tienda móvil perdía toda la
+      profundidad.
     */
     box-shadow: var(--rk-shadow-sm);
+  }
+
+  .rk-card-glow,
+  .rk-card-hover {
     transition:
       transform var(--rk-transition-slow) var(--rk-ease),
       box-shadow var(--rk-transition-slow) var(--rk-ease),
+      background-color var(--rk-transition-normal) var(--rk-ease-soft),
       border-color var(--rk-transition-normal) var(--rk-ease-soft);
   }
 
+  /*
+    Cuatro capas, de dentro hacia fuera: la sombra neutra que
+    asienta la tarjeta, el aro insinuado, el azul cercano y el
+    morado abierto. Es la suma lo que se lee como profundidad;
+    una sola capa ancha se ve como una mancha.
+  */
   .rk-card-glow:hover,
-  .rk-card-glow:focus-within {
-    transform: translateY(-3px);
+  .rk-card-glow:focus-within,
+  .rk-card-hover:hover,
+  .rk-card-hover:focus-within {
+    transform: translateY(-4px);
     box-shadow:
       var(--rk-shadow-lg),
-      0 14px 36px -18px rgb(var(--rk-accent) / 0.4);
+      0 0 0 1px rgb(var(--rk-accent) / 0.14),
+      0 14px 34px -18px rgb(var(--rk-accent) / 0.42),
+      0 26px 60px -28px rgb(var(--rk-accent-2) / 0.34);
     border-color: var(--rk-border-strong);
   }
 
-  .rk-card-glow:active {
+  .rk-card-glow:active,
+  .rk-card-hover:active {
     transform: translateY(-1px);
     box-shadow:
       var(--rk-shadow),
-      0 8px 24px -14px rgb(var(--rk-accent) / 0.35);
+      0 0 0 1px rgb(var(--rk-accent) / 0.12),
+      0 8px 22px -14px rgb(var(--rk-accent) / 0.34),
+      0 16px 40px -24px rgb(var(--rk-accent-2) / 0.26);
   }
 
-  /* Acercamiento de la imagen, contenido por el marco. */
-  .rk-card-glow .rk-card-zoom {
-    transition: transform var(--rk-transition-slow) var(--rk-ease);
-  }
+  /*
+    LA IMAGEN AL PASAR EL PUNTERO
 
-  .rk-card-glow:hover .rk-card-zoom,
-  .rk-card-glow:focus-within .rk-card-zoom {
-    transform: scale(1.04);
+    La portada del recurso se acerca algo más que un marco
+    cualquiera y gana un punto de saturación y luz: es la pieza
+    que se está vendiendo, y merece el matiz.
+
+    Solo se suben los valores. Quien los aplica sigue siendo la
+    única regla de `rk-frame`, que los lee de estas variables.
+    Declararlos sobre la propia imagen basta para que ganen a los
+    del marco, porque un valor declarado en el elemento pesa más
+    que el heredado del padre; y al no haber una segunda regla
+    que aplique `transform`, no hay especificidad que discutir.
+
+    El marco no cambia de tamaño: lo que crece es la imagen
+    dentro de él, así que la proporción del recurso se mantiene.
+  */
+  .rk-card-zoom {
+    --rk-zoom: 1.05;
+    --rk-zoom-filtro: saturate(1.08) brightness(1.03);
   }
 }
 
 /*
   Con el movimiento reducido se conserva el cambio de sombra
   —que informa sin moverse— y se retiran los desplazamientos y
-  el acercamiento.
+  los acercamientos.
+
+  Este bloque vive fuera de `@layer`: en la cascada, lo que no
+  está en ninguna capa gana a lo que sí, así que manda sobre
+  todo lo de arriba sin depender del orden.
 */
 @media (prefers-reduced-motion: reduce) {
+  .rk-btn:hover:not(:disabled),
+  .rk-btn:active:not(:disabled),
   .rk-card-glow:hover,
   .rk-card-glow:focus-within,
-  .rk-card-glow:active {
+  .rk-card-glow:active,
+  .rk-card-hover:hover,
+  .rk-card-hover:focus-within,
+  .rk-card-hover:active {
     transform: none;
   }
 
-  .rk-card-glow:hover .rk-card-zoom,
-  .rk-card-glow:focus-within .rk-card-zoom {
+  /*
+    Se retira el acercamiento y se deja el matiz de color: el
+    tono no se mueve, así que no molesta a quien pidió menos
+    movimiento, y la imagen sigue acusando el puntero.
+  */
+  .group:hover .rk-frame img,
+  .group:focus-within .rk-frame img,
+  .rk-frame:hover img,
+  .rk-frame:focus-within img {
     transform: none;
   }
 }
