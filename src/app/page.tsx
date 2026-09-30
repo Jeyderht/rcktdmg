@@ -13,6 +13,7 @@ import ProductCard from "@/components/ProductCard";
 import SeccionesMarketplace from "@/components/home/SeccionesMarketplace";
 import Recomendados from "@/components/home/Recomendados";
 import SelectorBusqueda from "@/components/home/SelectorBusqueda";
+import HeroFlyers from "@/components/home/HeroFlyers";
 import StoriesEventos from "@/components/home/StoriesEventos";
 import SliceCorporativos from "@/components/home/SliceCorporativos";
 import SeccionColecciones from "@/components/home/SeccionColecciones";
@@ -27,7 +28,6 @@ import {
   flyersParaStories,
 } from "@/lib/home";
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
-import { claseProporcion } from "@/lib/tipos-publicacion";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
@@ -167,15 +167,21 @@ export default async function Home() {
     prisma.product.findMany({
       where: { status: "PUBLISHED", coverUrl: { not: null } },
       orderBy: { createdAt: "desc" },
-      take: 3,
+      /*
+        Siete flyers: los que la escena del hero puede relevar sin
+        que la rueda se note corta, y ni una imagen más de las que
+        alguien va a ver.
+      */
+      take: 7,
       select: {
         id: true,
         name: true,
         slug: true,
         coverUrl: true,
-        /* Deciden el marco de cada portada del hero. */
+        price: true,
+        /* Deciden el marco de cada flyer del hero. */
         pieceType: true,
-        category: { select: { slug: true } },
+        category: { select: { slug: true, name: true } },
       },
     }),
 
@@ -383,45 +389,38 @@ export default async function Home() {
                 </dl>
               </div>
 
-              {/* COMPOSICIÓN CON RECURSOS REALES */}
+              {/*
+                ── ESCENA DE FLYERS ──
+
+                Los recursos reales del catálogo, relevándose.
+                Antes eran tres portadas quietas y escalonadas;
+                ahora el destacado manda en el centro, los demás
+                lo acompañan a los lados —más pequeños y más
+                apagados cuanto más lejos— y el turno va pasando.
+
+                El título, el precio y el botón de debajo hablan
+                siempre del flyer activo, así que la composición
+                no es un adorno: es por donde se entra al
+                recurso.
+
+                Los precios se convierten a número aquí. Un
+                `Decimal` de Prisma no cruza la frontera al
+                cliente, y es en este punto donde se sabe que va
+                a cruzarla.
+              */}
               {portadas.length > 0 && (
-                <div className="rk-fade-up rk-enter-2 min-w-0">
-                  <div className="flex items-start gap-3 sm:gap-4">
-                    {portadas.map((recurso, indice) => (
-                      <Link
-                        key={recurso.id}
-                        href={`/tienda/${recurso.slug}`}
-                        aria-label={recurso.name}
-                        className={`group relative block min-w-0 flex-1 ${
-                          // Escalonado: la composición respira.
-                          indice === 1
-                            ? "translate-y-6 sm:translate-y-10"
-                            : indice === 2
-                              ? "hidden translate-y-3 sm:block sm:translate-y-5"
-                              : ""
-                        }`}
-                      >
-                        <div
-                          className={`rk-frame ${claseProporcion(
-                            {
-                            categoriaSlug: recurso.category?.slug,
-                            pieceType: recurso.pieceType,
-                          }
-                          )} w-full shadow-rk-lg`}
-                        >
-                          <Image
-                            src={recurso.coverUrl as string}
-                            alt={recurso.name}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 1024px) 32vw, 16vw"
-                            priority={indice === 0}
-                          />
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+                <HeroFlyers
+                  flyers={portadas.map((recurso) => ({
+                    id: recurso.id,
+                    name: recurso.name,
+                    slug: recurso.slug,
+                    coverUrl: recurso.coverUrl as string,
+                    price: Number(recurso.price),
+                    categoriaNombre: recurso.category?.name ?? null,
+                    categoriaSlug: recurso.category?.slug ?? null,
+                    pieceType: recurso.pieceType,
+                  }))}
+                />
               )}
             </div>
           </div>

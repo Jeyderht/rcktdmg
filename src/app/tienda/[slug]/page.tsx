@@ -16,6 +16,7 @@ import AddToCartButton from "./AddToCartButton";
 import FavoriteButton from "@/components/FavoriteButton";
 import AddToCollectionButton from "@/components/AddToCollectionButton";
 import ProductGallery from "./ProductGallery";
+import SugerenciasFlyers from "./SugerenciasFlyers";
 import ProductCard from "@/components/ProductCard";
 import { getPriceDisplay, formatPrice } from "@/lib/pricing";
 import { getProductFileInfo } from "@/lib/product-file";
@@ -33,7 +34,11 @@ import {
     paginaPublica,
 } from "@/lib/seo";
 import { listarVersiones, mostrarVersion } from "@/lib/versiones";
-import { paraProducto, packsQueIncluyen } from "@/lib/recomendaciones";
+import {
+    paraProducto,
+    sugerenciasDeFicha,
+    packsQueIncluyen,
+} from "@/lib/recomendaciones";
 import PackCard from "@/components/PackCard";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 import { getSession } from "@/lib/session";
@@ -268,20 +273,44 @@ export default async function ProductPage({
     */
     const yaEsSuyo = await tieneProducto(session?.userId, product.id);
 
-    const bloques = await paraProducto(
-        {
-            id: product.id,
-            categoryId: product.categoryId,
-            creatorId: product.creatorId,
-            fileFormat: product.fileFormat,
-            color: product.color,
-            price: Number(product.price),
-            tagSlugs: product.tags.map((fila) => fila.tag.slug),
-            categoriaNombre: product.category.name,
-            creadorNombre: creatorName,
-        },
-        session?.userId ?? null
-    );
+    /*
+      LAS DOS LISTAS DE RECOMENDACIÓN, A LA VEZ
+
+      `paraProducto` alimenta los bloques del pie —"Más de este
+      creador", "Más de esta categoría"— y `sugerenciasDeFicha`
+      la tira animada que va junto a la zona de compra.
+
+      Van en paralelo porque no dependen una de otra: el tiempo
+      de respuesta es el de la más lenta, no la suma.
+
+      Son listas distintas a propósito. Arriba interesa el
+      parecido con lo que se está viendo, sin agrupar por señal;
+      abajo, la señal concreta que da título a cada bloque. Con
+      un catálogo pequeño algún recurso puede aparecer en las
+      dos, y eso es preferible a dejar la tira medio vacía por
+      reservarle solo lo que ningún bloque haya usado.
+    */
+    const referenciaReco = {
+        id: product.id,
+        categoryId: product.categoryId,
+        creatorId: product.creatorId,
+        fileFormat: product.fileFormat,
+        color: product.color,
+        price: Number(product.price),
+        tagSlugs: product.tags.map((fila) => fila.tag.slug),
+    };
+
+    const [bloques, sugerencias] = await Promise.all([
+        paraProducto(
+            {
+                ...referenciaReco,
+                categoriaNombre: product.category.name,
+                creadorNombre: creatorName,
+            },
+            session?.userId ?? null
+        ),
+        sugerenciasDeFicha(referenciaReco, session?.userId ?? null),
+    ]);
 
 
     // El perfil público solo existe si el creador tiene
@@ -615,6 +644,29 @@ export default async function ProductPage({
                                 </li>
                             </ul>
                         </div>
+
+                        {/*
+                            ── TAMBIÉN TE PUEDE INTERESAR ──
+
+                            Va aquí, pegada al precio y al botón,
+                            y no al pie de la ficha: es en este
+                            punto donde se está decidiendo la
+                            compra. Al pie quedaría detrás de las
+                            valoraciones, las versiones y las
+                            etiquetas, que es justo donde ya no
+                            ayuda a decidir.
+
+                            Hereda el ancho de la columna, así que
+                            su desplazamiento horizontal no puede
+                            arrastrar a la página.
+
+                            Se pinta solo si hay recursos reales
+                            que ofrecer: nunca un título con nada
+                            debajo.
+                        */}
+                        {sugerencias.length > 0 && (
+                            <SugerenciasFlyers productos={sugerencias} />
+                        )}
 
                         {/* ── CREADOR ── */}
                         <div className="rk-card rk-hover-lift mt-4 flex items-center gap-3.5 p-3.5 sm:p-4">

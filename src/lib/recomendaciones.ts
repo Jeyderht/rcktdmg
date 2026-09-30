@@ -480,13 +480,70 @@ export async function paraProducto(
   );
 
   /*
-    3. El resto. Se titula "También puede interesarte" y no
-    "Recomendado para ti": aquí la señal es el parecido con lo
-    que se está viendo, no el historial de quien mira.
+    NO HAY TERCER BLOQUE AQUÍ.
+
+    Antes existía uno, "También puede interesarte", con lo que
+    quedaba fuera de los dos anteriores. Ahora esa misma señal
+    —el parecido con lo que se está viendo— vive arriba, junto a
+    la zona de compra, en la tira de sugerencias animada, que la
+    sirve `sugerenciasDeFicha`.
+
+    Tenerlo en los dos sitios repetiría el mismo título y, con
+    un catálogo pequeño, los mismos recursos. Y dejarlo solo
+    abajo lo enterraba tras las valoraciones, las versiones y
+    las etiquetas: es donde menos ayuda a decidir una compra.
   */
-  anadir("También puede interesarte", null, candidatos);
 
   return bloques;
+}
+
+/**
+ * Sugerencias de la ficha, en una sola lista.
+ *
+ * Lo que alimenta la tira animada que va junto a la zona de
+ * compra. Devuelve recursos reales, PUBLISHED y sin el que se
+ * está viendo, ordenados por la misma función que puntúa los
+ * bloques: no hay un segundo criterio de parecido que pueda
+ * discrepar del primero.
+ *
+ * No agrupa por señal a propósito. Ahí arriba el título ya dice
+ * lo que son —otras opciones parecidas— y partirlas en bloques
+ * obligaría a leer tres encabezados antes de ver un flyer.
+ *
+ * `cuantos` se queda corto a propósito: son imágenes, y la
+ * ficha ya carga la galería del recurso. Diez es suficiente
+ * para que la tira nunca se vea vacía y poco para que no
+ * compita con lo que el cliente vino a ver.
+ */
+export async function sugerenciasDeFicha(
+  producto: {
+    id: string;
+    categoryId: string;
+    creatorId: string;
+    fileFormat: string | null;
+    color: string | null;
+    price: number;
+    tagSlugs: string[];
+  },
+  userId: string | null,
+  cuantos = 10
+): Promise<Recomendacion[]> {
+  const [usuario, candidatos] = await Promise.all([
+    senalesDe(userId),
+    traerCandidatos([producto.id], producto.categoryId),
+  ]);
+
+  const referencia: Referencia = {
+    id: producto.id,
+    categoryId: producto.categoryId,
+    creatorId: producto.creatorId,
+    fileFormat: producto.fileFormat,
+    color: producto.color,
+    price: producto.price,
+    tagSlugs: producto.tagSlugs,
+  };
+
+  return ordenar(candidatos, referencia, usuario, cuantos);
 }
 
 /**

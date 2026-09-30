@@ -1621,3 +1621,248 @@ input[type="search"]::-webkit-search-results-decoration {
     background: rgb(var(--rk-foreground) / 0.035);
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   TIRA DE SUGERENCIAS — DESFILE DE FLYERS
+
+   El movimiento lo lleva el componente, con `scrollLeft`: aquí
+   solo vive el aspecto. Así quien pide menos movimiento se
+   queda exactamente con esta tira, que se recorre a mano, sin
+   que haya que apagar una animación.
+
+   No hay color ni sombra propios. Los flyers son `ProductCard`,
+   que ya trae el marco, el resplandor azul y morado y la
+   elevación del sistema: la tira solo los coloca en fila.
+   ══════════════════════════════════════════════════════════ */
+@layer components {
+  .rk-desfile {
+    /*
+      El desbordamiento es real y horizontal. Queda contenido en
+      esta caja, así que la página nunca se desplaza de lado.
+    */
+    overflow-x: auto;
+    overflow-y: hidden;
+    /*
+      El dedo se mueve en horizontal sin que la página pelee por
+      el gesto, pero sigue pudiendo desplazarla en vertical.
+    */
+    touch-action: pan-x pan-y;
+    overscroll-behavior-x: contain;
+
+    /*
+      Sin barra: la tira se mueve sola y se arrastra con el dedo.
+      Una barra aquí solo añadiría ruido bajo los flyers.
+    */
+    scrollbar-width: none;
+
+    /*
+      ENTRADA Y SALIDA
+
+      Los flyers se desvanecen contra los bordes en lugar de
+      cortarse en seco, que es lo que delata un carrusel. Es una
+      máscara, no un degradado encima: funciona sobre cualquier
+      fondo y no tapa nada que se pueda pulsar.
+    */
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 5%,
+      #000 95%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 5%,
+      #000 95%,
+      transparent
+    );
+
+    /*
+      Aire arriba y abajo para que el resplandor de la tarjeta
+      al pasar el puntero no quede recortado por el
+      desbordamiento. Con un eje en `auto`, el otro no puede ser
+      `visible`, así que el sitio hay que dárselo con relleno.
+    */
+    padding-block: 0.375rem 0.875rem;
+  }
+
+  .rk-desfile::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rk-desfile-pista {
+    display: flex;
+    /*
+      `max-content` es lo que permite que la fila sea más ancha
+      que su caja; sin esto los flyers se comprimirían para
+      caber y no habría nada que desplazar.
+    */
+    width: max-content;
+    align-items: flex-start;
+    column-gap: 0.75rem;
+  }
+
+  .rk-desfile-lista {
+    display: flex;
+    align-items: flex-start;
+    column-gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /*
+    ESCALA MUY SUTIL
+
+    En reposo el flyer se queda un 3 % por debajo de su tamaño y
+    lo recupera cuando el puntero se acerca o el teclado lo
+    enfoca. Es poco a propósito: lo justo para que la pieza
+    señalada se adelante sobre las demás sin que la fila entera
+    parezca respirar.
+  */
+  .rk-desfile-pieza {
+    transform: scale(0.97);
+    transition: transform var(--rk-transition-slow) var(--rk-ease);
+  }
+
+  .rk-desfile-pieza:hover,
+  .rk-desfile-pieza:focus-within {
+    transform: scale(1);
+  }
+}
+
+/*
+  Con el movimiento reducido la tira ya no se mueve sola —eso lo
+  decide el componente— y aquí se retira lo que quedaba de
+  escala. Los flyers siguen visibles y se recorren con el dedo o
+  con el teclado.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .rk-desfile-pieza,
+  .rk-desfile-pieza:hover,
+  .rk-desfile-pieza:focus-within {
+    transform: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ESCENA DEL HERO — FLYERS EN RELEVO
+
+   La posición, el tamaño y la opacidad de cada flyer los
+   calcula el componente y llegan como estilo en línea: son
+   valores que dependen de la distancia al flyer activo y
+   cambian en cada relevo, así que no pueden vivir en una clase.
+
+   Aquí vive lo que sí es fijo: cómo se mueve de un sitio a
+   otro, y el punto que lo elige.
+
+   No hay color propio. El marco, el resplandor azul y morado y
+   la elevación salen de `rk-frame` y `rk-card-glow`, que son los
+   del sistema.
+   ══════════════════════════════════════════════════════════ */
+@layer components {
+  .rk-escena {
+    /*
+      La perspectiva no la usa ninguna transformación de hoy,
+      pero establece el contexto 3D: si mañana un flyer entra
+      girando, lo hará dentro de esta escena y no plano.
+    */
+    perspective: 1600px;
+    transform-style: preserve-3d;
+  }
+
+  /*
+    EL RELEVO
+
+    Una curva larga y con freno al final: arranca decidido y se
+    posa, que es lo que hace que el cambio se lea como un
+    movimiento de cámara y no como un salto.
+
+    `transform` y `opacity` son las dos únicas propiedades que
+    se animan, y las dos las resuelve el compositor sin volver a
+    maquetar: la composición entera se mueve sin costar una
+    pasada de diseño.
+  */
+  .rk-escena-flyer {
+    transition:
+      transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 700ms var(--rk-ease-soft);
+    will-change: transform, opacity;
+  }
+
+  /*
+    LOS PUNTOS
+
+    Doce píxeles de mancha visible sobre un objetivo de 44, que
+    es el mínimo que un dedo acierta. El área la da el relleno;
+    lo que se ve, el fondo del pseudoelemento.
+  */
+  .rk-escena-punto {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 2.75rem;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .rk-escena-punto::before {
+    content: "";
+    display: block;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: var(--rk-radius-full);
+    background: rgb(var(--rk-foreground) / 0.22);
+    transition:
+      width var(--rk-transition-normal) var(--rk-ease),
+      background-color var(--rk-transition-normal) var(--rk-ease-soft);
+  }
+
+  .rk-escena-punto:hover::before {
+    background: rgb(var(--rk-foreground) / 0.45);
+  }
+
+  /*
+    El punto del flyer activo se alarga en lugar de cambiar de
+    color: se distingue igual en una pantalla en blanco y negro
+    y para quien no separa bien dos azules.
+  */
+  .rk-escena-punto-activo::before {
+    width: 1.1rem;
+    background: rgb(var(--rk-accent));
+  }
+
+  .rk-escena-punto:focus-visible {
+    outline: none;
+  }
+
+  .rk-escena-punto:focus-visible::before {
+    box-shadow:
+      0 0 0 2px rgb(var(--rk-background)),
+      0 0 0 4px rgb(var(--rk-accent) / 0.7);
+  }
+}
+
+/*
+  Con el movimiento reducido no hay relevo automático —lo decide
+  el componente— y aquí se retira la transición: al pulsar un
+  punto, la composición aparece ya colocada en lugar de
+  desplazarse.
+
+  Los flyers siguen visibles, siguen siendo enlaces y los puntos
+  siguen funcionando.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .rk-escena-flyer {
+    transition: none;
+  }
+
+  .rk-escena-punto::before {
+    transition: none;
+  }
+}
