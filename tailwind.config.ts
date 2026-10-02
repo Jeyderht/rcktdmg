@@ -166,8 +166,9 @@ const config: Config = {
 
       animation: {
         fade: "fade 0.28s cubic-bezier(0.32,0.72,0,1) both",
-        "fade-up": "fade-up 0.5s cubic-bezier(0.32,0.72,0,1) both",
-        "scale-in": "scale-in 0.35s cubic-bezier(0.32,0.72,0,1) both",
+        // Entrada del sistema: 300 ms y la curva compartida.
+        "fade-up": "fade-up 0.3s cubic-bezier(0.2,0.7,0.2,1) both",
+        "scale-in": "scale-in 0.3s cubic-bezier(0.2,0.7,0.2,1) both",
       },
     },
   },

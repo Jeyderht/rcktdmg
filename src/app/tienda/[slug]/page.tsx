@@ -908,7 +908,7 @@ export default async function ProductPage({
 
                         <div className="rk-divider mt-4" />
 
-                        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+                        <div className="mt-6 rk-rejilla">
                             {bloque.productos.map((item) => (
                                 <ProductCard key={item.id} product={item} />
                             ))}

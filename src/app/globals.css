@@ -1356,317 +1356,6 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 }
 
-/* ══════════════════════════════════════════════════════════
-   PROFUNDIDAD E INTERACCIÓN
-
-   JERARQUÍA DE SUPERFICIES
-
-   Cuatro planos, y cada uno se distingue del anterior por tres
-   cosas a la vez: cuánta luz deja pasar, cuánto desenfoca lo
-   que hay detrás y cuánto se le ilumina el canto de arriba.
-
-     fondo       ·  negro con luz ambiental radial
-     superficie  ·  barras, paneles y navegación
-     tarjeta     ·  el contenido
-     interactivo ·  lo que se puede pulsar
-
-   EL CANTO ILUMINADO
-
-   Cada superficie lleva una línea de luz de un píxel en su
-   borde superior, por dentro. Es lo que hace que se lea como un
-   plano iluminado desde arriba y no como un rectángulo
-   recortado sobre el fondo. Sin ella, el vidrio parece un velo
-   gris; con ella, parece cristal.
-
-   LA RESPUESTA AL PUNTERO
-
-   Tiene que NOTARSE. Un elemento que se señala sube, proyecta
-   sombra, aclara su borde y gana un punto de luz en el canto.
-   Los cuatro cambios a la vez, y los cuatro suaves: lo que se
-   busca es que el ojo registre la respuesta sin que nada salte.
-
-   Solo se animan `transform`, `box-shadow`, `border-color`,
-   `background-color`, `opacity` y `filter`.
-   ══════════════════════════════════════════════════════════ */
-@layer components {
-  /* ────────── EL CANTO DE LUZ, COMPARTIDO ────────── */
-
-  /*
-    Se declara como variable para que superficie, tarjeta y
-    barra usen la MISMA línea con distinta intensidad, y para
-    que el tema claro la invierta sin reescribir ninguna regla.
-  */
-  .rk-card,
-  .rk-card-glass,
-  .rk-glass,
-  .rk-panel-lateral,
-  .rk-panel-barra {
-    box-shadow:
-      inset 0 1px 0 var(--rk-canto),
-      var(--rk-shadow-sm);
-  }
-
-  /* ────────── TARJETAS ────────── */
-
-  .rk-card-glow,
-  .rk-card-hover {
-    transition:
-      transform 420ms var(--rk-ease),
-      box-shadow 420ms var(--rk-ease),
-      border-color 280ms var(--rk-ease-soft),
-      background-color 280ms var(--rk-ease-soft);
-  }
-
-  .rk-card-glow {
-    box-shadow:
-      inset 0 1px 0 var(--rk-canto),
-      var(--rk-shadow-sm);
-  }
-
-  /*
-    Al señalar: sube cuatro píxeles, proyecta una sombra larga y
-    abierta, y el canto se enciende. La sombra es ancha y muy
-    difusa a propósito —un halo duro se vería como un borde de
-    color, que es lo que no se quiere— y oscura, no coloreada:
-    lo que separa la tarjeta del fondo es la profundidad, no un
-    acento.
-  */
-  .rk-card-glow:hover,
-  .rk-card-glow:focus-within,
-  .rk-card-hover:hover,
-  .rk-card-hover:focus-within {
-    transform: translateY(-4px);
-    border-color: var(--rk-border-strong);
-    box-shadow:
-      inset 0 1px 0 var(--rk-canto-vivo),
-      var(--rk-elevacion);
-  }
-
-  .rk-card-glow:active,
-  .rk-card-hover:active {
-    transform: translateY(-1px);
-    box-shadow:
-      inset 0 1px 0 var(--rk-canto),
-      var(--rk-shadow-lg);
-  }
-
-  /* ────────── BOTONES ────────── */
-
-  .rk-btn {
-    transition:
-      transform 220ms var(--rk-ease),
-      box-shadow 280ms var(--rk-ease),
-      background-color 220ms var(--rk-ease-soft),
-      border-color 220ms var(--rk-ease-soft),
-      color 220ms var(--rk-ease-soft),
-      opacity 220ms var(--rk-ease-soft);
-  }
-
-  /*
-    Las cuatro variantes tienen que SENTIRSE distintas, no solo
-    verse distintas en reposo:
-
-      ink / primary  ·  sólido, manda, sombra de verdad
-      secondary      ·  sólido pero sin voz propia
-      line / glass   ·  vidrio, responde con el borde y la luz
-      ghost          ·  solo texto hasta que se le señala
-  */
-  .rk-btn-ink,
-  .rk-btn-paper,
-  .rk-btn-primary,
-  .rk-btn-glow,
-  .rk-btn-secondary,
-  .rk-btn-success {
-    box-shadow:
-      inset 0 1px 0 var(--rk-canto-vivo),
-      var(--rk-shadow-sm);
-  }
-
-  .rk-btn-line,
-  .rk-btn-glass {
-    box-shadow: inset 0 1px 0 var(--rk-canto);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .rk-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-    }
-
-    .rk-btn-ink:hover:not(:disabled),
-    .rk-btn-paper:hover:not(:disabled),
-    .rk-btn-primary:hover:not(:disabled),
-    .rk-btn-glow:hover:not(:disabled),
-    .rk-btn-secondary:hover:not(:disabled),
-    .rk-btn-success:hover:not(:disabled) {
-      box-shadow:
-        inset 0 1px 0 var(--rk-canto-vivo),
-        var(--rk-elevacion-corta);
-    }
-
-    /*
-      Las variantes de vidrio no ganan sombra: ganan superficie.
-      El fondo sube un punto y el borde se aclara, que es como
-      responde el cristal cuando le da la luz.
-    */
-    .rk-btn-line:hover:not(:disabled),
-    .rk-btn-glass:hover:not(:disabled),
-    .rk-btn-ghost:hover:not(:disabled) {
-      border-color: var(--rk-border-strong);
-      box-shadow:
-        inset 0 1px 0 var(--rk-canto-vivo),
-        var(--rk-shadow-sm);
-    }
-  }
-
-  /* Pulsado: vuelve al plano y cede un punto de escala. */
-  .rk-btn:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
-    box-shadow: inset 0 1px 0 var(--rk-canto);
-  }
-
-  /*
-    EL REFLEJO DEL BOTÓN PRINCIPAL
-
-    Dos líneas de luz de un píxel, arriba y abajo, que no llegan
-    a los extremos. Es el único "efecto" que se permite la
-    referencia, y funciona porque no brilla: insinúa un canto
-    biselado.
-
-    Van en pseudoelementos para no tocar el marcado, y
-    `pointer-events:none` para que no roben el clic.
-  */
-  .rk-btn-ink,
-  .rk-btn-primary,
-  .rk-btn-glow {
-    position: relative;
-    overflow: visible;
-  }
-
-  .rk-btn-ink::before,
-  .rk-btn-ink::after,
-  .rk-btn-primary::before,
-  .rk-btn-primary::after,
-  .rk-btn-glow::before,
-  .rk-btn-glow::after {
-    content: "";
-    position: absolute;
-    left: 24%;
-    right: 24%;
-    height: 1px;
-    pointer-events: none;
-    opacity: 0.55;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgb(var(--rk-foreground) / 0.75),
-      transparent
-    );
-    transition: opacity 280ms var(--rk-ease-soft);
-  }
-
-  .rk-btn-ink::before,
-  .rk-btn-primary::before,
-  .rk-btn-glow::before {
-    top: -1px;
-  }
-
-  .rk-btn-ink::after,
-  .rk-btn-primary::after,
-  .rk-btn-glow::after {
-    bottom: -1px;
-  }
-
-  .rk-btn-ink:hover:not(:disabled)::before,
-  .rk-btn-ink:hover:not(:disabled)::after,
-  .rk-btn-primary:hover:not(:disabled)::before,
-  .rk-btn-primary:hover:not(:disabled)::after,
-  .rk-btn-glow:hover:not(:disabled)::before,
-  .rk-btn-glow:hover:not(:disabled)::after {
-    opacity: 1;
-  }
-
-  /* Un botón desactivado no promete nada. */
-  .rk-btn:disabled {
-    box-shadow: none;
-    transform: none;
-  }
-
-  .rk-btn:disabled::before,
-  .rk-btn:disabled::after {
-    opacity: 0;
-  }
-
-  /* ────────── LA IMAGEN ────────── */
-
-  /*
-    Cuatro y medio por ciento, con una curva larga que arranca
-    y frena despacio: el acercamiento se lee como un movimiento
-    de cámara, no como un salto de escala. Y un punto de
-    contraste, que es lo que hace que la portada "despierte".
-  */
-  .rk-card-zoom {
-    --rk-zoom: 1.045;
-    --rk-zoom-filtro: saturate(1.06) contrast(1.03) brightness(1.02);
-  }
-
-  .rk-frame img {
-    transition:
-      transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
-      filter 420ms var(--rk-ease-soft);
-  }
-
-  /* ────────── ENLACES Y NAVEGACIÓN ────────── */
-
-  /*
-    Lo que no es botón ni tarjeta también responde: los enlaces
-    de navegación, las migas y los "ver todos" suben de color.
-    Sin esto, media interfaz se queda muda al pasar por encima.
-  */
-  .rk-chip {
-    transition:
-      background-color 220ms var(--rk-ease-soft),
-      border-color 220ms var(--rk-ease-soft),
-      color 220ms var(--rk-ease-soft),
-      transform 220ms var(--rk-ease);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .rk-chip:hover {
-      border-color: var(--rk-border-strong);
-      color: rgb(var(--rk-foreground));
-      transform: translateY(-1px);
-    }
-  }
-}
-
-/*
-  Con el movimiento reducido se conservan sombra, borde y canto
-  —informan sin moverse— y se retiran desplazamientos,
-  acercamientos y escalas.
-
-  Fuera de `@layer` a propósito: lo que no está en ninguna capa
-  gana a lo que sí, así que manda sin depender del orden.
-*/
-@media (prefers-reduced-motion: reduce) {
-  .rk-btn:hover:not(:disabled),
-  .rk-btn:active:not(:disabled),
-  .rk-chip:hover,
-  .rk-card-glow:hover,
-  .rk-card-glow:focus-within,
-  .rk-card-glow:active,
-  .rk-card-hover:hover,
-  .rk-card-hover:focus-within,
-  .rk-card-hover:active {
-    transform: none;
-  }
-
-  .group:hover .rk-frame img,
-  .group:focus-within .rk-frame img,
-  .rk-frame:hover img,
-  .rk-frame:focus-within img {
-    transform: none;
-  }
-}
 
 /* ══════════════════════════════════════════════════════════
    TABLEROS — SIDEBAR, CAJÓN Y BARRA
@@ -2096,7 +1785,13 @@ html[data-theme="dark"] {
   --rx-fondo: #0e1013;
   --rx-texto: #f5f5f6;
   --rx-atenuado: #929299;
-  --rx-tenue: #626268;
+  /*
+    Subido de #626268 a #7a7c85: con el anterior, el texto
+    terciario daba 3,14:1 sobre el fondo, por debajo del 4,5
+    que pide AA a 13 px. Este es el valor MÍNIMO que pasa, para
+    no aclararlo más de lo necesario.
+  */
+  --rx-tenue: #7a7c85;
   --rx-plata: #d7d9dd;
 
   --rx-linea: rgb(255 255 255 / 0.075);
@@ -2138,7 +1833,8 @@ html[data-theme="dark"] {
   --rx-fondo: #eef1f6;
   --rx-texto: #121217;
   --rx-atenuado: #5a5c66;
-  --rx-tenue: #80828c;
+  /* Mismo motivo en claro: 3,38:1 era insuficiente. */
+  --rx-tenue: #66686f;
   --rx-plata: #4a4c55;
 
   --rx-linea: rgb(0 0 0 / 0.07);
@@ -2290,22 +1986,6 @@ h6 {
 
 .rk-tarjeta .rk-frame {
   border-radius: 15px;
-}
-
-/* ────────── BOTONES ────────── */
-
-.rk-btn {
-  /*
-    Solo mínimo, no alto fijo: un botón con dos líneas o con un
-    icono alto tiene que poder crecer. Con  se recortaba.
-  */
-  min-height: 46px;
-  padding: 0 24px;
-  border-radius: 999px;
-  font-weight: 500;
-  font-size: 15px;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  color: var(--rx-texto);
 }
 
 [data-theme="light"] .rk-btn {
@@ -2663,28 +2343,6 @@ h6 {
   detalle, se lee como un defecto.
 */
 /*
-  EL BOTÓN COMPACTO RECUPERA SU MEDIDA
-
-  La regla base de 46 px lo pisaba: los cincuenta botones
-  compactos de tablas y barras de herramientas pasaron a medir
-  lo mismo que uno principal, y las filas crecieron con ellos.
-
-  En pantalla táctil vuelve a los 44 px mínimos, que es lo que
-  el dedo necesita para acertar.
-*/
-.rk-btn-compact {
-  min-height: 2rem;
-  padding: 0 0.875rem;
-  font-size: 0.8125rem;
-}
-
-@media (pointer: coarse) {
-  .rk-btn-compact {
-    min-height: 2.75rem;
-  }
-}
-
-/*
   Dentro de una tabla, una lengüeta colgando de cada botón de
   fila se lee como un defecto de maquetación y no como un
   detalle. El efecto se reserva a las acciones con presencia
@@ -2991,4 +2649,471 @@ html[data-theme="dark"] {
     transition: none !important;
     transition-delay: 0ms !important;
   }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SISTEMA DE INTERACCIÓN
+
+   Una sola fuente para cómo responde TODO lo que se puede
+   pulsar, enfocar o señalar. Antes esto vivía repartido en
+   cuatro capas que se pisaban entre sí: catorce duraciones de
+   transición distintas, cuatro definiciones del botón compacto
+   y ochenta reglas de `:hover` frente a cuatro de
+   `:focus-visible`.
+
+   El orden importa: este bloque va el último del archivo, así
+   que cierra el sistema. Lo que se añada después debería
+   entrar AQUÍ, no debajo.
+   ══════════════════════════════════════════════════════════ */
+
+/* ────────── 1. TIEMPOS ────────── */
+
+/*
+   Tres velocidades y una curva. Nada más.
+
+   Una interfaz con catorce duraciones no se siente lenta ni
+   rápida: se siente desordenada, porque el ojo no llega a
+   aprender su ritmo.
+*/
+:root {
+  --rx-t-micro: 160ms; /* color, borde, opacidad */
+  --rx-t-hover: 200ms; /* elevación y sombra */
+  --rx-t-entrada: 300ms; /* lo que aparece */
+  --rx-curva: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* ────────── 2. JERARQUÍA DE BORDES ────────── */
+
+/*
+   Cuatro niveles. El borde separa superficies; no dibuja
+   cajas. Por eso crece con la cercanía a la mano: lo que solo
+   se mira apenas se insinúa, y lo que se escribe se delimita.
+*/
+html[data-theme="dark"] {
+  --rx-b-superficie: rgb(255 255 255 / 0.06);
+  --rx-b-card: rgb(255 255 255 / 0.1);
+  --rx-b-card-activa: rgb(255 255 255 / 0.2);
+  --rx-b-boton: rgb(255 255 255 / 0.14);
+  --rx-b-boton-activo: rgb(255 255 255 / 0.3);
+  --rx-b-input: rgb(255 255 255 / 0.16);
+  --rx-b-input-activo: rgb(255 255 255 / 0.34);
+  --rx-sombra-hover: 0 8px 28px rgb(0 0 0 / 0.38);
+  --rx-sombra-base: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+
+:root,
+[data-theme="light"] {
+  --rx-b-superficie: rgb(0 0 0 / 0.05);
+  --rx-b-card: rgb(0 0 0 / 0.09);
+  --rx-b-card-activa: rgb(0 0 0 / 0.18);
+  --rx-b-boton: rgb(0 0 0 / 0.12);
+  --rx-b-boton-activo: rgb(0 0 0 / 0.26);
+  --rx-b-input: rgb(0 0 0 / 0.14);
+  --rx-b-input-activo: rgb(0 0 0 / 0.3);
+  --rx-sombra-hover: 0 8px 28px rgb(21 22 27 / 0.12);
+  --rx-sombra-base: 0 1px 2px rgb(21 22 27 / 0.05);
+}
+
+.rk-card,
+.rk-card-glass,
+.rk-glass,
+.rk-panel-lateral,
+.rk-panel-barra {
+  border-color: var(--rx-b-superficie);
+}
+
+/* ────────── 3. FOCO, EN TODO ────────── */
+
+/*
+   Había ochenta reglas de hover y cuatro de foco: quien navega
+   con teclado no veía dónde estaba. Esto cubre de una vez todo
+   lo enfocable.
+
+   Es un `outline`, que tiene FORMA: no depende de distinguir un
+   color, y se ve igual sobre vidrio claro y sobre vidrio
+   oscuro. `:focus-visible` y no `:focus` para que no salte al
+   pulsar con el ratón.
+*/
+:where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    [tabindex]:not([tabindex="-1"])
+  ):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: inherit;
+}
+
+/* ────────── 4. BOTONES: MEDIDAS ────────── */
+
+/*
+   Una sola escala. Las variantes cambian de PESO visual, no de
+   tamaño: mezclar las dos cosas es lo que hacía que una fila de
+   tabla y una portada tuvieran botones de alturas distintas sin
+   motivo.
+*/
+.rk-btn {
+  min-height: 46px;
+  padding: 0 24px;
+  border-radius: var(--rk-radius-full);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  gap: 0.5rem;
+  border: 1px solid var(--rx-b-boton);
+  transition:
+    background-color var(--rx-t-micro) var(--rx-curva),
+    border-color var(--rx-t-micro) var(--rx-curva),
+    color var(--rx-t-micro) var(--rx-curva),
+    opacity var(--rx-t-micro) var(--rx-curva),
+    box-shadow var(--rx-t-hover) var(--rx-curva),
+    transform var(--rx-t-hover) var(--rx-curva);
+}
+
+/*
+   COMPACTO E ICONO
+
+   Van después de la base a propósito: su medida tiene que
+   ganar. Cuando no lo hacían, los botones de las tablas
+   pasaron de 32 a 46 px y las filas crecieron con ellos.
+*/
+.rk-btn-compact {
+  min-height: 2rem;
+  padding: 0 0.875rem;
+  font-size: 0.8125rem;
+  gap: 0.375rem;
+}
+
+.rk-btn-icono {
+  min-height: 2.75rem;
+  width: 2.75rem;
+  padding: 0;
+  aspect-ratio: 1;
+}
+
+/* En táctil el dedo manda: 44 px mínimos. */
+@media (pointer: coarse) {
+  .rk-btn-compact {
+    min-height: 2.75rem;
+  }
+}
+
+/* ────────── 5. BOTONES: ESTADOS ────────── */
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+    transform: translateY(-1px);
+  }
+
+  .rk-btn-line:hover:not(:disabled),
+  .rk-btn-glass:hover:not(:disabled),
+  .rk-btn-ghost:hover:not(:disabled),
+  .rk-btn-secondary:hover:not(:disabled),
+  .rk-btn-paper:hover:not(:disabled) {
+    border-color: var(--rx-b-boton-activo);
+  }
+}
+
+/* Pulsado: vuelve al plano y cede escala. Nunca mueve el layout. */
+.rk-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 90ms;
+}
+
+/*
+   DESACTIVADO
+
+   Menos contraste, sin respuesta y con el cursor que lo
+   anuncia. `pointer-events` se mantiene para que el cursor se
+   vea; quitarlo dejaba el botón mudo incluso para el ratón.
+*/
+.rk-btn:disabled,
+.rk-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  filter: none;
+}
+
+.rk-btn:disabled::before,
+.rk-btn:disabled::after,
+.rk-btn[aria-disabled="true"]::before,
+.rk-btn[aria-disabled="true"]::after {
+  opacity: 0;
+}
+
+/*
+   CARGANDO
+
+   Conserva la medida: el botón no puede encoger cuando su
+   texto cambia a "Guardando…", porque todo lo que tiene al lado
+   se movería. `min-width` congela el ancho alcanzado.
+*/
+.rk-btn[data-cargando="true"] {
+  cursor: progress;
+  pointer-events: none;
+}
+
+.rk-btn[data-cargando="true"] > * {
+  opacity: 0.55;
+  transition: opacity var(--rx-t-micro) var(--rx-curva);
+}
+
+/* ────────── 6. TARJETAS ────────── */
+
+/*
+   La elevación es de dos píxeles y la sombra crece: lo justo
+   para que el ojo registre la respuesta. No cambia de tamaño ni
+   empuja a las vecinas, porque lo que se anima es `transform`,
+   que no ocupa espacio.
+*/
+.rk-card-glow,
+.rk-card-hover {
+  transition:
+    transform var(--rx-t-hover) var(--rx-curva),
+    box-shadow var(--rx-t-hover) var(--rx-curva),
+    border-color var(--rx-t-micro) var(--rx-curva);
+}
+
+.rk-card-glow:hover,
+.rk-card-glow:focus-within,
+.rk-card-hover:hover,
+.rk-card-hover:focus-within {
+  transform: translateY(-2px);
+  border-color: var(--rx-b-card-activa);
+  box-shadow: var(--rx-sombra-hover);
+}
+
+.rk-card-glow:active,
+.rk-card-hover:active {
+  transform: translateY(0);
+}
+
+/*
+   La tarjeta de recurso NO se mueve: lleva la lengüeta anclada
+   a su borde y, si se desplazara, se despegaría. Responde con
+   borde y sombra, que es suficiente.
+*/
+.rk-tarjeta {
+  transition:
+    border-color var(--rx-t-micro) var(--rx-curva),
+    box-shadow var(--rx-t-hover) var(--rx-curva);
+}
+
+.rk-tarjeta:hover,
+.rk-tarjeta:focus-within {
+  border-color: var(--rx-b-card-activa);
+  box-shadow: var(--rx-sombra-hover);
+  transform: none;
+}
+
+/* ────────── 7. IMÁGENES ────────── */
+
+/*
+   El acercamiento ocurre DENTRO del marco, que recorta. Sin ese
+   recorte la imagen crecida se saldría y empujaría la
+   maquetación.
+*/
+.rk-frame {
+  overflow: hidden;
+}
+
+.rk-frame img {
+  transition:
+    transform var(--rx-t-entrada) var(--rx-curva),
+    filter var(--rx-t-hover) var(--rx-curva);
+}
+
+/* ────────── 8. CAMPOS ────────── */
+
+/*
+   Siete estados, y ninguno cambia la medida del campo: al
+   enfocar crece el `outline`, que se dibuja FUERA de la caja y
+   no desplaza nada. Un borde más grueso sí movería el texto.
+*/
+.rk-input,
+.rk-select,
+.rk-textarea {
+  border-color: var(--rx-b-input);
+  transition:
+    border-color var(--rx-t-micro) var(--rx-curva),
+    background-color var(--rx-t-micro) var(--rx-curva),
+    box-shadow var(--rx-t-micro) var(--rx-curva);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-input:hover:not(:disabled),
+  .rk-select:hover:not(:disabled),
+  .rk-textarea:hover:not(:disabled) {
+    border-color: var(--rx-b-input-activo);
+  }
+}
+
+.rk-input:focus-visible,
+.rk-select:focus-visible,
+.rk-textarea:focus-visible {
+  border-color: var(--rx-b-input-activo);
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.rk-input:disabled,
+.rk-select:disabled,
+.rk-textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Error y acierto: color MÁS forma, nunca color solo. */
+.rk-input[aria-invalid="true"],
+.rk-textarea[aria-invalid="true"],
+.rk-select[aria-invalid="true"] {
+  border-color: rgb(var(--rk-danger));
+  box-shadow: 0 0 0 1px rgb(var(--rk-danger) / 0.35);
+}
+
+.rk-input[data-estado="ok"],
+.rk-textarea[data-estado="ok"] {
+  border-color: rgb(var(--rk-success));
+  box-shadow: 0 0 0 1px rgb(var(--rk-success) / 0.3);
+}
+
+/* ────────── 9. ENLACES, PESTAÑAS Y CHIPS ────────── */
+
+.rk-chip {
+  transition:
+    background-color var(--rx-t-micro) var(--rx-curva),
+    border-color var(--rx-t-micro) var(--rx-curva),
+    color var(--rx-t-micro) var(--rx-curva);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-chip:hover {
+    border-color: var(--rx-b-boton-activo);
+    color: rgb(var(--rk-foreground));
+  }
+}
+
+/*
+   El estado activo se reconoce por el FONDO, no solo por el
+   color del texto: sobre vidrio, dos grises distintos no se
+   distinguen de un vistazo.
+*/
+.rk-chip[aria-current],
+.rk-chip[data-activo="true"] {
+  background: rgb(255 255 255 / 0.17);
+  border-color: var(--rx-b-boton-activo);
+  color: rgb(var(--rk-foreground));
+}
+
+[data-theme="light"] .rk-chip[aria-current],
+[data-theme="light"] .rk-chip[data-activo="true"] {
+  background: rgb(255 255 255 / 0.9);
+}
+
+/* ────────── 10. TABLAS ────────── */
+
+/*
+   Una fila responde con el fondo, nunca con desplazamiento: una
+   tabla cuyas filas se mueven es imposible de leer.
+*/
+.rk-tabla tbody tr,
+table tbody tr {
+  transition: background-color var(--rx-t-micro) var(--rx-curva);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-tabla tbody tr:hover,
+  table tbody tr:hover {
+    background: rgb(255 255 255 / 0.03);
+  }
+
+  [data-theme="light"] .rk-tabla tbody tr:hover,
+  [data-theme="light"] table tbody tr:hover {
+    background: rgb(0 0 0 / 0.025);
+  }
+}
+
+/* Y sus botones tampoco se mueven ni crecen. */
+table .rk-btn:hover:not(:disabled) {
+  transform: none;
+}
+
+/* ────────── 11. MODALES Y DESPLEGABLES ────────── */
+
+/*
+   Entrada corta: trescientos milisegundos y de una pieza. Una
+   animación larga retrasa la interacción, y es exactamente lo
+   que no se quiere de algo que se abre para actuar.
+*/
+/*
+  Los modales y desplegables de este proyecto NO usan clases
+  propias: entran con  y ,
+  que define Tailwind. Su duración y su curva se han alineado
+  ahí con el sistema —300 ms y la misma curva—, que es donde
+  toca tocarlas.
+
+  Antes aquí había reglas para  y ,
+  clases que no existen en ningún componente: código muerto que
+  aparentaba cubrir el caso.
+*/
+
+/* ────────── 12. MOVIMIENTO REDUCIDO ────────── */
+
+/*
+   Se conservan borde, sombra y fondo —informan sin moverse— y
+   desaparece todo lo que se desplaza, escala o aparece.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .rk-btn:hover:not(:disabled),
+  .rk-btn:active:not(:disabled),
+  .rk-card-glow:hover,
+  .rk-card-glow:focus-within,
+  .rk-card-glow:active,
+  .rk-card-hover:hover,
+  .rk-card-hover:focus-within,
+  .rk-card-hover:active,
+  .rk-tarjeta:hover,
+  .rk-chip:hover {
+    transform: none;
+  }
+
+  .rk-frame img,
+  .group:hover .rk-frame img,
+  .group:focus-within .rk-frame img,
+  .rk-frame:hover img,
+  .rk-frame:focus-within img {
+    transform: none;
+  }
+
+
+}
+
+/* ────────── REJILLA DE RECURSOS ────────── */
+
+/*
+  LA DECIDE EL CONTENEDOR, NO LA PANTALLA.
+
+  Antes eran puntos de ruptura por viewport —2, luego 3, luego
+  5 columnas—, y eso falla en cuanto la rejilla no ocupa el
+  ancho completo: dentro de una columna estrecha de un panel
+  seguía pidiendo cinco columnas y las tarjetas se aplastaban.
+
+  `auto-fill` con `minmax` reparte según el espacio que HAY: el
+  navegador mete tantas columnas de 260 px como quepan y
+  reparte el sobrante. Sale solo 4 / 3 / 2 / 1 sin escribir ni
+  un punto de ruptura.
+
+  El `min(100%, 290px)` es la red de seguridad: en un contenedor
+  más estrecho que 260 px, la columna se encoge con él en vez de
+  desbordar.
+*/
+.rk-rejilla {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
 }

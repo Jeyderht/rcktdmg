@@ -73,7 +73,7 @@ export default function RecomendadosCliente() {
         </Link>
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+      <div className="mt-5 rk-rejilla">
         {bloque.productos.map((producto) => (
           <ProductCard key={producto.id} product={producto} />
         ))}

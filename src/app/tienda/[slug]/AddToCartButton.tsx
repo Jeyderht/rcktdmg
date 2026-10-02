@@ -77,7 +77,7 @@ export default function AddToCartButton({ product }: Props) {
       className={`rk-btn w-full !py-3.5 ${
         added
           ? "bg-success text-white shadow-rk"
-          : "rk-btn-primary"
+          : "rk-btn-primary rk-btn-cta"
       }`}
     >
       {added ? (

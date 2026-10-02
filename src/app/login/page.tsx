@@ -169,7 +169,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="rk-btn rk-btn-primary w-full !py-3.5"
+              className="rk-btn rk-btn-primary rk-btn-cta w-full !py-3.5"
             >
               {loading ? "Iniciando sesión..." : "Iniciar sesión"}
             </button>

@@ -141,7 +141,7 @@ export default async function ColeccionPublicaPage({
             Esta colección todavía no tiene recursos publicados.
           </p>
         ) : (
-          <div className="rk-fade-up mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 xl:grid-cols-6">
+          <div className="rk-fade-up mt-8 rk-rejilla">
             {coleccion.items.map(({ product }) => (
               <ProductCard key={product.id} product={aTarjeta(product)} />
             ))}

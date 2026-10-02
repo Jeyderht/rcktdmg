@@ -105,7 +105,7 @@ export default async function StoreResults({
       {/* RESULTADOS */}
       {productos.length > 0 ? (
         <>
-          <div className="rk-fade-up rk-enter-1 mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="rk-fade-up rk-enter-1 mt-6 rk-rejilla">
             {productos.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -164,7 +164,7 @@ export function StoreResultsSkeleton() {
 
       <div className="rk-divider mt-4" />
 
-      <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="mt-6 rk-rejilla">
         {Array.from({ length: 10 }).map((_, index) => (
           <div key={index}>
             <div className="rk-aspect-product w-full animate-pulse rounded-rk-md bg-ink/[0.06]" />

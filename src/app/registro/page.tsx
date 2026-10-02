@@ -175,7 +175,7 @@ export default function RegistroPage() {
             <button
               type="submit"
               disabled={loading}
-              className="rk-btn rk-btn-primary w-full !py-3.5"
+              className="rk-btn rk-btn-primary rk-btn-cta w-full !py-3.5"
             >
               {loading ? "Creando cuenta..." : "Crear cuenta"}
             </button>

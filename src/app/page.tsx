@@ -581,7 +581,7 @@ export default async function Home() {
                 </p>
               </div>
             ) : (
-              <div className="rk-fade-up rk-enter-1 mt-10 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 xl:grid-cols-6">
+              <div className="rk-fade-up rk-enter-1 mt-10 rk-rejilla">
                 {products.map((product) => (
                   <ProductCard
                     key={product.id}

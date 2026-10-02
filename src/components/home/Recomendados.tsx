@@ -48,7 +48,7 @@ export default async function Recomendados() {
           </Link>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+        <div className="mt-8 rk-rejilla">
           {bloque.productos.map((producto) => (
             <ProductCard key={producto.id} product={producto} />
           ))}

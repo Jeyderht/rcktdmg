@@ -280,7 +280,7 @@ export default function HeroFlyers({ flyers }: { flyers: FlyerHero[] }) {
 
         <Link
           href={`/tienda/${destacado.slug}`}
-          className="rk-btn rk-btn-ink rk-btn-glow mt-5"
+          className="rk-btn rk-btn-ink rk-btn-cta mt-5"
         >
           Ver este recurso
           <ArrowRight size={16} />

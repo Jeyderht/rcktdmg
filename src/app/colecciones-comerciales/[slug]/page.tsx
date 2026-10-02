@@ -326,7 +326,7 @@ export default async function ColeccionComercialPage({
             con su propia descarga y su propia licencia.
           </p>
 
-          <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+          <div className="mt-6 rk-rejilla">
             {coleccion.productos.map((producto) => (
               <ProductCard
                 key={producto.id}
