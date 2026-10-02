@@ -80,8 +80,8 @@ export default function RevelarAlEntrar() {
           termina antes de que el contenido esté a la vista y
           no se llega a percibir.
         */
-        rootMargin: "0px 0px -12% 0px",
-        threshold: 0.05,
+        rootMargin: "0px 0px -6% 0px",
+        threshold: 0.15,
       }
     );
 

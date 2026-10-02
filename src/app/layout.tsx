@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Sora } from "next/font/google";
+import { Sora } from "next/font/google";
 import "./globals.css";
 
 import {
@@ -9,14 +9,20 @@ import {
 import RevelarAlEntrar from "@/components/RevelarAlEntrar";
 import { SITIO, absoluta, urlBase } from "@/lib/seo";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
+/*
+  Sora, y solo Sora.
 
+  La referencia acaba imponiéndola en toda la interfaz —títulos
+  y cuerpo— en su última capa de estilos. Mantener dos familias
+  obligaba a decidir en cada componente cuál tocaba, y esa
+  decisión se equivocaba sola con el tiempo.
+
+  Tres pesos: 400 para el cuerpo, 500 para controles y 600 para
+  los títulos. Ni uno más; cada peso es una descarga.
+*/
 const sora = Sora({
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   variable: "--font-sora",
   display: "swap",
 });
@@ -114,7 +120,7 @@ export default function RootLayout({
         />
       </head>
 
-      <body className={`${inter.variable} ${sora.variable} antialiased`}>
+      <body className={`${sora.variable} antialiased`}>
         <ThemeProvider>
           {children}
 

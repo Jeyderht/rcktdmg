@@ -72,8 +72,14 @@ export default function ProductCard({
     product.compareAtPrice
   );
 
+  /*
+    El envoltorio existe solo para la lengüeta luminosa: la
+    dibuja su ::before y queda POR DETRÁS de la tarjeta. No
+    recorta nada, porque un overflow oculto aquí se la comería.
+  */
   return (
-    <article className="group relative">
+    <div className="rx-pestana rx-pestana-bloque">
+      <article className="rk-tarjeta group relative">
 
       {/* CONTENIDO VISUAL 9:16 */}
       <Link
@@ -97,7 +103,7 @@ export default function ProductCard({
             acercamiento de la imagen se salga del marco y
             rompa la proporción que acaba de fijarse.
           */
-          className="rk-frame rk-card-glow w-full overflow-hidden"
+          className="rk-frame w-full overflow-hidden"
           style={{
             aspectRatio:
               proporcionDeRecurso(
@@ -158,7 +164,7 @@ export default function ProductCard({
       )}
 
       {/* INFORMACIÓN */}
-      <div className="px-0.5 pt-2.5">
+      <div className="px-1 pb-0.5 pt-2.5">
         <Link href={`/tienda/${product.slug}`}>
           <h3 className="line-clamp-2 min-h-[2.1rem] text-[13px] font-semibold leading-[1.05rem] tracking-tight transition-opacity group-hover:opacity-60">
             {product.name}
@@ -216,5 +222,6 @@ export default function ProductCard({
         </div>
       </div>
     </article>
+    </div>
   );
 }

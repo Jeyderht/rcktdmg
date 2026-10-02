@@ -25,41 +25,57 @@
   color-scheme: light;
 
   /* ---- SUPERFICIES ---- */
-  --rk-background: 244 246 250;
-  --rk-background-2: 236 239 245;
+  /*
+    Gris muy claro, no blanco: la referencia apoya todo sobre
+    un degradado #eef1f6 → #e5e9ef, y es ese fondo ligeramente
+    frío lo que deja respirar a las superficies blancas.
+  */
+  --rk-background: 238 241 246;
+  --rk-background-2: 229 233 239;
   --rk-surface: 255 255 255;
   --rk-surface-elevated: 255 255 255;
   --rk-card: 255 255 255;
-  --rk-card-alpha: 0.86;
+  /* Translúcida, no sólida: la tarjeta deja ver el fondo. */
+  --rk-card-alpha: 0.72;
 
   /* ---- TEXTO ---- */
-  --rk-foreground: 10 11 14;
-  --rk-ink: 10 11 14; /* alias histórico de foreground */
-  --rk-muted: 10 11 14;
-  --rk-muted-alpha: 0.62;
+  --rk-foreground: 21 22 27;
+  --rk-ink: 21 22 27; /* alias histórico de foreground */
+  --rk-muted: 21 22 27;
+  --rk-muted-alpha: 0.58;
 
   /* ---- LÍNEAS ---- */
-  --rk-border: 10 11 14;
-  --rk-border-alpha: 0.08;
-  --rk-border-strong-alpha: 0.16;
+  /* Finas y discretas: la línea sugiere el borde, no lo dibuja. */
+  --rk-border: 21 22 27;
+  --rk-border-alpha: 0.075;
+  --rk-border-strong-alpha: 0.14;
 
   /* ---- MARCA ---- */
-  --rk-primary: 10 11 14;
+  --rk-primary: 21 22 27;
   --rk-on-primary: 255 255 255;
 
-  /* Azul eléctrico: color de firma de RCKTDMG. */
-  --rk-accent: 0 98 255;
-  --rk-accent-hover: 0 80 224;
+  /*
+    ACENTO: AZUL GRISÁCEO, NO AZUL ELÉCTRICO.
+
+    El azul saturado tiraba de la interfaz hacia lo tecnológico.
+    Este es el mismo tono desaturado hasta donde acompaña sin
+    gritar: marca el foco y el estado activo, y no compite con
+    las portadas, que son lo que hay que mirar.
+
+    En claro se oscurece lo suficiente para que un anillo de
+    foco siga siendo claramente visible sobre el fondo.
+  */
+  --rk-accent: 71 88 112;
+  --rk-accent-hover: 54 68 90;
   --rk-accent-contrast: 255 255 255;
-  --rk-accent-soft: rgb(0 98 255 / 0.1);
+  --rk-accent-soft: rgb(71 88 112 / 0.09);
 
   /*
-    Morado de acompañamiento. Solo vive en los resplandores:
-    nunca en texto, fondo ni borde. Va una capa por detrás del
-    azul de firma, y es esa segunda capa la que convierte un
-    halo plano en profundidad.
+    Segundo tono de los resplandores. Era morado; ahora es el
+    mismo azul grisáceo un paso más frío. Dos tonos vecinos dan
+    profundidad sin que el halo se lea como color.
   */
-  --rk-accent-2: 109 62 235;
+  --rk-accent-2: 94 108 128;
 
   /* ---- ESTADOS ---- */
   --rk-success: 9 135 87;
@@ -69,9 +85,9 @@
 
   /* ---- VIDRIO ---- */
   --rk-glass: 255 255 255;
-  --rk-glass-alpha: 0.68;
-  --rk-glass-strong-alpha: 0.84;
-  --rk-glass-border: rgb(255 255 255 / 0.7);
+  --rk-glass-alpha: 0.6;
+  --rk-glass-strong-alpha: 0.78;
+  --rk-glass-border: rgb(255 255 255 / 0.66);
 
   /* ---- HALOS DEL FONDO ----
      Neutros: la identidad es tinta sobre papel, así que el
@@ -80,20 +96,38 @@
   --rk-halo-2: rgb(10 11 14 / 0.035);
 
   /* ---- PROFUNDIDAD: sombras por capas ---- */
+  /* Suaves y abiertas: posan el elemento, no lo despegan. */
   --rk-shadow-sm:
-    0 1px 2px rgb(10 11 14 / 0.04),
-    0 4px 12px rgb(10 11 14 / 0.05);
+    0 1px 2px rgb(21 22 27 / 0.03),
+    0 4px 14px rgb(21 22 27 / 0.045);
   --rk-shadow:
-    0 1px 2px rgb(10 11 14 / 0.04),
-    0 8px 24px rgb(10 11 14 / 0.07),
-    0 2px 6px rgb(10 11 14 / 0.04);
+    0 1px 2px rgb(21 22 27 / 0.035),
+    0 10px 28px rgb(21 22 27 / 0.06),
+    0 2px 6px rgb(21 22 27 / 0.03);
   --rk-shadow-lg:
-    0 2px 4px rgb(10 11 14 / 0.04),
-    0 16px 40px rgb(10 11 14 / 0.1),
-    0 4px 12px rgb(10 11 14 / 0.05);
+    0 2px 4px rgb(21 22 27 / 0.035),
+    0 18px 46px rgb(21 22 27 / 0.085),
+    0 4px 12px rgb(21 22 27 / 0.04);
   --rk-shadow-float:
-    0 8px 20px rgb(10 11 14 / 0.1),
-    0 24px 60px rgb(10 11 14 / 0.14);
+    0 8px 22px rgb(21 22 27 / 0.09),
+    0 28px 68px rgb(21 22 27 / 0.12);
+
+  /* ---- CANTO DE LUZ ----
+     La línea de un píxel que recorre el borde superior de cada
+     superficie. Es lo que hace que se lea como un plano
+     iluminado y no como un recorte sobre el fondo. */
+  --rk-canto: rgb(255 255 255 / 0.9);
+  --rk-canto-vivo: rgb(255 255 255 / 1);
+
+  /* ---- ELEVACIÓN AL SEÑALAR ----
+     Ancha y muy difusa: separa del fondo sin dibujar un borde.
+     Es sombra oscura, nunca de color. */
+  --rk-elevacion:
+    0 18px 44px -18px rgb(21 22 27 / 0.22),
+    0 6px 16px -8px rgb(21 22 27 / 0.13);
+  --rk-elevacion-corta:
+    0 10px 24px -10px rgb(21 22 27 / 0.2),
+    0 3px 8px -4px rgb(21 22 27 / 0.12);
 }
 
 [data-theme="dark"] {
@@ -102,34 +136,50 @@
   /* Negro profundo como base, con superficies que se elevan.
      Nunca negro absoluto en las tarjetas: se perdería la
      jerarquía entre capas. */
-  --rk-background: 8 9 11;
-  --rk-background-2: 13 14 17;
-  --rk-surface: 20 21 25;
-  --rk-surface-elevated: 30 32 37;
-  --rk-card: 23 24 29;
-  --rk-card-alpha: 0.8;
+  --rk-background: 8 9 12;
+  --rk-background-2: 6 7 10;
+  --rk-surface: 23 23 27;
+  --rk-surface-elevated: 28 29 34;
+  /*
+    LA TARJETA ES VIDRIO, NO UN PANEL SÓLIDO.
 
-  --rk-foreground: 243 245 248;
-  --rk-ink: 243 245 248;
-  --rk-muted: 243 245 248;
-  --rk-muted-alpha: 0.64;
+    El color se queda oscuro y la translucidez la pone el alfa.
+    Es importante que sea así: la utilidad  de Tailwind
+    usa este token con opacidad 1, de modo que ponerlo en blanco
+    para simular vidrio dejaba paneles BLANCOS en tema oscuro
+    allí donde alguien usaba esa utilidad en vez de la clase.
+
+    Un gris apenas más claro que el fondo, al 55 %, da el mismo
+    resultado en pantalla que un velo blanco al 3 %: lo que se
+    ve es el fondo a través de la superficie.
+  */
+  --rk-card: 23 24 29;
+  --rk-card-alpha: 0.55;
+
+  --rk-foreground: 236 236 241;
+  --rk-ink: 236 236 241;
+  --rk-muted: 236 236 241;
+  --rk-muted-alpha: 0.6;
 
   --rk-border: 255 255 255;
-  --rk-border-alpha: 0.1;
-  --rk-border-strong-alpha: 0.2;
+  --rk-border-alpha: 0.085;
+  --rk-border-strong-alpha: 0.16;
 
   /* En oscuro el primario se invierte para mantener contraste. */
   --rk-primary: 244 246 250;
   --rk-on-primary: 10 11 14;
 
-  /* Azul eléctrico más luminoso sobre fondo oscuro. */
-  --rk-accent: 61 140 255;
-  --rk-accent-hover: 92 162 255;
-  --rk-accent-contrast: 8 9 11;
-  --rk-accent-soft: rgb(61 140 255 / 0.16);
+  /*
+    El mismo azul grisáceo, aclarado para leerse sobre negro.
+    Es el tono de la referencia: acompaña, no señala.
+  */
+  --rk-accent: 191 212 232;
+  --rk-accent-hover: 214 229 243;
+  --rk-accent-contrast: 8 9 12;
+  --rk-accent-soft: rgb(191 212 232 / 0.1);
 
-  /* El morado también gana luz sobre fondo oscuro. */
-  --rk-accent-2: 158 128 255;
+  /* Un paso más frío que el acento, para dar fondo al halo. */
+  --rk-accent-2: 154 170 190;
 
   --rk-success: 45 190 130;
   --rk-warning: 226 160 44;
@@ -159,6 +209,22 @@
   --rk-shadow-float:
     0 8px 20px rgb(0 0 0 / 0.55),
     0 24px 60px rgb(0 0 0 / 0.65);
+
+  /* ---- CANTO DE LUZ ----
+     Sobre negro basta un 6 % de blanco para que el borde de
+     arriba se lea como un bisel. Al señalar sube al 14 %. */
+  --rk-canto: rgb(255 255 255 / 0.06);
+  --rk-canto-vivo: rgb(255 255 255 / 0.14);
+
+  /* ---- ELEVACIÓN AL SEÑALAR ----
+     En oscuro la sombra tiene que ser más profunda para que se
+     vea: sobre negro, una sombra tenue no existe. */
+  --rk-elevacion:
+    0 24px 56px -20px rgb(0 0 0 / 0.85),
+    0 8px 20px -8px rgb(0 0 0 / 0.6);
+  --rk-elevacion-corta:
+    0 12px 28px -10px rgb(0 0 0 / 0.75),
+    0 4px 10px -4px rgb(0 0 0 / 0.5);
 }
 
 /* ----------------------------------------------------------
@@ -241,7 +307,7 @@ html {
 body {
   margin: 0;
   color: rgb(var(--rk-foreground));
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-sora), system-ui, sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
 
@@ -362,9 +428,21 @@ input[type="search"]::-webkit-search-results-decoration {
   /* Tarjeta estándar. */
   .rk-card {
     background: rgb(var(--rk-card) / var(--rk-card-alpha));
-    -webkit-backdrop-filter: saturate(150%) blur(12px);
-    backdrop-filter: saturate(150%) blur(12px);
+    /*
+      Desenfoque amplio y algo de saturación: es lo que
+      convierte una capa translúcida en vidrio en lugar de en
+      un velo gris. Lo que se ve a través es el fondo, no un
+      color propio.
+    */
+    -webkit-backdrop-filter: saturate(150%) blur(22px);
+    backdrop-filter: saturate(150%) blur(22px);
     border: 1px solid var(--rk-border-color);
+    /*
+      El canto de arriba, un punto más claro que el resto. Imita
+      la luz que cae desde el borde superior y basta para que la
+      superficie se lea como un plano y no como un recorte.
+    */
+    border-top-color: var(--rk-border-strong);
     border-radius: var(--rk-radius-lg);
     box-shadow: var(--rk-shadow-sm);
     transition:
@@ -445,8 +523,8 @@ input[type="search"]::-webkit-search-results-decoration {
     justify-content: center;
     gap: 0.5rem;
     border-radius: var(--rk-radius-full);
-    padding: 0.75rem 1.5rem;
-    font-size: 0.875rem;
+    padding: 0.6875rem 1.375rem;
+    font-size: 0.9375rem;
     font-weight: 500;
     line-height: 1;
     white-space: nowrap;
@@ -686,8 +764,8 @@ input[type="search"]::-webkit-search-results-decoration {
     overflow: hidden;
     border-radius: var(--rk-radius-md);
     background: rgb(var(--rk-foreground) / 0.05);
-    --rk-zoom: 1.03;
-    --rk-zoom-filtro: saturate(1.06) brightness(1.02);
+    --rk-zoom: 1.02;
+    --rk-zoom-filtro: saturate(1.03);
   }
 
   .rk-frame img {
@@ -1279,229 +1357,300 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 /* ══════════════════════════════════════════════════════════
-   GLOW — BOTONES Y TARJETAS
+   PROFUNDIDAD E INTERACCIÓN
 
-   El resplandor se construye con dos tonos del mismo acento:
-   el azul de firma (`--rk-accent`) ceñido al contorno y un
-   morado de acompañamiento (`--rk-accent-2`) más abierto y más
-   tenue por detrás. Esa segunda capa es la que da profundidad;
-   con el azul solo, el halo se leía plano.
+   JERARQUÍA DE SUPERFICIES
 
-   Ninguno de los dos entra en texto, fondo ni borde real: la
-   identidad sigue siendo tinta sobre papel y el color vive
-   únicamente en la sombra.
+   Cuatro planos, y cada uno se distingue del anterior por tres
+   cosas a la vez: cuánta luz deja pasar, cuánto desenfoca lo
+   que hay detrás y cuánto se le ilumina el canto de arriba.
 
-   Nada de esto cambia la caja. Solo se animan `box-shadow`,
-   `transform` y `filter`: tres propiedades que el compositor
-   resuelve sin volver a maquetar, así que ningún elemento
-   cambia de tamaño ni desplaza a sus vecinos.
+     fondo       ·  negro con luz ambiental radial
+     superficie  ·  barras, paneles y navegación
+     tarjeta     ·  el contenido
+     interactivo ·  lo que se puede pulsar
+
+   EL CANTO ILUMINADO
+
+   Cada superficie lleva una línea de luz de un píxel en su
+   borde superior, por dentro. Es lo que hace que se lea como un
+   plano iluminado desde arriba y no como un rectángulo
+   recortado sobre el fondo. Sin ella, el vidrio parece un velo
+   gris; con ella, parece cristal.
+
+   LA RESPUESTA AL PUNTERO
+
+   Tiene que NOTARSE. Un elemento que se señala sube, proyecta
+   sombra, aclara su borde y gana un punto de luz en el canto.
+   Los cuatro cambios a la vez, y los cuatro suaves: lo que se
+   busca es que el ojo registre la respuesta sin que nada salte.
+
+   Solo se animan `transform`, `box-shadow`, `border-color`,
+   `background-color`, `opacity` y `filter`.
    ══════════════════════════════════════════════════════════ */
 @layer components {
-  /*
-    ELEVACIÓN DEL BOTÓN
-
-    Vale para todas las variantes, incluidas las de estado, que
-    no reciben halo de color pero sí deben acusar el puntero.
-
-    Se limita a quien tiene puntero fino: en una pantalla táctil
-    el hover se queda pegado después del toque y el botón
-    quedaría flotando sin motivo.
-  */
-  @media (hover: hover) and (pointer: fine) {
-    .rk-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-    }
-  }
+  /* ────────── EL CANTO DE LUZ, COMPARTIDO ────────── */
 
   /*
-    Al pulsar, el botón vuelve a su sitio y cede algo de escala.
-
-    Va después del hover a propósito: mientras se pulsa sigue
-    estando en hover, las dos reglas tienen la misma
-    especificidad y entonces el orden es lo único que decide.
+    Se declara como variable para que superficie, tarjeta y
+    barra usen la MISMA línea con distinta intensidad, y para
+    que el tema claro la invierta sin reescribir ninguna regla.
   */
-  .rk-btn:active:not(:disabled) {
-    transform: translateY(0) scale(0.97);
-  }
-
-  /*
-    BOTÓN PRINCIPAL CON RESPLANDOR
-
-    El halo se suma a la sombra que el botón ya tenía en lugar
-    de sustituirla: conserva su peso sobre fondos claros y gana
-    el resplandor sobre los oscuros.
-
-    En reposo se declaran las mismas capas con opacidad cero
-    para que la transición interpole capa por capa en vez de
-    aparecer de golpe.
-  */
-  .rk-btn-primary,
-  .rk-btn-glow {
+  .rk-card,
+  .rk-card-glass,
+  .rk-glass,
+  .rk-panel-lateral,
+  .rk-panel-barra {
     box-shadow:
-      var(--rk-shadow-sm),
-      0 0 0 0 rgb(var(--rk-accent) / 0),
-      0 0 0 0 rgb(var(--rk-accent-2) / 0);
+      inset 0 1px 0 var(--rk-canto),
+      var(--rk-shadow-sm);
   }
 
-  .rk-btn-primary:hover:not(:disabled),
-  .rk-btn-glow:hover:not(:disabled),
-  .rk-btn-primary:focus-visible,
-  .rk-btn-glow:focus-visible {
-    box-shadow:
-      var(--rk-shadow),
-      0 6px 18px -8px rgb(var(--rk-accent) / 0.5),
-      0 12px 32px -12px rgb(var(--rk-accent-2) / 0.4);
-  }
-
-  /*
-    VARIANTES NEUTRAS
-
-    Ink, paper, secondary y glass comparten un halo más
-    contenido: son acciones de segundo plano y su resplandor no
-    debe competir con el del botón principal.
-
-    Se repite `var(--rk-shadow)` porque esta regla reemplaza la
-    `box-shadow` que cada variante fijaba en su propio hover;
-    sin repetirla perderían la sombra neutra y quedaría solo el
-    color flotando.
-  */
-  .rk-btn-ink:hover:not(:disabled),
-  .rk-btn-paper:hover:not(:disabled),
-  .rk-btn-secondary:hover:not(:disabled),
-  .rk-btn-glass:hover:not(:disabled) {
-    box-shadow:
-      var(--rk-shadow),
-      0 4px 14px -8px rgb(var(--rk-accent) / 0.34),
-      0 9px 24px -14px rgb(var(--rk-accent-2) / 0.26);
-  }
-
-  /*
-    Line y ghost no tienen sombra propia en reposo —son las dos
-    variantes más discretas—, así que reciben la mínima para que
-    el halo tenga sobre qué apoyarse.
-  */
-  .rk-btn-line:hover:not(:disabled),
-  .rk-btn-ghost:hover:not(:disabled) {
-    box-shadow:
-      var(--rk-shadow-sm),
-      0 4px 14px -8px rgb(var(--rk-accent) / 0.3),
-      0 9px 24px -14px rgb(var(--rk-accent-2) / 0.22);
-  }
-
-  /*
-    Danger y success se quedan fuera del halo azul y morado: su
-    color ya dice lo que va a pasar, y teñirlo de otro tono
-    restaría claridad justo donde más importa. Sí acusan el
-    puntero, por la elevación de arriba.
-  */
-
-  /* Un botón desactivado no promete nada: tampoco resplandece. */
-  .rk-btn:disabled {
-    box-shadow: none;
-    transform: none;
-  }
-
-  /*
-    TARJETA CON RESPLANDOR
-
-    El halo sale por debajo de la tarjeta, no de su borde: un
-    resplandor pegado al contorno se lee como un borde de
-    color, que es justo lo que no se quiere. Lo que sí entra es
-    un aro de un píxel muy tenue que insinúa ese borde azul.
-    Es `box-shadow`, no `border`: la caja mide exactamente lo
-    mismo con aro y sin él.
-
-    `:focus-within` entra para quien navega con teclado y
-    `:active` para el dedo: en una pantalla táctil no hay hover,
-    así que sin eso la tarjeta no reaccionaría al tocarla.
-
-    `.rk-card-hover` recibe el mismo trato. Los tres tableros
-    —cliente, creador y administración— ya la usaban, de modo
-    que heredan el resplandor sin tocar su marcado.
-  */
-  .rk-card-glow {
-    /*
-      Sombra en reposo, no solo al pasar el ratón. Sin ella la
-      tarjeta se veía plana hasta que alguien la señalaba, y en
-      un teléfono no hay ratón: la tienda móvil perdía toda la
-      profundidad.
-    */
-    box-shadow: var(--rk-shadow-sm);
-  }
+  /* ────────── TARJETAS ────────── */
 
   .rk-card-glow,
   .rk-card-hover {
     transition:
-      transform var(--rk-transition-slow) var(--rk-ease),
-      box-shadow var(--rk-transition-slow) var(--rk-ease),
-      background-color var(--rk-transition-normal) var(--rk-ease-soft),
-      border-color var(--rk-transition-normal) var(--rk-ease-soft);
+      transform 420ms var(--rk-ease),
+      box-shadow 420ms var(--rk-ease),
+      border-color 280ms var(--rk-ease-soft),
+      background-color 280ms var(--rk-ease-soft);
+  }
+
+  .rk-card-glow {
+    box-shadow:
+      inset 0 1px 0 var(--rk-canto),
+      var(--rk-shadow-sm);
   }
 
   /*
-    Cuatro capas, de dentro hacia fuera: la sombra neutra que
-    asienta la tarjeta, el aro insinuado, el azul cercano y el
-    morado abierto. Es la suma lo que se lee como profundidad;
-    una sola capa ancha se ve como una mancha.
+    Al señalar: sube cuatro píxeles, proyecta una sombra larga y
+    abierta, y el canto se enciende. La sombra es ancha y muy
+    difusa a propósito —un halo duro se vería como un borde de
+    color, que es lo que no se quiere— y oscura, no coloreada:
+    lo que separa la tarjeta del fondo es la profundidad, no un
+    acento.
   */
   .rk-card-glow:hover,
   .rk-card-glow:focus-within,
   .rk-card-hover:hover,
   .rk-card-hover:focus-within {
     transform: translateY(-4px);
-    box-shadow:
-      var(--rk-shadow-lg),
-      0 0 0 1px rgb(var(--rk-accent) / 0.14),
-      0 14px 34px -18px rgb(var(--rk-accent) / 0.42),
-      0 26px 60px -28px rgb(var(--rk-accent-2) / 0.34);
     border-color: var(--rk-border-strong);
+    box-shadow:
+      inset 0 1px 0 var(--rk-canto-vivo),
+      var(--rk-elevacion);
   }
 
   .rk-card-glow:active,
   .rk-card-hover:active {
     transform: translateY(-1px);
     box-shadow:
-      var(--rk-shadow),
-      0 0 0 1px rgb(var(--rk-accent) / 0.12),
-      0 8px 22px -14px rgb(var(--rk-accent) / 0.34),
-      0 16px 40px -24px rgb(var(--rk-accent-2) / 0.26);
+      inset 0 1px 0 var(--rk-canto),
+      var(--rk-shadow-lg);
+  }
+
+  /* ────────── BOTONES ────────── */
+
+  .rk-btn {
+    transition:
+      transform 220ms var(--rk-ease),
+      box-shadow 280ms var(--rk-ease),
+      background-color 220ms var(--rk-ease-soft),
+      border-color 220ms var(--rk-ease-soft),
+      color 220ms var(--rk-ease-soft),
+      opacity 220ms var(--rk-ease-soft);
   }
 
   /*
-    LA IMAGEN AL PASAR EL PUNTERO
+    Las cuatro variantes tienen que SENTIRSE distintas, no solo
+    verse distintas en reposo:
 
-    La portada del recurso se acerca algo más que un marco
-    cualquiera y gana un punto de saturación y luz: es la pieza
-    que se está vendiendo, y merece el matiz.
+      ink / primary  ·  sólido, manda, sombra de verdad
+      secondary      ·  sólido pero sin voz propia
+      line / glass   ·  vidrio, responde con el borde y la luz
+      ghost          ·  solo texto hasta que se le señala
+  */
+  .rk-btn-ink,
+  .rk-btn-paper,
+  .rk-btn-primary,
+  .rk-btn-glow,
+  .rk-btn-secondary,
+  .rk-btn-success {
+    box-shadow:
+      inset 0 1px 0 var(--rk-canto-vivo),
+      var(--rk-shadow-sm);
+  }
 
-    Solo se suben los valores. Quien los aplica sigue siendo la
-    única regla de `rk-frame`, que los lee de estas variables.
-    Declararlos sobre la propia imagen basta para que ganen a los
-    del marco, porque un valor declarado en el elemento pesa más
-    que el heredado del padre; y al no haber una segunda regla
-    que aplique `transform`, no hay especificidad que discutir.
+  .rk-btn-line,
+  .rk-btn-glass {
+    box-shadow: inset 0 1px 0 var(--rk-canto);
+  }
 
-    El marco no cambia de tamaño: lo que crece es la imagen
-    dentro de él, así que la proporción del recurso se mantiene.
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+
+    .rk-btn-ink:hover:not(:disabled),
+    .rk-btn-paper:hover:not(:disabled),
+    .rk-btn-primary:hover:not(:disabled),
+    .rk-btn-glow:hover:not(:disabled),
+    .rk-btn-secondary:hover:not(:disabled),
+    .rk-btn-success:hover:not(:disabled) {
+      box-shadow:
+        inset 0 1px 0 var(--rk-canto-vivo),
+        var(--rk-elevacion-corta);
+    }
+
+    /*
+      Las variantes de vidrio no ganan sombra: ganan superficie.
+      El fondo sube un punto y el borde se aclara, que es como
+      responde el cristal cuando le da la luz.
+    */
+    .rk-btn-line:hover:not(:disabled),
+    .rk-btn-glass:hover:not(:disabled),
+    .rk-btn-ghost:hover:not(:disabled) {
+      border-color: var(--rk-border-strong);
+      box-shadow:
+        inset 0 1px 0 var(--rk-canto-vivo),
+        var(--rk-shadow-sm);
+    }
+  }
+
+  /* Pulsado: vuelve al plano y cede un punto de escala. */
+  .rk-btn:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: inset 0 1px 0 var(--rk-canto);
+  }
+
+  /*
+    EL REFLEJO DEL BOTÓN PRINCIPAL
+
+    Dos líneas de luz de un píxel, arriba y abajo, que no llegan
+    a los extremos. Es el único "efecto" que se permite la
+    referencia, y funciona porque no brilla: insinúa un canto
+    biselado.
+
+    Van en pseudoelementos para no tocar el marcado, y
+    `pointer-events:none` para que no roben el clic.
+  */
+  .rk-btn-ink,
+  .rk-btn-primary,
+  .rk-btn-glow {
+    position: relative;
+    overflow: visible;
+  }
+
+  .rk-btn-ink::before,
+  .rk-btn-ink::after,
+  .rk-btn-primary::before,
+  .rk-btn-primary::after,
+  .rk-btn-glow::before,
+  .rk-btn-glow::after {
+    content: "";
+    position: absolute;
+    left: 24%;
+    right: 24%;
+    height: 1px;
+    pointer-events: none;
+    opacity: 0.55;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--rk-foreground) / 0.75),
+      transparent
+    );
+    transition: opacity 280ms var(--rk-ease-soft);
+  }
+
+  .rk-btn-ink::before,
+  .rk-btn-primary::before,
+  .rk-btn-glow::before {
+    top: -1px;
+  }
+
+  .rk-btn-ink::after,
+  .rk-btn-primary::after,
+  .rk-btn-glow::after {
+    bottom: -1px;
+  }
+
+  .rk-btn-ink:hover:not(:disabled)::before,
+  .rk-btn-ink:hover:not(:disabled)::after,
+  .rk-btn-primary:hover:not(:disabled)::before,
+  .rk-btn-primary:hover:not(:disabled)::after,
+  .rk-btn-glow:hover:not(:disabled)::before,
+  .rk-btn-glow:hover:not(:disabled)::after {
+    opacity: 1;
+  }
+
+  /* Un botón desactivado no promete nada. */
+  .rk-btn:disabled {
+    box-shadow: none;
+    transform: none;
+  }
+
+  .rk-btn:disabled::before,
+  .rk-btn:disabled::after {
+    opacity: 0;
+  }
+
+  /* ────────── LA IMAGEN ────────── */
+
+  /*
+    Cuatro y medio por ciento, con una curva larga que arranca
+    y frena despacio: el acercamiento se lee como un movimiento
+    de cámara, no como un salto de escala. Y un punto de
+    contraste, que es lo que hace que la portada "despierte".
   */
   .rk-card-zoom {
-    --rk-zoom: 1.05;
-    --rk-zoom-filtro: saturate(1.08) brightness(1.03);
+    --rk-zoom: 1.045;
+    --rk-zoom-filtro: saturate(1.06) contrast(1.03) brightness(1.02);
+  }
+
+  .rk-frame img {
+    transition:
+      transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 420ms var(--rk-ease-soft);
+  }
+
+  /* ────────── ENLACES Y NAVEGACIÓN ────────── */
+
+  /*
+    Lo que no es botón ni tarjeta también responde: los enlaces
+    de navegación, las migas y los "ver todos" suben de color.
+    Sin esto, media interfaz se queda muda al pasar por encima.
+  */
+  .rk-chip {
+    transition:
+      background-color 220ms var(--rk-ease-soft),
+      border-color 220ms var(--rk-ease-soft),
+      color 220ms var(--rk-ease-soft),
+      transform 220ms var(--rk-ease);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .rk-chip:hover {
+      border-color: var(--rk-border-strong);
+      color: rgb(var(--rk-foreground));
+      transform: translateY(-1px);
+    }
   }
 }
 
 /*
-  Con el movimiento reducido se conserva el cambio de sombra
-  —que informa sin moverse— y se retiran los desplazamientos y
-  los acercamientos.
+  Con el movimiento reducido se conservan sombra, borde y canto
+  —informan sin moverse— y se retiran desplazamientos,
+  acercamientos y escalas.
 
-  Este bloque vive fuera de `@layer`: en la cascada, lo que no
-  está en ninguna capa gana a lo que sí, así que manda sobre
-  todo lo de arriba sin depender del orden.
+  Fuera de `@layer` a propósito: lo que no está en ninguna capa
+  gana a lo que sí, así que manda sin depender del orden.
 */
 @media (prefers-reduced-motion: reduce) {
   .rk-btn:hover:not(:disabled),
   .rk-btn:active:not(:disabled),
+  .rk-chip:hover,
   .rk-card-glow:hover,
   .rk-card-glow:focus-within,
   .rk-card-glow:active,
@@ -1511,11 +1660,6 @@ input[type="search"]::-webkit-search-results-decoration {
     transform: none;
   }
 
-  /*
-    Se retira el acercamiento y se deja el matiz de color: el
-    tono no se mueve, así que no molesta a quien pidió menos
-    movimiento, y la imagen sigue acusando el puntero.
-  */
   .group:hover .rk-frame img,
   .group:focus-within .rk-frame img,
   .rk-frame:hover img,
@@ -1864,5 +2008,987 @@ input[type="search"]::-webkit-search-results-decoration {
 
   .rk-escena-punto::before {
     transition: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   LA TARJETA DE RECURSO
+
+   Antes era una imagen suelta con el texto debajo, sin nada
+   que las uniera: sobre el fondo oscuro, las piezas flotaban
+   sin pertenecer a nada.
+
+   Ahora es un contenedor de vidrio que envuelve las dos, con
+   la imagen embebida y un margen que la separa del canto. Es
+   lo que convierte una rejilla de fotos en un catálogo: cada
+   recurso ocupa una superficie propia, y esa superficie
+   responde.
+
+   El radio de dentro es menor que el de fuera a propósito. Dos
+   curvas concéntricas con el mismo radio se ven mal; la de
+   dentro tiene que cerrarse más para que el marco se lea
+   parejo en las esquinas.
+   ══════════════════════════════════════════════════════════ */
+@layer components {
+  .rk-tarjeta {
+    display: block;
+    padding: 0.5rem;
+    border-radius: var(--rk-radius-lg);
+    background: rgb(var(--rk-card) / var(--rk-card-alpha));
+    -webkit-backdrop-filter: saturate(150%) blur(22px);
+    backdrop-filter: saturate(150%) blur(22px);
+    border: 1px solid var(--rk-border-color);
+    box-shadow:
+      inset 0 1px 0 var(--rk-canto),
+      var(--rk-shadow-sm);
+    transition:
+      transform 420ms var(--rk-ease),
+      box-shadow 420ms var(--rk-ease),
+      border-color 280ms var(--rk-ease-soft),
+      background-color 280ms var(--rk-ease-soft);
+  }
+
+  /* La imagen, embebida: su curva cierra más que la del marco. */
+  .rk-tarjeta .rk-frame {
+    border-radius: calc(var(--rk-radius-lg) - 0.5rem);
+  }
+
+  .rk-tarjeta:hover,
+  .rk-tarjeta:focus-within {
+    border-color: var(--rk-border-strong);
+    box-shadow:
+      inset 0 1px 0 var(--rk-canto-vivo),
+      var(--rk-elevacion);
+  }
+
+  .rk-tarjeta:active {
+    box-shadow:
+      inset 0 1px 0 var(--rk-canto),
+      var(--rk-shadow-lg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-tarjeta:hover,
+  .rk-tarjeta:focus-within,
+  .rk-tarjeta:active {
+    transform: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESKIN — SISTEMA VISUAL DE REFERENCIA
+
+   Esta capa va la ÚLTIMA del archivo a propósito: define el
+   acabado final sobre el sistema `rk-*` que ya existía, sin
+   tener que desmontarlo. Lo de arriba sigue dando estructura,
+   tamaños y comportamiento; esto da la piel.
+
+   Todo lo que hay aquí sale de la cascada final de la
+   referencia, que es la que manda: sus últimas reglas anulan
+   las primeras. El fondo, por ejemplo, empieza siendo un
+   degradado radial y acaba siendo un color plano.
+   ══════════════════════════════════════════════════════════ */
+
+/* ────────── TOKENS ────────── */
+
+html[data-theme="dark"] {
+  --rx-fondo: #0e1013;
+  --rx-texto: #f5f5f6;
+  --rx-atenuado: #929299;
+  --rx-tenue: #626268;
+  --rx-plata: #d7d9dd;
+
+  --rx-linea: rgb(255 255 255 / 0.075);
+  --rx-linea-alta: rgb(255 255 255 / 0.13);
+  --rx-borde: rgb(255 255 255 / 0.14);
+  --rx-borde-alto: rgb(255 255 255 / 0.28);
+
+  --rx-vidrio: rgb(255 255 255 / 0.035);
+  --rx-vidrio-panel: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 0.075),
+    rgb(255 255 255 / 0.028) 52%,
+    rgb(255 255 255 / 0.05)
+  );
+
+  /* La lengüeta que asoma por detrás de botones y tarjetas. */
+  --rx-lengueta: rgb(255 255 255 / 0.72);
+  --rx-lengueta-plena: rgb(255 255 255 / 0.72);
+
+  /* Lengüeta y halo: la luz que asoma por detrás. */
+  --rx-tab: rgb(255 255 255 / 0.72);
+  /* La pieza gris de detrás y su desenfoque propio. */
+  --rx-glow: rgb(255 255 255 / 0.8);
+  --rx-blur-glow: 16px;
+  --rx-halo-1: rgb(255 255 255 / 0.34);
+  --rx-halo-2: rgb(255 255 255 / 0.12);
+  --rx-halo-btn-1: rgb(255 255 255 / 0.22);
+  --rx-halo-btn-2: rgb(255 255 255 / 0.06);
+  --rx-linea-fina: rgb(255 255 255 / 0.1);
+  --rx-vidrio-2: rgb(255 255 255 / 0.035);
+  --rx-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --rx-lengueta-media: rgb(255 255 255 / 0.3);
+
+  --rx-h1: linear-gradient(180deg, #ffffff 0%, #ffffff 38%, #8b8e99 100%);
+}
+
+:root,
+[data-theme="light"] {
+  --rx-fondo: #eef1f6;
+  --rx-texto: #121217;
+  --rx-atenuado: #5a5c66;
+  --rx-tenue: #80828c;
+  --rx-plata: #4a4c55;
+
+  --rx-linea: rgb(0 0 0 / 0.07);
+  --rx-linea-alta: rgb(0 0 0 / 0.1);
+  --rx-borde: rgb(0 0 0 / 0.09);
+  --rx-borde-alto: rgb(255 255 255 / 0.9);
+
+  --rx-vidrio: rgb(255 255 255 / 0.42);
+  --rx-vidrio-panel: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 0.55),
+    rgb(255 255 255 / 0.3) 52%,
+    rgb(255 255 255 / 0.5)
+  );
+
+  --rx-lengueta: rgb(160 163 174 / 0.5);
+  --rx-lengueta-plena: rgb(160 163 174 / 0.5);
+
+  --rx-tab: rgb(160 163 174 / 0.5);
+  --rx-glow: rgb(160 163 174 / 0.55);
+  --rx-blur-glow: 16px;
+  --rx-halo-1: rgb(160 163 174 / 0.3);
+  --rx-halo-2: rgb(160 163 174 / 0.1);
+  --rx-halo-btn-1: rgb(160 163 174 / 0.2);
+  --rx-halo-btn-2: rgb(160 163 174 / 0.06);
+  --rx-linea-fina: rgb(0 0 0 / 0.09);
+  --rx-vidrio-2: rgb(255 255 255 / 0.55);
+  --rx-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --rx-lengueta-media: rgb(160 163 174 / 0.22);
+
+  --rx-h1: linear-gradient(180deg, #15161b 0%, #15161b 38%, #767986 100%);
+}
+
+/* ────────── FONDO Y TEXTO ────────── */
+
+/*
+  Plano, sin degradados ni manchas. La referencia llega a esto
+  en su última capa después de haber probado halos radiales: en
+  un catálogo de imágenes, cualquier gradiente del fondo compite
+  con las portadas.
+*/
+body {
+  background-color: var(--rx-fondo);
+  background-image: none;
+  color: var(--rx-texto);
+  font-size: 15px;
+  letter-spacing: -0.015em;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme="light"] body,
+:root:not([data-theme="dark"]) body {
+  background-image: linear-gradient(180deg, #eef1f6, #e5e9ef);
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+/*
+  EL TÍTULO EN DEGRADADO
+
+  Solo en portada y cabeceras de sección —`rk-display` y
+  `rk-title`—, no en todos los `h1`. Un `h1` de formulario o de
+  panel con el texto desvanecido hacia el gris se vuelve difícil
+  de leer, y ahí el título es una etiqueta, no un reclamo.
+
+  `background-clip:text` necesita el color transparente; si la
+  propiedad no estuviera soportada, el texto heredaría ese
+  transparente y desaparecería, así que se declara dentro de
+  `@supports`.
+*/
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .rk-display,
+  .rk-title {
+    background-image: var(--rx-h1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /*
+      Safari ignora  con recorte de texto:
+      sin esta línea pinta el título en su color sólido y el
+      degradado no aparece.
+    */
+    -webkit-text-fill-color: transparent;
+    /* Las colas de g, j e y se recortaban al recortar el fondo. */
+    padding-bottom: 0.1em;
+  }
+}
+
+.rk-display {
+  font-size: clamp(40px, 6.4vw, 72px);
+  line-height: 1.06;
+  letter-spacing: -0.04em;
+}
+
+/* ────────── VIDRIO ────────── */
+
+/*
+  El borde superior más claro que el resto simula la luz que
+  cae desde arriba. Es el detalle que separa una superficie de
+  vidrio de un rectángulo gris, y se repite en todo: tarjetas,
+  cabecera, buscadores y paneles.
+*/
+.rk-card,
+.rk-card-glass,
+.rk-glass,
+.rk-tarjeta,
+.rk-panel-lateral,
+.rk-panel-barra,
+.rk-input,
+.rk-select,
+.rk-textarea {
+  background: var(--rx-vidrio);
+  border-color: var(--rx-borde);
+  border-top-color: var(--rx-borde-alto);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+/* Los paneles grandes llevan el degradado diagonal. */
+.rk-card-elevated,
+.rk-panel-lateral {
+  background: var(--rx-vidrio-panel);
+}
+
+/* ────────── FORMAS ────────── */
+
+:root {
+  --rk-radius-sm: 12px;
+  --rk-radius-md: 15px;
+  --rk-radius-lg: 22px;
+  --rk-radius-xl: 28px;
+}
+
+.rk-tarjeta {
+  border-radius: 22px;
+  padding: 8px;
+}
+
+.rk-tarjeta .rk-frame {
+  border-radius: 15px;
+}
+
+/* ────────── BOTONES ────────── */
+
+.rk-btn {
+  /*
+    Solo mínimo, no alto fijo: un botón con dos líneas o con un
+    icono alto tiene que poder crecer. Con  se recortaba.
+  */
+  min-height: 46px;
+  padding: 0 24px;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 15px;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  color: var(--rx-texto);
+}
+
+[data-theme="light"] .rk-btn {
+  border-color: var(--rx-borde);
+}
+
+/*
+  PRIMARIO: BLANCO PERLADO
+
+  El degradado a 135° con el gris en el centro es lo que lo
+  hace parecer una superficie curva y no una pastilla plana.
+  Las dos sombras interiores rematan el canto: blanca arriba,
+  gris abajo.
+*/
+/*
+  El contexto para las líneas de luz. Se excluyen los botones
+  que ya van posicionados con la utilidad  —el de
+  buscar, dentro de su campo—: imponerles  los sacaba
+  de su sitio. Siendo absolutos ya son contexto de sus propios
+  pseudoelementos, así que el efecto no se pierde.
+*/
+.rk-btn-ink:not(.absolute),
+.rk-btn-primary:not(.absolute),
+.rk-btn-glow:not(.absolute) {
+  position: relative;
+}
+
+.rk-btn-ink,
+.rk-btn-primary,
+.rk-btn-glow {
+  background: linear-gradient(135deg, #ffffff 0%, #e9e9ec 48%, #ffffff 100%);
+  color: #111;
+  border-color: rgb(255 255 255 / 0.95);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    inset 0 -1px 0 rgb(125 125 125 / 0.12),
+    0 2px 8px rgb(0 0 0 / 0.16);
+}
+
+/* Línea de luz en el canto de arriba. */
+.rk-btn-ink::before,
+.rk-btn-primary::before,
+.rk-btn-glow::before {
+  content: "";
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  top: -1px;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.95),
+    transparent
+  );
+}
+
+/* Resplandor en el canto de abajo. */
+.rk-btn-ink::after,
+.rk-btn-primary::after,
+.rk-btn-glow::after {
+  content: "";
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: -1px;
+  height: 1px;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgb(255 255 255 / 0.32),
+    transparent 68%
+  );
+}
+
+.rk-btn-ink:hover:not(:disabled),
+.rk-btn-primary:hover:not(:disabled),
+.rk-btn-glow:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffffff 0%, #e9e9ec 48%, #ffffff 100%);
+  color: #111;
+  filter: brightness(1.04);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 6px 20px rgb(255 255 255 / 0.1);
+}
+
+/*
+  En claro el primario es negro y liso: ni bordes, ni sombras,
+  ni líneas de luz. Sobre un fondo claro esos brillos no se
+  leen como relieve, se leen como suciedad.
+*/
+[data-theme="light"] .rk-btn-ink,
+[data-theme="light"] .rk-btn-primary,
+[data-theme="light"] .rk-btn-glow,
+[data-theme="light"] .rk-btn-ink:hover:not(:disabled),
+[data-theme="light"] .rk-btn-primary:hover:not(:disabled),
+[data-theme="light"] .rk-btn-glow:hover:not(:disabled) {
+  background: #15161b;
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: none;
+  filter: none;
+}
+
+[data-theme="light"] .rk-btn-ink::before,
+[data-theme="light"] .rk-btn-ink::after,
+[data-theme="light"] .rk-btn-primary::before,
+[data-theme="light"] .rk-btn-primary::after,
+[data-theme="light"] .rk-btn-glow::before,
+[data-theme="light"] .rk-btn-glow::after {
+  display: none;
+}
+
+/* Secundarios: vidrio. */
+.rk-btn-line,
+.rk-btn-glass,
+.rk-btn-secondary,
+.rk-btn-paper {
+  background: rgb(255 255 255 / 0.045);
+  border-color: rgb(255 255 255 / 0.16);
+  border-top-color: var(--rx-borde-alto);
+  color: var(--rx-texto);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: none;
+}
+
+[data-theme="light"] .rk-btn-line,
+[data-theme="light"] .rk-btn-glass,
+[data-theme="light"] .rk-btn-secondary,
+[data-theme="light"] .rk-btn-paper {
+  background: rgb(255 255 255 / 0.5);
+  border-color: var(--rx-borde);
+}
+
+.rk-btn-line:hover:not(:disabled),
+.rk-btn-glass:hover:not(:disabled),
+.rk-btn-secondary:hover:not(:disabled),
+.rk-btn-paper:hover:not(:disabled),
+.rk-btn-ghost:hover:not(:disabled) {
+  border-color: rgb(255 255 255 / 0.34);
+  background: rgb(255 255 255 / 0.06);
+  color: var(--rx-texto);
+}
+
+[data-theme="light"] .rk-btn-line:hover:not(:disabled),
+[data-theme="light"] .rk-btn-glass:hover:not(:disabled),
+[data-theme="light"] .rk-btn-secondary:hover:not(:disabled),
+[data-theme="light"] .rk-btn-paper:hover:not(:disabled),
+[data-theme="light"] .rk-btn-ghost:hover:not(:disabled) {
+  border-color: rgb(0 0 0 / 0.2);
+  background: rgb(255 255 255 / 0.65);
+}
+
+/* ────────── LENGÜETA Y HALO ────────── */
+
+/*
+  DOS PIEZAS, NO UNA.
+
+  La luz se compone de dos cosas distintas, y mezclarlas en una
+  sola era el error de la versión anterior:
+
+    ::before  ·  la LENGÜETA. Sólida, cuatro píxeles asomando
+                 por debajo del borde, pegada, con las esquinas
+                 de abajo redondeadas. Se ve nítida.
+    ::after   ·  el HALO. Radial, SIEMPRE radial. Sube por
+                 detrás de la tarjeta y se desvanece en todas
+                 las direcciones a la vez.
+
+  La diferencia importa: un degradado lineal tiene lados rectos,
+  y al difuminarlo se sigue leyendo como un rectángulo de luz
+  dentro de la tarjeta. Uno radial no tiene lados, así que lo
+  que se ve es un resplandor.
+
+  EL DESENFOQUE NO SE PINTA: SE PRODUCE.
+
+  No hay `filter:blur` en ninguna parte. Lo difumina el
+  `backdrop-filter` de la tarjeta, que desenfoca lo que tiene
+  detrás —y detrás tiene estas dos piezas—.
+
+  De ahí salen las condiciones, que no son caprichos: la
+  tarjeta tiene que ser translúcida, entre halo y tarjeta no
+  puede haber fondos opacos ni `filter`, `opacity` menor que
+  uno, `mask` o `will-change`, y la tarjeta no puede moverse al
+  señalarla, porque dejaría la lengüeta atrás.
+*/
+.rx-pestana {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+.rx-pestana-bloque {
+  height: 100%;
+}
+
+/*
+  LA LENGÜETA
+
+  Anclada al borde exterior inferior con `top:calc(100% - 1px)`
+  en vez de a `bottom`: así empieza exactamente donde acaba la
+  tarjeta, sin un hueco que cambie según el alto de la fila.
+
+  Va POR ENCIMA (z-index 2). Es la pieza nítida del efecto: si
+  quedara por detrás, el vidrio de la tarjeta la desenfocaría
+  también y se perdería el contraste entre lo nítido y lo
+  difuso, que es justo de lo que vive esto.
+*/
+.rx-pestana::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(100% - 1px);
+  transform: translateX(-50%);
+  width: 16%;
+  height: 5px;
+  border-radius: 0 0 6px 6px;
+  background: var(--rx-tab);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/*
+  LA PIEZA GRIS DE DETRÁS
+
+  Por qué lleva su propio `filter:blur` y no se deja desenfocar
+  por la tarjeta: `backdrop-filter` NO difumina lo que está
+  pegado al borde del elemento que lo aplica. Chrome y Safari
+  dejan esa franja nítida, y lo que aparecía era un bloque gris
+  con los lados rectos en lugar de luz.
+
+  Así que se desenfoca ella misma y se recorta con `clip-path`
+  justo en el borde inferior de la tarjeta: la luz existe dentro
+  y deja de existir fuera. Los −80 px de los otros tres lados
+  dan aire suficiente para que el desenfoque no se corte por
+  arriba ni por los costados.
+*/
+.rx-pestana::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 22%;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--rx-glow);
+  filter: blur(var(--rx-blur-glow));
+  clip-path: inset(-80px -80px 0 -80px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.rx-pestana > * {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  margin: 0;
+}
+
+/* ────────── BOTÓN SECUNDARIO ────────── */
+
+/*
+  SIN ENVOLTORIO.
+
+  Los efectos se dibujan en el propio botón. Un contenedor
+  externo parecía más limpio, pero en un `flex` o un `grid` el
+  envoltorio se estira y la lengüeta se queda anclada a SU
+  borde, no al del botón: aparecía un hueco entre los dos que
+  cambiaba según el layout.
+
+  Anclándola al botón con `top:calc(100% + 1px)`, empieza
+  exactamente donde acaba su borde exterior, en cualquier
+  contexto.
+
+  `align-self:center` evita que un padre con `stretch` estire el
+  botón y lo deje más alto de lo suyo.
+*/
+.rk-btn-line,
+.rk-btn-glass,
+.rk-btn-secondary,
+.rk-btn-paper {
+  position: relative;
+  align-self: center;
+  min-height: 48px;
+  padding: 0 30px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--rx-linea-fina);
+  /* El halo va DENTRO del fondo, radial y centrado abajo. */
+  background:
+    radial-gradient(
+      50% 100% at 50% 100%,
+      var(--rx-halo-btn-1) 0%,
+      var(--rx-halo-btn-2) 45%,
+      transparent 100%
+    ),
+    var(--rx-vidrio-2);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: none;
+  overflow: visible;
+}
+
+.rk-btn-line::after,
+.rk-btn-glass::after,
+.rk-btn-secondary::after,
+.rk-btn-paper::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 1px);
+  transform: translateX(-50%);
+  width: 18%;
+  height: 4px;
+  border-radius: 0 0 6px 6px;
+  background: var(--rx-tab);
+  pointer-events: none;
+}
+
+/*
+  Al señalar solo cambia el borde. Si el botón se desplazara, la
+  lengüeta —anclada a su borde— lo seguiría, y el conjunto daría
+  un salto en lugar de responder.
+*/
+.rk-btn-line:hover:not(:disabled),
+.rk-btn-glass:hover:not(:disabled),
+.rk-btn-secondary:hover:not(:disabled),
+.rk-btn-paper:hover:not(:disabled) {
+  border-color: rgb(255 255 255 / 0.34);
+  background:
+    radial-gradient(
+      50% 100% at 50% 100%,
+      var(--rx-halo-btn-1) 0%,
+      var(--rx-halo-btn-2) 45%,
+      transparent 100%
+    ),
+    var(--rx-vidrio-2);
+  transform: none;
+}
+
+[data-theme="light"] .rk-btn-line:hover:not(:disabled),
+[data-theme="light"] .rk-btn-glass:hover:not(:disabled),
+[data-theme="light"] .rk-btn-secondary:hover:not(:disabled),
+[data-theme="light"] .rk-btn-paper:hover:not(:disabled) {
+  border-color: rgb(0 0 0 / 0.2);
+}
+
+/*
+  Los botones compactos y los de icono se quedan fuera: una
+  lengüeta bajo un botón de treinta píxeles no se lee como un
+  detalle, se lee como un defecto.
+*/
+/*
+  EL BOTÓN COMPACTO RECUPERA SU MEDIDA
+
+  La regla base de 46 px lo pisaba: los cincuenta botones
+  compactos de tablas y barras de herramientas pasaron a medir
+  lo mismo que uno principal, y las filas crecieron con ellos.
+
+  En pantalla táctil vuelve a los 44 px mínimos, que es lo que
+  el dedo necesita para acertar.
+*/
+.rk-btn-compact {
+  min-height: 2rem;
+  padding: 0 0.875rem;
+  font-size: 0.8125rem;
+}
+
+@media (pointer: coarse) {
+  .rk-btn-compact {
+    min-height: 2.75rem;
+  }
+}
+
+/*
+  Dentro de una tabla, una lengüeta colgando de cada botón de
+  fila se lee como un defecto de maquetación y no como un
+  detalle. El efecto se reserva a las acciones con presencia
+  propia.
+*/
+table .rk-btn-line::after,
+table .rk-btn-glass::after,
+table .rk-btn-secondary::after,
+table .rk-btn-paper::after,
+.rk-btn-compact::after,
+.rk-btn-icono::after {
+  display: none;
+}
+
+/* ────────── DESTELLO DEL CTA ────────── */
+
+/*
+  El botón principal dentro de un panel o bloque destacado gana
+  una franja diagonal de luz que lo cruza al señalarlo. Es el
+  único movimiento de luz del sistema, y por eso se reserva a la
+  acción más importante de la página.
+
+  `overflow:hidden` lo recorta dentro del botón e `isolation`
+  le da su propio contexto para que el `z-index:-1` del brillo
+  interior no se escape por detrás del fondo de la página.
+*/
+.rk-btn-cta {
+  min-height: 50px;
+  padding: 0 32px;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -1px 0 rgb(50 50 50 / 0.14),
+    0 0 0 1px rgb(255 255 255 / 0.14),
+    0 5px 18px rgb(255 255 255 / 0.1);
+  transition:
+    transform 0.25s var(--rx-ease),
+    box-shadow 0.25s,
+    filter 0.25s;
+}
+
+/* Brillo interior, por debajo del contenido. */
+.rk-btn-cta::before {
+  inset: 1px;
+  top: 1px;
+  left: 1px;
+  right: 1px;
+  height: auto;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    rgb(255 255 255 / 0.45),
+    rgb(255 255 255 / 0.08) 35%,
+    transparent 52%,
+    rgb(255 255 255 / 0.12) 80%,
+    rgb(255 255 255 / 0.28)
+  );
+}
+
+/* La franja que barre. */
+.rk-btn-cta::after {
+  top: -80%;
+  bottom: auto;
+  left: -35%;
+  right: auto;
+  width: 25%;
+  height: 260%;
+  z-index: 0;
+  border-radius: 0;
+  background: radial-gradient(
+    circle,
+    rgb(255 255 255 / 0.32),
+    transparent 68%
+  );
+  transform: rotate(18deg);
+  opacity: 0.48;
+  transition: left 0.7s ease;
+}
+
+.rk-btn-cta:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.045);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 7px 22px rgb(255 255 255 / 0.1);
+}
+
+.rk-btn-cta:hover:not(:disabled)::after {
+  left: 115%;
+}
+
+[data-theme="light"] .rk-btn-cta {
+  box-shadow: none;
+}
+
+[data-theme="light"] .rk-btn-cta::before,
+[data-theme="light"] .rk-btn-cta::after {
+  display: none;
+}
+
+/* ────────── SIN BACKDROP-FILTER ────────── */
+
+/*
+  Donde el navegador no sabe desenfocar lo que hay detrás, el
+  vidrio se vuelve invisible: quedaría texto claro sobre el
+  fondo, sin superficie que lo sostenga. Se sustituye por un
+  gris casi opaco, que conserva la jerarquía aunque pierda el
+  efecto.
+*/
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .rk-card,
+  .rk-card-glass,
+  .rk-glass,
+  .rk-tarjeta,
+  .rk-panel-lateral,
+  .rk-panel-barra,
+  .rk-btn-line,
+  .rk-btn-glass,
+  .rk-btn-secondary,
+  .rk-btn-paper,
+  .rk-input,
+  .rk-select,
+  .rk-textarea {
+    background: rgb(22 24 28 / 0.92);
+  }
+
+  [data-theme="light"] .rk-card,
+  [data-theme="light"] .rk-card-glass,
+  [data-theme="light"] .rk-glass,
+  [data-theme="light"] .rk-tarjeta,
+  [data-theme="light"] .rk-panel-lateral,
+  [data-theme="light"] .rk-panel-barra,
+  [data-theme="light"] .rk-btn-line,
+  [data-theme="light"] .rk-btn-glass,
+  [data-theme="light"] .rk-btn-secondary,
+  [data-theme="light"] .rk-btn-paper,
+  [data-theme="light"] .rk-input,
+  [data-theme="light"] .rk-select,
+  [data-theme="light"] .rk-textarea {
+    background: rgb(252 253 255 / 0.95);
+  }
+}
+
+/* ────────── TARJETA CON RESPLANDOR INFERIOR ────────── */
+
+.rk-tarjeta {
+  /*
+    Vidrio liso. La luz NO se pinta aquí dentro: es la pieza
+    gris del envoltorio, que se ve a través de esta superficie.
+    Pintarla aquí la dejaba plana y con los lados del degradado
+    marcados.
+  */
+  background: rgb(255 255 255 / 0.024);
+  -webkit-backdrop-filter: blur(22px) saturate(0.9);
+  backdrop-filter: blur(22px) saturate(0.9);
+}
+
+[data-theme="light"] .rk-tarjeta {
+  background: rgb(255 255 255 / 0.45);
+}
+
+.rk-tarjeta:hover,
+.rk-tarjeta:focus-within {
+  border-color: var(--rx-borde-alto);
+  box-shadow:
+    0 8px 28px rgb(0 0 0 / 0.18),
+    0 0 24px rgb(255 255 255 / 0.045);
+  transition: all 0.2s;
+}
+
+[data-theme="light"] .rk-tarjeta:hover,
+[data-theme="light"] .rk-tarjeta:focus-within {
+  border-color: rgb(0 0 0 / 0.2);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.1);
+}
+
+/* ────────── CHIPS, BADGES Y ETIQUETAS ────────── */
+
+.rk-chip,
+.rk-glass-on-image {
+  border-radius: 999px;
+  font-size: 12.5px;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  color: #d5d7db;
+  background: rgb(255 255 255 / 0.06);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+[data-theme="light"] .rk-chip,
+[data-theme="light"] .rk-glass-on-image {
+  border-color: rgb(0 0 0 / 0.14);
+  color: #3c3e48;
+  background: rgb(255 255 255 / 0.6);
+}
+
+/* ────────── ACENTO PLATA ────────── */
+
+/*
+  El azul de firma pasa a plata. Los colores de ESTADO —rojo,
+  verde y ámbar— se quedan: en «Eliminar», en un error de
+  validación o en la etiqueta RECHAZADO, el color no decora,
+  informa, y volverlo gris le quita al usuario un dato que
+  necesita.
+*/
+html[data-theme="dark"] {
+  --rk-accent: 215 217 221;
+  --rk-accent-hover: 236 238 241;
+  --rk-accent-soft: rgb(215 217 221 / 0.1);
+  --rk-accent-2: 180 183 189;
+}
+
+:root,
+[data-theme="light"] {
+  --rk-accent: 74 76 85;
+  --rk-accent-hover: 56 58 66;
+  --rk-accent-soft: rgb(74 76 85 / 0.08);
+  --rk-accent-2: 100 102 112;
+}
+
+/* ────────── TEXTO ATENUADO ────────── */
+
+html[data-theme="dark"] {
+  --rk-muted: 146 146 153;
+  --rk-muted-alpha: 1;
+  --rk-foreground: 245 245 246;
+  --rk-ink: 245 245 246;
+  --rk-border: 255 255 255;
+  --rk-border-alpha: 0.075;
+  --rk-border-strong-alpha: 0.13;
+}
+
+:root,
+[data-theme="light"] {
+  --rk-muted: 90 92 102;
+  --rk-muted-alpha: 1;
+  --rk-foreground: 18 18 23;
+  --rk-ink: 18 18 23;
+}
+
+/* ────────── FOCO ACCESIBLE ────────── */
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* ────────── APARICIÓN AL ENTRAR ────────── */
+
+/*
+  La clase la pone el componente que ya existía; aquí solo se
+  afina el gesto al de la referencia: sube dieciocho píxeles y
+  se enfoca, en vez de solo desvanecerse.
+*/
+.rk-revelar {
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(4px);
+  transition:
+    opacity 0.75s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.75s cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 0.75s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.rk-revelar.rk-visto {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/*
+  Escalonado: cada hijo directo entra noventa milisegundos
+  después del anterior, y se corta a los cuatro. Más allá, la
+  espera deja de leerse como ritmo y empieza a leerse como
+  lentitud.
+*/
+.rk-revelar > *:nth-child(1) {
+  transition-delay: 0ms;
+}
+.rk-revelar > *:nth-child(2) {
+  transition-delay: 90ms;
+}
+.rk-revelar > *:nth-child(3) {
+  transition-delay: 180ms;
+}
+.rk-revelar > *:nth-child(4) {
+  transition-delay: 270ms;
+}
+.rk-revelar > *:nth-child(n + 5) {
+  transition-delay: 360ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-revelar,
+  .rk-revelar.rk-visto,
+  .rk-revelar > * {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+    transition-delay: 0ms !important;
   }
 }
