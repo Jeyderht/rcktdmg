@@ -73,7 +73,19 @@ export default function BuscadorSugerencias({
 
   return (
     <div ref={contenedor} className={`relative ${className}`}>
-      <form action="/tienda" method="GET" autoComplete="off" role="search">
+      {/*
+        El formulario ES la superficie: el borde, el fondo y el
+        desenfoque viven aquí, no en el campo. Antes los llevaba
+        el input y el botón se posaba encima, que es lo que
+        producía el aspecto de caja con un botón pegado.
+      */}
+      <form
+        action="/tienda"
+        method="GET"
+        autoComplete="off"
+        role="search"
+        className="rk-buscador"
+      >
         {Object.entries(ocultos).map(([clave, valor]) =>
           valor ? (
             <input key={clave} type="hidden" name={clave} value={valor} />
@@ -83,7 +95,7 @@ export default function BuscadorSugerencias({
         <Search
           size={18}
           aria-hidden
-          className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-ink/60"
+          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink/45"
         />
 
         <input
@@ -107,10 +119,10 @@ export default function BuscadorSugerencias({
           aria-activedescendant={
             activo >= 0 ? `${listaId}-${activo}` : undefined
           }
-          className="h-14 w-full rounded-rk-md border border-line/10 bg-surface/70 pl-14 pr-[6.5rem] text-[15px] outline-none backdrop-blur-rk transition-colors duration-normal ease-rk placeholder:text-ink/60 hover:border-line/20 focus:border-ink/40 focus:bg-surface"
+          className="rk-buscador-campo"
         />
 
-        <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
+        <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
           {texto && (
             <button
               type="button"
@@ -127,7 +139,7 @@ export default function BuscadorSugerencias({
 
           <button
             type="submit"
-            className="rk-btn rk-btn-ink !px-4 !py-3 !text-sm"
+            className="rk-buscador-accion"
           >
             Buscar
           </button>

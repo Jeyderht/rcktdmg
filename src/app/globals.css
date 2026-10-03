@@ -3117,3 +3117,181 @@ table .rk-btn:hover:not(:disabled) {
   gap: 1.25rem;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
 }
+
+/* ────────── BUSCADOR ────────── */
+
+/*
+  UNA SOLA SUPERFICIE.
+
+  El borde, el fondo y el desenfoque viven en el FORMULARIO. El
+  campo va dentro, transparente y sin borde propio.
+
+  Antes era al revés: el input llevaba la caja y el botón se
+  posaba encima, así que se veían dos superficies —una dentro de
+  otra— y el botón parecía pegado con cola. Moviendo la
+  superficie al contenedor, el conjunto se lee como una pieza.
+
+  Usa los tokens del sistema: ningún valor suelto.
+*/
+.rk-buscador {
+  position: relative;
+  display: block;
+  border-radius: var(--rk-radius-lg);
+  background: var(--rx-vidrio);
+  border: 1px solid var(--rx-b-input);
+  /* El canto de arriba, un punto más claro: luz desde arriba. */
+  border-top-color: var(--rx-borde-alto);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow: var(--rx-sombra-base);
+  transition:
+    border-color var(--rx-t-micro) var(--rx-curva),
+    box-shadow var(--rx-t-hover) var(--rx-curva),
+    background-color var(--rx-t-micro) var(--rx-curva);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-buscador:hover {
+    border-color: var(--rx-b-input-activo);
+  }
+}
+
+/*
+  FOCO
+
+  Se aclara el borde y crece un punto la sombra. Ni una medida
+  cambia: un borde más grueso movería el texto de dentro, y la
+  caja daría un salto justo al empezar a escribir.
+*/
+.rk-buscador:focus-within {
+  border-color: var(--rx-b-input-activo);
+  box-shadow:
+    var(--rx-sombra-base),
+    0 0 0 3px rgb(var(--rk-foreground) / 0.07);
+}
+
+/*
+  EL CAMPO
+
+  Transparente y sin contorno: lo único que aporta es el sitio
+  donde escribir. El espacio de la izquierda deja hueco al
+  icono; el de la derecha, al botón.
+*/
+.rk-buscador-campo {
+  width: 100%;
+  height: 3.25rem;
+  padding: 0 7rem 0 2.875rem;
+  background: transparent;
+  border: 0;
+  outline: none;
+  border-radius: inherit;
+  font-size: 0.9375rem;
+  color: rgb(var(--rk-foreground));
+}
+
+.rk-buscador-campo::placeholder {
+  color: rgb(var(--rk-muted) / 0.75);
+}
+
+/* El aspa nativa de `type=search` duplicaría el botón de limpiar. */
+.rk-buscador-campo::-webkit-search-cancel-button,
+.rk-buscador-campo::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/*
+  EL FOCO LO MARCA LA SUPERFICIE, NO EL CAMPO
+
+  El campo no dibuja su propio anillo: lo haría por dentro del
+  borde y se verían dos marcos concéntricos. Quien avisa es el
+  contenedor, con `:focus-within`.
+*/
+.rk-buscador-campo:focus-visible {
+  outline: none;
+}
+
+/*
+  EL BOTÓN
+
+  Más bajo que la superficie —40 px dentro de 52— para que se
+  lea como algo que va DENTRO y no como una segunda caja pegada
+  al borde. Claro sobre oscuro, que es la jerarquía del sistema,
+  pero sin el tamaño de un botón principal.
+*/
+.rk-buscador-accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  padding: 0 1.125rem;
+  border-radius: var(--rk-radius-full);
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background: rgb(255 255 255 / 0.92);
+  color: #101114;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.16);
+  transition:
+    transform var(--rx-t-hover) var(--rx-curva),
+    box-shadow var(--rx-t-hover) var(--rx-curva),
+    background-color var(--rx-t-micro) var(--rx-curva),
+    border-color var(--rx-t-micro) var(--rx-curva);
+}
+
+[data-theme="light"] .rk-buscador-accion {
+  background: #15161b;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgb(21 22 27 / 0.12);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-buscador-accion:hover {
+    transform: translateY(-1px);
+    background: rgb(255 255 255 / 0.98);
+    border-color: rgb(255 255 255 / 0.5);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.22);
+  }
+
+  [data-theme="light"] .rk-buscador-accion:hover {
+    background: #22242b;
+    border-color: rgb(21 22 27 / 0.3);
+    box-shadow: 0 4px 12px rgb(21 22 27 / 0.16);
+  }
+}
+
+.rk-buscador-accion:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.rk-buscador-accion:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/*
+  En un teléfono el botón se queda solo con su texto: con el
+  relleno de escritorio, el campo perdía la mitad del ancho y el
+  texto escrito dejaba de verse.
+*/
+@media (max-width: 480px) {
+  .rk-buscador-campo {
+    padding-right: 5.75rem;
+  }
+
+  .rk-buscador-accion {
+    height: 2.25rem;
+    padding: 0 0.875rem;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-buscador-accion:hover,
+  .rk-buscador-accion:active {
+    transform: none;
+  }
+}
