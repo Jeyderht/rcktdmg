@@ -119,6 +119,7 @@ export default function BuscadorSugerencias({
           aria-activedescendant={
             activo >= 0 ? `${listaId}-${activo}` : undefined
           }
+          spellCheck={false}
           className="rk-buscador-campo"
         />
 

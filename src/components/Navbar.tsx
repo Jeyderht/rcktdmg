@@ -97,10 +97,16 @@ function SearchField({
   return (
     <div ref={contenedor} className={`relative ${className ?? ""}`}>
       <form onSubmit={handleSubmit} role="search">
-        <div className="relative">
+        {/*
+          Esta caja ES la superficie, igual que en la tienda. El
+          campo que iba aquí se pintaba a sí mismo: al enfocarlo
+          cambiaba a fondo sólido y borde de tinta, y el vidrio
+          desaparecía. Ahora el borde y el fondo viven fuera.
+        */}
+        <div className="rk-buscador rk-buscador-compacto">
           <Search
             size={16}
-            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink/60"
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink/45"
           />
 
           <input
@@ -124,7 +130,8 @@ function SearchField({
               activo >= 0 ? `${listaId}-${activo}` : undefined
             }
             autoComplete="off"
-            className="h-12 w-full rounded-full border border-line/10 bg-surface/60 pl-11 pr-24 text-sm outline-none backdrop-blur-xl transition duration-normal ease-rk placeholder:text-ink/60 focus:border-ink/40 focus:bg-surface"
+            spellCheck={false}
+            className="rk-buscador-campo"
           />
 
           <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
@@ -147,7 +154,7 @@ function SearchField({
             */}
             <button
               type="submit"
-              className="rk-btn rk-btn-ink rk-btn-compact rk-hit-44-y !rounded-full !px-4 !py-2 !text-xs"
+              className="rk-buscador-accion rk-hit-44-y"
             >
               Buscar
             </button>

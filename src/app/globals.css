@@ -356,18 +356,12 @@ h6 {
 }
 
 /*
-   Foco accesible: tinta sobre papel.
-
-   Se invierte con el tema, así que siempre tiene el máximo
-   contraste disponible contra el fondo de la página, y el
-   desplazamiento lo mantiene visible incluso sobre un botón
-   del mismo color.
+   El foco accesible vive en un solo sitio: la sección
+   «3. FOCO, EN TODO» del SISTEMA DE INTERACCIÓN, al final de
+   este archivo. Aquí había una segunda definición que la
+   contradecía —otro color y otro desplazamiento— y que ganaba
+   o perdía según el orden del archivo.
 */
-:focus-visible {
-  outline: 2px solid rgb(var(--rk-foreground));
-  outline-offset: 2px;
-  border-radius: var(--rk-radius-sm);
-}
 
 /* Oculta la X nativa de los inputs type="search". */
 input[type="search"]::-webkit-search-decoration,
@@ -420,9 +414,24 @@ input[type="search"]::-webkit-search-results-decoration {
     box-shadow: 0 2px 10px rgb(0 0 0 / 0.18);
   }
 
+  /*
+    Era un relleno OSCURO al 58 %: sobre la portada se leía como
+    una caja gris pegada encima. Baja al 40 % y el desenfoque
+    sube a 18 px, así que la portada se percibe por debajo.
+
+    Se probó antes con velo CLARO al 14 %, que es lo que pedía
+    el encargo. Medido sobre las portadas reales no sirve: la
+    etiqueta lleva texto claro, y sobre una portada crema —la de
+    Shakira— un velo blanco deja el texto casi invisible. Un
+    velo claro solo funciona si la imagen de debajo es oscura, y
+    aquí la imagen es cualquiera. El velo oscuro con texto claro
+    es el único que se lee sobre las dos.
+  */
   [data-theme="dark"] .rk-glass-on-image {
-    background: rgb(16 17 21 / 0.58);
-    border-color: rgb(255 255 255 / 0.14);
+    background: rgb(16 17 21 / 0.4);
+    border-color: rgb(255 255 255 / 0.22);
+    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    backdrop-filter: blur(18px) saturate(120%);
   }
 
   /* Tarjeta estándar. */
@@ -662,22 +671,34 @@ input[type="search"]::-webkit-search-results-decoration {
     color: rgb(var(--rk-foreground) / 0.62);
   }
 
-  /* Tarjeta de la capa B&N: borde fino, sin color. */
+  /*
+    Tarjeta de la capa B&N: borde fino, sin color.
+
+    El fondo era `rgb(var(--rk-card))`, sin alfa: un panel
+    OPACO, sin nada de vidrio, justo al lado de un buscador y
+    unas tarjetas que sí lo son. Le faltaba el alfa que usa
+    `.rk-card` y le faltaba el desenfoque.
+
+    Los tiempos también eran de otro sistema —200 y 220 ms con
+    dos curvas distintas—; pasan a los tokens.
+  */
   .rk-tile {
     position: relative;
     overflow: hidden;
     border-radius: var(--rk-radius-md);
-    border: 1px solid var(--rk-border-color);
-    background: rgb(var(--rk-card));
+    border: 1px solid var(--rx-b-card);
+    background: rgb(var(--rk-card) / var(--rk-card-alpha));
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    backdrop-filter: blur(20px) saturate(1.2);
+    box-shadow: var(--rx-sombra-base);
     transition:
-      border-color 200ms var(--rk-ease-soft),
-      transform var(--rk-transition-normal) var(--rk-ease),
-      box-shadow var(--rk-transition-normal) var(--rk-ease);
+      border-color var(--rx-t-micro) var(--rx-curva),
+      box-shadow var(--rx-t-hover) var(--rx-curva);
   }
 
   .rk-tile:hover {
-    border-color: rgb(var(--rk-foreground) / 0.3);
-    box-shadow: var(--rk-shadow);
+    border-color: var(--rx-b-card-activa);
+    box-shadow: var(--rx-sombra-hover);
   }
 
   /* Rail horizontal con anclaje, para los carruseles. */
@@ -2293,21 +2314,19 @@ h6 {
   overflow: visible;
 }
 
-.rk-btn-line::after,
-.rk-btn-glass::after,
-.rk-btn-secondary::after,
-.rk-btn-paper::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: calc(100% + 1px);
-  transform: translateX(-50%);
-  width: 18%;
-  height: 4px;
-  border-radius: 0 0 6px 6px;
-  background: var(--rx-tab);
-  pointer-events: none;
-}
+/*
+  Aquí colgaba una lengüeta de cada uno de estos botones: una
+  barra de 4 px al 72 % de blanco, anclada a `top: calc(100% +
+  1px)`, es decir FUERA del botón.
+
+  Se retira. En una tarjeta la lengüeta es la pieza que la
+  sujeta y tiene sentido; bajo un botón se lee como una raya
+  suelta, y además el hover de abajo desplaza el botón un píxel,
+  con lo que la barra lo seguía y el conjunto temblaba.
+
+  El botón se delimita con su borde y su vidrio, que es lo que
+  hace el resto del sistema.
+*/
 
 /*
   Al señalar solo cambia el borde. Si el botón se desplazara, la
@@ -2343,19 +2362,10 @@ h6 {
   detalle, se lee como un defecto.
 */
 /*
-  Dentro de una tabla, una lengüeta colgando de cada botón de
-  fila se lee como un defecto de maquetación y no como un
-  detalle. El efecto se reserva a las acciones con presencia
-  propia.
+  Aquí se apagaba la lengüeta dentro de tablas y en los botones
+  compactos y de icono. Ya no hace falta: la lengüeta no existe
+  en ningún botón.
 */
-table .rk-btn-line::after,
-table .rk-btn-glass::after,
-table .rk-btn-secondary::after,
-table .rk-btn-paper::after,
-.rk-btn-compact::after,
-.rk-btn-icono::after {
-  display: none;
-}
 
 /* ────────── DESTELLO DEL CTA ────────── */
 
@@ -2379,10 +2389,15 @@ table .rk-btn-paper::after,
     inset 0 -1px 0 rgb(50 50 50 / 0.14),
     0 0 0 1px rgb(255 255 255 / 0.14),
     0 5px 18px rgb(255 255 255 / 0.1);
+  /*
+    Eran 250 ms, que no es ninguno de los tres tiempos del
+    sistema, y dos de las tres propiedades iban sin curva. Pasa
+    a los tokens: el CTA responde como todo lo demás.
+  */
   transition:
-    transform 0.25s var(--rx-ease),
-    box-shadow 0.25s,
-    filter 0.25s;
+    transform var(--rx-t-hover) var(--rx-curva),
+    box-shadow var(--rx-t-hover) var(--rx-curva),
+    filter var(--rx-t-hover) var(--rx-curva);
 }
 
 /* Brillo interior, por debajo del contenido. */
@@ -2421,7 +2436,13 @@ table .rk-btn-paper::after,
   );
   transform: rotate(18deg);
   opacity: 0.48;
-  transition: left 0.7s ease;
+  /*
+    El barrido conserva su duración larga a propósito: es un
+    recorrido, no una respuesta, y acortarlo a 200 ms lo
+    convierte en un parpadeo. Lo que sí adopta es la curva del
+    sistema, que antes era un `ease` suelto.
+  */
+  transition: left 0.7s var(--rx-curva);
 }
 
 .rk-btn-cta:hover:not(:disabled) {
@@ -2543,6 +2564,37 @@ table .rk-btn-paper::after,
   background: rgb(255 255 255 / 0.6);
 }
 
+/*
+  VIDRIO SOBRE IMAGEN QUE SE PULSA
+
+  La misma clase viste dos cosas: las etiquetas de la portada,
+  que no se pulsan, y el botón de guardar, que sí. El botón no
+  respondía al ratón: ni fondo, ni borde, ni transición.
+
+  El hover se limita a lo pulsable —`button` y `a`—, para que
+  las etiquetas no reaccionen a un ratón que pasa por encima.
+*/
+.rk-glass-on-image {
+  transition:
+    background-color var(--rx-t-micro) var(--rx-curva),
+    border-color var(--rx-t-micro) var(--rx-curva),
+    color var(--rx-t-micro) var(--rx-curva);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button.rk-glass-on-image:hover,
+  a.rk-glass-on-image:hover {
+    background: rgb(16 17 21 / 0.55);
+    border-color: rgb(255 255 255 / 0.36);
+  }
+
+  [data-theme="light"] button.rk-glass-on-image:hover,
+  [data-theme="light"] a.rk-glass-on-image:hover {
+    background: rgb(255 255 255 / 0.82);
+    border-color: rgb(0 0 0 / 0.24);
+  }
+}
+
 /* ────────── ACENTO PLATA ────────── */
 
 /*
@@ -2585,13 +2637,6 @@ html[data-theme="dark"] {
   --rk-muted-alpha: 1;
   --rk-foreground: 18 18 23;
   --rk-ink: 18 18 23;
-}
-
-/* ────────── FOCO ACCESIBLE ────────── */
-
-:where(a, button, input, select, textarea, [tabindex]):focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
 }
 
 /* ────────── APARICIÓN AL ENTRAR ────────── */
@@ -2733,19 +2778,20 @@ html[data-theme="dark"] {
    color, y se ve igual sobre vidrio claro y sobre vidrio
    oscuro. `:focus-visible` y no `:focus` para que no salte al
    pulsar con el ratón.
+
+   Sin `border-radius`. Aquí dentro esa propiedad no redondea el
+   anillo: cambia el radio REAL del elemento mientras está
+   enfocado. Con `inherit`, un campo redondo heredaba el 0 de su
+   padre y se volvía un rectángulo de esquinas vivas en cuanto
+   se pulsaba. El navegador ya dibuja el `outline` siguiendo el
+   radio que el elemento tenga.
+
+   El selector es escueto a propósito: cubre TODO lo enfocable,
+   incluido lo que no es ni enlace ni control.
 */
-:where(
-    a,
-    button,
-    input,
-    select,
-    textarea,
-    summary,
-    [tabindex]:not([tabindex="-1"])
-  ):focus-visible {
+:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
-  border-radius: inherit;
 }
 
 /* ────────── 4. BOTONES: MEDIDAS ────────── */
@@ -2808,13 +2854,46 @@ html[data-theme="dark"] {
     transform: translateY(-1px);
   }
 
+  /*
+    Al señalar, los tres gestos juntos: el borde gana luz, la
+    superficie se aclara un punto y aparece una sombra corta. El
+    desplazamiento de un píxel lo pone la regla de arriba.
+
+    Antes solo cambiaba el borde, y un botón de vidrio sobre
+    fondo oscuro apenas acusaba el paso del ratón.
+  */
   .rk-btn-line:hover:not(:disabled),
   .rk-btn-glass:hover:not(:disabled),
   .rk-btn-ghost:hover:not(:disabled),
   .rk-btn-secondary:hover:not(:disabled),
   .rk-btn-paper:hover:not(:disabled) {
     border-color: var(--rx-b-boton-activo);
+    box-shadow: var(--rx-sombra-base);
   }
+
+  .rk-btn-line:hover:not(:disabled),
+  .rk-btn-glass:hover:not(:disabled),
+  .rk-btn-secondary:hover:not(:disabled) {
+    background-color: rgb(255 255 255 / 0.06);
+  }
+
+  [data-theme="light"] .rk-btn-line:hover:not(:disabled),
+  [data-theme="light"] .rk-btn-glass:hover:not(:disabled),
+  [data-theme="light"] .rk-btn-secondary:hover:not(:disabled) {
+    background-color: rgb(255 255 255 / 0.72);
+  }
+
+  /*
+    La flecha de «Explorar recursos» se adelanta dos píxeles:
+    señala a dónde lleva. Solo se mueve el icono, nunca la caja.
+  */
+  .rk-btn-line:hover:not(:disabled) svg {
+    transform: translateX(2px);
+  }
+}
+
+.rk-btn-line svg {
+  transition: transform var(--rx-t-hover) var(--rx-curva);
 }
 
 /* Pulsado: vuelve al plano y cede escala. Nunca mueve el layout. */
@@ -2907,6 +2986,13 @@ html[data-theme="dark"] {
 .rk-tarjeta:hover,
 .rk-tarjeta:focus-within {
   border-color: var(--rx-b-card-activa);
+  /*
+    El canto de arriba conserva su luz. Sin esta línea, el hover
+    bajaba ese borde de 0,28 a 0,20: los lados ganaban presencia
+    y la parte superior la perdía, así que la tarjeta se
+    iluminaba y se apagaba a la vez.
+  */
+  border-top-color: var(--rx-borde-alto);
   box-shadow: var(--rx-sombra-hover);
   transform: none;
 }
@@ -3090,7 +3176,10 @@ table .rk-btn:hover:not(:disabled) {
     transform: none;
   }
 
-
+  /* La flecha tampoco se adelanta. El borde y el fondo quedan. */
+  .rk-btn-line:hover:not(:disabled) svg {
+    transform: none;
+  }
 }
 
 /* ────────── REJILLA DE RECURSOS ────────── */
@@ -3270,6 +3359,48 @@ table .rk-btn:hover:not(:disabled) {
 .rk-buscador-accion:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
+}
+
+/*
+  VARIANTE COMPACTA — la de la barra de navegación.
+
+  Mismo sistema, no otro: cambia la medida, no el lenguaje. Las
+  cifras son exactamente las que tenía el campo de la navbar
+  (48 px de alto, 44 de hueco a la izquierda, 96 a la derecha,
+  botón de 34), para que al pasarlo a este sistema la barra no
+  se mueva ni un píxel.
+*/
+.rk-buscador-compacto {
+  border-radius: var(--rk-radius-full);
+}
+
+.rk-buscador-compacto .rk-buscador-campo {
+  height: 2.875rem;
+  padding: 0 6rem 0 2.75rem;
+  font-size: 0.875rem;
+}
+
+.rk-buscador-compacto .rk-buscador-accion {
+  height: 2.125rem;
+  padding: 0 0.875rem;
+  font-size: 0.75rem;
+}
+
+/*
+  VARIANTE DEL HERO — la del home.
+
+  Dos píxeles más alta que la de la tienda y de canto redondo,
+  que es lo que ya tenía. Mismas cifras que el campo anterior
+  (56 de alto, 56 de hueco a la izquierda, 120 a la derecha)
+  para no mover el bloque del hero.
+*/
+.rk-buscador-hero {
+  border-radius: var(--rk-radius-full);
+}
+
+.rk-buscador-hero .rk-buscador-campo {
+  height: 3.375rem;
+  padding: 0 7.5rem 0 3.5rem;
 }
 
 /*

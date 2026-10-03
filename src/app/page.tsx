@@ -304,7 +304,12 @@ export default async function Home() {
                   method="GET"
                   className="mt-9 max-w-md"
                 >
-                  <div className="relative">
+                  {/*
+                    La superficie es esta caja, no el campo. El
+                    campo que había aquí se volvía sólido y de
+                    borde oscuro al enfocarlo, y perdía el vidrio.
+                  */}
+                  <div className="rk-buscador rk-buscador-hero">
                     <Search
                       size={18}
                       aria-hidden
@@ -317,12 +322,13 @@ export default async function Home() {
                       placeholder="Buscar recursos..."
                       aria-label="Buscar recursos"
                       autoComplete="off"
-                      className="h-14 w-full rounded-full border border-line/15 bg-surface/70 pl-14 pr-[7.5rem] text-[15px] outline-none backdrop-blur-rk transition-colors duration-normal ease-rk placeholder:text-ink/45 hover:border-line/30 focus:border-ink/40 focus:bg-surface"
+                      spellCheck={false}
+                      className="rk-buscador-campo"
                     />
 
                     <button
                       type="submit"
-                      className="rk-btn rk-btn-ink rk-btn-compact absolute right-1.5 top-1/2 -translate-y-1/2 !px-5 !py-3 !text-sm"
+                      className="rk-buscador-accion absolute right-1.5 top-1/2 -translate-y-1/2"
                     >
                       Buscar
                     </button>
