@@ -3,13 +3,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { paginaPublica } from "@/lib/seo";
-import { ArrowUpRight, LayoutGrid } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { prisma } from "@/lib/prisma";
-import { claseProporcion } from "@/lib/tipos-publicacion";
 
 export const metadata: Metadata = paginaPublica({
   titulo: "Categorías",
@@ -48,11 +47,9 @@ export default async function CategoriesPage() {
         orderBy: {
           createdAt: "desc",
         },
-        take: 1,
+        take: 3,
         select: {
           coverUrl: true,
-          /* Decide el marco de la miniatura de la categoría. */
-          pieceType: true,
 
           images: {
             orderBy: {
@@ -107,69 +104,60 @@ export default async function CategoriesPage() {
             />
           </div>
         ) : (
-          <div className="rk-fade-up rk-enter-1 mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rk-fade-up rk-enter-1 rk-folder-grid mt-10">
             {withProducts.map((category) => {
-              const preview =
-                category.products[0]?.coverUrl ||
-                category.products[0]?.images[0]?.url ||
-                null;
+              /* Hasta tres portadas reales, las más recientes,
+                 asoman de la carpeta como hojas. */
+              const portadas = category.products
+                .map((p) => p.coverUrl || p.images[0]?.url || null)
+                .filter((url): url is string => Boolean(url))
+                .slice(0, 3);
+
+              const total = category._count.products;
 
               return (
                 <Link
                   key={category.id}
                   href={`/tienda?categoria=${category.slug}`}
-                  className="rk-card rk-card-hover rk-press group relative overflow-hidden"
+                  className="rk-folder rk-press"
+                  aria-label={`${category.name}: ${total} ${
+                    total === 1 ? "recurso" : "recursos"
+                  }`}
                 >
-                  <div className="flex items-center gap-4 p-3.5">
-                    {/* Portada real del recurso más reciente,
-                        en su marco y siempre nítida. */}
-                    <div
-                      className={`rk-media ${claseProporcion(
-                        {
-                        categoriaSlug: category.slug,
-                        pieceType: category.products[0]?.pieceType,
-                      }
-                      )} relative w-16 shrink-0 overflow-hidden rounded-rk-sm`}
-                    >
-                      {preview ? (
-                        <Image
-                          src={preview}
-                          alt={category.name}
-                          fill
-                          className="object-cover transition-transform duration-slow ease-rk group-hover:scale-[1.04]"
-                          sizes="64px"
-                        />
-                      ) : (
-                        <span className="flex h-full items-center justify-center text-[8px] uppercase tracking-[0.2em] text-ink/45">
-                          RK
+                  <span aria-hidden className="rk-folder-back" />
+
+                  <span aria-hidden className="rk-folder-papers">
+                    {portadas.length > 0 ? (
+                      portadas.map((url) => (
+                        <span key={url} className="rk-folder-paper">
+                          <Image
+                            src={url}
+                            alt=""
+                            fill
+                            className="object-cover"
+                            sizes="(min-width: 1024px) 18vw, (min-width: 640px) 26vw, 40vw"
+                          />
                         </span>
-                      )}
-                    </div>
+                      ))
+                    ) : (
+                      <span className="rk-folder-paper rk-folder-paper-empty" />
+                    )}
+                  </span>
 
-                    <div className="min-w-0 flex-1">
-                      <h2 className="truncate text-[17px] font-semibold tracking-tight">
-                        {category.name}
-                      </h2>
+                  <span className="rk-folder-front">
+                    <span aria-hidden className="rk-folder-badge">
+                      {category.name.charAt(0).toUpperCase()}
+                    </span>
 
-                      {category.description && (
-                        <p className="mt-1 line-clamp-2 text-sm leading-6 text-ink/60">
-                          {category.description}
-                        </p>
-                      )}
+                    <span className="rk-folder-text">
+                      <h2 className="rk-folder-title">{category.name}</h2>
 
                       {/* Contador real de recursos publicados. */}
-                      <p className="mt-1.5 text-xs text-ink/60">
-                        {category._count.products}{" "}
-                        {category._count.products === 1
-                          ? "recurso"
-                          : "recursos"}
-                      </p>
-                    </div>
-
-                    <span className="rk-icon-tile h-9 w-9 transition-colors duration-normal ease-rk group-hover:bg-ink/[0.07] group-hover:text-ink">
-                      <ArrowUpRight size={16} />
+                      <span className="rk-folder-count">
+                        {total} {total === 1 ? "recurso" : "recursos"}
+                      </span>
                     </span>
-                  </div>
+                  </span>
                 </Link>
               );
             })}
