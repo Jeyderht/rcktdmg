@@ -17,6 +17,7 @@ import SeccionesMarketplace from "@/components/home/SeccionesMarketplace";
 import Recomendados from "@/components/home/Recomendados";
 import SelectorBusqueda from "@/components/home/SelectorBusqueda";
 import HeroFlyers from "@/components/home/HeroFlyers";
+import SliderPortadas from "@/components/home/SliderPortadas";
 import StoriesEventos from "@/components/home/StoriesEventos";
 import SliceCorporativos from "@/components/home/SliceCorporativos";
 import SeccionColecciones from "@/components/home/SeccionColecciones";
@@ -33,6 +34,7 @@ import {
 } from "@/lib/home";
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
 import { getSession } from "@/lib/session";
+import { portadasActivas } from "@/lib/portadas";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { SITIO, absoluta, paginaPublica } from "@/lib/seo";
@@ -106,6 +108,7 @@ export default async function Home() {
     colecciones,
     creadoresHome,
     conteosDisenos,
+    promos,
   ] = await Promise.all([
     prisma.product.findMany({
       where: { status: "PUBLISHED" },
@@ -210,6 +213,10 @@ export default async function Home() {
     creadoresDestacados(12),
 
     conteosDeDisenos(),
+
+    /* Portadas del slider de arriba (PromoSlide). Si la tabla
+       falla o está vacía, la home sigue sin slider. */
+    portadasActivas().catch(() => []),
   ]);
 
   /*
@@ -264,6 +271,9 @@ export default async function Home() {
       />
 
       <main>
+
+        {/* ══════════ SLIDER DE PORTADAS ══════════ */}
+        {promos.length > 0 && <SliderPortadas portadas={promos} />}
 
         {/* ══════════ HERO ══════════ */}
         <section className="relative overflow-hidden">

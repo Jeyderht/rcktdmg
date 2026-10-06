@@ -13,6 +13,7 @@ import { ArrowLeft, ArrowRight, ImagePlus, Trash2 } from "lucide-react";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 
 import { subirImagen } from "@/lib/storage/client-upload";
+import PortadaSlider from "@/components/panel/PortadaSlider";
 
 type Product = {
   /** Decide el marco con el que se previsualiza. */
@@ -954,6 +955,9 @@ export default function EditarImagenesPage() {
           </div>
 
         </section>
+
+        {/* Portada horizontal para el slider del inicio (opcional). */}
+        <PortadaSlider productId={id} />
       </div>
     </main>
   );
