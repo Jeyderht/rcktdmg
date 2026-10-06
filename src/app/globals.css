@@ -15110,3 +15110,57 @@ div.rk-upload-error > * + * {
 .rk-topbar-actions .rk-avatar-btn:not(:has(.rk-avatar-btn-img))::after {
   content: none;
 }
+
+/* ═══ AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image ═══
+   Vidrio claro como el botón secundario, igual en los dos temas:
+   blanco transparente, texto e iconos blancos, sin sombra. */
+.rk-glass-on-image,
+[data-theme="light"] .rk-glass-on-image,
+[data-theme="dark"] .rk-glass-on-image,
+.rk-tarjeta .rk-glass-on-image,
+[data-theme="light"] .rk-tarjeta .rk-glass-on-image {
+  border: 1px solid rgb(255 255 255 / 0.4);
+  /*
+    Dos capas: el vidrio blanco que da el carácter, y DEBAJO un velo
+    oscuro que le da base. Sin el velo, el texto blanco desaparecía
+    sobre las portadas claras —el mismo defecto que ya se corrigió
+    una vez—; con él se lee igual sobre una foto clara que sobre una
+    oscura, y el vidrio sigue viéndose blanco porque el velo queda
+    por detrás.
+  */
+  background:
+    linear-gradient(rgb(255 255 255 / 0.14), rgb(255 255 255 / 0.14)),
+    rgb(14 15 19 / 0.42);
+  color: #fff;
+  box-shadow: none;
+  text-shadow: none;
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+}
+
+.rk-glass-on-image svg:not(.fill-danger) {
+  color: #fff !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button.rk-glass-on-image:hover,
+  a.rk-glass-on-image:hover,
+  [data-theme="light"] button.rk-glass-on-image:hover,
+  [data-theme="light"] a.rk-glass-on-image:hover,
+  .rk-tarjeta button.rk-glass-on-image:hover,
+  [data-theme="light"] .rk-tarjeta button.rk-glass-on-image:hover {
+    border-color: rgb(255 255 255 / 0.6);
+    background:
+      linear-gradient(rgb(255 255 255 / 0.24), rgb(255 255 255 / 0.24)),
+      rgb(14 15 19 / 0.42);
+  }
+}
+
+.rk-glass-on-image.text-danger,
+[data-theme="light"] .rk-glass-on-image.text-danger,
+.rk-tarjeta .rk-glass-on-image.text-danger,
+[data-theme="light"] .rk-tarjeta .rk-glass-on-image.text-danger {
+  border-color: rgb(248 96 96 / 0.5);
+  background: rgb(74 20 24 / 0.28);
+  color: rgb(255 214 214);
+}
