@@ -114,6 +114,12 @@ export default function PreguntasFrecuentes({
         {PREGUNTAS.map(({ pregunta, respuesta }, indice) => (
           <details
             key={pregunta}
+            /*
+              El nombre compartido convierte los <details> en un
+              acordeón exclusivo: al abrir uno, el navegador cierra
+              el que estuviera abierto. Sigue sin JavaScript.
+            */
+            name="rk-faq"
             className="rk-faq-item"
             open={indice === 0}
           >
