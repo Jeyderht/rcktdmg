@@ -457,8 +457,19 @@ model Product {
    * el carrusel de Corporativos. Sin su tamaño no se puede
    * filtrar por formato real ni respetar su proporción.
    */
-  coverWidth      Int?
-  coverHeight     Int?
+  coverWidth  Int?
+  coverHeight Int?
+
+  /**
+   * Portada HORIZONTAL para el slider del inicio (16:9, p. ej. 1600 × 900).
+   * La sube el creador desde «Imágenes» de su recurso. Es opcional: solo
+   * los recursos PUBLICADOS que la tienen aparecen en el slider.
+   * Sus medidas se leen al subirla y se exige que sea horizontal.
+   */
+  sliderUrl    String?
+  sliderWidth  Int?
+  sliderHeight Int?
+
   /// Color dominante declarado por el creador. Null si no lo indicó.
   color           String?
   createdAt       DateTime @default(now())
@@ -488,18 +499,15 @@ model Product {
 
   /**
    * Qué pieza es, dentro de un evento.
-   *
    * NULL a propósito, y para siempre: los recursos anteriores
    * a esta etapa nunca declararon su tipo y no se les va a
    * inventar uno. Null significa «no se declaró», que es
    * distinto de «es otra cosa» (EVENT_OTHER, que sí es una
    * elección del creador).
-   *
    * Lo elige QUIEN PUBLICA y no se deduce de las medidas: un
    * flyer de 1080 × 1920 sigue siendo un flyer. Las medidas
    * sirven para comprobar el tipo declarado, nunca para
    * cambiarlo.
-   *
    * Solo lo usan las piezas de la categoría «eventos». En las
    * demás queda null.
    */
@@ -810,11 +818,9 @@ enum CreatorStatus {
 
 /**
  * Pieza de un evento.
- *
  * Los valores llevan el prefijo EVENT_ porque hoy solo se
  * aplican a esa categoría. Si mañana otra necesita sus propios
  * tipos, se añaden con su prefijo y estos no estorban.
- *
  * Cada valor se corresponde con una opción del formulario; la
  * traducción vive en src/lib/tipos-publicacion.ts, que es
  * donde ya estaban las opciones.
@@ -997,13 +1003,11 @@ model CreatorApplicationCategory {
 
 /**
  * Un trabajo del portafolio.
- *
  * Convive con `portfolioUrl` y `portfolioFileUrl`, que siguen
  * siendo válidos: las solicitudes anteriores a esta etapa solo
  * tienen aquellos dos campos y deben seguir viéndose igual.
  * Esto es la forma nueva de presentar varios trabajos, no su
  * sustituto.
- *
  * `imageUrl` apunta al almacén PÚBLICO: son piezas que el
  * candidato quiere enseñar. El archivo privado sigue siendo
  * `portfolioFileUrl`, que solo abre administración.
@@ -1117,13 +1121,11 @@ model CommercialCollectionItem {
 
 /**
  * Estado de una colección comercial.
- *
  * Pasa por la misma cola que un recurso: el creador la deja en
  * DRAFT, la envía a revisión y administración la publica o la
  * rechaza con un motivo. Sus piezas ya pasaron por moderación,
  * pero la colección tiene precio, nombre, portada y descripción
  * propios, y eso no lo ha revisado nadie.
- *
  * Las colecciones anteriores a esta etapa siguen en DRAFT,
  * PUBLISHED o ARCHIVED sin tocarse: los estados nuevos se
  * añaden, no sustituyen a ninguno.

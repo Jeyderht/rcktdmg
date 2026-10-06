@@ -15164,3 +15164,334 @@ div.rk-upload-error > * + * {
   background: rgb(74 20 24 / 0.28);
   color: rgb(255 214 214);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*
+   ═══════════════════════════════════════════════════════════════════════
+   Carrusel tipo coverflow justo debajo de la barra superior. La portada
+   activa va al centro con su información; las vecinas asoman a los
+   lados, más pequeñas y atenuadas. La posición la da --d (distancia a
+   la activa, con signo), --escala y --giro, que pone el componente.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rk-promo {
+  --rk-promo-w: min(780px, 86vw);
+  position: relative;
+  padding: 12px 0 4px;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .rk-promo {
+    --rk-promo-w: min(780px, 72vw);
+    padding-top: 20px;
+  }
+}
+
+.rk-promo-stage {
+  position: relative;
+  height: calc(var(--rk-promo-w) * 9 / 16);
+  perspective: 1400px;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.rk-promo-slide {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--rk-promo-w);
+  aspect-ratio: 16 / 9;
+  margin-left: calc(var(--rk-promo-w) / -2);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 26px;
+  background: rgb(var(--rk-marca-frio) / 0.3);
+  /* --d, --escala y --giro los pone el componente; z-index y filter van
+     en línea porque dependen de la distancia a la activa */
+  transform: translateX(calc(var(--d) * 58%)) scale(var(--escala, 1))
+    rotateY(var(--giro, 0deg));
+  transition:
+    transform 0.6s var(--rx-curva, cubic-bezier(0.2, 0.7, 0.2, 1)),
+    filter 0.6s var(--rx-curva, cubic-bezier(0.2, 0.7, 0.2, 1)),
+    opacity 0.6s var(--rx-curva, cubic-bezier(0.2, 0.7, 0.2, 1));
+}
+
+[data-theme="light"] .rk-promo-slide {
+  border-color: rgb(21 22 27 / 0.06);
+}
+
+.rk-promo-slide[data-oculta="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 639px) {
+  .rk-promo-slide {
+    border-radius: 20px;
+    transform: translateX(calc(var(--d) * 92%)) scale(var(--escala, 1));
+  }
+}
+
+.rk-promo-img {
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* vecina: toda la tarjeta es un botón invisible que la trae al centro */
+.rk-promo-peek {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* ── información de la activa ─────────────────────────────────────────── */
+.rk-promo-info {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 22px 24px;
+  background: linear-gradient(
+    180deg,
+    transparent 35%,
+    rgb(8 9 12 / 0.35) 60%,
+    rgb(8 9 12 / 0.82) 100%
+  );
+  color: #fff;
+  text-decoration: none;
+}
+
+@media (min-width: 640px) {
+  .rk-promo-info {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 28px 30px;
+  }
+}
+
+.rk-promo-info:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-calido));
+  outline-offset: -4px;
+  border-radius: 26px;
+}
+
+.rk-promo-text {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.rk-promo-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.rk-promo-title {
+  display: -webkit-box;
+  max-width: 22ch;
+  overflow: hidden;
+  font-size: clamp(1.125rem, 4.2vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.rk-promo-sub {
+  display: -webkit-box;
+  max-width: 46ch;
+  overflow: hidden;
+  color: rgb(255 255 255 / 0.75);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 639px) {
+  .rk-promo-info {
+    gap: 10px;
+    padding: 14px 16px;
+  }
+
+  .rk-promo-sub {
+    display: none;
+  }
+}
+
+.rk-promo-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 14px;
+}
+
+.rk-promo-price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-promo-price small {
+  margin-right: 3px;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.rk-promo-cta {
+  pointer-events: none;
+}
+
+.rk-promo-cta svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 639px) {
+  .rk-promo-cta {
+    min-height: 38px;
+    padding: 0 14px;
+    font-size: 0.8125rem;
+  }
+
+  .rk-promo-price {
+    font-size: 1rem;
+  }
+}
+
+/* ── flechas (solo desde tablet) ──────────────────────────────────────── */
+.rk-promo-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 20;
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.rk-promo-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+.rk-promo-arrow-prev {
+  left: calc(50% - var(--rk-promo-w) / 2 + 14px);
+}
+
+.rk-promo-arrow-next {
+  right: calc(50% - var(--rk-promo-w) / 2 + 14px);
+}
+
+@media (min-width: 640px) {
+  .rk-promo-arrow {
+    display: grid;
+  }
+}
+
+/* ── puntos con progreso y pausa ──────────────────────────────────────── */
+.rk-promo-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.rk-promo-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rk-promo-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(var(--rk-muted) / 0.35);
+  cursor: pointer;
+  transition: width 0.3s var(--rx-curva, ease);
+}
+
+.rk-promo-dot[aria-selected="true"] {
+  width: 36px;
+  background: rgb(var(--rk-muted) / 0.25);
+}
+
+.rk-promo-dot-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--rk-marca-degradado);
+  transform-origin: left center;
+}
+
+.rk-promo-dot-fill.is-running {
+  animation: rk-promo-progreso linear forwards;
+}
+
+@keyframes rk-promo-progreso {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.rk-promo-dot:focus-visible,
+.rk-promo-pause:focus-visible,
+.rk-promo-arrow:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-calido));
+  outline-offset: 2px;
+}
+
+.rk-promo-pause {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--rk-linea);
+  border-radius: 999px;
+  background: transparent;
+  color: rgb(var(--rk-muted));
+  cursor: pointer;
+}
+
+.rk-promo-pause svg {
+  width: 12px;
+  height: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-promo-slide,
+  .rk-promo-dot {
+    transition: none;
+  }
+
+  .rk-promo-dot-fill {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
