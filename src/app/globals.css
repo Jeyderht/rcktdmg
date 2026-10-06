@@ -15079,3 +15079,34 @@ div.rk-upload-error > * + * {
     transition: none;
   }
 }
+
+/* botón «Mi cuenta» sin foto (sesión cerrada): mismo círculo de vidrio
+   que los demás iconos de la barra. Con foto queda como está. */
+.rk-topbar-actions .rk-avatar-btn:not(:has(.rk-avatar-btn-img)) {
+  border: 1px solid rgb(21 22 27 / 0.08);
+  background: rgb(255 255 255 / 0.7);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+}
+
+:root:not([data-theme="light"]) .rk-topbar-actions .rk-avatar-btn:not(:has(.rk-avatar-btn-img)) {
+  border-color: rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.05);
+}
+
+.rk-topbar-actions .rk-avatar-btn:not(:has(.rk-avatar-btn-img)) svg {
+  width: 18px;
+  height: 18px;
+}
+
+/*
+  Y sin su doble anillo al señalar. `.rk-avatar-btn::before` dibuja su
+  propio círculo —borde e inset 0, pensado para cuando el botón NO tiene
+  fondo—; ahora que el botón sí lo lleva, al pasar el ratón se veían dos
+  anillos concéntricos en vez de uno. Solo en el caso sin foto: con foto
+  el botón sigue sin fondo y su `::before` hace falta.
+*/
+.rk-topbar-actions .rk-avatar-btn:not(:has(.rk-avatar-btn-img))::before,
+.rk-topbar-actions .rk-avatar-btn:not(:has(.rk-avatar-btn-img))::after {
+  content: none;
+}
