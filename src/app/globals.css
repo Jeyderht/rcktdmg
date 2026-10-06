@@ -14601,3 +14601,15 @@ div.rk-upload-error > * + * {
     transition: none;
   }
 }
+
+/* etiquetas sobre la portada de la tarjeta: legibles sobre cualquier
+   imagen (clara u oscura) y en los dos temas. La imagen es la misma en
+   claro y oscuro, así que la etiqueta tampoco cambia con el tema. */
+.rk-tarjeta .rk-glass-on-image,
+[data-theme="light"] .rk-tarjeta .rk-glass-on-image {
+  border-color: rgb(255 255 255 / 0.22);
+  background: rgb(14 15 19 / 0.42);
+  color: #fff;
+  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  backdrop-filter: blur(10px) saturate(1.3);
+}
