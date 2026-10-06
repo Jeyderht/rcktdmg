@@ -303,7 +303,7 @@ export default function QuickAccess({
         <button
           type="button"
           onClick={handleLogout}
-          className="rk-press inline-flex min-h-[2.75rem] items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:bg-danger/10 hover:text-danger"
+          className="rk-btn rk-btn-danger rk-btn-compact"
         >
           <LogOut size={14} />
           Cerrar sesión

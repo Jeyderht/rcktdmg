@@ -347,7 +347,7 @@ function NavbarContent() {
             </div>
 
             {/* ACCIONES */}
-            <div className="ml-auto flex shrink-0 items-center gap-0 sm:gap-0.5 xl:ml-2">
+            <div className="rk-topbar-actions ml-auto flex shrink-0 items-center gap-2 xl:ml-2">
 
               {/* BUSCADOR (MÓVIL) */}
               <button
@@ -386,7 +386,7 @@ function NavbarContent() {
               </IconAction>
 
               {/* TEMA: claro / oscuro / sistema */}
-              <div className="ml-1 hidden md:block">
+              <div className="hidden md:block">
                 <ThemeToggle />
               </div>
 
@@ -399,7 +399,7 @@ function NavbarContent() {
               {user?.role === "ADMIN" && (
                 <Link
                   href="/admin"
-                  className="rk-btn rk-btn-line ml-1 hidden !px-3.5 !text-[13px] xl:inline-flex"
+                  className="rk-btn rk-btn-line hidden !px-3.5 !text-[13px] xl:inline-flex"
                 >
                   <Shield size={14} />
                   Mi panel
@@ -409,7 +409,7 @@ function NavbarContent() {
               {(user?.role === "CREATOR" || user?.role === "ADMIN") && (
                 <Link
                   href="/creadores/panel"
-                  className="rk-btn rk-btn-line ml-1 hidden !px-3.5 !text-[13px] xl:inline-flex"
+                  className="rk-btn rk-btn-line hidden !px-3.5 !text-[13px] xl:inline-flex"
                 >
                   <Sparkles size={14} />
                   Creator Studio
@@ -419,7 +419,7 @@ function NavbarContent() {
               {loading ? (
                 <div
                   aria-hidden
-                  className="ml-1 h-10 w-10 animate-pulse rounded-full bg-ink/[0.06]"
+                  className="h-10 w-10 animate-pulse rounded-full bg-ink/[0.06]"
                 />
               ) : user ? (
                 <>

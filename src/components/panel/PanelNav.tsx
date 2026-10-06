@@ -180,7 +180,7 @@ function PanelNavInterno({
       <form action="/api/auth/logout" method="POST" className="mt-2">
         <button
           type="submit"
-          className="rk-menu-item rk-menu-item-danger"
+          className="rk-btn rk-btn-danger rk-btn-logout"
         >
           <LogOut size={16} aria-hidden className="shrink-0" />
           Cerrar sesión
