@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -66,19 +73,154 @@ const ESTRECHO = { paso: 54, escala: 0.2, opacidad: 0.42 };
 const ANCHO = { paso: 46, escala: 0.15, opacidad: 0.34 };
 
 export default function HeroFlyers({ flyers }: { flyers: FlyerHero[] }) {
+  const [grupo, setGrupo] = useState(0);
   const [activo, setActivo] = useState(0);
   const [estrecho, setEstrecho] = useState(false);
   const [quieto, setQuieto] = useState(false);
+  /* Cambiar este número reinicia el reloj del relevo. */
+  const [reinicio, setReinicio] = useState(0);
 
   const escena = useRef<HTMLDivElement | null>(null);
   const pausas = useRef<Set<string>>(new Set());
   const idTitulo = useId();
 
-  const total = flyers.length;
+  /*
+    UNA CATEGORÍA POR VUELTA.
+
+    La consulta que alimenta el Hero selecciona por FORMATO
+    —1080 × 1920—, no por categoría. Mientras todos los recursos
+    verticales sean de la misma, no se nota; en cuanto haya un
+    9:16 de otra, la rueda mostraría un evento a la izquierda y
+    un corporativo a la derecha, como si fueran la misma serie.
+
+    Así que los flyers se agrupan por categoría y la rueda gira
+    DENTRO de un grupo. Lo que se ve a izquierda, centro y
+    derecha pertenece siempre a la misma. Al completar la vuelta
+    el turno pasa al grupo siguiente, de modo que ninguna
+    categoría queda sin aparecer.
+
+    El orden de los grupos es el de llegada de los flyers, que ya
+    viene ordenado por fecha: no se reordena nada, solo se
+    reparte.
+  */
+  const grupos = useMemo(() => {
+    const porCategoria = new Map<string, FlyerHero[]>();
+
+    for (const flyer of flyers) {
+      const clave = flyer.categoriaSlug ?? "__sin-categoria";
+      const lista = porCategoria.get(clave);
+      if (lista) lista.push(flyer);
+      else porCategoria.set(clave, [flyer]);
+    }
+
+    return [...porCategoria.values()];
+  }, [flyers]);
+
+  const visibles = grupos[grupo] ?? [];
+  const total = visibles.length;
 
   const avanzar = useCallback(() => {
-    setActivo((actual) => (actual + 1) % total);
+    setActivo((actual) => {
+      const siguiente = actual + 1;
+
+      /* Al cerrar la vuelta, el turno pasa a la otra categoría. */
+      if (siguiente >= total) {
+        if (grupos.length > 1) setGrupo((g) => (g + 1) % grupos.length);
+        return 0;
+      }
+
+      return siguiente;
+    });
+  }, [total, grupos.length]);
+
+  const retroceder = useCallback(() => {
+    setActivo((actual) => (actual - 1 + total) % total);
   }, [total]);
+
+  /*
+    ARRASTRE LATERAL EN TÁCTIL.
+
+    En un teléfono la rueda solo se podía manejar con los puntos
+    de abajo: el gesto natural —deslizar sobre la imagen— no
+    hacía nada.
+
+    Lo delicado es no robarle el gesto al scroll. Por eso el eje
+    se decide en el primer movimiento que pase de 10 px: si
+    domina el vertical, este componente se aparta y la página se
+    desplaza como siempre. Solo si domina el horizontal se
+    interpreta como paso de flyer (`touch-action: pan-y` deja
+    pasar el vertical y reserva el horizontal).
+
+    El umbral de 48 px evita que un roce al hacer scroll cambie
+    de flyer.
+  */
+  useEffect(() => {
+    const caja = escena.current;
+    if (!caja || total < 2) return;
+
+    const motivos = pausas.current;
+    let id: number | null = null;
+    let x0 = 0;
+    let y0 = 0;
+    let eje: "sin-decidir" | "horizontal" | "vertical" = "sin-decidir";
+
+    const soltar = () => {
+      id = null;
+      eje = "sin-decidir";
+      motivos.delete("arrastre");
+    };
+
+    const abajo = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") return;
+      id = e.pointerId;
+      x0 = e.clientX;
+      y0 = e.clientY;
+      eje = "sin-decidir";
+      motivos.add("arrastre");
+    };
+
+    const mueve = (e: PointerEvent) => {
+      if (id !== e.pointerId) return;
+
+      const dx = e.clientX - x0;
+      const dy = e.clientY - y0;
+
+      if (eje === "sin-decidir") {
+        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+        eje = Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical";
+        /* Vertical: esto no va conmigo. Que la página se mueva. */
+        if (eje === "vertical") soltar();
+      }
+    };
+
+    const arriba = (e: PointerEvent) => {
+      if (id !== e.pointerId) return;
+
+      const dx = e.clientX - x0;
+
+      if (eje === "horizontal" && Math.abs(dx) >= 48) {
+        if (dx < 0) avanzar();
+        else retroceder();
+        /* El relevo vuelve a contar desde cero tras el gesto. */
+        setReinicio((n) => n + 1);
+      }
+
+      soltar();
+    };
+
+    caja.addEventListener("pointerdown", abajo, { passive: true });
+    caja.addEventListener("pointermove", mueve, { passive: true });
+    caja.addEventListener("pointerup", arriba, { passive: true });
+    caja.addEventListener("pointercancel", soltar, { passive: true });
+
+    return () => {
+      caja.removeEventListener("pointerdown", abajo);
+      caja.removeEventListener("pointermove", mueve);
+      caja.removeEventListener("pointerup", arriba);
+      caja.removeEventListener("pointercancel", soltar);
+      motivos.delete("arrastre");
+    };
+  }, [avanzar, retroceder, total]);
 
   /* Ancho de pantalla y preferencia de movimiento. */
   useEffect(() => {
@@ -158,7 +300,7 @@ export default function HeroFlyers({ flyers }: { flyers: FlyerHero[] }) {
       document.removeEventListener("visibilitychange", visibilidad);
       motivos.clear();
     };
-  }, [avanzar, quieto, total]);
+  }, [avanzar, quieto, total, reinicio]);
 
   if (total === 0) return null;
 
@@ -167,7 +309,7 @@ export default function HeroFlyers({ flyers }: { flyers: FlyerHero[] }) {
     ? ACOMPANANTES_ESTRECHO
     : ACOMPANANTES_ANCHO;
 
-  const destacado = flyers[activo];
+  const destacado = visibles[activo];
 
   /**
    * Distancia circular al flyer activo, con signo.
@@ -192,8 +334,10 @@ export default function HeroFlyers({ flyers }: { flyers: FlyerHero[] }) {
       <div
         ref={escena}
         className="rk-escena relative mx-auto aspect-square w-full max-w-[34rem]"
+        /* Reserva el eje horizontal para el gesto; el vertical sigue siendo scroll. */
+        style={{ touchAction: "pan-y" }}
       >
-        {flyers.map((flyer, indice) => {
+        {visibles.map((flyer, indice) => {
           const lejania = desvio(indice);
           const distancia = Math.abs(lejania);
           const fuera = distancia > acompanantes;
@@ -300,7 +444,7 @@ export default function HeroFlyers({ flyers }: { flyers: FlyerHero[] }) {
           aria-label="Elegir recurso destacado"
           className="mt-6 flex items-center justify-center gap-2"
         >
-          {flyers.map((flyer, indice) => (
+          {visibles.map((flyer, indice) => (
             <button
               key={flyer.id}
               type="button"

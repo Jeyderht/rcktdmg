@@ -147,16 +147,29 @@ export default function CarruselCreadores({
                   />
                 )}
 
-                {/* Degradado para que el panel se lea siempre. */}
+                {/*
+                  Degradado para que el panel se lea siempre.
+
+                  Va con `--rk-marca-tinta`, que es fija, y no con
+                  `ink`. `ink` es el color del TEXTO y se invierte
+                  con el tema: en oscuro vale casi blanco, así que
+                  este degradado no oscurecía la fotografía, la
+                  lavaba de blanco por abajo y el nombre del
+                  creador se perdía encima.
+                */}
                 <span
                   aria-hidden
-                  className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/85 via-ink/40 to-transparent"
+                  className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(to top, rgb(var(--rk-marca-tinta) / 0.85), rgb(var(--rk-marca-tinta) / 0.4) 45%, transparent)",
+                  }}
                 />
 
                 {/* PANEL */}
                 <span className="absolute inset-x-0 bottom-0 p-4">
                   <span className="flex items-center gap-2.5">
-                    <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface/20 ring-1 ring-surface/30">
+                    <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[rgb(var(--rk-marca-centro)_/_0.2)] ring-1 ring-[rgb(var(--rk-marca-centro)_/_0.3)]">
                       {creador.avatarUrl ? (
                         <Image
                           src={creador.avatarUrl}
@@ -166,7 +179,7 @@ export default function CarruselCreadores({
                           sizes="36px"
                         />
                       ) : (
-                        <span className="text-xs font-semibold text-surface">
+                        <span className="text-xs font-semibold text-[rgb(var(--rk-marca-centro))]">
                           {creador.nombre.charAt(0).toUpperCase()}
                         </span>
                       )}
@@ -174,24 +187,24 @@ export default function CarruselCreadores({
 
                     <span className="min-w-0 flex-1">
                       <span className="flex min-w-0 items-center gap-1">
-                        <span className="truncate text-[15px] font-semibold text-surface">
+                        <span className="truncate text-[15px] font-semibold text-[rgb(var(--rk-marca-centro))]">
                           {creador.nombre}
                         </span>
                       </span>
 
-                      <span className="block truncate text-[12px] text-surface/65">
+                      <span className="block truncate text-[12px] text-[rgb(var(--rk-marca-centro)_/_0.7)]">
                         @{creador.username}
                       </span>
                     </span>
 
-                    <span className="rk-press grid h-9 w-9 shrink-0 place-items-center rounded-full bg-surface text-ink transition-transform duration-normal ease-rk group-hover:rotate-45">
+                    <span className="rk-press grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[rgb(var(--rk-marca-centro))] text-[rgb(var(--rk-marca-tinta))] transition-transform duration-normal ease-rk group-hover:rotate-45">
                       <ArrowUpRight size={16} aria-hidden />
                     </span>
                   </span>
 
                   {/* Especialidad real, si se puede deducir. */}
                   {creador.especialidad && (
-                    <span className="mt-2.5 inline-block rounded-full bg-surface/15 px-2.5 py-1 text-[11px] font-medium text-surface/90 backdrop-blur-sm">
+                    <span className="mt-2.5 inline-block rounded-full bg-[rgb(var(--rk-marca-centro)_/_0.15)] px-2.5 py-1 text-[11px] font-medium text-[rgb(var(--rk-marca-centro)_/_0.9)] backdrop-blur-sm">
                       {creador.especialidad}
                     </span>
                   )}
@@ -201,7 +214,7 @@ export default function CarruselCreadores({
                     escritorio aparecen al acercarse, para que la
                     tarjeta en reposo respire.
                   */}
-                  <span className="mt-2 block text-[12px] tabular-nums text-surface/70 transition-opacity duration-normal ease-rk lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-visible:opacity-100">
+                  <span className="mt-2 block text-[12px] tabular-nums text-[rgb(var(--rk-marca-centro)_/_0.75)] transition-opacity duration-normal ease-rk lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-visible:opacity-100">
                     {creador.recursos}{" "}
                     {creador.recursos === 1 ? "recurso" : "recursos"}
                     {creador.seguidores > 0 &&

@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+import { useFocoModal } from "@/lib/foco-modal";
 import { ArrowUpDown, Check, SlidersHorizontal, X } from "lucide-react";
 
 import {
@@ -67,23 +69,29 @@ export default function FiltrosMoviles({
   const [pendientes, setPendientes] =
     useState<ParametrosTienda>(actuales);
 
-  // Mientras la hoja está abierta, la página de detrás no se
-  // mueve y Escape la cierra.
+  /* Estable, para que el efecto del foco no se reinicie en cada render. */
+  const cerrar = useCallback(() => setModo(null), []);
+
+  /*
+    El foco vive DENTRO de la hoja mientras está abierta, y vuelve
+    al botón que la abrió al cerrarse. Quien navega con teclado
+    abría la hoja y seguía tabulando por la página de detrás.
+  */
+  const panel = useFocoModal(modo !== null, cerrar);
+
+  // Mientras la hoja está abierta, la página de detrás no se mueve.
   useEffect(() => {
     if (!modo) return;
 
     const previo = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    function alPulsar(evento: KeyboardEvent) {
-      if (evento.key === "Escape") setModo(null);
-    }
-
-    window.addEventListener("keydown", alPulsar);
-
+    /*
+      Escape lo atiende `useFocoModal`, junto con el resto del
+      teclado. Aquí solo queda el bloqueo del scroll de fondo.
+    */
     return () => {
       document.body.style.overflow = previo;
-      window.removeEventListener("keydown", alPulsar);
     };
   }, [modo]);
 
@@ -215,11 +223,16 @@ export default function FiltrosMoviles({
           <button
             type="button"
             aria-label="Cerrar"
-            onClick={() => setModo(null)}
+            onClick={cerrar}
+            tabIndex={-1}
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
           />
 
-          <div className="rk-sheet-panel animate-fade-up">
+          <div
+            ref={panel}
+            tabIndex={-1}
+            className="rk-sheet-panel animate-fade-up outline-none"
+          >
             <span aria-hidden className="rk-menu-grabber" />
 
             <div className="rk-sheet-head">
@@ -229,7 +242,7 @@ export default function FiltrosMoviles({
 
               <button
                 type="button"
-                onClick={() => setModo(null)}
+                onClick={cerrar}
                 aria-label="Cerrar"
                 className="rk-notif-check"
                 style={{ margin: 0 }}
