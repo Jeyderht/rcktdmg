@@ -153,7 +153,7 @@ export default function CategoriasManager() {
         <form onSubmit={crear} className="rk-card p-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="cat-nombre" className="text-sm font-medium">
+              <label htmlFor="cat-nombre" className="rk-label">
                 Nombre
               </label>
 
@@ -168,7 +168,7 @@ export default function CategoriasManager() {
             </div>
 
             <div>
-              <label htmlFor="cat-desc" className="text-sm font-medium">
+              <label htmlFor="cat-desc" className="rk-label">
                 Descripción (opcional)
               </label>
 
@@ -194,7 +194,7 @@ export default function CategoriasManager() {
             <button
               type="submit"
               disabled={enCurso === "nueva"}
-              className="rk-btn rk-btn-ink !px-5 !py-2.5 !text-[13px] disabled:opacity-60"
+              className="rk-btn rk-btn-ink disabled:opacity-60"
             >
               {enCurso === "nueva" ? (
                 <Loader2 size={15} aria-hidden className="animate-spin" />
@@ -207,7 +207,7 @@ export default function CategoriasManager() {
             <button
               type="button"
               onClick={() => setCreando(false)}
-              className="rk-btn rk-btn-line !px-5 !py-2.5 !text-[13px]"
+              className="rk-btn rk-btn-line"
             >
               Cancelar
             </button>
@@ -217,7 +217,7 @@ export default function CategoriasManager() {
         <button
           type="button"
           onClick={() => setCreando(true)}
-          className="rk-btn rk-btn-ink !px-5 !py-2.5 !text-[13px]"
+          className="rk-btn rk-btn-ink"
         >
           <Plus size={15} aria-hidden />
           Nueva categoría
@@ -225,7 +225,7 @@ export default function CategoriasManager() {
       )}
 
       {error && (
-        <p role="alert" className="mt-4 text-sm text-danger">
+        <p role="alert" className="rk-upload-error mt-4">
           {error}
         </p>
       )}
@@ -247,7 +247,7 @@ export default function CategoriasManager() {
           {categorias.map((categoria) => (
             <li
               key={categoria.id}
-              className={`rk-card flex flex-wrap items-center justify-between gap-4 p-4 ${
+              className={`rk-row-card flex flex-wrap items-center justify-between gap-4 ${
                 categoria.isActive ? "" : "opacity-60"
               }`}
             >
@@ -351,7 +351,7 @@ export default function CategoriasManager() {
                         if (ok) setEditando(null);
                       }}
                       aria-label="Guardar nombre"
-                      className="rk-press rk-touch grid h-11 w-11 place-items-center rounded-full hover:bg-ink/5"
+                      className="rk-notif-check" style={{ margin: 0, width: 40, height: 40 }}
                     >
                       <Check size={16} aria-hidden />
                     </button>
@@ -360,7 +360,7 @@ export default function CategoriasManager() {
                       type="button"
                       onClick={() => setEditando(null)}
                       aria-label="Cancelar"
-                      className="rk-press rk-touch grid h-11 w-11 place-items-center rounded-full hover:bg-ink/5"
+                      className="rk-notif-check" style={{ margin: 0, width: 40, height: 40 }}
                     >
                       <X size={16} aria-hidden />
                     </button>
@@ -376,7 +376,7 @@ export default function CategoriasManager() {
                         setDescripcionEdit(categoria.description ?? "");
                         setPortadaEdit(categoria.coverUrl);
                       }}
-                      className="rk-btn rk-btn-line !px-4 !py-2 !text-[13px]"
+                      className="rk-btn rk-btn-line"
                     >
                       Renombrar
                     </button>
@@ -400,7 +400,7 @@ export default function CategoriasManager() {
                         categoria.isActive ? "Retirar" : "Reactivar"
                       }
                       title={categoria.isActive ? "Retirar" : "Reactivar"}
-                      className="rk-press rk-touch grid h-11 w-11 place-items-center rounded-full hover:bg-ink/5"
+                      className="rk-notif-check" style={{ margin: 0, width: 40, height: 40 }}
                     >
                       <Power size={16} aria-hidden />
                     </button>
@@ -412,7 +412,7 @@ export default function CategoriasManager() {
                         onClick={() => retirar(categoria)}
                         aria-label="Eliminar"
                         title="Eliminar"
-                        className="rk-press rk-touch grid h-11 w-11 place-items-center rounded-full text-danger hover:bg-danger/10"
+                        className="rk-icon-button-danger"
                       >
                         <Trash2 size={16} aria-hidden />
                       </button>

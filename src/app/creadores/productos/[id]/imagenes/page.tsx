@@ -564,7 +564,7 @@ export default function EditarImagenesPage() {
         <div className="mb-8">
           <Link
             href={`/creadores/productos/${id}`}
-            className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
+            className="rk-auth-back"
           >
             ← Volver a gestionar
           </Link>
@@ -634,7 +634,7 @@ export default function EditarImagenesPage() {
               )}
             </div>
 
-            <label className="rk-btn rk-btn-primary mx-auto mt-4 rk-btn-compact cursor-pointer !px-5 !py-2.5 !text-sm">
+            <label className="rk-btn rk-btn-primary mx-auto mt-4 rk-btn-compact cursor-pointer">
               {uploadingCover
                 ? "Subiendo portada..."
                 : coverUrl
@@ -776,7 +776,7 @@ export default function EditarImagenesPage() {
               <div>
                 <span
                   aria-hidden
-                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink"
+                  className="rk-empty-icon mx-auto text-ink"
                 >
                   <ImagePlus size={22} />
                 </span>
@@ -915,7 +915,7 @@ export default function EditarImagenesPage() {
               )}
 
               {error && (
-                <p className="rk-fade rounded-rk-md border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger">
+                <p className="rk-upload-error rk-fade">
                   {error}
                 </p>
               )}
@@ -946,7 +946,7 @@ export default function EditarImagenesPage() {
 
             <Link
               href={`/creadores/productos/${id}`}
-              className="rk-btn rk-btn-glass"
+              className="rk-btn rk-btn-line"
             >
               Cancelar
             </Link>

@@ -168,72 +168,53 @@ export default function Account() {
 
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
 
-        {/* ========== CABECERA ========== */}
-        <section className="rk-fade-up relative overflow-hidden">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-ink/[0.05] blur-[90px]"
-          />
+        {/* ========== PERFIL ========== */}
+        <section className="rk-fade-up">
+          <p className="rk-eyebrow mb-5">Mi cuenta</p>
 
-          <p className="rk-eyebrow">RCKTDMG</p>
-
-          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
-            Mi cuenta
-          </h1>
-
-          <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
-            Gestiona tus compras, recursos y actividad.
-          </p>
-        </section>
-
-        {/* ========== IDENTIDAD ========== */}
-        <section className="rk-fade-up rk-enter-1 mt-6">
-          <div className="rk-card flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-            <div className="flex min-w-0 items-center gap-4">
-              <span className="rk-media relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full text-lg font-semibold text-ink/70 sm:h-16 sm:w-16 sm:text-xl">
+          <div className="rk-profile">
+            <div className="rk-profile-avatar">
+              <span
+                className="rk-profile-initials"
+                style={{ position: "relative", overflow: "hidden" }}
+              >
                 {user?.avatarUrl ? (
                   <Image
                     src={user.avatarUrl}
                     alt={displayName || "Avatar"}
                     fill
                     className="object-cover"
-                    sizes="64px"
+                    sizes="92px"
                   />
                 ) : (
                   initial
                 )}
               </span>
-
-              <div className="min-w-0">
-                {/* Solo datos reales de la sesion. */}
-                {displayName && (
-                  <p className="truncate text-[17px] font-semibold leading-tight">
-                    {displayName}
-                  </p>
-                )}
-
-                {user?.email && (
-                  <p className="mt-1 truncate text-sm text-ink/60">
-                    {user.email}
-                  </p>
-                )}
-              </div>
             </div>
 
-            {user && (
-              <div className="flex shrink-0 flex-wrap items-center gap-2">
-                <span className="rk-badge rk-badge-accent">
-                  {ROLE_LABEL[user.role] || user.role}
-                </span>
+            <div className="min-w-0">
+              {/* Solo datos reales de la sesión. */}
+              <h1 className="rk-profile-name">{displayName || "Mi cuenta"}</h1>
 
-                {user.isVerified && (
+              <div className="rk-profile-meta">
+                {user && (
+                  <span className="rk-badge rk-badge-accent rk-badge-dot">
+                    {ROLE_LABEL[user.role] || user.role}
+                  </span>
+                )}
+
+                {user?.isVerified && (
                   <span className="rk-badge rk-badge-success">
                     <BadgeCheck size={13} />
                     Verificado
                   </span>
                 )}
+
+                {user?.email && (
+                  <span className="min-w-0 truncate">{user.email}</span>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </section>
 
@@ -241,14 +222,14 @@ export default function Account() {
         {error && (
           <div
             role="alert"
-            className="rk-fade mt-4 rounded-rk-md border border-danger/25 bg-danger/10 px-5 py-4 text-sm text-danger"
+            className="rk-upload-error rk-fade mt-6"
           >
             {error}
           </div>
         )}
 
         {/* ========== RESUMEN REAL ========== */}
-        <section className="rk-fade-up rk-enter-2 mt-3 grid grid-cols-2 gap-2.5 sm:gap-3">
+        <section className="rk-fade-up rk-enter-2 rk-stats mt-8">
           {stats.map((stat) => {
             const Icon = stat.icon;
 
@@ -256,27 +237,33 @@ export default function Account() {
               <Link
                 key={stat.href}
                 href={stat.href}
-                className="rk-card rk-card-hover rk-press group flex items-center justify-between gap-4 p-4 sm:p-5"
+                className="rk-stat rk-stat-iris"
+                style={{ color: "inherit", textDecoration: "none" }}
               >
-                <div className="min-w-0">
-                  <p className="rk-eyebrow">{stat.label}</p>
+                <div className="rk-stat-main">
+                  <div className="rk-stat-head">
+                    <p className="rk-stat-label">{stat.label}</p>
 
-                  <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight">
-                    {loading ? (
-                      <span className="inline-block h-8 w-10 animate-pulse rounded-full bg-ink/[0.07] align-middle" />
-                    ) : (
-                      stat.value
-                    )}
-                  </p>
-
-                  <p className="mt-1 text-sm text-ink/60">
-                    {stat.hint}
-                  </p>
+                    <p className="rk-stat-value">
+                      {loading ? (
+                        <span
+                          className="rk-skeleton"
+                          style={{ display: "inline-block", width: 40, height: 28, borderRadius: 999 }}
+                        />
+                      ) : (
+                        stat.value
+                      )}
+                    </p>
+                  </div>
                 </div>
 
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink transition-transform duration-normal ease-rk group-hover:scale-110">
-                  <Icon size={19} />
-                </span>
+                <div className="rk-stat-foot">
+                  <span>{stat.hint}</span>
+
+                  <span aria-hidden className="rk-stat-chip">
+                    <Icon size={15} />
+                  </span>
+                </div>
               </Link>
             );
           })}
@@ -302,7 +289,7 @@ export default function Account() {
             {paidOrders.length > 0 && (
               <Link
                 href="/mi-cuenta/compras"
-                className="rk-press inline-flex items-center gap-1.5 text-sm font-medium text-ink transition-opacity hover:opacity-75"
+                className="rk-btn rk-btn-line"
               >
                 Ver todas
                 <ArrowRight size={15} />
@@ -313,19 +300,9 @@ export default function Account() {
           <div className="rk-divider mt-4" />
 
           {loading ? (
-            <div className="mt-5 space-y-2.5" aria-busy="true">
+            <div className="mt-5 grid gap-2.5" aria-busy="true">
               {[0, 1, 2].map((index) => (
-                <div
-                  key={index}
-                  className="rk-card flex items-center gap-4 p-3"
-                >
-                  <div className="rk-aspect-product w-12 shrink-0 animate-pulse rounded-rk-sm bg-ink/[0.06]" />
-
-                  <div className="min-w-0 flex-1">
-                    <div className="h-3.5 w-2/3 animate-pulse rounded-full bg-ink/[0.06]" />
-                    <div className="mt-2 h-3 w-24 animate-pulse rounded-full bg-ink/[0.05]" />
-                  </div>
-                </div>
+                <div key={index} className="rk-skeleton" style={{ height: 76, borderRadius: 22 }} />
               ))}
             </div>
           ) : paidOrders.length === 0 ? (
@@ -338,70 +315,59 @@ export default function Account() {
               />
             </div>
           ) : (
-            <div className="mt-5 space-y-2.5">
+            <ul className="rk-row-list mt-5">
               {paidOrders.slice(0, 4).map((order) => {
                 const cover = order.items[0]?.product.coverUrl;
 
                 return (
-                  <Link
-                    key={order.id}
-                    href="/mi-cuenta/compras"
-                    className="rk-card rk-card-hover rk-press-sm flex items-center gap-4 p-3"
-                  >
-                    {/* Miniatura 9:16, siempre nitida. */}
-                    <div
-                      className={`rk-media ${claseProporcion(
-                        {
-                        categoriaSlug: order.items[0]?.product.category?.slug,
-                        pieceType: order.items[0]?.product.pieceType as never,
-                      }
-                      )} relative w-12 shrink-0 overflow-hidden rounded-rk-sm`}
-                    >
-                      {cover ? (
-                        <Image
-                          src={cover}
-                          alt={order.items[0].product.name}
-                          fill
-                          className="object-cover"
-                          sizes="48px"
-                        />
-                      ) : (
-                        <span className="flex h-full items-center justify-center text-[8px] uppercase tracking-[0.2em] text-ink/45">
-                          RK
+                  <li key={order.id}>
+                    <Link href="/mi-cuenta/compras" className="rk-row-card">
+                      <div className="rk-row-card-head" style={{ alignItems: "center" }}>
+                        {/* Miniatura con la proporción real del recurso */}
+                        <span
+                          className={`rk-media ${claseProporcion({
+                            categoriaSlug: order.items[0]?.product.category?.slug,
+                            pieceType: order.items[0]?.product.pieceType as never,
+                          })} rk-row-card-thumb`}
+                        >
+                          {cover && (
+                            <Image
+                              src={cover}
+                              alt={order.items[0].product.name}
+                              fill
+                              className="object-cover"
+                              sizes="44px"
+                            />
+                          )}
                         </span>
-                      )}
-                    </div>
 
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">
-                        {order.items[0]?.product.name || "Pedido"}
+                        <div className="min-w-0 flex-1">
+                          <p className="rk-row-card-title">
+                            {order.items[0]?.product.name || "Pedido"}
+                          </p>
 
-                        {order.items.length > 1 && (
-                          <span className="text-ink/60">
-                            {" "}
-                            y {order.items.length - 1} más
+                          <p className="rk-row-card-sub">
+                            {formatDate(order.createdAt)}
+                            {order.items.length > 1 &&
+                              ` · y ${order.items.length - 1} más`}
+                          </p>
+                        </div>
+
+                        <div className="rk-row-card-side">
+                          <p className="rk-row-card-amount">
+                            S/ {Number(order.total).toFixed(2)}
+                          </p>
+
+                          <span className="rk-badge rk-badge-success">
+                            Pagado
                           </span>
-                        )}
-                      </p>
-
-                      <p className="mt-1 text-xs text-ink/60">
-                        {formatDate(order.createdAt)}
-                      </p>
-                    </div>
-
-                    <div className="shrink-0 text-right">
-                      <p className="text-sm font-semibold tabular-nums">
-                        S/ {Number(order.total).toFixed(2)}
-                      </p>
-
-                      <span className="rk-badge rk-badge-success mt-1">
-                        Pagado
-                      </span>
-                    </div>
-                  </Link>
+                        </div>
+                      </div>
+                    </Link>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           )}
         </section>
 

@@ -275,7 +275,7 @@ export default function ColeccionesPage() {
         {error && (
           <div
             role="alert"
-            className="rk-fade mt-4 rounded-rk-md border border-danger/25 bg-danger/10 px-5 py-4 text-sm text-danger"
+            className="rk-upload-error rk-fade mt-4"
           >
             {error}
           </div>
@@ -479,7 +479,7 @@ export default function ColeccionesPage() {
                             onClick={() =>
                               updateCollection(collection.id)
                             }
-                            className="rk-btn rk-btn-primary rk-btn-compact !px-4 !py-2 !text-xs"
+                            className="rk-btn rk-btn-primary rk-btn-compact"
                           >
                             <Check size={14} />
                             Guardar
@@ -491,7 +491,7 @@ export default function ColeccionesPage() {
                               setEditingId(null);
                               setEditingName("");
                             }}
-                            className="rk-btn rk-btn-ghost rk-btn-compact !px-4 !py-2 !text-xs"
+                            className="rk-btn rk-btn-ghost rk-btn-compact"
                           >
                             <X size={14} />
                             Cancelar

@@ -210,7 +210,7 @@ export default function ProductGallery({
                 type="button"
                 onClick={() => goTo(selectedIndex - 1)}
                 aria-label="Imagen anterior"
-                className="rk-press rk-glass-on-image absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full"
+                className="rk-hero-round rk-press absolute left-3 top-1/2 -translate-y-1/2"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -219,7 +219,7 @@ export default function ProductGallery({
                 type="button"
                 onClick={() => goTo(selectedIndex + 1)}
                 aria-label="Imagen siguiente"
-                className="rk-press rk-glass-on-image absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full"
+                className="rk-hero-round rk-press absolute right-3 top-1/2 -translate-y-1/2"
               >
                 <ChevronRight size={18} />
               </button>

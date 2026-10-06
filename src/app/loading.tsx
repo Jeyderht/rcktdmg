@@ -45,9 +45,9 @@ export default function Loading() {
         */}
         <span
           aria-hidden
-          className="rk-carga-barra block h-[3px] w-28 overflow-hidden rounded-full bg-ink/10"
+          className="rk-carga-barra block h-[3px] w-28 overflow-hidden rounded-full"
         >
-          <span className="rk-carga-pulso block h-full w-1/2 rounded-full bg-primary" />
+          <span className="rk-carga-pulso block h-full w-1/2 rounded-full" />
         </span>
 
         <span className="sr-only">Cargando…</span>

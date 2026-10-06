@@ -127,7 +127,7 @@ export default function MisComprasPage() {
                     {orders.length > 0 && (
                         <Link
                             href="/mi-cuenta/descargas"
-                            className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2.5 !text-sm"
+                            className="rk-btn rk-btn-line"
                         >
                             <DownloadIcon size={15} />
                             Mis descargas
@@ -137,20 +137,9 @@ export default function MisComprasPage() {
 
                 {/* CARGANDO */}
                 {loading && (
-                    <div className="mt-8 space-y-3" aria-busy="true">
+                    <div className="mt-8 grid gap-3" aria-busy="true">
                         {[0, 1].map((index) => (
-                            <div key={index} className="rk-card p-5">
-                                <div className="h-3.5 w-32 animate-pulse rounded-full bg-ink/[0.06]" />
-
-                                <div className="mt-5 flex items-center gap-4">
-                                    <div className="rk-aspect-product w-14 animate-pulse rounded-rk-sm bg-ink/[0.06]" />
-
-                                    <div className="min-w-0 flex-1">
-                                        <div className="h-3.5 w-2/3 animate-pulse rounded-full bg-ink/[0.06]" />
-                                        <div className="mt-2 h-3 w-24 animate-pulse rounded-full bg-ink/[0.05]" />
-                                    </div>
-                                </div>
-                            </div>
+                            <div key={index} className="rk-skeleton" style={{ height: 150, borderRadius: 22 }} />
                         ))}
                     </div>
                 )}
@@ -159,14 +148,14 @@ export default function MisComprasPage() {
                 {!loading && error && (
                     <div
                         role="alert"
-                        className="rk-fade mt-8 rounded-rk-md border border-danger/25 bg-danger/10 p-5"
+                        className="rk-upload-error rk-fade mt-8"
                     >
-                        <p className="text-sm text-danger">{error}</p>
+                        <p style={{ margin: 0 }}>{error}</p>
 
                         <button
                             type="button"
                             onClick={loadOrders}
-                            className="rk-btn rk-btn-primary mt-4 rk-btn-compact !px-4 !py-2.5 !text-sm"
+                            className="rk-btn rk-btn-primary mt-4"
                         >
                             Intentar nuevamente
                         </button>
@@ -190,145 +179,100 @@ export default function MisComprasPage() {
 
                 {/* PEDIDOS */}
                 {!loading && !error && orders.length > 0 && (
-                    <section className="mt-8 space-y-4">
+                    <section className="rk-row-list mt-8">
                         {orders.map((order) => (
-                            <article
-                                key={order.id}
-                                className="rk-fade-up rk-card overflow-hidden"
-                            >
+                            <article key={order.id} className="rk-fade-up rk-row-card">
                                 {/* CABECERA DEL PEDIDO */}
-                                <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-3 p-4 sm:p-5">
+                                <div className="rk-row-card-head">
                                     <div className="min-w-0">
-                                        <p className="text-sm font-medium">
+                                        <p className="rk-row-card-title">
                                             {formatDate(order.createdAt)}
                                         </p>
 
-                                        <p className="mt-1 truncate font-mono text-[11px] text-ink/60">
-                                            #{order.id}
-                                        </p>
+                                        <p className="rk-row-card-code">#{order.id}</p>
                                     </div>
 
-                                    <div className="flex items-center gap-3">
+                                    <div className="rk-row-card-side">
+                                        <p className="rk-row-card-amount">
+                                            {formatMoney(order.total)}
+                                        </p>
+
                                         <span
                                             className={`rk-badge ${getOrderStatusBadge(
                                                 order.status
                                             )}`}
                                         >
-                                            {getOrderStatusLabel(
-                                                order.status
-                                            )}
+                                            {getOrderStatusLabel(order.status)}
                                         </span>
-
-                                        <p className="text-lg font-semibold tabular-nums tracking-tight">
-                                            {formatMoney(order.total)}
-                                        </p>
                                     </div>
                                 </div>
 
-                                <div className="rk-divider" />
-
                                 {/* RECURSOS DEL PEDIDO */}
-                                <div className="rk-divider-y">
+                                <ul className="rk-row-card-box rk-row-items">
                                     {order.items.map((item) => (
-                                        <div
-                                            key={item.id}
-                                            className="flex flex-wrap items-center gap-4 p-4 sm:p-5"
-                                        >
-                                            {/* Contenido visual 9:16, sin desenfoque. */}
+                                        <li key={item.id}>
                                             <Link
                                                 href={`/tienda/${item.product.slug}`}
-                                                className="rk-press-sm shrink-0"
                                                 aria-label={item.product.name}
+                                                className={`rk-media ${claseProporcion({
+                                                    categoriaSlug: item.product.category?.slug,
+                                                    pieceType: item.product.pieceType as never,
+                                                })} rk-row-card-thumb`}
                                             >
-                                                <div
-                                                    className={`rk-media ${claseProporcion(
-                                                        {
-                                                        categoriaSlug: item.product.category?.slug,
-                                                        pieceType: item.product.pieceType as never,
-                                                    }
-                                                    )} relative w-14 overflow-hidden rounded-rk-sm sm:w-16`}
-                                                >
-                                                    {item.product.coverUrl ? (
-                                                        <Image
-                                                            src={
-                                                                item.product
-                                                                    .coverUrl
-                                                            }
-                                                            alt={
-                                                                item.product
-                                                                    .name
-                                                            }
-                                                            fill
-                                                            className="object-cover"
-                                                            sizes="64px"
-                                                        />
-                                                    ) : (
-                                                        <span className="flex h-full items-center justify-center text-[8px] uppercase tracking-[0.2em] text-ink/45">
-                                                            RK
-                                                        </span>
-                                                    )}
-                                                </div>
+                                                {item.product.coverUrl && (
+                                                    <Image
+                                                        src={item.product.coverUrl}
+                                                        alt={item.product.name}
+                                                        fill
+                                                        className="object-cover"
+                                                        sizes="52px"
+                                                    />
+                                                )}
                                             </Link>
 
                                             <div className="min-w-0 flex-1">
                                                 <Link
                                                     href={`/tienda/${item.product.slug}`}
-                                                    className="block truncate text-[15px] font-semibold transition-opacity hover:opacity-70"
+                                                    className="rk-row-item-name"
                                                 >
                                                     {item.product.name}
                                                 </Link>
 
-                                                <p className="mt-1 text-sm text-ink/60">
+                                                <p className="rk-row-card-meta">
                                                     {formatMoney(item.price)}
-
-                                                    {item.quantity > 1 && (
-                                                        <span>
-                                                            {" · "}
-                                                            {item.quantity}{" "}
-                                                            unidades
-                                                        </span>
-                                                    )}
+                                                    {item.quantity > 1 &&
+                                                        ` · ${item.quantity} unidades`}
                                                 </p>
                                             </div>
 
-                                            <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto">
-                                                {/* La descarga vive en su página: la
-                                                    entrega el mismo registro real. */}
-                                                {order.status === "PAID" ? (
-                                                    <Link
-                                                        href="/mi-cuenta/descargas"
-                                                        className="rk-btn rk-btn-primary rk-btn-compact flex-1 !px-4 !py-2.5 !text-sm sm:flex-none"
-                                                    >
-                                                        <DownloadIcon
-                                                            size={15}
-                                                        />
-                                                        Descargar
-                                                    </Link>
-                                                ) : (
-                                                    <Link
-                                                        href={`/tienda/${item.product.slug}`}
-                                                        className="rk-btn rk-btn-glass rk-btn-compact flex-1 !px-4 !py-2.5 !text-sm sm:flex-none"
-                                                    >
-                                                        Ver recurso
-                                                    </Link>
-                                                )}
-                                            </div>
-                                        </div>
+                                            {/* La descarga vive en su página: la
+                                                entrega el mismo registro real. */}
+                                            {order.status === "PAID" ? (
+                                                <Link
+                                                    href="/mi-cuenta/descargas"
+                                                    className="rk-btn rk-btn-buy"
+                                                >
+                                                    <DownloadIcon size={15} />
+                                                    Descargar
+                                                </Link>
+                                            ) : (
+                                                <Link
+                                                    href={`/tienda/${item.product.slug}`}
+                                                    className="rk-btn rk-btn-line"
+                                                >
+                                                    Ver recurso
+                                                </Link>
+                                            )}
+                                        </li>
                                     ))}
-                                </div>
+                                </ul>
 
                                 {/* PAGO REAL, SOLO SI EXISTE */}
                                 {order.payment && (
-                                    <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-1 border-t border-line/10 bg-ink/[0.02] px-4 py-3 text-xs text-ink/60 sm:px-5">
-                                        <span>
-                                            Pago: {order.payment.provider}
-                                        </span>
-
-                                        <span>
-                                            Estado del pago:{" "}
-                                            {order.payment.status}
-                                        </span>
-                                    </div>
+                                    <p className="rk-row-card-meta rk-row-card-foot">
+                                        Pago: {order.payment.provider} · Estado:{" "}
+                                        {order.payment.status}
+                                    </p>
                                 )}
                             </article>
                         ))}

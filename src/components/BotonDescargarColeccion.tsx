@@ -111,7 +111,7 @@ export default function BotonDescargarColeccion({
       {error && (
         <p
           role="alert"
-          className="mt-2 rounded-rk-sm border border-danger/25 bg-danger/10 px-3 py-2 text-[12px] leading-5 text-danger"
+          className="rk-upload-error mt-2"
         >
           {error}
         </p>

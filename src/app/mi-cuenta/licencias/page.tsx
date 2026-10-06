@@ -107,7 +107,7 @@ export default function LicenciasPage() {
         {error && (
           <p
             role="alert"
-            className="mt-6 rounded-rk-sm border border-danger/25 bg-danger/[0.06] px-4 py-3 text-sm text-danger"
+            className="rk-upload-error mt-6"
           >
             {error}
           </p>

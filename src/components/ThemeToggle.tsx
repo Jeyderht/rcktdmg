@@ -29,7 +29,7 @@ export default function ThemeToggle({
 }: {
   variant?: "compact" | "full";
 }) {
-  const { preference, setPreference, ready } = useTheme();
+  const { preference, resolved, setPreference, ready } = useTheme();
 
   if (variant === "full") {
     return (
@@ -64,41 +64,25 @@ export default function ThemeToggle({
     );
   }
 
-  return (
-    <div
-      role="radiogroup"
-      aria-label="Tema de la interfaz"
-      className="flex items-center gap-0.5 rounded-full border border-line/10 bg-ink/[0.04] p-0.5"
-    >
-      {OPTIONS.map((option) => {
-        const Icon = option.icon;
-        const active = ready && preference === option.value;
+  /*
+    Compacto: interruptor sol / luna (rk-theme-toggle). El círculo
+    se coloca solo según data-theme; aquí solo se cambia el tema.
+    La opción "sistema" sigue en la variante completa.
+  */
+  const oscuro = resolved === "dark";
 
-        return (
-          <button
-            key={option.value}
-            type="button"
-            role="radio"
-            aria-checked={active}
-            aria-label={`Tema ${option.label.toLowerCase()}`}
-            title={option.label}
-            onClick={() => setPreference(option.value)}
-            /*
-              El botón sigue midiendo 32 px a la vista; el área
-              que responde al dedo llega a 44 de alto. No se
-              ensancha porque los tres segmentos están pegados
-              y se robarían las pulsaciones entre ellos.
-            */
-            className={`rk-press rk-hit-44-y flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
-              active
-                ? "bg-surface text-foreground shadow-rk-sm"
-                : "text-muted/50 hover:text-foreground"
-            }`}
-          >
-            <Icon size={15} />
-          </button>
-        );
-      })}
-    </div>
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={oscuro}
+      aria-label="Modo oscuro"
+      onClick={() => setPreference(oscuro ? "light" : "dark")}
+      className="rk-theme-toggle rk-theme-toggle-sm"
+    >
+      <span className="rk-theme-toggle-knob" aria-hidden="true" />
+      <Sun className="rk-theme-toggle-sun" aria-hidden="true" />
+      <Moon className="rk-theme-toggle-moon" aria-hidden="true" />
+    </button>
   );
 }

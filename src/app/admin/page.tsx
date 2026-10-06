@@ -225,7 +225,7 @@ export default async function Admin() {
       <section className="rk-fade-up relative overflow-hidden">
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-ink/[0.05] blur-[90px]"
+          className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full rk-halo-marca blur-[90px]"
         />
 
         <p className="rk-eyebrow">Admin Center</p>
@@ -255,7 +255,7 @@ export default async function Admin() {
 
       {/* IDENTIDAD DEL ADMINISTRADOR */}
       <section className="rk-fade-up rk-enter-1 mt-6">
-        <div className="rk-card flex flex-wrap items-center justify-between gap-4 p-4">
+        <div className="rk-row-card flex flex-wrap items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3.5">
             <span className="rk-media relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full text-base font-semibold text-ink/70">
               {adminUser?.avatarUrl ? (
@@ -402,74 +402,55 @@ export default async function Admin() {
 
       {/* ÚLTIMAS VENTAS */}
       <section className="rk-enter rk-enter-3 mt-4">
-        <div className="rk-card overflow-hidden">
-          <div className="flex items-center justify-between gap-3 border-b border-line/10 px-5 py-4">
-            <h2 className="text-sm font-semibold">Últimas ventas</h2>
+        <div className="rk-table-wrap">
+          <div className="rk-table-head">
+            <h2>Últimas ventas</h2>
 
-            <Link
-              href="/admin/recursos"
-              className="rk-press text-xs font-medium text-ink/60 hover:text-ink"
-            >
-              Ver recursos
-            </Link>
+            <Link href="/admin/recursos">Ver recursos</Link>
           </div>
 
           {stats.recentSales.length === 0 ? (
-            <p className="px-5 py-12 text-center text-sm text-ink/60">
+            <p className="rk-table-empty">
               Todavía no hay ventas registradas.
             </p>
           ) : (
             <>
               {/* ESCRITORIO: tabla */}
-              <div className="hidden overflow-x-auto lg:block">
-                <table className="w-full text-left text-sm">
-                  <thead className="border-b border-line/10">
-                    <tr className="text-[11px] uppercase tracking-wider text-ink/60">
-                      <th className="px-5 py-3 font-medium">
-                        Producto
-                      </th>
-                      <th className="px-5 py-3 font-medium">
-                        Cliente
-                      </th>
-                      <th className="px-5 py-3 font-medium">
-                        Creador
-                      </th>
-                      <th className="px-5 py-3 font-medium">Fecha</th>
-                      <th className="px-5 py-3 font-medium">
-                        Importe
-                      </th>
-                      <th className="px-5 py-3 font-medium">Estado</th>
-                      <th className="px-5 py-3 font-medium">Acción</th>
+              <div className="rk-table-scroll hidden lg:block">
+                <table className="rk-table">
+                  <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th>Cliente</th>
+                      <th>Creador</th>
+                      <th>Fecha</th>
+                      <th className="rk-table-num">Importe</th>
+                      <th>Estado</th>
+                      <th className="rk-table-actions">Acción</th>
                     </tr>
                   </thead>
 
-                  <tbody className="divide-y divide-line/10">
+                  <tbody>
                     {stats.recentSales.map((sale) => (
                       <tr key={sale.id}>
-                        <td className="max-w-[16rem] truncate px-5 py-3 font-medium">
+                        <td className="max-w-[16rem] truncate font-semibold">
                           {sale.productName}
                         </td>
-                        <td className="px-5 py-3 text-ink/60">
-                          {sale.buyer}
-                        </td>
-                        <td className="px-5 py-3 text-ink/60">
-                          {sale.creator}
-                        </td>
-                        <td className="whitespace-nowrap px-5 py-3 text-ink/60">
+                        <td className="rk-table-muted">{sale.buyer}</td>
+                        <td className="rk-table-muted">{sale.creator}</td>
+                        <td className="rk-table-muted">
                           {shortDate(sale.createdAt)}
                         </td>
-                        <td className="whitespace-nowrap px-5 py-3 font-semibold">
-                          {money(sale.amount)}
-                        </td>
-                        <td className="px-5 py-3">
+                        <td className="rk-table-num">{money(sale.amount)}</td>
+                        <td>
                           <span className="rk-badge rk-badge-success">
                             Pagado
                           </span>
                         </td>
-                        <td className="px-5 py-3">
+                        <td className="rk-table-actions">
                           <Link
                             href={`/tienda/${sale.productSlug}`}
-                            className="rk-press text-xs font-medium text-ink/60 underline underline-offset-2 hover:text-ink"
+                            className="rk-table-link"
                           >
                             Ver
                           </Link>
@@ -480,34 +461,36 @@ export default async function Admin() {
                 </table>
               </div>
 
-              {/* MÓVIL: tarjetas compactas */}
-              <ul className="divide-y divide-line/10 lg:hidden">
+              {/* MÓVIL: tarjetas */}
+              <ul className="rk-row-list is-inset lg:hidden">
                 {stats.recentSales.map((sale) => (
-                  <li key={sale.id} className="px-4 py-3.5">
-                    <div className="flex items-start justify-between gap-3">
-                      <Link
-                        href={`/tienda/${sale.productSlug}`}
-                        className="min-w-0 flex-1"
-                      >
-                        <p className="truncate text-[13px] font-semibold">
-                          {sale.productName}
-                        </p>
+                  <li key={sale.id}>
+                    <Link
+                      href={`/tienda/${sale.productSlug}`}
+                      className="rk-row-card"
+                    >
+                      <div className="rk-row-card-head">
+                        <div className="min-w-0">
+                          <p className="rk-row-card-title">
+                            {sale.productName}
+                          </p>
 
-                        <p className="mt-0.5 truncate text-[11px] text-ink/60">
-                          {sale.buyer} · {sale.creator}
-                        </p>
-                      </Link>
+                          <p className="rk-row-card-sub">
+                            {sale.buyer} · {sale.creator}
+                          </p>
+                        </div>
 
-                      <div className="shrink-0 text-right">
-                        <p className="text-[13px] font-semibold">
-                          {money(sale.amount)}
-                        </p>
+                        <div className="rk-row-card-side">
+                          <p className="rk-row-card-amount">
+                            {money(sale.amount)}
+                          </p>
 
-                        <p className="mt-0.5 text-[10px] text-ink/60">
-                          {shortDate(sale.createdAt)}
-                        </p>
+                          <p className="rk-row-card-meta">
+                            {shortDate(sale.createdAt)}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   </li>
                 ))}
               </ul>

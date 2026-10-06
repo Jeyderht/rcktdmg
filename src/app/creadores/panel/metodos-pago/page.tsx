@@ -152,7 +152,7 @@ export default function MetodosPagoPage() {
         {error && (
           <div
             role="alert"
-            className="rk-fade mt-6 rounded-rk-md border border-danger/25 bg-danger/10 px-5 py-4 text-sm text-danger"
+            className="rk-upload-error rk-fade mt-6"
           >
             {error}
           </div>
@@ -186,7 +186,7 @@ export default function MetodosPagoPage() {
               <div>
                 <label
                   htmlFor="type"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Tipo de método
                 </label>
@@ -210,7 +210,7 @@ export default function MetodosPagoPage() {
               <div>
                 <label
                   htmlFor="holderName"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Titular
                 </label>
@@ -229,7 +229,7 @@ export default function MetodosPagoPage() {
               <div>
                 <label
                   htmlFor="documentNumber"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   DNI o RUC
                 </label>
@@ -251,7 +251,7 @@ export default function MetodosPagoPage() {
                   <div>
                     <label
                       htmlFor="bankName"
-                      className="mb-2 block text-sm font-medium"
+                      className="rk-label mb-2 block"
                     >
                       Banco
                     </label>
@@ -270,7 +270,7 @@ export default function MetodosPagoPage() {
                   <div>
                     <label
                       htmlFor="accountNumber"
-                      className="mb-2 block text-sm font-medium"
+                      className="rk-label mb-2 block"
                     >
                       Número de cuenta
                     </label>
@@ -289,7 +289,7 @@ export default function MetodosPagoPage() {
                   <div>
                     <label
                       htmlFor="cci"
-                      className="mb-2 block text-sm font-medium"
+                      className="rk-label mb-2 block"
                     >
                       CCI
                     </label>
@@ -309,7 +309,7 @@ export default function MetodosPagoPage() {
                 <div>
                   <label
                     htmlFor="phone"
-                    className="mb-2 block text-sm font-medium"
+                    className="rk-label mb-2 block"
                   >
                     Número de celular
                   </label>
@@ -400,7 +400,7 @@ export default function MetodosPagoPage() {
                       <div className="flex min-w-0 items-start gap-3">
                         <span
                           aria-hidden
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink"
+                          className="rk-icon-tile h-10 w-10"
                         >
                           {method.type === "BANK" ? (
                             <CreditCard size={18} />

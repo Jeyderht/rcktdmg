@@ -125,7 +125,7 @@ export default async function StoreResults({
       ) : (
         /* SIN RESULTADOS */
         <div className="rk-fade-up rk-tile mt-6 px-6 py-16 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-rk-md bg-ink/[0.06]">
+          <div className="rk-empty-icon mx-auto">
             <SearchX size={26} />
           </div>
 

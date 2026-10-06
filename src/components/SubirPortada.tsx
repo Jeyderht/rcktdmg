@@ -67,7 +67,7 @@ export default function SubirPortada({
 
   return (
     <div>
-      <span className="text-sm font-medium">{etiqueta}</span>
+      <span className="rk-label">{etiqueta}</span>
 
       {valor ? (
         <div className="mt-1.5 flex flex-wrap items-center gap-3">
@@ -82,7 +82,7 @@ export default function SubirPortada({
           </span>
 
           <div className="flex flex-wrap gap-2">
-            <label className="rk-btn rk-btn-line cursor-pointer !px-4 !py-2 !text-[13px]">
+            <label className="rk-btn rk-btn-line cursor-pointer">
               {subiendo ? (
                 <Loader2 size={14} aria-hidden className="animate-spin" />
               ) : (
@@ -106,14 +106,14 @@ export default function SubirPortada({
               type="button"
               onClick={() => alCambiar(null)}
               aria-label="Quitar portada"
-              className="rk-press rk-touch grid h-10 w-10 place-items-center rounded-full text-danger hover:bg-danger/10"
+              className="rk-icon-button-danger"
             >
               <Trash2 size={15} aria-hidden />
             </button>
           </div>
         </div>
       ) : (
-        <label className="rk-press mt-1.5 flex min-h-[2.75rem] w-full cursor-pointer items-center justify-center gap-2 rounded-rk-md border border-dashed border-line/25 px-4 py-3 text-sm transition-colors hover:border-ink/40">
+        <label className="rk-upload mt-1.5 justify-center">
           {subiendo ? (
             <>
               <Loader2 size={15} aria-hidden className="animate-spin" />
@@ -144,7 +144,7 @@ export default function SubirPortada({
       )}
 
       {error && (
-        <p role="alert" className="mt-1.5 text-[13px] text-danger">
+        <p role="alert" className="rk-upload-error mt-1.5">
           {error}
         </p>
       )}

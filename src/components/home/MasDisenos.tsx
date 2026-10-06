@@ -93,7 +93,7 @@ export default function MasDisenos({
             <Link
               key={href}
               href={href}
-              className="rk-press group rk-tile flex min-h-[10rem] flex-col justify-between rounded-rk-lg p-5 transition-colors duration-normal ease-rk hover:border-ink/25"
+              className="rk-press group rk-tile flex min-h-[10rem] flex-col justify-between p-5"
             >
               <Icono
                 size={22}

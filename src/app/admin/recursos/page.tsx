@@ -295,7 +295,7 @@ export default async function RecursosAdminPage({
                     {/* Motivo real del rechazo. */}
                     {resource.status === "REJECTED" &&
                       resource.rejectionReason && (
-                        <p className="mt-3 rounded-rk-sm border border-danger/25 bg-danger/10 px-3.5 py-2.5 text-xs leading-5 text-danger">
+                        <p className="rk-upload-error mt-3">
                           <span className="font-medium">
                             Motivo del rechazo:
                           </span>{" "}

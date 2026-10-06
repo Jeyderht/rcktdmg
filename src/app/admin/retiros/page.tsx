@@ -299,7 +299,7 @@ export default function AdminRetirosPage() {
             type="button"
             disabled={isProcessing}
             onClick={() => handleAction(withdrawal.id, "APPROVE")}
-            className="rk-btn rk-btn-primary rk-btn-compact !px-3.5 !py-2 !text-xs"
+            className="rk-btn rk-btn-primary rk-btn-compact"
           >
             {isProcessing ? "Procesando..." : "Aprobar"}
           </button>
@@ -308,7 +308,7 @@ export default function AdminRetirosPage() {
             type="button"
             disabled={isProcessing}
             onClick={() => handleAction(withdrawal.id, "REJECT")}
-            className="rk-btn rk-btn-compact border border-danger/25 !px-3.5 !py-2 !text-xs text-danger hover:bg-danger/10"
+            className="rk-btn rk-btn-compact border border-danger/25 text-danger hover:bg-danger/10"
           >
             Rechazar
           </button>
@@ -322,7 +322,7 @@ export default function AdminRetirosPage() {
           type="button"
           disabled={isProcessing}
           onClick={() => handleAction(withdrawal.id, "PAY")}
-          className="rk-btn rk-btn-success rk-btn-compact !px-3.5 !py-2 !text-xs"
+          className="rk-btn rk-btn-success rk-btn-compact"
         >
           {isProcessing ? "Procesando..." : "Marcar pagado"}
         </button>
@@ -363,7 +363,7 @@ export default function AdminRetirosPage() {
           type="button"
           onClick={loadWithdrawals}
           disabled={loading}
-          className="rk-btn rk-btn-glass shrink-0"
+          className="rk-btn rk-btn-line shrink-0"
         >
           <RefreshCw size={15} />
           {loading ? "Actualizando..." : "Actualizar"}
@@ -428,11 +428,11 @@ export default function AdminRetirosPage() {
         <div className="rk-divider mt-4" />
 
         {loading ? (
-          <div className="mt-5 space-y-2.5" aria-busy="true">
+          <div className="mt-5 grid gap-2.5" aria-busy="true">
             {[0, 1, 2].map((index) => (
-              <div key={index} className="rk-card p-5">
-                <div className="h-4 w-40 animate-pulse rounded-full bg-ink/[0.06]" />
-                <div className="mt-3 h-3 w-24 animate-pulse rounded-full bg-ink/[0.05]" />
+              <div key={index} className="rk-skeleton-card">
+                <div className="rk-skeleton rk-skeleton-line" style={{ width: 160 }} />
+                <div className="rk-skeleton rk-skeleton-line" style={{ width: 96 }} />
               </div>
             ))}
           </div>
@@ -447,60 +447,45 @@ export default function AdminRetirosPage() {
         ) : (
           <>
             {/* ESCRITORIO: tabla */}
-            <div className="rk-card mt-5 hidden overflow-hidden !p-0 xl:block">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="border-b border-line/10">
-                    <tr className="text-[11px] uppercase tracking-wider text-ink/60">
-                      <th className="px-5 py-3 font-medium">
-                        Creador
-                      </th>
-                      <th className="px-5 py-3 font-medium">
-                        Monto
-                      </th>
-                      <th className="px-5 py-3 font-medium">
-                        Método de pago
-                      </th>
-                      <th className="px-5 py-3 font-medium">
-                        Estado
-                      </th>
-                      <th className="px-5 py-3 font-medium">
-                        Fecha
-                      </th>
-                      <th className="px-5 py-3 font-medium">
-                        Nota
-                      </th>
-                      <th className="px-5 py-3 text-right font-medium">
-                        Acción
-                      </th>
+            <div className="rk-table-wrap mt-5 hidden xl:block">
+              <div className="rk-table-scroll">
+                <table className="rk-table">
+                  <thead>
+                    <tr>
+                      <th>Creador</th>
+                      <th className="rk-table-num">Monto</th>
+                      <th>Método de pago</th>
+                      <th>Estado</th>
+                      <th>Fecha</th>
+                      <th>Nota</th>
+                      <th className="rk-table-actions">Acción</th>
                     </tr>
                   </thead>
 
-                  <tbody className="divide-y divide-line/10">
+                  <tbody>
                     {withdrawals.map((withdrawal) => (
                       <tr key={withdrawal.id}>
-                        <td className="px-5 py-4 align-top">
-                          <p className="font-medium">
-                            {withdrawal.creator.name ||
-                              "Sin nombre"}
+                        <td className="rk-table-top">
+                          <p className="rk-table-user-name">
+                            {withdrawal.creator.name || "Sin nombre"}
                           </p>
 
-                          <p className="mt-1 text-xs text-ink/60">
+                          <p className="rk-table-user-email">
                             {withdrawal.creator.email}
                           </p>
                         </td>
 
-                        <td className="whitespace-nowrap px-5 py-4 align-top font-semibold tabular-nums">
+                        <td className="rk-table-num rk-table-top">
                           {formatMoney(Number(withdrawal.amount))}
                         </td>
 
-                        <td className="px-5 py-4 align-top">
+                        <td className="rk-table-top">
                           <PaymentMethodDetails
                             method={withdrawal.paymentMethod}
                           />
                         </td>
 
-                        <td className="px-5 py-4 align-top">
+                        <td className="rk-table-top">
                           <span
                             className={`rk-badge ${
                               statusBadges[withdrawal.status]
@@ -510,23 +495,23 @@ export default function AdminRetirosPage() {
                           </span>
                         </td>
 
-                        <td className="whitespace-nowrap px-5 py-4 align-top text-ink/60">
+                        <td className="rk-table-muted rk-table-top">
                           {formatDate(withdrawal.createdAt)}
 
                           {/* Solo si el registro tiene fecha real. */}
                           {withdrawal.processedAt && (
-                            <span className="mt-1 block text-xs text-ink/60">
+                            <span className="mt-1 block">
                               Procesado{" "}
                               {formatDate(withdrawal.processedAt)}
                             </span>
                           )}
                         </td>
 
-                        <td className="max-w-[16rem] px-5 py-4 align-top text-ink/60">
+                        <td className="rk-table-note rk-table-top">
                           {withdrawal.note || "—"}
                         </td>
 
-                        <td className="px-5 py-4 align-top">
+                        <td className="rk-table-actions rk-table-top">
                           <div className="flex justify-end">
                             <Actions withdrawal={withdrawal} />
                           </div>
@@ -542,27 +527,27 @@ export default function AdminRetirosPage() {
               MÓVIL Y TABLET: la misma información en tarjetas.
               La tabla llegaba a 1300 px y desbordaba la pantalla.
             */}
-            <div className="mt-5 space-y-2.5 xl:hidden">
+            <div className="rk-row-list mt-5 xl:hidden">
               {withdrawals.map((withdrawal) => (
-                <article key={withdrawal.id} className="rk-card p-4">
-                  <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+                <article key={withdrawal.id} className="rk-row-card">
+                  <div className="rk-row-card-head">
                     <div className="min-w-0">
-                      <p className="truncate text-[15px] font-semibold">
+                      <p className="rk-row-card-title">
                         {withdrawal.creator.name || "Sin nombre"}
                       </p>
 
-                      <p className="mt-0.5 truncate text-xs text-ink/60">
+                      <p className="rk-row-card-sub">
                         {withdrawal.creator.email}
                       </p>
                     </div>
 
-                    <div className="shrink-0 text-right">
-                      <p className="text-lg font-semibold tabular-nums">
+                    <div className="rk-row-card-side">
+                      <p className="rk-row-card-amount">
                         {formatMoney(Number(withdrawal.amount))}
                       </p>
 
                       <span
-                        className={`rk-badge mt-1 ${
+                        className={`rk-badge ${
                           statusBadges[withdrawal.status]
                         }`}
                       >
@@ -571,15 +556,14 @@ export default function AdminRetirosPage() {
                     </div>
                   </div>
 
-                  <div className="mt-4 rounded-rk-sm bg-ink/[0.03] p-3.5">
+                  <div className="rk-row-card-box">
                     <PaymentMethodDetails
                       method={withdrawal.paymentMethod}
                     />
                   </div>
 
-                  <p className="mt-3 text-xs text-ink/60">
-                    Solicitado el{" "}
-                    {formatDate(withdrawal.createdAt)}
+                  <p className="rk-row-card-meta">
+                    Solicitado el {formatDate(withdrawal.createdAt)}
 
                     {withdrawal.processedAt && (
                       <>
@@ -590,12 +574,10 @@ export default function AdminRetirosPage() {
                   </p>
 
                   {withdrawal.note && (
-                    <p className="mt-2 text-xs leading-5 text-ink/60">
-                      {withdrawal.note}
-                    </p>
+                    <p className="rk-row-card-meta">{withdrawal.note}</p>
                   )}
 
-                  <div className="mt-4 border-t border-line/10 pt-3.5">
+                  <div className="rk-row-card-foot">
                     <Actions withdrawal={withdrawal} />
                   </div>
                 </article>

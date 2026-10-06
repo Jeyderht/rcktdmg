@@ -49,7 +49,7 @@ export default function AdminRequisitosPage() {
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {TIPOS_PUBLICACION.map((tipo) => (
-            <article key={tipo.clave} className="rk-card p-4">
+            <article key={tipo.clave} className="rk-row-card">
               <p className="text-[14px] font-semibold">{tipo.nombre}</p>
 
               <p className="mt-1 text-[12px] leading-5 text-ink/55">
@@ -59,15 +59,15 @@ export default function AdminRequisitosPage() {
               </p>
 
               {tipo.formatos.length > 0 && (
-                <ul className="mt-2.5 space-y-0.5">
+                <ul className="rk-specs mt-1.5">
                   {tipo.formatos.map((formato) => (
                     <li
                       key={formato.clave}
-                      className="flex items-baseline justify-between gap-3 text-[12px]"
+                      className=""
                     >
                       <span className="text-ink/55">{formato.nombre}</span>
 
-                      <span className="shrink-0 tabular-nums">
+                      <span className="shrink-0 font-semibold tabular-nums">
                         {formato.medida
                           ? `${formato.medida.ancho}×${formato.medida.alto}`
                           : "libre"}

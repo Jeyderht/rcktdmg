@@ -31,10 +31,10 @@ function Ficha({ requisito }: { requisito: Requisito }) {
         {requisito.paraQue}
       </p>
 
-      <dl className="mt-4 space-y-1.5 text-[13px]">
-        <div className="flex items-baseline justify-between gap-3">
-          <dt className="text-ink/55">Medidas</dt>
-          <dd className="text-right font-medium tabular-nums">
+      <dl className="rk-specs mt-3">
+        <div>
+          <dt>Medidas</dt>
+          <dd>
             {requisito.medida
               ? `${requisito.medida.ancho} × ${requisito.medida.alto} px`
               : "Cualquiera"}
@@ -42,24 +42,24 @@ function Ficha({ requisito }: { requisito: Requisito }) {
         </div>
 
         {requisito.medida && (
-          <div className="flex items-baseline justify-between gap-3">
-            <dt className="text-ink/55">Proporción</dt>
-            <dd className="text-right font-medium">
+          <div>
+            <dt>Proporción</dt>
+            <dd>
               {requisito.medida.proporcion}
             </dd>
           </div>
         )}
 
-        <div className="flex items-baseline justify-between gap-3">
-          <dt className="text-ink/55">Formatos</dt>
-          <dd className="text-right font-medium">
+        <div>
+          <dt>Formatos</dt>
+          <dd>
             {comoLista(requisito.formatos)}
           </dd>
         </div>
 
-        <div className="flex items-baseline justify-between gap-3">
-          <dt className="text-ink/55">Peso máximo</dt>
-          <dd className="text-right font-medium tabular-nums">
+        <div>
+          <dt>Peso máximo</dt>
+          <dd>
             {enMegas(requisito.maxBytes)}
           </dd>
         </div>

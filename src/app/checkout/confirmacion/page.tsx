@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense, useState } from "react";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { Check, CheckCircle2, Clock } from "lucide-react";
 
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
@@ -73,139 +73,137 @@ function ConfirmationContent() {
     <>
       <Navbar />
 
-      <main className="mx-auto max-w-3xl px-4 sm:px-5 py-12 sm:py-20">
-        <div className="rk-card p-6 text-center sm:p-10">
-          <div
-            className={`mx-auto flex h-16 w-16 items-center justify-center rounded-rk-md ${
-              paid
-                ? "bg-success/12 text-success"
-                : "bg-warning/12 text-warning"
-            }`}
+      <main className="mx-auto max-w-xl px-4 py-10 sm:px-5 sm:py-16">
+        {/* AVANCE: el pago queda hecho o en curso */}
+        <ol className="rk-steps-line mb-7" aria-label="Pasos de la compra">
+          <li className="is-done">
+            <span className="rk-steps-dot">
+              <Check aria-hidden />
+            </span>
+            Carrito
+          </li>
+
+          <li className="is-done">
+            <span className="rk-steps-dot">
+              <Check aria-hidden />
+            </span>
+            Confirmar
+          </li>
+
+          <li
+            className={paid ? "is-done" : "is-current"}
+            aria-current={paid ? undefined : "step"}
           >
-            {paid ? <CheckCircle2 size={26} /> : <AlertCircle size={26} />}
-          </div>
+            <span className="rk-steps-dot">
+              {paid ? <Check aria-hidden /> : "3"}
+            </span>
+            Pago
+          </li>
+        </ol>
 
-          <p className="mt-8 text-xs uppercase tracking-[0.25em] text-ink/60">
-            RCKTDMG
-          </p>
+        <div className="rk-done" data-tone={paid ? "success" : "warning"}>
+          <span aria-hidden className="rk-done-icon">
+            {paid ? <CheckCircle2 /> : <Clock />}
+          </span>
 
-          <h1 className="mt-3 text-4xl font-semibold">
+          <p className="rk-done-kicker">RCKTDMG</p>
+
+          <h1 className="rk-done-title">
             {paid
               ? "Pago realizado correctamente"
               : "Pedido creado correctamente"}
           </h1>
 
-          <p className="mx-auto mt-5 max-w-xl leading-7 text-ink/60">
+          <p className="rk-done-text">
             {paid
               ? "Tu pedido ha sido pagado y tus productos digitales ya están disponibles para descargar."
               : "Tu pedido ha sido registrado correctamente. Continúa con el pago para acceder a tus productos."}
           </p>
 
           {orderId ? (
-            <div className="mx-auto mt-8 max-w-md rounded-rk-md bg-ink/[0.05] p-5">
-              <p className="text-xs uppercase tracking-wider text-ink/60">
-                Número de pedido
-              </p>
-
-              <p className="mt-2 break-all font-mono text-sm">
-                {orderId}
-              </p>
-            </div>
+            <dl className="rk-done-order">
+              <dt>Número de pedido</dt>
+              <dd>{orderId}</dd>
+            </dl>
           ) : (
-            <div className="mt-8 rounded-rk-md bg-danger/10 p-5 text-sm text-danger">
+            <p role="alert" className="rk-upload-error">
               No se encontró el número de pedido.
-            </div>
+            </p>
           )}
 
           {error && (
-            <div className="mx-auto mt-6 max-w-md rounded-rk-md bg-danger/10 p-4 text-sm text-danger">
+            <p role="alert" className="rk-upload-error">
               {error}
-            </div>
+            </p>
           )}
 
           {/*
             EL BOTÓN DE PRUEBA SOLO EXISTE EN DESARROLLO.
-
-            Antes se pintaba también en producción, donde el
-            endpoint responde 403: un botón que parecía pagar y
-            solo devolvía un error. Ahora, sin pasarela
-            conectada, se dice lo que de verdad ocurre —el
-            pedido queda pendiente— en lugar de ofrecer una
-            acción que no existe.
-
             `NODE_ENV` lo resuelve el compilador, así que en el
             paquete de producción este bloque ni siquiera viaja.
           */}
           {!paid && orderId && EN_DESARROLLO && (
-            <div className="mx-auto mt-8 max-w-md">
+            <div className="rk-done-actions" style={{ gridTemplateColumns: "1fr" }}>
               <button
                 type="button"
                 onClick={simulatePayment}
                 disabled={loading}
-                className="rk-btn rk-btn-primary w-full"
+                className="rk-btn rk-btn-buy"
               >
-                {loading
-                  ? "Procesando pago..."
-                  : "Simular pago de prueba"}
+                {loading ? "Procesando pago..." : "Simular pago de prueba"}
               </button>
 
-              <p className="mt-3 text-xs text-ink/60">
+              <p className="rk-done-dev">
                 Solo en desarrollo · No se realizará ningún cobro real.
               </p>
             </div>
           )}
 
+          {/*
+            Sin pasarela conectada se dice lo que de verdad ocurre:
+            el pedido queda pendiente.
+          */}
           {!paid && orderId && !EN_DESARROLLO && (
-            <div className="mx-auto mt-8 max-w-md rounded-rk-md border border-warning/30 bg-warning/[0.08] p-5 text-left">
-              <p className="text-sm font-medium">Pendiente de pago</p>
+            <div className="rk-done-note">
+              <p className="rk-done-note-title">
+                <Clock aria-hidden />
+                Pendiente de pago
+              </p>
 
-              <p className="mt-2 text-sm leading-6 text-ink/70">
+              <p>
                 Tu pedido está guardado con este número. Todavía no hay
                 una pasarela de pago conectada, así que el cobro se
                 gestiona aparte; en cuanto se registre, tus descargas se
                 habilitan solas.
               </p>
 
-              <Link
-                href="/mi-cuenta/compras"
-                className="rk-btn rk-btn-line mt-4"
-              >
+              <Link href="/mi-cuenta/compras" className="rk-btn rk-btn-line">
                 Ver mis pedidos
               </Link>
             </div>
           )}
 
           {paid && (
-            <div className="mx-auto mt-8 max-w-md rounded-rk-md border border-success/25 bg-success/12 p-5">
-              <p className="text-sm font-medium text-success">
-                ✓ Pago aprobado
+            <div className="rk-done-note">
+              <p className="rk-done-note-title">
+                <Check aria-hidden />
+                Pago aprobado
               </p>
 
-              <p className="mt-2 text-sm text-success/70">
-                Tus descargas han sido habilitadas.
-              </p>
+              <p>Tus descargas han sido habilitadas.</p>
 
-              <Link
-              href="/mi-cuenta"
-                className="rk-btn rk-btn-primary mt-5"
-              >
+              <Link href="/mi-cuenta/descargas" className="rk-btn rk-btn-buy">
                 Ver mis descargas
               </Link>
             </div>
           )}
 
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link
-              href="/tienda"
-              className="rk-btn rk-btn-primary"
-            >
+          <div className="rk-done-actions">
+            <Link href="/tienda" className="rk-btn rk-btn-primary">
               Volver a la tienda
             </Link>
 
-            <Link
-              href="/"
-              className="rounded-full border px-6 py-3 transition hover:bg-ink/[0.05]"
-            >
+            <Link href="/" className="rk-btn rk-btn-line">
               Ir al inicio
             </Link>
           </div>
@@ -224,8 +222,8 @@ export default function ConfirmationPage() {
         <>
           <Navbar />
 
-          <main className="mx-auto max-w-3xl px-4 sm:px-5 py-12 sm:py-20">
-            <p className="text-ink/60">Cargando...</p>
+          <main className="mx-auto max-w-xl px-4 py-10 sm:px-5 sm:py-16">
+            <div className="rk-skeleton" style={{ height: 420, borderRadius: 30 }} />
           </main>
         </>
       }

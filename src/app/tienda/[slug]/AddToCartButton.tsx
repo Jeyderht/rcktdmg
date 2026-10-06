@@ -74,9 +74,9 @@ export default function AddToCartButton({ product }: Props) {
     <button
       type="button"
       onClick={addToCart}
-      className={`rk-btn w-full !py-3.5 ${
+      className={`rk-btn w-full ${
         added
-          ? "bg-success text-white shadow-rk"
+          ? "rk-btn-added"
           : "rk-btn-primary rk-btn-cta"
       }`}
     >

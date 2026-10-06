@@ -31,14 +31,13 @@ export default function NotFound() {
       <Navbar />
 
       <main className="mx-auto flex w-full max-w-2xl flex-col items-center px-4 pb-20 pt-16 text-center sm:px-5 lg:pb-28 lg:pt-24">
-        <span
-          aria-hidden
-          className="rk-media flex h-14 w-14 items-center justify-center rounded-full"
-        >
-          <Compass size={24} className="text-ink/45" />
+        <p aria-hidden className="rk-404 rk-text-iris">404</p>
+
+        <span aria-hidden className="rk-empty-icon mt-2">
+          <Compass />
         </span>
 
-        <p className="rk-kicker mt-6">Error 404</p>
+        <p className="rk-kicker mt-4">Error 404</p>
 
         <h1 className="rk-title mt-3 text-[2rem] sm:text-4xl">
           Esta página no existe
@@ -55,7 +54,7 @@ export default function NotFound() {
             Ir al inicio
           </Link>
 
-          <Link href="/tienda" className="rk-btn rk-btn-ghost">
+          <Link href="/tienda" className="rk-btn rk-btn-line">
             <Search size={16} aria-hidden />
             Explorar recursos
           </Link>

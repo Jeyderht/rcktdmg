@@ -168,7 +168,7 @@ export default function SolicitudesManager() {
       </div>
 
       {error && (
-        <p role="alert" className="mt-4 text-sm text-danger">
+        <p role="alert" className="rk-upload-error mt-4">
           {error}
         </p>
       )}
@@ -193,7 +193,7 @@ export default function SolicitudesManager() {
             <li key={s.id} className="rk-card p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="flex min-w-0 items-start gap-3">
-                  <span className="rk-media relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full">
+                  <span className="rk-avatar-anillo relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full">
                     {s.solicitante.avatarUrl ? (
                       <Image
                         src={s.solicitante.avatarUrl}
@@ -374,7 +374,7 @@ export default function SolicitudesManager() {
               </div>
 
               {s.rejectionReason && (
-                <p className="mt-4 rounded-rk-sm border border-danger/25 bg-danger/[0.05] p-3 text-[13px] leading-6">
+                <p className="rk-upload-error mt-4">
                   <strong>Motivo del rechazo:</strong>{" "}
                   {s.rejectionReason}
                 </p>
@@ -407,7 +407,7 @@ export default function SolicitudesManager() {
                           type="button"
                           disabled={enCurso === s.id || motivo.trim().length < 10}
                           onClick={() => decidir(s.id, "rechazar", motivo)}
-                          className="rk-btn rk-btn-ink !px-5 !py-2.5 !text-[13px] disabled:opacity-60"
+                          className="rk-btn rk-btn-ink disabled:opacity-60"
                         >
                           Confirmar rechazo
                         </button>
@@ -418,7 +418,7 @@ export default function SolicitudesManager() {
                             setRechazando(null);
                             setMotivo("");
                           }}
-                          className="rk-btn rk-btn-line !px-5 !py-2.5 !text-[13px]"
+                          className="rk-btn rk-btn-line"
                         >
                           Cancelar
                         </button>
@@ -430,7 +430,7 @@ export default function SolicitudesManager() {
                         type="button"
                         disabled={enCurso === s.id}
                         onClick={() => decidir(s.id, "aprobar")}
-                        className="rk-btn rk-btn-ink !px-5 !py-2.5 !text-[13px] disabled:opacity-60"
+                        className="rk-btn rk-btn-ink disabled:opacity-60"
                       >
                         {enCurso === s.id ? (
                           <Loader2
@@ -448,7 +448,7 @@ export default function SolicitudesManager() {
                         type="button"
                         disabled={enCurso === s.id}
                         onClick={() => setRechazando(s.id)}
-                        className="rk-btn rk-btn-line !px-5 !py-2.5 !text-[13px] disabled:opacity-60"
+                        className="rk-btn rk-btn-line disabled:opacity-60"
                       >
                         <X size={15} aria-hidden />
                         Rechazar

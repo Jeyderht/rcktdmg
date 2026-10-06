@@ -403,7 +403,7 @@ export default function EditarRecursoPage() {
             ← Volver a mis recursos
           </Link>
 
-          <div className="mt-6 rounded-rk-lg border border-danger/25 bg-danger/10 p-6">
+          <div className="rk-upload-error mt-6">
             <p className="font-medium text-danger">
               {error}
             </p>
@@ -452,7 +452,7 @@ export default function EditarRecursoPage() {
       <div className="mx-auto max-w-4xl">
         <Link
           href={`/creadores/productos/${id}`}
-          className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
+          className="rk-auth-back"
         >
           ← Volver al recurso
         </Link>
@@ -472,7 +472,7 @@ export default function EditarRecursoPage() {
           </p>
 
           {product.status === "REJECTED" && product.rejectionReason && (
-            <div className="mt-5 rounded-rk-md border border-danger/25 bg-danger/10 p-5">
+            <div className="rk-upload-error mt-5">
               <p className="text-sm font-semibold text-danger">
                 Recurso rechazado
               </p>
@@ -507,7 +507,7 @@ export default function EditarRecursoPage() {
               <div>
                 <label
                   htmlFor="name"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Nombre del recurso
                 </label>
@@ -526,7 +526,7 @@ export default function EditarRecursoPage() {
               <div>
                 <label
                   htmlFor="description"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Descripción
                 </label>
@@ -559,7 +559,7 @@ export default function EditarRecursoPage() {
               <div>
                 <label
                   htmlFor="price"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Precio
                 </label>
@@ -587,7 +587,7 @@ export default function EditarRecursoPage() {
               <div>
                 <label
                   htmlFor="accessType"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Tipo de acceso
                 </label>
@@ -631,7 +631,7 @@ export default function EditarRecursoPage() {
             <div className="mt-6">
               <label
                 htmlFor="category"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Categoría actual
               </label>
@@ -660,7 +660,7 @@ export default function EditarRecursoPage() {
             <div className="mt-6">
               <label
                 htmlFor="licenseType"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Licencia de uso
               </label>
@@ -687,7 +687,7 @@ export default function EditarRecursoPage() {
               </p>
             </div>
             <div className="mt-6">
-              <p className="mb-2 block text-sm font-medium">
+              <p className="rk-label mb-2 block">
                 Etiquetas
                 <span className="ml-1.5 font-normal text-ink/45">
                   (opcional)
@@ -701,7 +701,7 @@ export default function EditarRecursoPage() {
               <div>
                 <label
                   htmlFor="color"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Color predominante
                   <span className="ml-1.5 font-normal text-ink/45">
@@ -731,7 +731,7 @@ export default function EditarRecursoPage() {
               </div>
 
               <div>
-                <p className="mb-2 block text-sm font-medium">
+                <p className="rk-label mb-2 block">
                   Tipo de recurso
                 </p>
 
@@ -818,7 +818,7 @@ export default function EditarRecursoPage() {
 
               <label
                 htmlFor="product-file-edit"
-                className="rk-btn rk-btn-primary cursor-pointer rk-btn-compact !px-5 !py-2.5 !text-sm"
+                className="rk-btn rk-btn-primary cursor-pointer rk-btn-compact"
               >
                 {uploadingFile
                   ? "Subiendo archivo..."
@@ -892,7 +892,7 @@ export default function EditarRecursoPage() {
 
                 <label
                   htmlFor="cover-upload"
-                  className="rk-btn rk-btn-primary cursor-pointer rk-btn-compact !px-5 !py-2.5 !text-sm"
+                  className="rk-btn rk-btn-primary cursor-pointer rk-btn-compact"
                 >
                   {uploadingCover
                     ? "Subiendo portada..."
@@ -1046,7 +1046,7 @@ export default function EditarRecursoPage() {
 
           {/* MENSAJES */}
           {error && (
-            <div className="rk-fade rounded-rk-md border border-danger/25 bg-danger/10 p-4">
+            <div className="rk-upload-error rk-fade">
               <p className="text-sm font-medium text-danger">
                 {error}
               </p>
@@ -1080,7 +1080,7 @@ export default function EditarRecursoPage() {
 
             <Link
               href={`/creadores/productos/${id}`}
-              className="rk-btn rk-btn-glass"
+              className="rk-btn rk-btn-line"
             >
               Cancelar
             </Link>

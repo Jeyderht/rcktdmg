@@ -198,12 +198,12 @@ function IconAction({
       href={href}
       aria-label={label}
       title={label}
-      className={`rk-press relative flex h-11 w-11 items-center justify-center rounded-full text-ink/70 hover:bg-ink/[0.06] hover:text-ink ${className}`}
+      className={`rk-topbar-btn ${className}`}
     >
       {children}
 
       {badge !== undefined && badge > 0 && (
-        <span className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-foreground px-1 text-[10px] font-semibold leading-none text-background ring-2 ring-surface/80">
+        <span className="rk-dock-badge">
           {badge > 9 ? "9+" : badge}
         </span>
       )}
@@ -278,15 +278,13 @@ function NavbarContent() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4 sm:pt-4">
-        <div
-          className={`mx-auto w-full max-w-7xl rounded-rk-xl transition-all duration-slow ease-rk ${
-            scrolled
-              ? "rk-glass shadow-rk-lg"
-              : "border border-line/10 bg-surface/45 shadow-rk-sm backdrop-blur-xl"
-          }`}
-        >
-          <div className="flex h-[3.75rem] items-center gap-1 px-2 py-2.5 sm:gap-3 sm:px-4 lg:px-5">
+      {/*
+        Barra sin caja: logo, buscador y botones flotan sueltos,
+        cada uno con su propio vidrio (rk-topbar en globals.css).
+      */}
+      <header className="rk-topbar sm:px-4 sm:pt-4" data-scrolled={scrolled}>
+        <div className="mx-auto w-full max-w-7xl">
+          <div className="rk-topbar-bar">
 
             {/* LOGO */}
             <Link
@@ -302,9 +300,9 @@ function NavbarContent() {
                 al logotipo de texto; sin él dejaba el isotipo
                 descentrado dentro del área pulsable.
               */
-              className="rk-press-sm flex shrink-0 items-center rounded-full px-1 py-1.5"
+              className="rk-topbar-btn"
             >
-              <span className="flex h-8 w-8 items-center justify-center">
+              <span className="flex h-6 w-6 items-center justify-center">
                 <Image
                   src="/Isotipo.svg"
                   alt=""
@@ -319,16 +317,13 @@ function NavbarContent() {
             </Link>
 
             {/* NAVEGACIÓN PRINCIPAL */}
-            <nav className="hidden items-center gap-0.5 pl-2 xl:flex">
+            <nav className="rk-topbar-nav">
               {links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`rk-press-sm rounded-full px-3.5 py-2 text-sm transition-colors duration-fast ${
-                    isActive(link.href)
-                      ? "bg-ink/[0.07] font-semibold text-ink"
-                      : "text-ink/60 hover:bg-ink/[0.04] hover:text-ink"
-                  }`}
+                  aria-current={isActive(link.href) ? "page" : undefined}
+                  className="rk-topbar-link"
                 >
                   {link.label}
                 </Link>
@@ -364,7 +359,7 @@ function NavbarContent() {
                 }
                 aria-label="Buscar"
                 aria-expanded={enLaTienda ? undefined : mobileSearchOpen}
-                className="rk-press flex h-11 w-11 items-center justify-center rounded-full text-ink/70 hover:bg-ink/[0.06] hover:text-ink xl:hidden"
+                className="rk-topbar-btn xl:hidden"
               >
                 {mobileSearchOpen && !enLaTienda ? (
                   <X size={18} />
@@ -472,7 +467,7 @@ function NavbarContent() {
 
           {/* BUSCADOR DESPLEGABLE EN MÓVIL */}
           {mobileSearchOpen && !enLaTienda && (
-            <div className="animate-scale-in border-t border-line/10 px-3 py-3 xl:hidden">
+            <div className="animate-scale-in mt-2 xl:hidden">
               <SearchField
                 autoFocus
                 onSubmitted={() => setMobileSearchOpen(false)}
@@ -485,11 +480,8 @@ function NavbarContent() {
         <nav className="mx-auto mt-2 hidden max-w-7xl items-center gap-1 overflow-x-auto px-1 sm:flex xl:hidden">
           <Link
             href="/"
-            className={`rk-press-sm shrink-0 rounded-full px-3.5 py-2 text-sm backdrop-blur-xl transition-colors ${
-              isActive("/")
-                ? "bg-ink/[0.07] font-semibold text-ink"
-                : "text-ink/60 hover:text-ink"
-            }`}
+            aria-current={isActive("/") ? "page" : undefined}
+            className="rk-topbar-link shrink-0"
           >
             Inicio
           </Link>
@@ -498,11 +490,8 @@ function NavbarContent() {
             <Link
               key={link.href}
               href={link.href}
-              className={`rk-press-sm shrink-0 rounded-full px-3.5 py-2 text-sm backdrop-blur-xl transition-colors ${
-                isActive(link.href)
-                  ? "bg-ink/[0.07] font-semibold text-ink"
-                  : "text-ink/60 hover:text-ink"
-              }`}
+              aria-current={isActive(link.href) ? "page" : undefined}
+            className="rk-topbar-link shrink-0"
             >
               {link.label}
             </Link>
@@ -511,11 +500,8 @@ function NavbarContent() {
           {(user?.role === "CREATOR" || user?.role === "ADMIN") && (
             <Link
               href="/creadores/panel"
-              className={`rk-press-sm shrink-0 rounded-full px-3.5 py-2 text-sm backdrop-blur-xl transition-colors ${
-                isActive("/creadores/panel")
-                  ? "bg-ink/[0.07] font-semibold text-ink"
-                  : "text-ink/60 hover:text-ink"
-              }`}
+              aria-current={isActive("/creadores/panel") ? "page" : undefined}
+            className="rk-topbar-link shrink-0"
             >
               Studio
             </Link>
@@ -524,11 +510,8 @@ function NavbarContent() {
           {user?.role === "ADMIN" && (
             <Link
               href="/admin"
-              className={`rk-press-sm shrink-0 rounded-full px-3.5 py-2 text-sm backdrop-blur-xl transition-colors ${
-                isActive("/admin")
-                  ? "bg-ink/[0.07] font-semibold text-ink"
-                  : "text-ink/60 hover:text-ink"
-              }`}
+              aria-current={isActive("/admin") ? "page" : undefined}
+            className="rk-topbar-link shrink-0"
             >
               Admin
             </Link>
@@ -550,10 +533,10 @@ export default function Navbar() {
   return (
     <Suspense
       fallback={
-        <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4 sm:pt-4">
-          <div className="mx-auto w-full max-w-7xl rounded-rk-xl border border-line/10 bg-surface/45 shadow-rk-sm backdrop-blur-xl">
-            <div className="flex h-[3.75rem] items-center gap-2 px-3 py-2.5 sm:px-4">
-              <span className="flex h-8 w-8 items-center justify-center">
+        <header className="rk-topbar sm:px-4 sm:pt-4">
+          <div className="mx-auto w-full max-w-7xl">
+            <div className="rk-topbar-bar">
+              <span className="rk-topbar-btn">
                 <Image
                   src="/Isotipo.svg"
                   alt=""

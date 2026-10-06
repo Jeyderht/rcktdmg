@@ -197,7 +197,7 @@ export default function VisorStory({
         Una story es negra en los dos temas. Por eso el color va
         fijo y no depende de ningún token.
       */
-      className="fixed inset-0 z-[80] flex flex-col bg-[#0a0a0c]"
+      className="rk-story fixed inset-0 z-[80] flex flex-col"
       style={{
         height: "100dvh",
         width: "100vw",
@@ -217,10 +217,10 @@ export default function VisorStory({
         {imagenes.map((img, i) => (
           <span
             key={img.key}
-            className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/25"
+            className="rk-story-track h-0.5 flex-1 overflow-hidden rounded-full"
           >
             <span
-              className="block h-full rounded-full bg-white"
+              className="rk-story-fill block h-full rounded-full"
               style={{
                 width: i <= indice ? "100%" : "0%",
                 transition:
@@ -235,7 +235,7 @@ export default function VisorStory({
 
       {/* ══════════ CREADOR ══════════ */}
       <div className="flex shrink-0 items-center gap-2.5 px-4 py-3">
-        <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/15">
+        <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full rk-story-avatar">
           {producto.creador.avatarUrl ? (
             <Image
               src={producto.creador.avatarUrl}
@@ -291,7 +291,7 @@ export default function VisorStory({
           type="button"
           onClick={alCerrar}
           aria-label="Cerrar"
-          className="rk-press rk-touch grid h-11 w-11 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10"
+          className="rk-story-btn rk-press rk-touch h-11 w-11 shrink-0"
         >
           <X size={20} aria-hidden />
         </button>
@@ -335,7 +335,7 @@ export default function VisorStory({
               type="button"
               onClick={anterior}
               aria-label="Imagen anterior"
-              className="rk-press absolute left-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition-colors hover:bg-black/70"
+              className="rk-story-btn rk-press absolute left-3 top-1/2 h-11 w-11 -translate-y-1/2"
             >
               <ChevronLeft size={20} aria-hidden />
             </button>
@@ -344,7 +344,7 @@ export default function VisorStory({
               type="button"
               onClick={siguiente}
               aria-label="Imagen siguiente"
-              className="rk-press absolute right-3 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-white backdrop-blur transition-colors hover:bg-black/70"
+              className="rk-story-btn rk-press absolute right-3 top-1/2 h-11 w-11 -translate-y-1/2"
             >
               <ChevronRight size={20} aria-hidden />
             </button>
@@ -371,7 +371,7 @@ export default function VisorStory({
           <Link
             href={`/tienda/${producto.slug}`}
             aria-label="Ver el recurso"
-            className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
+            className="rk-story-btn rk-press h-12 w-12 shrink-0"
           >
             <ArrowUpRight size={18} aria-hidden />
           </Link>
@@ -430,10 +430,8 @@ function BotonCarrito({
       type="button"
       onClick={anadir}
       aria-label={anadido ? "Agregado al carrito" : "Añadir al carrito"}
-      className={`rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border transition-colors ${
-        anadido
-          ? "border-white bg-white text-[#0a0a0c]"
-          : "border-white/25 text-white hover:bg-white/10"
+      className={`rk-story-btn rk-story-cta rk-press h-12 w-12 shrink-0 ${
+        anadido ? "is-done" : ""
       }`}
     >
       {anadido ? (
@@ -475,7 +473,7 @@ function BotonFavorito({ productId }: { productId: string }) {
       onClick={alternar}
       aria-pressed={esFavorito}
       aria-label={esFavorito ? "Quitar de guardados" : "Guardar"}
-      className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
+      className="rk-story-btn rk-press h-12 w-12 shrink-0"
     >
       <Heart
         size={18}

@@ -33,13 +33,13 @@ export default function AccountPageHeader({
     <header className="rk-fade-up">
       <Link
         href={backHref}
-        className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
+        className="rk-auth-back"
       >
-        <ChevronLeft size={15} />
+        <ChevronLeft aria-hidden />
         {backLabel}
       </Link>
 
-      <div className="mt-3 flex flex-wrap items-end justify-between gap-x-5 gap-y-4">
+      <div className="flex flex-wrap items-end justify-between gap-x-5 gap-y-4">
         <div className="min-w-0">
           <h1 className="rk-title text-[1.75rem] sm:text-4xl">
             {title}

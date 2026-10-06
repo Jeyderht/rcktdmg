@@ -99,7 +99,7 @@ export default function Ecosistema() {
             </svg>
 
             {/* NÚCLEO */}
-            <div className="absolute left-1/2 top-1/2 flex h-28 w-28 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-ink text-surface shadow-rk-float sm:h-32 sm:w-32">
+            <div className="absolute left-1/2 top-1/2 flex h-28 w-28 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full rk-nucleo sm:h-32 sm:w-32">
               <span className="text-[13px] font-bold uppercase tracking-[0.14em] sm:text-sm">
                 RCKTDMG
               </span>
@@ -134,7 +134,7 @@ export default function Ecosistema() {
 
         {/* ══════════ REJILLA · hasta 640px ══════════ */}
         <div className="rk-fade-up rk-enter-1 mt-9 sm:hidden">
-          <div className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-ink text-surface">
+          <div className="rk-nucleo mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full">
             <span className="text-[12px] font-bold uppercase tracking-[0.14em]">
               RCKTDMG
             </span>

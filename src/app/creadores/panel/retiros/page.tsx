@@ -257,16 +257,16 @@ export default function RetirosPage() {
       <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
         <div
           role="alert"
-          className="rk-fade rounded-rk-md border border-danger/25 bg-danger/10 p-6"
+          className="rk-upload-error rk-fade"
         >
-          <p className="text-sm text-danger">
+          <p className="rk-upload-error">
             {error || "No se pudo cargar la información."}
           </p>
 
           <button
             type="button"
             onClick={loadWithdrawals}
-            className="rk-btn rk-btn-primary mt-5 rk-btn-compact !px-4 !py-2.5 !text-sm"
+            className="rk-btn rk-btn-primary mt-5 rk-btn-compact"
           >
             Intentar nuevamente
           </button>
@@ -383,7 +383,7 @@ export default function RetirosPage() {
             {error && (
               <div
                 role="alert"
-                className="rk-fade mb-5 rounded-rk-sm border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
+                className="rk-upload-error rk-fade mb-5"
               >
                 {error}
               </div>
@@ -412,7 +412,7 @@ export default function RetirosPage() {
 
                     <Link
                       href="/creadores/panel/metodos-pago"
-                      className="rk-btn rk-btn-primary mt-4 rk-btn-compact !px-4 !py-2.5 !text-sm"
+                      className="rk-btn rk-btn-primary mt-4 rk-btn-compact"
                     >
                       Registrar método de pago
                     </Link>
@@ -499,7 +499,7 @@ export default function RetirosPage() {
                 <div className="w-full sm:max-w-xs">
                   <label
                     htmlFor="amount"
-                    className="mb-2 block text-sm font-medium"
+                    className="rk-label mb-2 block"
                   >
                     Monto a retirar
                   </label>

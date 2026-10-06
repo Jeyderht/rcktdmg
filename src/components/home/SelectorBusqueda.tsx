@@ -60,7 +60,7 @@ export default function SelectorBusqueda() {
             <Link
               key={href}
               href={href}
-              className="rk-press group rk-tile flex min-h-[9rem] flex-col justify-between rounded-rk-lg p-6 transition-colors duration-normal ease-rk hover:border-ink/25 sm:min-h-[11rem] sm:p-8"
+              className="rk-press group rk-tile flex min-h-[9rem] flex-col justify-between p-6 sm:min-h-[11rem] sm:p-8"
             >
               <Icono
                 size={26}

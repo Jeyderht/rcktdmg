@@ -84,7 +84,7 @@ export default function CarruselCreadores({
                   type="button"
                   onClick={() => desplazar(-1)}
                   aria-label="Ver creadores anteriores"
-                  className="rk-press grid h-11 w-11 place-items-center rounded-full border border-line/15 transition-colors hover:bg-ink/[0.04]"
+                  className="rk-hero-round rk-flecha"
                 >
                   <ChevronLeft size={18} aria-hidden />
                 </button>
@@ -93,7 +93,7 @@ export default function CarruselCreadores({
                   type="button"
                   onClick={() => desplazar(1)}
                   aria-label="Ver más creadores"
-                  className="rk-press grid h-11 w-11 place-items-center rounded-full border border-line/15 transition-colors hover:bg-ink/[0.04]"
+                  className="rk-hero-round rk-flecha"
                 >
                   <ChevronRight size={18} aria-hidden />
                 </button>

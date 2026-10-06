@@ -170,7 +170,7 @@ export default function AddToCollectionButton({
       <button
         type="button"
         onClick={handleOpen}
-        className="rk-btn rk-btn-glass w-full !py-3.5"
+        className="rk-btn rk-btn-line w-full"
       >
         <FolderPlus size={17} />
         Agregar a colección
@@ -213,7 +213,8 @@ export default function AddToCollectionButton({
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Cerrar"
-                className="rk-press flex h-9 w-9 items-center justify-center rounded-full bg-ink/[0.06] text-ink/60 hover:bg-ink/10 hover:text-ink"
+                className="rk-notif-check"
+                style={{ margin: 0 }}
               >
                 <X size={16} />
               </button>
@@ -239,7 +240,7 @@ export default function AddToCollectionButton({
 
                 <Link
                   href="/mi-cuenta/colecciones"
-                  className="rk-btn rk-btn-primary mt-4 !px-5 !py-2.5"
+                  className="rk-btn rk-btn-primary mt-4"
                 >
                   Crear colección
                 </Link>
@@ -259,7 +260,7 @@ export default function AddToCollectionButton({
                       type="button"
                       disabled={alreadyAdded}
                       onClick={() => addToCollection(collection.id)}
-                      className="rk-press-sm flex w-full items-center justify-between gap-3 rounded-rk-md border border-line/10 bg-surface/70 p-4 text-left transition-colors hover:bg-surface disabled:cursor-default disabled:opacity-60"
+                      className="rk-row-card rk-press-sm flex w-full items-center justify-between gap-3 text-left disabled:cursor-default disabled:opacity-60"
                     >
                       <div className="min-w-0">
                         <p className="truncate font-medium">

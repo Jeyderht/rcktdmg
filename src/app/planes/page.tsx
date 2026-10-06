@@ -2,11 +2,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { paginaPublica } from "@/lib/seo";
-import { ArrowRight, Check, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import PlanesLista from "./PlanesLista";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = paginaPublica({
@@ -62,96 +63,98 @@ export default async function PlansPage() {
             />
           </div>
         ) : (
-          <div className="rk-fade-up rk-enter-1 mt-8 grid gap-3 md:grid-cols-3">
-            {plans.map((plan, index) => {
-              const featured =
-                plans.length > 1 &&
-                index === Math.floor(plans.length / 2);
+          <>
+          {/* Tarjetas con interruptor Mensual / Anual (cliente) */}
+          <PlanesLista
+            plans={plans.map((plan) => ({
+              id: plan.id,
+              name: plan.name,
+              description: plan.description ?? null,
+              monthlyPrice: Number(plan.monthlyPrice),
+              yearlyPrice: Number(plan.yearlyPrice),
+              downloadLimit: plan.downloadLimit ?? null,
+            }))}
+          />
 
-              return (
-                <div
-                  key={plan.id}
-                  className={`relative flex flex-col overflow-hidden rounded-rk-lg p-6 sm:p-7 ${
-                    featured
-                      ? "rk-float bg-primary text-onprimary"
-                      : "rk-card"
-                  }`}
-                >
-                  {featured && (
-                    <>
-                      <div
-                        aria-hidden
-                        className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-ink/[0.07] blur-3xl"
-                      />
+          {/* COMPARACIÓN: solo datos reales de cada plan */}
+          <section className="rk-fade-up rk-enter-2 mt-10">
+            <h2 className="mb-4 text-center text-xl font-semibold tracking-tight">
+              Compara los planes
+            </h2>
 
-                      <span className="relative mb-4 inline-flex w-fit rounded-full bg-onprimary/15 px-3 py-1 text-[11px] font-medium backdrop-blur-sm">
-                        Recomendado
-                      </span>
-                    </>
-                  )}
+            <div
+              className="rk-compare"
+              style={{ ["--rk-cmp-cols" as string]: plans.length }}
+              role="table"
+              aria-label="Comparación de planes"
+            >
+              <div className="rk-compare-row rk-compare-head" role="row">
+                <span role="columnheader" />
+                {plans.map((plan, index) => {
+                  const featured =
+                    plans.length > 1 &&
+                    index === Math.floor(plans.length / 2);
 
-                  <div className="relative">
-                    <h2 className="rk-title text-lg">
-                      {plan.name}
-                    </h2>
-
-                    {plan.description && (
-                      <p
-                        className={`mt-2 text-sm leading-6 ${
-                          featured ? "text-onprimary/60" : "text-ink/60"
+                  return (
+                    <span key={plan.id} role="columnheader">
+                      <span className="rk-compare-plan">{plan.name}</span>
+                      <b>
+                        <sup>S/</sup>
+                        {Number(plan.monthlyPrice).toFixed(0)}
+                      </b>
+                      <em>
+                        Por mes
+                        <br />
+                        S/ {Number(plan.yearlyPrice).toFixed(0)} al año
+                      </em>
+                      <button
+                        type="button"
+                        disabled
+                        className={`rk-btn ${
+                          featured ? "rk-btn-primary" : "rk-btn-glass"
                         }`}
                       >
-                        {plan.description}
-                      </p>
-                    )}
+                        <span className="rk-compare-btn-text">Pronto</span>
+                        <ArrowRight aria-hidden="true" />
+                      </button>
+                    </span>
+                  );
+                })}
+              </div>
 
-                    <p className="mt-6 text-4xl font-semibold tracking-tight">
-                      S/ {Number(plan.monthlyPrice).toFixed(0)}
-                      <span
-                        className={`text-base font-normal ${
-                          featured ? "text-onprimary/50" : "text-ink/60"
-                        }`}
-                      >
-                        /mes
-                      </span>
-                    </p>
+              <div className="rk-compare-row rk-compare-group" role="row">
+                <span role="rowheader">Lo esencial</span>
+              </div>
 
-                    <p
-                      className={`mt-1 text-sm ${
-                        featured ? "text-onprimary/50" : "text-ink/60"
-                      }`}
-                    >
-                      S/ {Number(plan.yearlyPrice).toFixed(0)} al año
-                    </p>
+              <div className="rk-compare-row" role="row">
+                <span role="rowheader">Descargas al mes</span>
+                {plans.map((plan) => (
+                  <span key={plan.id} role="cell">
+                    <i className="rk-compare-val">
+                      {plan.downloadLimit !== null
+                        ? plan.downloadLimit
+                        : "Ilimitadas"}
+                    </i>
+                  </span>
+                ))}
+              </div>
 
-                    {plan.downloadLimit !== null && (
-                      <p
-                        className={`mt-5 flex items-center gap-2 text-sm ${
-                          featured ? "text-onprimary/70" : "text-ink/60"
-                        }`}
-                      >
-                        <Check size={15} className="shrink-0" />
-                        Hasta {plan.downloadLimit} descargas al mes
-                      </p>
-                    )}
-                  </div>
+              <div className="rk-compare-row" role="row">
+                <span role="rowheader">Compras individuales</span>
+                {plans.map((plan) => (
+                  <span key={plan.id} role="cell">
+                    <i
+                      className="rk-compare-yes"
+                      role="img"
+                      aria-label="Incluido"
+                    />
+                  </span>
+                ))}
+              </div>
 
-                  <button
-                    type="button"
-                    disabled
-                    title="Las suscripciones estarán disponibles próximamente"
-                    className={`rk-btn relative mt-8 w-full !py-3 ${
-                      featured
-                        ? "bg-onprimary/15 text-onprimary"
-                        : "rk-btn-glass"
-                    }`}
-                  >
-                    Próximamente
-                  </button>
-                </div>
-              );
-            })}
-          </div>
+            </div>
+          </section>
+          </>
         )}
 
         {/* ALTERNATIVA DISPONIBLE HOY */}

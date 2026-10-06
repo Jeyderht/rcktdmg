@@ -24,69 +24,77 @@ export default function PackCard({ pack }: { pack: PackVista }) {
     null;
 
   return (
-    <article className="group">
-      <Link
-        href={`/packs/${pack.slug}`}
-        className="rk-frame rk-aspect-product block w-full overflow-hidden rounded-rk-md"
-      >
-        {portada && (
-          <Image
-            src={portada}
-            alt={pack.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-          />
-        )}
+    <div className="rx-pestana rx-pestana-bloque">
+      <article className="rk-tarjeta group relative">
+        <Link
+          href={`/packs/${pack.slug}`}
+          className="relative block"
+          aria-label={pack.name}
+        >
+          <div className="rk-frame rk-aspect-product w-full overflow-hidden">
+            {portada && (
+              <Image
+                src={portada}
+                alt={pack.name}
+                fill
+                className="rk-card-zoom object-cover"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+              />
+            )}
 
-        {/* DISTINTIVO: cuántos recursos incluye. */}
-        <span className="rk-glass-on-image absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider">
-          <Layers size={11} aria-hidden />
-          {pack.productos.length}{" "}
-          {pack.productos.length === 1 ? "recurso" : "recursos"}
-        </span>
+            {/* DISTINTIVO: cuántos recursos incluye. */}
+            <span className="rk-glass-on-image pointer-events-none absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider">
+              <Layers size={11} aria-hidden />
+              {pack.productos.length}{" "}
+              {pack.productos.length === 1 ? "recurso" : "recursos"}
+            </span>
 
-        {/* AHORRO: solo si es real. */}
-        {pack.ahorro && (
-          <span className="rk-glass-on-image absolute right-2 top-2 rounded-full px-2.5 py-1 text-[10px] font-bold tabular-nums">
-            −{pack.ahorro.porcentaje}%
-          </span>
-        )}
-      </Link>
-
-      <div className="px-0.5 pt-2.5">
-        <Link href={`/packs/${pack.slug}`}>
-          <h3 className="line-clamp-2 min-h-[2.1rem] text-[13px] font-semibold leading-[1.05rem] tracking-tight transition-opacity group-hover:opacity-60">
-            {pack.name}
-          </h3>
+            {/* AHORRO: solo si es real. */}
+            {pack.ahorro && (
+              <span className="rk-glass-on-image pointer-events-none absolute bottom-2 right-2 rounded-full px-2 py-1 text-[10px] font-bold tabular-nums text-danger">
+                −{pack.ahorro.porcentaje}%
+              </span>
+            )}
+          </div>
         </Link>
 
-        <p className="mt-1 truncate text-[11px] text-ink/45">
-          {pack.creador.username ? (
-            <Link
-              href={`/creadores/${pack.creador.username}`}
-              className="transition-colors hover:text-ink"
-            >
-              {pack.creador.nombre}
-            </Link>
-          ) : (
-            pack.creador.nombre
-          )}
-        </p>
+        <div className="px-2 pb-1.5 pt-3">
+          <Link href={`/packs/${pack.slug}`}>
+            <h3 className="rk-tarjeta-nombre">{pack.name}</h3>
+          </Link>
 
-        <div className="mt-1.5 flex items-baseline gap-1.5">
-          <p className="text-[14px] font-semibold tabular-nums tracking-tight">
-            {formatPrice(pack.price)}
+          <p className="rk-card-meta">
+            <span className="rk-card-avatar">
+              {pack.creador.nombre.charAt(0).toUpperCase()}
+            </span>
+            {pack.creador.username ? (
+              <Link
+                href={`/creadores/${pack.creador.username}`}
+                className="truncate hover:text-ink"
+              >
+                {pack.creador.nombre}
+              </Link>
+            ) : (
+              <span>{pack.creador.nombre}</span>
+            )}
           </p>
 
-          {/* Referencia tachada: solo si de verdad se ahorra. */}
-          {pack.ahorro && (
-            <p className="text-[11px] text-ink/45 line-through tabular-nums">
-              {formatPrice(pack.sumaIndividual)}
+          <div className="flex items-center gap-1.5">
+            <p className="rk-tarjeta-precio">
+              {formatPrice(pack.price)}
             </p>
-          )}
+
+            {/* Referencia tachada: solo si de verdad se ahorra. */}
+            {pack.ahorro && (
+              <p className="text-[11px] text-ink/45 line-through tabular-nums">
+                {formatPrice(pack.sumaIndividual)}
+              </p>
+            )}
+
+            <span className="rk-tarjeta-formato">Pack</span>
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+    </div>
   );
 }

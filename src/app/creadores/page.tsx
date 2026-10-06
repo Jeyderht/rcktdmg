@@ -74,7 +74,7 @@ export default async function CreatorsPage() {
           <div className="rk-glass relative overflow-hidden rounded-rk-xl px-6 py-12 text-center sm:rounded-rk-xl sm:px-10 sm:py-16">
             <div
               aria-hidden
-              className="pointer-events-none absolute -top-28 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-ink/[0.06] blur-3xl"
+              className="pointer-events-none absolute -top-28 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full rk-halo-marca blur-3xl"
             />
 
             <div className="relative">
@@ -122,7 +122,7 @@ export default async function CreatorsPage() {
 
                 <Link
                   href="/creadores/requisitos"
-                  className="rk-btn rk-btn-glass"
+                  className="rk-btn rk-btn-line"
                 >
                   Ver requisitos
                 </Link>
@@ -169,13 +169,13 @@ export default async function CreatorsPage() {
                           sizes="(max-width: 1024px) 100vw, 22rem"
                         />
                       ) : (
-                        <div className="h-full w-full bg-gradient-to-br from-ink/[0.12] via-ink/[0.05] to-transparent" />
+                        <div className="rk-portada-marca h-full w-full" />
                       )}
                     </div>
 
                     <div className="px-5 pb-5">
                       {/* AVATAR */}
-                      <div className="rk-media relative -mt-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-[3px] border-surface shadow-rk">
+                      <div className="rk-avatar-anillo relative -mt-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
                         {creator.avatarUrl ? (
                           <Image
                             src={creator.avatarUrl}
@@ -185,7 +185,7 @@ export default async function CreatorsPage() {
                             sizes="64px"
                           />
                         ) : (
-                          <span className="text-xl font-semibold text-ink/60">
+                          <span className="text-xl font-semibold">
                             {displayName.charAt(0).toUpperCase()}
                           </span>
                         )}

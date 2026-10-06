@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { CheckCircle2, FileArchive, RefreshCw, X } from "lucide-react";
+import { CheckCircle2, FileArchive, RefreshCw, X, Upload } from "lucide-react";
 
 import { subirArchivoDeProducto } from "@/lib/storage/client-upload";
 import {
@@ -59,6 +59,7 @@ export default function SubidorArchivo({
   const [subiendo, setSubiendo] = useState(false);
   const [progreso, setProgreso] = useState<number | null>(null);
   const [error, setError] = useState("");
+  const [arrastrando, setArrastrando] = useState(false);
   const entrada = useRef<HTMLInputElement>(null);
 
   async function alElegir(evento: React.ChangeEvent<HTMLInputElement>) {
@@ -131,6 +132,31 @@ export default function SubidorArchivo({
     }
   }
 
+  /*
+    Soltar un archivo encima de la caja: se pasa al input oculto
+    y se reutiliza alElegir, con las mismas comprobaciones.
+  */
+  function alSoltar(evento: React.DragEvent<HTMLButtonElement>) {
+    evento.preventDefault();
+    setArrastrando(false);
+
+    if (subiendo) {
+      return;
+    }
+
+    const archivo = evento.dataTransfer.files?.[0];
+    const input = entrada.current;
+
+    if (!archivo || !input) {
+      return;
+    }
+
+    const transferencia = new DataTransfer();
+    transferencia.items.add(archivo);
+    input.files = transferencia.files;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
   return (
     <div>
       <p className="mb-2 text-sm font-medium">{etiqueta}</p>
@@ -146,30 +172,27 @@ export default function SubidorArchivo({
       />
 
       {valor ? (
-        <div className="flex items-start gap-3 rounded-rk-md border border-line/12 p-3">
-          <span
-            aria-hidden
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-rk-sm bg-ink/[0.06]"
-          >
-            <FileArchive size={17} />
+        <div className="rk-upload-file">
+          <span aria-hidden className="rk-upload-icon">
+            <FileArchive />
           </span>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-medium">{valor.nombre}</p>
+            <p className="rk-upload-name">{valor.nombre}</p>
 
-            <p className="mt-0.5 flex items-center gap-1.5 text-xs text-success">
-              <CheckCircle2 size={12} aria-hidden />
+            <p className="rk-upload-status">
+              <CheckCircle2 aria-hidden />
               Subido · <span className="tabular-nums">{enMegas(valor.bytes)}</span>
             </p>
 
-            <div className="mt-2.5 flex flex-wrap gap-2">
+            <div className="rk-upload-actions">
               <button
                 type="button"
                 onClick={() => entrada.current?.click()}
                 disabled={subiendo}
-                className="rk-btn rk-btn-glass rk-btn-compact !px-3 !py-1.5 !text-xs"
+                className="rk-btn rk-btn-line"
               >
-                <RefreshCw size={12} aria-hidden />
+                <RefreshCw aria-hidden />
                 Reemplazar
               </button>
 
@@ -177,9 +200,9 @@ export default function SubidorArchivo({
                 type="button"
                 onClick={() => alCambiar(null)}
                 disabled={subiendo}
-                className="rk-btn rk-btn-glass rk-btn-compact !px-3 !py-1.5 !text-xs"
+                className="rk-btn rk-btn-danger"
               >
-                <X size={12} aria-hidden />
+                <X aria-hidden />
                 Quitar
               </button>
             </div>
@@ -190,21 +213,24 @@ export default function SubidorArchivo({
           type="button"
           onClick={() => entrada.current?.click()}
           disabled={subiendo}
-          className="rk-press flex w-full items-center gap-3 rounded-rk-md border border-dashed border-line/20 bg-ink/[0.02] p-4 text-left transition-colors duration-fast ease-rk hover:border-ink/40 disabled:opacity-60"
+          className={`rk-upload${arrastrando ? " is-dragging" : ""}`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setArrastrando(true);
+          }}
+          onDragLeave={() => setArrastrando(false)}
+          onDrop={alSoltar}
         >
-          <span
-            aria-hidden
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-rk-sm bg-ink/[0.06]"
-          >
-            <FileArchive size={17} />
+          <span aria-hidden className="rk-upload-icon">
+            {subiendo ? <FileArchive /> : <Upload />}
           </span>
 
-          <span className="min-w-0">
-            <span className="block text-sm font-medium">
+          <span className="rk-upload-body">
+            <span className="rk-upload-title">
               {subiendo ? "Subiendo…" : `Subir ${etiqueta.toLowerCase()}`}
             </span>
 
-            <span className="mt-0.5 block text-xs leading-5 text-ink/60">
+            <span className="rk-upload-hint">
               {ayuda ?? `ZIP, RAR o 7Z · hasta ${enMegas(MAXIMO_BYTES)}`}
             </span>
           </span>
@@ -212,27 +238,28 @@ export default function SubidorArchivo({
       )}
 
       {subiendo && (
-        <div className="mt-2.5">
+        <div
+          className={`rk-progress-wrap${
+            progreso === null ? " rk-progress-indeterminate" : ""
+          }`}
+        >
           <div
             role="progressbar"
             aria-label={`Subiendo ${etiqueta.toLowerCase()}`}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={progreso ?? undefined}
-            className="h-1 w-full overflow-hidden rounded-full bg-ink/[0.08]"
+            className="rk-progress"
           >
             <div
-              className={
-                progreso === null
-                  ? "h-full w-1/3 animate-pulse bg-foreground"
-                  : "h-full bg-foreground transition-[width] duration-normal ease-rk"
-              }
+              className="rk-progress-bar"
               style={progreso === null ? undefined : { width: `${progreso}%` }}
             />
           </div>
 
-          <p className="mt-1.5 text-xs tabular-nums text-ink/60">
-            {progreso === null ? "Subiendo…" : `${progreso}%`}
+          <p className="rk-progress-meta">
+            <span>Subiendo…</span>
+            {progreso !== null && <strong>{progreso}%</strong>}
           </p>
         </div>
       )}
@@ -240,7 +267,7 @@ export default function SubidorArchivo({
       {error && (
         <p
           role="alert"
-          className="mt-2 rounded-rk-sm border border-danger/25 bg-danger/10 px-3 py-2 text-xs leading-5 text-danger"
+          className="rk-upload-error"
         >
           {error}
         </p>

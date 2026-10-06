@@ -505,20 +505,20 @@ export default async function ProductPage({
                         {product.reviewCount > 0 && product.avgRating && (
                             <a
                                 href="#valoraciones"
-                                className="rk-press-sm mt-3 inline-flex min-h-[2.75rem] items-center gap-2 text-sm"
+                                className="rk-rating-link mt-2"
                             >
                                 <Estrellas
                                     valor={Number(product.avgRating)}
                                     tamano={15}
                                 />
 
-                                <span className="font-medium tabular-nums">
+                                <strong>
                                     {Number(product.avgRating)
                                         .toFixed(1)
                                         .replace(".", ",")}
-                                </span>
+                                </strong>
 
-                                <span className="text-ink/55 underline underline-offset-4">
+                                <span>
                                     {product.reviewCount}
                                     {product.reviewCount === 1
                                         ? " valoración"
@@ -554,39 +554,36 @@ export default async function ProductPage({
                         </div>
 
                         {/* ── PRECIO Y COMPRA ── */}
-                        <div className="rk-glass mt-6 rounded-rk-lg p-4 sm:p-5">
-                            <div className="flex items-end justify-between gap-4">
+                        <div className="rk-buy mt-6">
+                            <div className="rk-buy-top">
                                 <div className="min-w-0">
                                     {pricing.hasPromotion ? (
                                         <>
                                             {/* Precio anterior: secundario y tachado */}
-                                            <div className="flex flex-wrap items-center gap-2">
-                                                <span className="text-xs text-ink/60">
-                                                    Antes
-                                                </span>
-
-                                                <span className="text-sm text-ink/60 line-through">
+                                            <p className="rk-buy-before">
+                                                Antes
+                                                <s>
                                                     {formatPrice(
                                                         pricing.compareAtPrice as number
                                                     )}
-                                                </span>
+                                                </s>
 
                                                 <span className="rk-badge rk-badge-danger">
                                                     {pricing.discountPercent}% OFF
                                                 </span>
-                                            </div>
+                                            </p>
 
-                                            <p className="mt-1 text-[2rem] font-semibold leading-none tracking-tight">
+                                            <p className="rk-buy-price">
                                                 {formatPrice(pricing.price)}
                                             </p>
                                         </>
                                     ) : (
                                         <>
-                                            <p className="rk-eyebrow !tracking-[0.16em]">
+                                            <p className="rk-buy-label">
                                                 Precio
                                             </p>
 
-                                            <p className="mt-2 text-[2rem] font-semibold leading-none tracking-tight">
+                                            <p className="rk-buy-price">
                                                 {formatPrice(pricing.price)}
                                             </p>
                                         </>
@@ -596,7 +593,7 @@ export default async function ProductPage({
                                 <FavoriteButton productId={product.id} />
                             </div>
 
-                            <div className="mt-5 space-y-2">
+                            <div className="rk-buy-actions">
                                 {yaEsSuyo ? (
                                     <YaAdquirido que="recurso" />
                                 ) : (
@@ -620,27 +617,19 @@ export default async function ProductPage({
                             </div>
 
                             {/* Condiciones reales del marketplace */}
-                            <div className="rk-divider my-4" />
-
-                            <ul className="grid gap-2.5 sm:grid-cols-2">
-                                <li className="flex items-start gap-2">
-                                    <Download
-                                        size={14}
-                                        className="mt-0.5 shrink-0 text-ink"
-                                    />
-                                    <span className="text-xs leading-5 text-ink/60">
-                                        Descarga inmediata tras el pago
+                            <ul className="rk-buy-perks">
+                                <li>
+                                    <span aria-hidden className="rk-buy-perk-icon">
+                                        <Download />
                                     </span>
+                                    Descarga inmediata tras el pago
                                 </li>
 
-                                <li className="flex items-start gap-2">
-                                    <ShieldCheck
-                                        size={14}
-                                        className="mt-0.5 shrink-0 text-ink"
-                                    />
-                                    <span className="text-xs leading-5 text-ink/60">
-                                        Acceso permanente desde tu cuenta
+                                <li>
+                                    <span aria-hidden className="rk-buy-perk-icon">
+                                        <ShieldCheck />
                                     </span>
+                                    Acceso permanente desde tu cuenta
                                 </li>
                             </ul>
                         </div>
@@ -669,8 +658,8 @@ export default async function ProductPage({
                         )}
 
                         {/* ── CREADOR ── */}
-                        <div className="rk-card rk-hover-lift mt-4 flex items-center gap-3.5 p-3.5 sm:p-4">
-                            <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-lg font-semibold text-onprimary">
+                        <div className="rk-creator mt-4">
+                            <span className="rk-creator-avatar">
                                 {product.creator.avatarUrl ? (
                                     <Image
                                         src={product.creator.avatarUrl}
@@ -685,26 +674,22 @@ export default async function ProductPage({
                             </span>
 
                             <div className="min-w-0 flex-1">
-                                <p className="rk-eyebrow !tracking-[0.16em]">
+                                <p className="rk-buy-label">
                                     Creador
                                 </p>
 
-                                <p className="mt-1 flex items-center gap-1.5">
-                                    <span className="truncate text-[14px] font-semibold">
+                                <p className="rk-creator-name">
+                                    <span>
                                         {creatorName}
                                     </span>
 
                                     {product.creator.isVerified && (
-                                        <BadgeCheck
-                                            size={14}
-                                            className="shrink-0 text-ink"
-                                            aria-label="Creador verificado"
-                                        />
+                                        <BadgeCheck aria-label="Creador verificado" />
                                     )}
                                 </p>
 
                                 {product.creator.username && (
-                                    <p className="truncate text-[11px] text-ink/60">
+                                    <p className="rk-creator-user">
                                         @{product.creator.username}
                                     </p>
                                 )}
@@ -713,7 +698,7 @@ export default async function ProductPage({
                             {creatorProfileUrl && (
                                 <Link
                                     href={creatorProfileUrl}
-                                    className="rk-btn rk-btn-line shrink-0 !px-4 !text-xs"
+                                    className="rk-btn rk-btn-line"
                                 >
                                     Ver perfil
                                 </Link>
@@ -721,12 +706,12 @@ export default async function ProductPage({
                         </div>
 
                         {/* ── DESCRIPCIÓN ── */}
-                        <section className="rk-card mt-4 p-4 sm:p-5">
-                            <h2 className="text-sm font-semibold">
+                        <section className="rk-detail-card mt-4">
+                            <h2 className="rk-detail-title">
                                 Sobre este recurso
                             </h2>
 
-                            <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-ink/60">
+                            <p className="rk-detail-text">
                                 {product.description}
                             </p>
                         </section>
@@ -739,22 +724,21 @@ export default async function ProductPage({
                             no se muestra.
                         */}
                         {specs.length > 0 && (
-                            <section className="rk-card mt-4 p-4 sm:p-5">
-                                <h2 className="text-sm font-semibold">
+                            <section className="rk-detail-card mt-4">
+                                <h2 className="rk-detail-title">
                                     Detalles del recurso
                                 </h2>
 
-                                <dl className="rk-divider-y mt-3">
+                                <dl className="rk-specs">
                                     {specs.map((spec) => (
                                         <div
                                             key={spec.label}
-                                            className="flex items-center justify-between gap-4 py-2.5"
                                         >
-                                            <dt className="text-sm text-ink/60">
+                                            <dt>
                                                 {spec.label}
                                             </dt>
 
-                                            <dd className="text-right text-sm font-medium">
+                                            <dd>
                                                 {spec.value}
                                             </dd>
                                         </div>

@@ -247,7 +247,7 @@ export default async function AdminRecursoPage({ params }: Props) {
         <header className="rk-fade-up">
           <Link
             href="/admin/recursos"
-            className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
+            className="rk-auth-back"
           >
             <ChevronLeft size={15} />
             Recursos
@@ -277,7 +277,7 @@ export default async function AdminRecursoPage({ params }: Props) {
                 href={`/tienda/${resource.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rk-btn rk-btn-glass rk-btn-compact shrink-0 !px-4 !py-2.5 !text-sm"
+                className="rk-btn rk-btn-line rk-btn-compact shrink-0"
               >
                 <ExternalLink size={15} />
                 Ver publicación
@@ -289,7 +289,7 @@ export default async function AdminRecursoPage({ params }: Props) {
         {/* ========== REVISIÓN ========== */}
         {resource.status === "REJECTED" &&
           resource.rejectionReason && (
-            <section className="rk-fade mt-6 rounded-rk-md border border-danger/25 bg-danger/10 p-5">
+            <section className="rk-upload-error rk-fade mt-6">
               <p className="text-sm font-semibold text-danger">
                 Recurso rechazado
               </p>

@@ -79,7 +79,7 @@ export default function AvisoRequisitos({
         onClick={() => setAbierto((v) => !v)}
         aria-expanded={abierto}
         aria-label={`Requisitos de ${requisito.nombre.toLowerCase()}`}
-        className="rk-press inline-flex h-11 w-11 items-center justify-center rounded-full text-ink/45 transition-colors duration-fast hover:text-ink"
+        className="rk-icon-button rk-press"
       >
         <Info size={15} aria-hidden />
       </button>
@@ -99,7 +99,7 @@ export default function AvisoRequisitos({
               type="button"
               onClick={() => setAbierto(false)}
               aria-label="Cerrar"
-              className="rk-press -mr-1 -mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full text-ink/45 hover:text-ink"
+              className="rk-icon-button rk-press -mr-1 -mt-1"
             >
               <X size={13} aria-hidden />
             </button>
@@ -117,7 +117,7 @@ export default function AvisoRequisitos({
           </span>
 
           {requisito.notas && (
-            <span className="mt-3 block space-y-1.5 border-t border-line/12 pt-3">
+            <span className="rk-divider-t mt-3 block space-y-1.5 pt-3">
               {requisito.notas.map((nota) => (
                 <span
                   key={nota}

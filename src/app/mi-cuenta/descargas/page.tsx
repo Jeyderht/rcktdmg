@@ -197,7 +197,7 @@ export default function MisDescargasPage() {
                         {[0, 1].map((index) => (
                             <div
                                 key={index}
-                                className="rk-card flex gap-4 p-4"
+                                className="rk-row-card flex gap-4"
                             >
                                 <div className="rk-aspect-product w-20 shrink-0 animate-pulse rounded-rk-sm bg-ink/[0.06]" />
 
@@ -215,14 +215,14 @@ export default function MisDescargasPage() {
                 {!loading && error && (
                     <div
                         role="alert"
-                        className="rk-fade mt-8 rounded-rk-md border border-danger/25 bg-danger/10 p-5"
+                        className="rk-upload-error rk-fade mt-8"
                     >
-                        <p className="text-sm text-danger">{error}</p>
+                        <p style={{ margin: 0 }}>{error}</p>
 
                         <button
                             type="button"
                             onClick={loadDownloads}
-                            className="rk-btn rk-btn-primary mt-4 rk-btn-compact !px-4 !py-2.5 !text-sm"
+                            className="rk-btn rk-btn-primary mt-4"
                         >
                             Intentar nuevamente
                         </button>
@@ -249,9 +249,9 @@ export default function MisDescargasPage() {
                             {colecciones.map((coleccion) => (
                                 <li
                                     key={coleccion.id}
-                                    className="rk-card flex gap-4 p-4"
+                                    className="rk-row-card flex gap-4"
                                 >
-                                    <span className="rk-media rk-aspect-product relative w-20 shrink-0 overflow-hidden rounded-rk-sm">
+                                    <span className="rk-media rk-aspect-product rk-row-card-thumb" style={{ width: 80 }}>
                                         {coleccion.coverUrl && (
                                             <Image
                                                 src={coleccion.coverUrl}
@@ -353,7 +353,7 @@ export default function MisDescargasPage() {
                                 return (
                                     <article
                                         key={download.id}
-                                        className="rk-card flex gap-4 p-4"
+                                        className="rk-row-card flex gap-4"
                                     >
                                         {/* Contenido visual 9:16, siempre nítido. */}
                                         <Link
@@ -468,7 +468,7 @@ export default function MisDescargasPage() {
                                                         !isActive ||
                                                         isDownloading
                                                     }
-                                                    className="rk-btn rk-btn-primary rk-btn-compact w-full !py-2.5 !text-sm"
+                                                    className="rk-btn rk-btn-buy w-full"
                                                 >
                                                     <DownloadIcon
                                                         size={15}

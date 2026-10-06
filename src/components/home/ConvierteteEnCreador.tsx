@@ -23,15 +23,15 @@ export default function ConvierteteEnCreador({
   return (
     <section className="border-t border-line/10">
       <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
-        <div className="rk-tile rk-fade-up flex flex-col items-start gap-6 rounded-rk-xl p-7 sm:p-10 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+        <div className="rk-footer-cta rk-fade-up gap-6 p-7 sm:p-10 lg:gap-10">
           <div className="max-w-2xl">
-            <p className="rk-kicker">Publica en RCKTDMG</p>
+            <p className="rk-footer-cta-kicker">Publica en RCKTDMG</p>
 
-            <h2 className="rk-title mt-3 text-[1.75rem] sm:text-4xl">
+            <h2 className="rk-footer-cta-title" style={{ maxWidth: "none" }}>
               Conviértete en creador
             </h2>
 
-            <p className="mt-3 text-[15px] leading-7 text-ink/60">
+            <p className="mt-3 text-[15px] leading-7" style={{ opacity: 0.7 }}>
               Convierte tus diseños en recursos y véndelos en RCKTDMG.
               Envías tu portafolio, lo revisamos y, si encaja, abrimos
               tu perfil público con tu nombre y tus enlaces.
@@ -40,7 +40,7 @@ export default function ConvierteteEnCreador({
 
           <Link
             href="/creadores/unete"
-            className="rk-btn rk-btn-primary shrink-0"
+            className="rk-btn rk-btn-ink shrink-0"
           >
             Enviar mi solicitud
             <ArrowRight size={16} aria-hidden />

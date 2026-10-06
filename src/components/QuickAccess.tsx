@@ -201,7 +201,7 @@ function CompactGrid({ links }: { links: QuickLink[] }) {
             href={link.href}
             className="rk-card rk-card-hover rk-press flex items-center gap-2.5 !rounded-rk-sm p-3"
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink/70">
+            <span className="rk-icon-tile h-9 w-9">
               <Icon size={16} />
             </span>
 
@@ -231,7 +231,7 @@ function FeatureGrid({ links }: { links: QuickLink[] }) {
             href={link.href}
             className="rk-card rk-card-hover rk-press group flex items-center gap-3.5 p-3.5 sm:p-4"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink transition-transform duration-normal ease-rk group-hover:scale-105">
+            <span className="rk-icon-tile h-10 w-10 transition-transform duration-normal ease-rk group-hover:scale-105">
               <Icon size={18} />
             </span>
 
@@ -339,7 +339,7 @@ export default function QuickAccess({
                 href={publicProfileUrl}
                 className="rk-card rk-card-hover rk-press group flex items-center gap-2.5 !rounded-rk-sm p-3"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink">
+                <span className="rk-icon-tile h-9 w-9">
                   <UserRound size={16} />
                 </span>
 

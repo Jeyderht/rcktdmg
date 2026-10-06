@@ -80,7 +80,7 @@ export default async function AdminColeccionesPage() {
           {enRevisionPrimero.map((coleccion) => (
             <li
               key={coleccion.id}
-              className="rk-card flex flex-wrap items-center justify-between gap-4 p-4"
+              className="rk-row-card flex flex-wrap items-center justify-between gap-4"
             >
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[15px] font-semibold">
@@ -115,7 +115,7 @@ export default async function AdminColeccionesPage() {
                 {coleccion.status === "PUBLISHED" && (
                   <Link
                     href={`/colecciones-comerciales/${coleccion.slug}`}
-                    className="rk-btn rk-btn-line !px-4 !py-2 !text-[13px]"
+                    className="rk-btn rk-btn-line"
                   >
                     Ver ficha
                   </Link>

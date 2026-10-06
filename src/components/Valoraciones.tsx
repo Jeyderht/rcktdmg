@@ -57,7 +57,7 @@ function SelectorEstrellas({
 
   return (
     <div
-      className="inline-flex items-center gap-1"
+      className="rk-star-picker"
       onMouseLeave={() => setEncima(0)}
     >
       {Array.from({ length: NOTA_MAXIMA }).map((_, i) => {
@@ -72,17 +72,9 @@ function SelectorEstrellas({
             onMouseEnter={() => setEncima(nota)}
             aria-label={`${nota} ${nota === 1 ? "estrella" : "estrellas"}`}
             aria-pressed={valor === nota}
-            className="rk-press flex h-11 w-11 items-center justify-center rounded-full disabled:opacity-50"
+            className={nota <= mostrado ? "is-on" : undefined}
           >
-            <Star
-              size={22}
-              strokeWidth={1.75}
-              className={
-                nota <= mostrado
-                  ? "fill-ink text-ink"
-                  : "text-ink/25"
-              }
-            />
+            <Star strokeWidth={1.75} aria-hidden />
           </button>
         );
       })}
@@ -100,7 +92,7 @@ function EstrellasFijas({
 }) {
   return (
     <span
-      className="inline-flex items-center gap-0.5"
+      className="rk-stars"
       role="img"
       aria-label={`${valor.toFixed(1).replace(".", ",")} de ${NOTA_MAXIMA}`}
     >
@@ -111,25 +103,17 @@ function EstrellasFijas({
           <span
             key={i}
             aria-hidden
-            className="relative inline-flex shrink-0"
+            className="rk-star"
             style={{ width: tamano, height: tamano }}
           >
-            <Star
-              size={tamano}
-              strokeWidth={1.75}
-              className="absolute inset-0 text-ink/20"
-            />
+            <Star size={tamano} strokeWidth={1.75} />
 
             {relleno > 0 && (
               <span
-                className="absolute inset-0 overflow-hidden"
+                className="rk-star-fill"
                 style={{ width: `${relleno * 100}%` }}
               >
-                <Star
-                  size={tamano}
-                  strokeWidth={1.75}
-                  className="fill-ink text-ink"
-                />
+                <Star size={tamano} strokeWidth={1.75} />
               </span>
             )}
           </span>
@@ -269,11 +253,12 @@ export default function Valoraciones({
 
   if (cargando) {
     return (
-      <div aria-busy="true" className="mt-6 space-y-2">
+      <div aria-busy="true" className="mt-6 grid gap-2.5">
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className="h-20 animate-pulse rounded-rk-sm bg-ink/[0.05]"
+            className="rk-skeleton"
+            style={{ height: 80, borderRadius: 20 }}
           />
         ))}
       </div>
@@ -282,7 +267,7 @@ export default function Valoraciones({
 
   if (!datos) {
     return (
-      <p role="alert" className="mt-6 text-sm text-danger">
+      <p role="alert" className="rk-upload-error mt-6">
         {error || "No se pudieron cargar las valoraciones."}
       </p>
     );
@@ -302,24 +287,20 @@ export default function Valoraciones({
     <div className="mt-6">
       {/* ══════ RESUMEN ══════ */}
       {resumen.total > 0 ? (
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-10">
-          <div className="shrink-0">
-            <p className="text-4xl font-semibold tabular-nums tracking-tight">
-              {media}
-            </p>
+        <div className="rk-rating">
+          <div className="rk-rating-score">
+            <p className="rk-rating-value rk-text-iris">{media}</p>
 
-            <div className="mt-1.5">
-              <EstrellasFijas valor={resumen.media ?? 0} tamano={15} />
-            </div>
+            <EstrellasFijas valor={resumen.media ?? 0} tamano={16} />
 
-            <p className="mt-1.5 text-sm text-ink/60 tabular-nums">
+            <p className="rk-rating-total">
               {resumen.total}{" "}
               {resumen.total === 1 ? "valoración" : "valoraciones"}
             </p>
           </div>
 
           {/* Reparto por nota: un dato real, no una estimación. */}
-          <ul className="min-w-0 flex-1 space-y-1">
+          <ul className="rk-rating-bars">
             {([5, 4, 3, 2, 1] as const).map((n) => {
               const cuantas = resumen.reparto[n];
 
@@ -327,22 +308,20 @@ export default function Valoraciones({
                 resumen.total > 0 ? (cuantas / resumen.total) * 100 : 0;
 
               return (
-                <li key={n} className="flex items-center gap-2.5">
-                  <span className="w-3 shrink-0 text-xs tabular-nums text-ink/60">
+                <li key={n} className="rk-rating-bar">
+                  <span className="rk-rating-bar-label">
                     {n}
+                    <Star aria-hidden />
                   </span>
 
-                  <span
-                    aria-hidden
-                    className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-ink/[0.08]"
-                  >
+                  <span aria-hidden className="rk-rating-track">
                     <span
-                      className="block h-full rounded-full bg-ink/70"
+                      className="rk-rating-fill"
                       style={{ width: `${porcentaje}%` }}
                     />
                   </span>
 
-                  <span className="w-6 shrink-0 text-right text-xs tabular-nums text-ink/50">
+                  <span>
                     {cuantas}
                   </span>
                 </li>
@@ -351,7 +330,7 @@ export default function Valoraciones({
           </ul>
         </div>
       ) : (
-        <p className="text-[15px] leading-7 text-ink/60">
+        <p className="rk-review-note">
           Este recurso todavía no tiene valoraciones.
         </p>
       )}
@@ -360,13 +339,13 @@ export default function Valoraciones({
       {mostrarFormulario ? (
         <form
           onSubmit={enviar}
-          className="rk-tile mt-7 p-5 sm:p-6"
+          className="rk-review-form mt-6"
         >
-          <p className="rk-kicker">
+          <p className="rk-review-form-title">
             {datos.mia ? "Editar tu valoración" : "Escribe tu valoración"}
           </p>
 
-          <div className="mt-3">
+          <div>
             <SelectorEstrellas
               valor={nota}
               onChange={setNota}
@@ -386,20 +365,20 @@ export default function Valoraciones({
             rows={4}
             disabled={guardando}
             placeholder="¿Qué te ha parecido? (opcional)"
-            className="rk-textarea mt-4 w-full"
+            className="rk-textarea w-full"
           />
 
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs tabular-nums text-ink/45">
+          <div className="rk-review-form-foot">
+            <p className="rk-review-count">
               {comentario.length} / {LARGO_COMENTARIO}
             </p>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="rk-review-form-actions">
               {editando && (
                 <button
                   type="button"
                   onClick={() => setEditando(false)}
-                  className="rk-btn rk-btn-line !px-4 !py-2.5 !text-[13px]"
+                  className="rk-btn rk-btn-line"
                 >
                   Cancelar
                 </button>
@@ -408,7 +387,7 @@ export default function Valoraciones({
               <button
                 type="submit"
                 disabled={!nota || guardando}
-                className="rk-btn rk-btn-ink !px-5 !py-2.5 !text-[13px] disabled:opacity-50"
+                className="rk-btn rk-btn-primary"
               >
                 {guardando
                   ? "Guardando…"
@@ -421,19 +400,19 @@ export default function Valoraciones({
         </form>
       ) : datos.mia ? (
         /* Ya valoró: se le ofrece editar o eliminar. */
-        <div className="rk-tile mt-7 p-5 sm:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="rk-review-form rk-review-mine mt-6">
+          <div className="rk-review-mine-head">
             <div className="flex items-center gap-2.5">
               <EstrellasFijas valor={datos.mia.rating} tamano={15} />
 
-              <span className="text-sm text-ink/60">Tu valoración</span>
+              <span className="rk-review-count">Tu valoración</span>
             </div>
 
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setEditando(true)}
-                className="rk-btn rk-btn-line !px-4 !py-2.5 !text-[13px]"
+                className="rk-btn rk-btn-line"
               >
                 Editar
               </button>
@@ -443,22 +422,22 @@ export default function Valoraciones({
                 onClick={borrar}
                 disabled={guardando}
                 aria-label="Eliminar mi valoración"
-                className="rk-btn rk-btn-line !min-w-[2.75rem] !px-3 !py-2.5 disabled:opacity-50"
+                className="rk-icon-button-danger"
               >
-                <Trash2 size={15} aria-hidden />
+                <Trash2 aria-hidden />
               </button>
             </div>
           </div>
 
           {datos.mia.comment && (
-            <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-ink/70">
+            <p className="rk-review-text" style={{ marginTop: 0 }}>
               {datos.mia.comment}
             </p>
           )}
         </div>
       ) : (
         /* No puede valorar: se explica por qué, sin rodeos. */
-        <p className="mt-7 rounded-rk-sm border border-line/12 px-4 py-3.5 text-sm leading-6 text-ink/60">
+        <p className="rk-review-note mt-6">
           {datos.haySesion ? (
             datos.motivo
           ) : (
@@ -467,7 +446,6 @@ export default function Valoraciones({
                 href={`/login?redirect=${encodeURIComponent(
                   `/tienda/${productSlug}`
                 )}`}
-                className="font-medium text-ink underline underline-offset-4"
               >
                 Inicia sesión
               </Link>{" "}
@@ -478,7 +456,7 @@ export default function Valoraciones({
       )}
 
       {error && (
-        <p role="alert" className="mt-3 text-sm text-danger">
+        <p role="alert" className="rk-upload-error">
           {error}
         </p>
       )}
@@ -486,14 +464,14 @@ export default function Valoraciones({
       {/* ══════ LISTA ══════ */}
       {datos.resenas.length > 0 && (
         <>
-          <ul className="mt-8 space-y-5">
+          <ul className="rk-reviews mt-6">
             {datos.resenas.map((resena) => (
               <li
                 key={resena.id}
-                className="border-t border-line/10 pt-5 first:border-t-0 first:pt-0"
+                className="rk-review"
               >
-                <div className="flex items-center gap-3">
-                  <span className="rk-media relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full">
+                <div className="rk-review-head">
+                  <span className="rk-review-avatar">
                     {resena.autor.avatarUrl ? (
                       <Image
                         src={resena.autor.avatarUrl}
@@ -503,19 +481,14 @@ export default function Valoraciones({
                         sizes="36px"
                       />
                     ) : (
-                      <span className="text-xs font-semibold text-ink/55">
-                        {resena.autor.nombre.charAt(0).toUpperCase()}
-                      </span>
+                      resena.autor.nombre.charAt(0).toUpperCase()
                     )}
                   </span>
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
+                    <p className="rk-review-name">
                       {resena.autor.username ? (
-                        <Link
-                          href={`/creadores/${resena.autor.username}`}
-                          className="underline-offset-4 hover:underline"
-                        >
+                        <Link href={`/creadores/${resena.autor.username}`}>
                           {resena.autor.nombre}
                         </Link>
                       ) : (
@@ -523,13 +496,13 @@ export default function Valoraciones({
                       )}
 
                       {resena.esMia && (
-                        <span className="ml-2 text-xs font-normal text-ink/45">
+                        <span className="rk-review-you">
                           tú
                         </span>
                       )}
                     </p>
 
-                    <p className="mt-0.5 flex items-center gap-2 text-xs text-ink/50">
+                    <p className="rk-review-meta">
                       <EstrellasFijas valor={resena.rating} tamano={12} />
                       {fecha(resena.createdAt)}
                     </p>
@@ -537,7 +510,7 @@ export default function Valoraciones({
                 </div>
 
                 {resena.comment && (
-                  <p className="mt-2.5 whitespace-pre-line text-[15px] leading-7 text-ink/70">
+                  <p className="rk-review-text">
                     {resena.comment}
                   </p>
                 )}
@@ -548,19 +521,19 @@ export default function Valoraciones({
           {datos.totalPaginas > 1 && (
             <nav
               aria-label="Paginación de valoraciones"
-              className="mt-7 flex items-center justify-center gap-2"
+              className="rk-reviews-pager"
             >
               <button
                 type="button"
                 onClick={() => cargar(datos.pagina - 1)}
                 disabled={datos.pagina <= 1}
                 aria-label="Página anterior"
-                className="rk-btn rk-btn-line !min-w-[2.75rem] !px-3 disabled:opacity-40"
+                className="rk-btn rk-btn-line rk-btn-icon"
               >
                 <ChevronLeft size={16} aria-hidden />
               </button>
 
-              <span className="px-2 text-sm tabular-nums text-ink/60">
+              <span>
                 {datos.pagina} de {datos.totalPaginas}
               </span>
 
@@ -569,7 +542,7 @@ export default function Valoraciones({
                 onClick={() => cargar(datos.pagina + 1)}
                 disabled={datos.pagina >= datos.totalPaginas}
                 aria-label="Página siguiente"
-                className="rk-btn rk-btn-line !min-w-[2.75rem] !px-3 disabled:opacity-40"
+                className="rk-btn rk-btn-line rk-btn-icon"
               >
                 <ChevronRight size={16} aria-hidden />
               </button>

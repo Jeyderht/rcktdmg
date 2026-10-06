@@ -199,7 +199,7 @@ export default function CollectionDetailPage() {
                     {[0, 1, 2].map((index) => (
                         <div
                             key={index}
-                            className="rk-card flex gap-4 p-4"
+                            className="rk-row-card flex gap-4"
                         >
                             <div className="rk-aspect-product w-16 shrink-0 animate-pulse rounded-rk-sm bg-ink/[0.06]" />
 
@@ -253,7 +253,7 @@ export default function CollectionDetailPage() {
             >
                 <Link
                     href="/tienda"
-                    className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2.5 !text-sm"
+                    className="rk-btn rk-btn-line rk-btn-compact"
                 >
                     Agregar recursos
                 </Link>
@@ -264,7 +264,7 @@ export default function CollectionDetailPage() {
                 <div className="flex min-w-0 items-start gap-3.5">
                     <span
                         aria-hidden
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06]"
+                        className="rk-icon-tile h-10 w-10"
                     >
                         {collection.isPublic ? (
                             <Globe size={18} />
@@ -301,7 +301,7 @@ export default function CollectionDetailPage() {
                     type="button"
                     onClick={cambiarVisibilidad}
                     disabled={cambiandoVisibilidad}
-                    className="rk-btn rk-btn-line rk-btn-compact shrink-0 !px-4 !py-2.5 !text-sm"
+                    className="rk-btn rk-btn-line rk-btn-compact shrink-0"
                 >
                     {cambiandoVisibilidad
                         ? "Guardando..."
@@ -332,7 +332,7 @@ export default function CollectionDetailPage() {
                         {collection.items.map(({ product }) => (
                             <article
                                 key={product.id}
-                                className="rk-card flex gap-4 p-4"
+                                className="rk-row-card flex gap-4"
                             >
                                 {/* El marco lo decide la pieza; sin desenfoque. */}
                                 <Link

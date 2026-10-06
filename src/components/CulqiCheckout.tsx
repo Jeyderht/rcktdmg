@@ -221,7 +221,7 @@ export default function CulqiCheckout({
             />
 
             {error && (
-                <div className="mb-4 rounded-rk-md bg-danger/10 p-4 text-sm text-danger">
+                <div className="rk-upload-error mb-4">
                     {error}
                 </div>
             )}
@@ -230,7 +230,7 @@ export default function CulqiCheckout({
                 type="button"
                 onClick={openCheckout}
                 disabled={loading || !culqiLoaded}
-                className="rk-btn rk-btn-primary w-full !py-4"
+                className="rk-btn rk-btn-primary w-full"
             >
                 {loading
                     ? "Preparando pago..."

@@ -5,6 +5,9 @@ import {
   ArrowRight,
   ArrowUpRight,
   Search,
+  Compass,
+  ShoppingBag,
+  Download,
 } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
@@ -55,18 +58,24 @@ export const metadata: Metadata = {
 const PASOS = [
   {
     numero: "01",
+    icono: Compass,
+    tono: "rk-step-frio",
     titulo: "Explora",
     texto:
       "Busca por categoría, formato, color o precio hasta dar con lo que necesitas.",
   },
   {
     numero: "02",
+    icono: ShoppingBag,
+    tono: "rk-step-neutro",
     titulo: "Elige",
     texto:
       "Abre el recurso, revisa sus imágenes y su ficha, y añádelo al carrito.",
   },
   {
     numero: "03",
+    icono: Download,
+    tono: "rk-step-calido",
     titulo: "Descarga",
     texto:
       "Tras el pago queda en tu cuenta, disponible para descargar cuando quieras.",
@@ -635,25 +644,26 @@ export default async function Home() {
               </h2>
             </div>
 
-            <div className="rk-fade-up rk-enter-1 mt-12 grid gap-px overflow-hidden rounded-rk-lg border border-line/10 bg-line/10 sm:grid-cols-3">
-              {PASOS.map((paso) => (
-                <div
-                  key={paso.numero}
-                  className="bg-background p-6 sm:p-8"
-                >
-                  <span className="rk-title block text-5xl tabular-nums text-ink/15 sm:text-6xl">
-                    {paso.numero}
-                  </span>
+            <div className="rk-steps rk-fade-up rk-enter-1 mt-12 sm:grid-cols-3">
+              {PASOS.map((paso) => {
+                const Icono = paso.icono;
 
-                  <h3 className="mt-6 text-xl font-semibold tracking-tight">
-                    {paso.titulo}
-                  </h3>
+                return (
+                  <article
+                    key={paso.numero}
+                    className={`rk-step ${paso.tono}`}
+                  >
+                    <span className="rk-step-num" aria-hidden="true">
+                      <Icono />
+                    </span>
 
-                  <p className="mt-2.5 text-sm leading-7 text-ink/60">
-                    {paso.texto}
-                  </p>
-                </div>
-              ))}
+                    <div className="rk-step-body">
+                      <h3 className="rk-step-title">{paso.titulo}</h3>
+                      <p className="rk-step-text">{paso.texto}</p>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>

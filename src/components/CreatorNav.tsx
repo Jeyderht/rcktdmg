@@ -89,7 +89,7 @@ export default function CreatorNav() {
       aria-label="Secciones del Creator Studio"
       className="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-5 lg:px-8"
     >
-      <div className="rk-glass flex gap-1 overflow-x-auto rounded-rk-lg p-1.5">
+      <div className="rk-tabs rk-tabs-track">
         {SECTIONS.map((section) => {
           const Icon = section.icon;
           const active = isActive(section);
@@ -99,13 +99,9 @@ export default function CreatorNav() {
               key={section.href}
               href={section.href}
               aria-current={active ? "page" : undefined}
-              className={`rk-press flex min-h-[2.75rem] shrink-0 items-center gap-1.5 rounded-rk-sm px-3 py-2 text-[13px] font-medium transition-colors duration-fast ease-rk ${
-                active
-                  ? "bg-ink/[0.07] font-semibold text-ink"
-                  : "text-ink/60 hover:bg-ink/[0.05] hover:text-ink"
-              }`}
+              className="rk-tab"
             >
-              <Icon size={15} />
+              <Icon aria-hidden />
               {section.label}
             </Link>
           );

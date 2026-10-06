@@ -58,7 +58,7 @@ export default function NuevoCreadorPage() {
         <header className="rk-fade-up">
           <Link
             href="/admin/usuarios"
-            className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
+            className="rk-auth-back"
           >
             <ChevronLeft size={15} />
             Usuarios
@@ -90,7 +90,7 @@ export default function NuevoCreadorPage() {
             <div className="mt-5">
               <label
                 htmlFor="nombre"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Nombre completo
               </label>
@@ -120,7 +120,7 @@ export default function NuevoCreadorPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Correo electrónico
                 </label>
@@ -140,7 +140,7 @@ export default function NuevoCreadorPage() {
               <div>
                 <label
                   htmlFor="password"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Contraseña temporal
                 </label>
@@ -180,7 +180,7 @@ export default function NuevoCreadorPage() {
             <div className="mt-5 flex items-start gap-3.5 rounded-rk-md bg-ink/[0.03] p-4">
               <span
                 aria-hidden
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink"
+                className="rk-icon-tile h-10 w-10"
               >
                 <ShieldCheck size={18} />
               </span>
@@ -204,7 +204,7 @@ export default function NuevoCreadorPage() {
             {error && (
               <div
                 role="alert"
-                className="rk-fade mt-5 rounded-rk-sm border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
+                className="rk-upload-error rk-fade mt-5"
               >
                 {error}
               </div>
@@ -213,7 +213,7 @@ export default function NuevoCreadorPage() {
             <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
               <Link
                 href="/admin/usuarios"
-                className="rk-btn rk-btn-glass"
+                className="rk-btn rk-btn-line"
               >
                 Cancelar
               </Link>
