@@ -14629,3 +14629,12 @@ div.rk-upload-error > * + * {
     gap: 18px 12px;
   }
 }
+
+/* etiquetas de la tarjeta en 2 columnas: más compactas para que entren enteras */
+@media (max-width: 639px) {
+  .rk-rejilla .rk-tarjeta .rk-glass-on-image {
+    padding: 3px 8px;
+    font-size: 9.5px;
+    letter-spacing: 0;
+  }
+}
