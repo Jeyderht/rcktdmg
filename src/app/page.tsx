@@ -24,6 +24,7 @@ import CarruselCreadores from "@/components/home/CarruselCreadores";
 import Ecosistema from "@/components/home/Ecosistema";
 import MasDisenos from "@/components/home/MasDisenos";
 import ConvierteteEnCreador from "@/components/home/ConvierteteEnCreador";
+import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
 import {
   conteosDeDisenos,
   creadoresDestacados,
@@ -667,6 +668,9 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
+        {/* ══════════ PREGUNTAS FRECUENTES ══════════ */}
+        <PreguntasFrecuentes />
 
         {/* ══════════ CTA FINAL ══════════ */}
         <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-4 sm:px-5 lg:px-8 lg:pb-24">

@@ -403,7 +403,7 @@ export default function NotificationsBell() {
         aria-expanded={abierto}
         aria-haspopup="dialog"
         title="Notificaciones"
-        className="rk-avatar-btn"
+        className="rk-topbar-btn"
       >
         <Bell aria-hidden />
 

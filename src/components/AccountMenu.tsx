@@ -232,7 +232,7 @@ export default function AccountMenu({
         <button
           type="button"
           onClick={handleLogout}
-          className="rk-menu-item rk-menu-item-danger"
+          className="rk-btn rk-btn-danger rk-btn-logout"
         >
           <LogOut aria-hidden />
           Cerrar sesión

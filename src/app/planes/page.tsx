@@ -8,6 +8,7 @@ import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import PlanesLista from "./PlanesLista";
+import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = paginaPublica({
@@ -173,6 +174,8 @@ export default async function PlansPage() {
             <ArrowRight size={16} />
           </Link>
         </div>
+
+        <PreguntasFrecuentes className="!px-0" />
       </main>
 
       <Footer />
