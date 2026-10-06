@@ -178,15 +178,15 @@ export default function ProductStatisticsPage() {
             <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
                 <div
                     role="alert"
-                    className="rk-fade rounded-rk-md border border-danger/25 bg-danger/10 p-6"
+                    className="rk-upload-error rk-fade"
                 >
-                    <p className="text-sm text-danger">
+                    <p className="rk-upload-error">
                         {error || "No se pudo cargar el recurso."}
                     </p>
 
                     <Link
                         href="/creadores/panel/recursos"
-                        className="rk-btn rk-btn-primary mt-5 rk-btn-compact !px-4 !py-2.5 !text-sm"
+                        className="rk-btn rk-btn-primary mt-5 rk-btn-compact"
                     >
                         Volver a mis recursos
                     </Link>
@@ -221,7 +221,7 @@ export default function ProductStatisticsPage() {
                 <header className="rk-fade-up">
                     <Link
                         href="/creadores/panel/recursos"
-                        className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
+                        className="rk-auth-back"
                     >
                         <ChevronLeft size={15} />
                         Mis recursos
@@ -275,7 +275,7 @@ export default function ProductStatisticsPage() {
                         <div className="flex shrink-0 flex-wrap gap-2">
                             <Link
                                 href={`/creadores/productos/${product.id}`}
-                                className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2.5 !text-sm"
+                                className="rk-btn rk-btn-line rk-btn-compact"
                             >
                                 Gestionar
                             </Link>
@@ -285,7 +285,7 @@ export default function ProductStatisticsPage() {
                                     href={`/tienda/${product.slug}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="rk-btn rk-btn-primary rk-btn-compact !px-4 !py-2.5 !text-sm"
+                                    className="rk-btn rk-btn-primary rk-btn-compact"
                                 >
                                     <ExternalLink size={15} />
                                     Ver publicación

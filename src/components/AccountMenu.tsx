@@ -4,16 +4,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  Crown,
+  LayoutDashboard,
   LogIn,
   LogOut,
+  Moon,
   Settings,
-  Sparkles,
+  ShoppingBag,
   UserPlus,
   UserRound,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { useTheme } from "@/components/ThemeProvider";
 import type { SessionUser } from "@/components/useSessionUser";
 
 /**
@@ -36,6 +40,8 @@ export default function AccountMenu({
   loading: boolean;
 }) {
   const router = useRouter();
+  const { resolved, setPreference } = useTheme();
+  const isDark = resolved === "dark";
 
   const [open, setOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -119,18 +125,37 @@ export default function AccountMenu({
     .charAt(0)
     .toUpperCase();
 
+  /* Interruptor de tema: lo comparten las dos variantes del menú. */
+  const themeRow = (
+    <div className="rk-menu-group">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={isDark}
+        onClick={() => setPreference(isDark ? "light" : "dark")}
+        className="rk-menu-item"
+      >
+        <Moon aria-hidden />
+        Modo oscuro
+        <span aria-hidden className="rk-menu-switch" />
+      </button>
+    </div>
+  );
+
+  const isCreator = user?.role === "CREATOR" || user?.role === "ADMIN";
+
   const menuBody = user ? (
     <>
       {/* IDENTIDAD */}
-      <div className="flex items-center gap-3 rk-divider-b px-4 py-4">
-        <span className="rk-media relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-ink/70">
+      <div className="rk-menu-head">
+        <span className="rk-avatar-btn-img">
           {user.avatarUrl ? (
             <Image
               src={user.avatarUrl}
               alt={displayName || "Avatar"}
               fill
               className="object-cover"
-              sizes="44px"
+              sizes="48px"
             />
           ) : (
             initials
@@ -138,92 +163,114 @@ export default function AccountMenu({
         </span>
 
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-[13px] font-semibold">
-            {displayName || "Mi cuenta"}
-          </span>
-
-          <span className="block truncate text-[11px] text-ink/60">
-            {user.email}
-          </span>
+          <span className="rk-menu-name">{displayName || "Mi cuenta"}</span>
+          <span className="rk-menu-email">{user.email}</span>
         </span>
       </div>
 
-      {/* OPCIONES */}
-      <div className="p-2">
+      {/*
+        Banner destacado. Solo a quien AÚN no puede publicar:
+        a un creador o a un administrador no le dice nada.
+      */}
+      {!isCreator && (
         <Link
-          href="/mi-cuenta"
+          href="/creadores/unete"
           onClick={() => setOpen(false)}
-          className="rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
+          className="rk-menu-promo"
         >
-          <UserRound size={15} className="shrink-0 text-ink/60" />
-          Ver perfil
+          <Crown aria-hidden />
+          Hazte creador
+          <span className="rk-menu-promo-pill">Únete</span>
         </Link>
+      )}
 
-        <Link
-          href="/mi-cuenta"
-          onClick={() => setOpen(false)}
-          className="rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
-        >
-          <Settings size={15} className="shrink-0 text-ink/60" />
-          Ajustes
-        </Link>
-
-        {/*
-          Solo se ofrece a quien AÚN no puede publicar. A un
-          creador o a un administrador esta entrada no le dice
-          nada, y llenar el menú de opciones que no sirven es
-          la forma más rápida de que nadie lo lea.
-        */}
-        {user.role !== "CREATOR" && user.role !== "ADMIN" && (
+      <nav className="rk-menu-list" aria-label="Opciones de cuenta">
+        <div className="rk-menu-group">
           <Link
-            href="/creadores/unete"
+            href="/mi-cuenta"
             onClick={() => setOpen(false)}
-            className="rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
+            className="rk-menu-item"
           >
-            <Sparkles size={15} className="shrink-0 text-ink/60" />
-            Únete como creador
+            <UserRound aria-hidden />
+            Ver perfil
           </Link>
-        )}
+
+          <Link
+            href="/mi-cuenta/compras"
+            onClick={() => setOpen(false)}
+            className="rk-menu-item"
+          >
+            <ShoppingBag aria-hidden />
+            Mis compras
+          </Link>
+
+          {isCreator && (
+            <Link
+              href="/creadores/panel"
+              onClick={() => setOpen(false)}
+              className="rk-menu-item"
+            >
+              <LayoutDashboard aria-hidden />
+              Panel de creador
+            </Link>
+          )}
+
+          <Link
+            href="/mi-cuenta"
+            onClick={() => setOpen(false)}
+            className="rk-menu-item"
+          >
+            <Settings aria-hidden />
+            Ajustes
+          </Link>
+        </div>
+
+        {themeRow}
+
+        <hr className="rk-menu-sep" />
 
         <button
           type="button"
           onClick={handleLogout}
-          className="rk-press flex w-full items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-left text-[13px] font-medium text-danger transition-colors hover:bg-danger/10"
+          className="rk-menu-item rk-menu-item-danger"
         >
-          <LogOut size={15} className="shrink-0" />
-          Salir
+          <LogOut aria-hidden />
+          Cerrar sesión
         </button>
-      </div>
+      </nav>
     </>
   ) : (
     <>
-      <div className="rk-divider-b px-4 py-4">
-        <p className="text-[13px] font-semibold">Mi cuenta</p>
-
-        <p className="mt-0.5 text-[11px] text-ink/60">
+      <div className="rk-menu-head" style={{ display: "block" }}>
+        <p className="rk-menu-name">Mi cuenta</p>
+        <p className="rk-menu-text">
           Accede para comprar y descargar recursos.
         </p>
       </div>
 
-      <div className="p-2">
-        <Link
-          href="/login"
-          onClick={() => setOpen(false)}
-          className="rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
-        >
-          <LogIn size={15} className="shrink-0 text-ink/60" />
-          Iniciar sesión
-        </Link>
+      <nav className="rk-menu-list" aria-label="Opciones de cuenta">
+        <div className="rk-menu-group">
+          <Link
+            href="/login"
+            onClick={() => setOpen(false)}
+            className="rk-menu-item"
+          >
+            <LogIn aria-hidden />
+            Iniciar sesión
+          </Link>
 
-        <Link
-          href="/registro"
-          onClick={() => setOpen(false)}
-          className="rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors hover:bg-ink/[0.05]"
-        >
-          <UserPlus size={15} className="shrink-0 text-ink/60" />
-          Crear cuenta
-        </Link>
-      </div>
+          <Link
+            href="/registro"
+            onClick={() => setOpen(false)}
+            className="rk-menu-item"
+          >
+            <UserPlus aria-hidden />
+            Crear cuenta
+          </Link>
+        </div>
+
+        {themeRow}
+      </nav>
     </>
   );
 
@@ -243,12 +290,9 @@ export default function AccountMenu({
               role="dialog"
               aria-modal="true"
               aria-label="Menú de cuenta"
-              className="rk-glass-strong rk-float animate-fade-up absolute inset-x-3 bottom-[calc(var(--rk-dock-h)+env(safe-area-inset-bottom)+0.75rem)] max-h-[70vh] overflow-y-auto overscroll-contain rounded-rk-lg"
+              className="rk-menu rk-menu-sheet animate-fade-up absolute inset-x-3 bottom-[calc(var(--rk-dock-h)+env(safe-area-inset-bottom)+0.75rem)] max-h-[70vh] overflow-y-auto overscroll-contain"
             >
-              <div
-                aria-hidden
-                className="mx-auto mt-2.5 h-1 w-10 rounded-full bg-ink/15"
-              />
+              <span aria-hidden className="rk-menu-grabber" />
 
               {menuBody}
             </div>
@@ -261,7 +305,8 @@ export default function AccountMenu({
     return (
       <div
         aria-hidden
-        className="h-11 w-11 animate-pulse rounded-full bg-ink/[0.06]"
+        className="rk-skeleton rk-skeleton-circle"
+        style={{ width: 44, height: 44 }}
       />
     );
   }
@@ -275,14 +320,10 @@ export default function AccountMenu({
         aria-expanded={open}
         aria-haspopup="dialog"
         title="Mi cuenta"
-        className={`rk-press relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full transition-colors ${
-          open
-            ? "bg-ink/[0.08] text-ink"
-            : "text-ink/70 hover:bg-ink/[0.06] hover:text-ink"
-        }`}
+        className="rk-avatar-btn"
       >
         {user?.avatarUrl ? (
-          <span className="rk-media relative block h-8 w-8 overflow-hidden rounded-full">
+          <span className="rk-avatar-btn-img">
             <Image
               src={user.avatarUrl}
               alt={displayName || "Mi cuenta"}
@@ -292,7 +333,7 @@ export default function AccountMenu({
             />
           </span>
         ) : (
-          <UserRound size={18} />
+          <UserRound aria-hidden />
         )}
       </button>
 
@@ -301,7 +342,7 @@ export default function AccountMenu({
         <div
           role="dialog"
           aria-label="Menú de cuenta"
-          className="rk-glass-strong rk-float animate-fade-up absolute right-0 top-[calc(100%+0.6rem)] z-[80] w-64 overflow-hidden rounded-rk-md"
+          className="rk-menu animate-fade-up absolute right-0 top-[calc(100%+0.75rem)] z-[80]"
         >
           {menuBody}
         </div>

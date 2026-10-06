@@ -193,7 +193,7 @@ export default async function PackPage({ params }: PackPageProps) {
 
             {/* CREADOR */}
             <div className="mt-3.5 flex items-center gap-2.5">
-              <span className="rk-media relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full">
+              <span className="rk-avatar-anillo relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full">
                 {pack.creador.avatarUrl ? (
                   <Image
                     src={pack.creador.avatarUrl}
@@ -203,7 +203,7 @@ export default async function PackPage({ params }: PackPageProps) {
                     sizes="32px"
                   />
                 ) : (
-                  <span className="text-xs font-semibold text-ink/55">
+                  <span className="text-xs font-semibold">
                     {pack.creador.nombre.charAt(0).toUpperCase()}
                   </span>
                 )}
@@ -238,9 +238,9 @@ export default async function PackPage({ params }: PackPageProps) {
             </p>
 
             {/* ══════════ PRECIO ══════════ */}
-            <div className="mt-7 rounded-rk-md border border-line/12 p-5">
-              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <p className="text-3xl font-semibold tabular-nums tracking-tight">
+            <div className="rk-buy mt-7">
+              <div>
+                <p className="rk-buy-price" style={{ marginTop: 0 }}>
                   {formatPrice(pack.price)}
                 </p>
 
@@ -251,26 +251,23 @@ export default async function PackPage({ params }: PackPageProps) {
                   descuento real sería publicidad engañosa.
                 */}
                 {pack.ahorro && (
-                  <>
-                    <p className="text-[15px] text-ink/45 line-through tabular-nums">
-                      {formatPrice(pack.sumaIndividual)}
-                    </p>
-
-                    <span className="rk-badge rk-badge-neutral tabular-nums">
+                  <p className="rk-buy-before mt-2">
+                    Por separado <s>{formatPrice(pack.sumaIndividual)}</s>
+                    <span className="rk-badge rk-badge-danger tabular-nums">
                       Ahorras {formatPrice(pack.ahorro.importe)} ·{" "}
                       {pack.ahorro.porcentaje}%
                     </span>
-                  </>
+                  </p>
                 )}
               </div>
 
-              <p className="mt-2 text-sm text-ink/60 tabular-nums">
+              <p className="rk-buy-label" style={{ letterSpacing: "0.08em" }}>
                 {pack.productos.length}{" "}
                 {pack.productos.length === 1 ? "recurso" : "recursos"}{" "}
                 incluidos, cada uno con su licencia.
               </p>
 
-              <div className="mt-5">
+              <div className="rk-buy-actions">
                 <AddPackToCartButton
                   pack={{
                     id: pack.id,

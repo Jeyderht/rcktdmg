@@ -9,6 +9,8 @@ import {
   Instagram,
   Music2,
   PackageOpen,
+  ChevronLeft,
+  LayoutGrid,
 } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
@@ -17,6 +19,7 @@ import Navbar from "@/components/Navbar";
 import EmptyState from "@/components/EmptyState";
 import ProductCard from "@/components/ProductCard";
 import Paginacion from "@/components/Paginacion";
+import CompartirPerfil from "@/components/CompartirPerfil";
 import SeguirButton from "@/components/SeguirButton";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { estadoSeguimiento } from "@/lib/seguidores";
@@ -237,188 +240,154 @@ export default async function CreatorPublicProfile({
 
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-5 lg:pb-24 lg:pt-8">
 
-        {/* PERFIL */}
+        {/* PERFIL · centrado, con la portada fundida detrás */}
         <section className="rk-enter">
-          <div className="rk-glass overflow-hidden rounded-rk-xl">
-
-            {/* PORTADA */}
-            <div className="relative h-32 overflow-hidden sm:h-48 lg:h-56">
-              {creator.coverUrl ? (
+          <div className="rk-hero">
+            <div className="rk-hero-cover">
+              {creator.coverUrl && (
                 <Image
                   src={creator.coverUrl}
-                  alt={`Portada de ${displayName}`}
+                  alt=""
                   fill
                   priority
                   className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 72rem"
+                  sizes="(max-width: 640px) 100vw, 640px"
                 />
-              ) : (
-                <div className="h-full w-full bg-gradient-to-br from-ink via-ink/75 to-ink/50" />
               )}
-
-              {/* Degradado para que el avatar respire sobre la imagen */}
-              <div
-                aria-hidden
-                className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-card/80 to-transparent"
-              />
             </div>
 
-            {/*
-              DATOS
-              Móvil: bloque centrado.
-              Escritorio: foto a la izquierda, datos a la derecha.
-            */}
-            <div className="px-5 pb-7 sm:px-9 sm:pb-9">
-              <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:gap-7 sm:text-left">
+            {/* BARRA FLOTANTE: volver · usuario · compartir */}
+            <div className="rk-hero-bar">
+              <Link href="/creadores" aria-label="Volver a creadores" className="rk-hero-round">
+                <ChevronLeft aria-hidden />
+              </Link>
 
-                {/* FOTO */}
-                <div className="-mt-16 shrink-0 sm:-mt-20">
-                  <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rk-media rounded-full border-4 border-surface shadow-rk-float sm:h-36 sm:w-36 sm:rounded-rk-xl">
-                    {creator.avatarUrl ? (
-                      <Image
-                        src={creator.avatarUrl}
-                        alt={displayName}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 112px, 144px"
-                      />
-                    ) : (
-                      <span className="text-4xl font-semibold text-ink/60 sm:text-5xl">
-                        {initials}
-                      </span>
-                    )}
-                  </div>
-                </div>
+              <p className="rk-hero-bar-title">
+                {creator.username ? creator.username : displayName}
+              </p>
 
-                {/* INFORMACIÓN */}
-                <div className="min-w-0 flex-1 sm:pt-3">
+              <CompartirPerfil url={perfilUrl} titulo={displayName} />
+            </div>
 
-                  {/* NOMBRE + VERIFICACIÓN */}
-                  <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                    <h1 className="rk-title text-2xl sm:text-3xl">
-                      {displayName}
-                    </h1>
-
-                    {creator.isVerified && (
-                      <span
-                        title="Creador verificado"
-                        className="rk-badge rk-badge-accent"
-                      >
-                        <BadgeCheck size={13} />
-                        Verificado
-                      </span>
-                    )}
-                  </div>
-
-                  {creator.username && (
-                    <p className="mt-1 text-sm text-ink/60">
-                      @{creator.username}
-                    </p>
-                  )}
-
-                  {/* BIO: solo si existe realmente */}
-                  {creator.bio && (
-                    <p className="mx-auto mt-4 max-w-2xl whitespace-pre-line text-[15px] leading-7 text-ink/60 sm:mx-0">
-                      {creator.bio}
-                    </p>
-                  )}
-
-                  {/*
-                    REDES SOCIALES
-                    Solo las que están configuradas de verdad.
-                    Móvil: iconos circulares. Escritorio: con etiqueta.
-                  */}
-                  {socials.length > 0 && (
-                    <div className="mt-5 flex flex-wrap justify-center gap-2 sm:justify-start">
-                      {socials.map((social) => {
-                        const Icon = social.icon;
-
-                        return (
-                          <a
-                            key={social.label}
-                            href={social.url as string}
-                            target="_blank"
-                            rel="noreferrer noopener"
-                            aria-label={social.label}
-                            title={social.label}
-                            className="rk-chip h-10 w-10 justify-center !px-0 sm:h-auto sm:w-auto sm:!px-4"
-                          >
-                            <Icon size={15} className="shrink-0" />
-
-                            <span className="hidden sm:inline">
-                              {social.label}
-                            </span>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/*
-                    CATEGORÍAS
-                    Salen de sus recursos publicados, no de una
-                    lista declarada: enlazan a la tienda ya
-                    filtrada por ese creador.
-                  */}
-                  {categorias.length > 0 && (
-                    <ul className="mt-5 flex flex-wrap justify-center gap-2 sm:justify-start">
-                      {categorias.map((categoria) => (
-                        <li key={categoria.slug}>
-                          <Link
-                            href={`/tienda?categoria=${encodeURIComponent(
-                              categoria.slug
-                            )}`}
-                            className="rk-chip"
-                          >
-                            {categoria.name}
-
-                            <span className="text-[10px] tabular-nums opacity-60">
-                              {categoria._count.products}
-                            </span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  {/*
-                    RECURSOS PUBLICADOS + ACCIÓN
-
-                    En móvil cada bloque ocupa su línea y va
-                    centrado; a partir de sm se alinean en fila.
-                    Antes el botón de seguir traía su recuento
-                    apilado debajo y en una fila centrada
-                    quedaba desalineado con el resto.
-                  */}
-                  <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-start">
-                    <span className="rk-card px-4 py-2 text-sm font-medium tabular-nums">
-                      {totalRecursos}{" "}
-                      <span className="text-ink/60">
-                        {totalRecursos === 1
-                          ? "recurso publicado"
-                          : "recursos publicados"}
-                      </span>
-                    </span>
-
-                    <SeguirButton
-                      creatorId={creator.id}
-                      perfilUrl={perfilUrl}
-                      seguidoresIniciales={seguimiento.seguidores}
-                      siguiendoInicial={seguimiento.siguiendo}
-                      esUnoMismo={seguimiento.esUnoMismo}
-                    />
-
-                    {totalRecursos > 0 && (
-                      <a
-                        href="#recursos"
-                        className="rk-btn rk-btn-line !px-5 !py-2.5 !text-[13px]"
-                      >
-                        Explorar sus recursos
-                      </a>
-                    )}
-                  </div>
-                </div>
+            <div className="rk-hero-body">
+              {/* FOTO */}
+              <div className="rk-hero-avatar">
+                {creator.avatarUrl ? (
+                  <Image
+                    src={creator.avatarUrl}
+                    alt={displayName}
+                    fill
+                    className="object-cover"
+                    sizes="116px"
+                  />
+                ) : (
+                  initials
+                )}
               </div>
+
+              {/* NOMBRE + VERIFICACIÓN */}
+              <div className="rk-hero-name">
+                <h1>{displayName}</h1>
+
+                {creator.isVerified && (
+                  <BadgeCheck
+                    className="rk-hero-verified"
+                    aria-label="Creador verificado"
+                  />
+                )}
+              </div>
+
+              {creator.username && (
+                <p className="rk-hero-user">@{creator.username}</p>
+              )}
+
+              {/* BIO: solo si existe realmente */}
+              {creator.bio && <p className="rk-hero-bio">{creator.bio}</p>}
+
+              {/* REDES: solo las configuradas de verdad */}
+              {socials.length > 0 && (
+                <div className="rk-hero-chips">
+                  {socials.map((social) => {
+                    const Icon = social.icon;
+
+                    return (
+                      <a
+                        key={social.label}
+                        href={social.url as string}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        aria-label={social.label}
+                        title={social.label}
+                        className="rk-chip"
+                      >
+                        <Icon aria-hidden />
+                        <span className="hidden sm:inline">{social.label}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* ACCIONES: seguir (ancho) + compartir (redondo) */}
+              <div className="rk-hero-actions">
+                <SeguirButton
+                  creatorId={creator.id}
+                  perfilUrl={perfilUrl}
+                  seguidoresIniciales={seguimiento.seguidores}
+                  siguiendoInicial={seguimiento.siguiendo}
+                  esUnoMismo={seguimiento.esUnoMismo}
+                />
+
+                {totalRecursos > 0 && (
+                  <a
+                    href="#recursos"
+                    aria-label="Ver sus recursos"
+                    title="Ver sus recursos"
+                    className="rk-hero-round"
+                  >
+                    <LayoutGrid aria-hidden />
+                  </a>
+                )}
+              </div>
+
+              {/* CIFRAS: datos reales (los seguidores los muestra Seguir) */}
+              <dl className="rk-hero-stats">
+                <div>
+                  <dt>{totalRecursos === 1 ? "Recurso" : "Recursos"}</dt>
+                  <dd>
+                    <span className="rk-text-iris">{totalRecursos}</span>
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>{categorias.length === 1 ? "Categoría" : "Categorías"}</dt>
+                  <dd>{categorias.length}</dd>
+                </div>
+              </dl>
+
+              {/* PESTAÑAS: sus categorías reales, a la tienda filtrada */}
+              {categorias.length > 0 && (
+                <div className="rk-hero-tabs">
+                  <nav className="rk-tabs rk-tabs-track" aria-label="Categorías del creador">
+                    <a href="#recursos" className="rk-tab" aria-current="page">
+                      Todo
+                    </a>
+
+                    {categorias.map((categoria) => (
+                      <Link
+                        key={categoria.slug}
+                        href={`/tienda?categoria=${encodeURIComponent(categoria.slug)}`}
+                        className="rk-tab"
+                      >
+                        {categoria.name}
+                        <span className="rk-tab-count">
+                          {categoria._count.products}
+                        </span>
+                      </Link>
+                    ))}
+                  </nav>
+                </div>
+              )}
             </div>
           </div>
         </section>

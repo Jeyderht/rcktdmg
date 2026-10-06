@@ -111,7 +111,7 @@ export default function FavoriteButton({
       </button>
 
       {message && (
-        <span className="animate-scale-in absolute right-0 top-full z-20 mt-2 whitespace-nowrap rounded-full bg-primary px-3 py-1.5 text-[11px] font-medium text-onprimary shadow-rk">
+        <span className="animate-scale-in absolute right-0 top-full z-20 mt-2 whitespace-nowrap rk-toast-mini">
           {message}
         </span>
       )}

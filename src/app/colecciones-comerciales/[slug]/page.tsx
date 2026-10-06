@@ -196,7 +196,7 @@ export default async function ColeccionComercialPage({
 
             {/* CREADOR */}
             <div className="mt-3.5 flex items-center gap-2.5">
-              <span className="rk-media relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full">
+              <span className="rk-avatar-anillo relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full">
                 {coleccion.creador.avatarUrl ? (
                   <Image
                     src={coleccion.creador.avatarUrl}
@@ -206,7 +206,7 @@ export default async function ColeccionComercialPage({
                     sizes="32px"
                   />
                 ) : (
-                  <span className="text-xs font-semibold text-ink/55">
+                  <span className="text-xs font-semibold">
                     {coleccion.creador.nombre.charAt(0).toUpperCase()}
                   </span>
                 )}
@@ -241,18 +241,18 @@ export default async function ColeccionComercialPage({
             </p>
 
             {/* ══════════ PRECIO ══════════ */}
-            <div className="mt-7 rounded-rk-md border border-line/12 p-5">
-              <dl className="space-y-1.5 text-sm">
-                <div className="flex items-baseline justify-between gap-4">
-                  <dt className="text-ink/60">Valor individual</dt>
-                  <dd className="tabular-nums text-ink/60 line-through">
+            <div className="rk-buy mt-7">
+              <dl className="rk-specs" style={{ margin: 0 }}>
+                <div>
+                  <dt>Valor individual</dt>
+                  <dd style={{ textDecoration: "line-through", opacity: 0.6 }}>
                     {formatPrice(coleccion.sumaIndividual)}
                   </dd>
                 </div>
 
-                <div className="flex items-baseline justify-between gap-4">
-                  <dt className="font-medium">Precio de la colección</dt>
-                  <dd className="text-2xl font-semibold tabular-nums tracking-tight">
+                <div>
+                  <dt>Precio de la colección</dt>
+                  <dd className="rk-buy-price" style={{ margin: 0, fontSize: "1.75rem" }}>
                     {formatPrice(coleccion.price)}
                   </dd>
                 </div>
@@ -263,10 +263,10 @@ export default async function ColeccionComercialPage({
                   sus piezas, anunciarlo sería mentir.
                 */}
                 {coleccion.ahorro && (
-                  <div className="flex items-baseline justify-between gap-4 pt-1">
-                    <dt className="text-ink/60">Ahorras</dt>
+                  <div>
+                    <dt>Ahorras</dt>
                     <dd>
-                      <span className="rk-badge rk-badge-neutral tabular-nums">
+                      <span className="rk-badge rk-badge-danger tabular-nums">
                         {formatPrice(coleccion.ahorro.importe)} ·{" "}
                         {coleccion.ahorro.porcentaje}%
                       </span>
@@ -275,7 +275,7 @@ export default async function ColeccionComercialPage({
                 )}
               </dl>
 
-              <p className="mt-4 text-sm text-ink/60 tabular-nums">
+              <p className="rk-buy-label" style={{ letterSpacing: "0.06em", textTransform: "none" }}>
                 {coleccion.productos.length} recursos incluidos, cada uno
                 con su descarga y su licencia.
               </p>
@@ -288,11 +288,11 @@ export default async function ColeccionComercialPage({
                 una suscripción, y es lo primero que alguien
                 necesita saber antes de decidir.
               */}
-              <p className="mt-4 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/70">
+              <p className="rk-buy-label text-center">
                 Compra única
               </p>
 
-              <div className="mt-3">
+              <div className="rk-buy-actions">
                 {yaEsSuya ? (
                   <YaAdquirido que="colección" />
                 ) : (

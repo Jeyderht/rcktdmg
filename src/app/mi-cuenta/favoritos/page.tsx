@@ -118,14 +118,14 @@ export default function FavoritosPage() {
         {error && (
           <div
             role="alert"
-            className="rk-fade mt-6 rounded-rk-md border border-danger/25 bg-danger/10 p-5"
+            className="rk-upload-error rk-fade mt-6"
           >
-            <p className="text-sm text-danger">{error}</p>
+            <p className="rk-upload-error">{error}</p>
 
             <button
               type="button"
               onClick={loadFavorites}
-              className="rk-btn rk-btn-primary mt-4 rk-btn-compact !px-4 !py-2.5 !text-sm"
+              className="rk-btn rk-btn-primary mt-4 rk-btn-compact"
             >
               Intentar nuevamente
             </button>

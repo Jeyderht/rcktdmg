@@ -1,7 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, BellOff, Check, X } from "lucide-react";
+import {
+  AlertTriangle,
+  Bell,
+  BellOff,
+  Check,
+  CheckCircle2,
+  X,
+  XCircle,
+  type LucideIcon,
+} from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -24,11 +33,12 @@ import {
  * está en /notificaciones.
  */
 
-const PUNTO_TONO: Record<TonoNotificacion, string> = {
-  neutral: "bg-ink/25",
-  success: "bg-success",
-  warning: "bg-warning",
-  danger: "bg-danger",
+/* Icono de cada tono; el color lo pone rk-notif-item[data-tone]. */
+const ICONO_TONO: Record<TonoNotificacion, LucideIcon> = {
+  neutral: Bell,
+  success: CheckCircle2,
+  warning: AlertTriangle,
+  danger: XCircle,
 };
 
 const EN_LA_CAMPANA = 10;
@@ -202,27 +212,24 @@ export default function NotificationsBell() {
   const cuerpo = (
     <>
       {/* CABECERA */}
-      <div className="flex items-center justify-between gap-2 border-b border-line/10 px-4 py-3">
-        <div className="flex min-w-0 items-center gap-2">
-          <h2 className="truncate text-sm font-semibold">
-            Notificaciones
-          </h2>
-
+      <div className="rk-notif-head">
+        <h2 className="rk-notif-title">
+          Notificaciones
           {noLeidas > 0 && (
-            <span className="rk-badge rk-badge-danger shrink-0 tabular-nums">
+            <span className="rk-badge rk-badge-danger tabular-nums">
               {noLeidas}
             </span>
           )}
-        </div>
+        </h2>
 
         <div className="flex shrink-0 items-center gap-1">
           {noLeidas > 0 && (
             <button
               type="button"
               onClick={marcarTodas}
-              className="rk-btn rk-btn-ghost !px-2.5 !text-[11px]"
+              className="rk-notif-link"
             >
-              Marcar todas
+              Marcar leídas
             </button>
           )}
 
@@ -230,58 +237,52 @@ export default function NotificationsBell() {
             type="button"
             onClick={() => setAbierto(false)}
             aria-label="Cerrar notificaciones"
-            className="rk-press rk-touch flex h-9 w-9 items-center justify-center rounded-full text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
+            className="rk-notif-check"
+            style={{ margin: 0 }}
           >
-            <X size={16} aria-hidden />
+            <X aria-hidden />
           </button>
         </div>
       </div>
 
       {/* LISTA */}
-      <div className="flex-1 overflow-y-auto overscroll-contain">
+      <div className="rk-notif-body">
         {cargando ? (
-          <p className="px-4 py-10 text-center text-sm text-ink/60">
-            Cargando...
-          </p>
+          <div aria-busy="true" className="grid gap-1.5 p-1.5">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="rk-skeleton"
+                style={{ height: 64, borderRadius: 16 }}
+              />
+            ))}
+          </div>
         ) : items.length === 0 ? (
-          <div className="px-4 py-10 text-center">
-            <div
-              aria-hidden
-              className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-md bg-ink/[0.05]"
-            >
-              <BellOff size={20} className="text-ink/60" />
-            </div>
-
-            <p className="mt-3 text-sm text-ink/60">
-              Sin notificaciones
-            </p>
+          <div className="rk-notif-empty">
+            <BellOff aria-hidden />
+            Sin notificaciones
           </div>
         ) : (
-          <ul className="divide-y divide-line/10">
+          <ul className="rk-notif-list">
             {items.map((item) => {
               const sinLeer = item.readAt === null;
+              const tono = tonoDe(item.type);
+              const Icono = ICONO_TONO[tono];
 
               const interior = (
                 <>
-                  <span
-                    aria-hidden
-                    className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
-                      PUNTO_TONO[tonoDe(item.type)]
-                    }`}
-                  />
+                  <span aria-hidden className="rk-notif-icon">
+                    <Icono />
+                  </span>
 
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[13px] font-semibold leading-5">
-                      {item.title}
-                    </span>
+                  <span className="rk-notif-text">
+                    <span className="rk-notif-item-title">{item.title}</span>
 
                     {item.body && (
-                      <span className="mt-0.5 block break-words text-xs leading-5 text-ink/60">
-                        {item.body}
-                      </span>
+                      <span className="rk-notif-item-body">{item.body}</span>
                     )}
 
-                    <span className="mt-1 block text-[10px] text-ink/60">
+                    <span className="rk-notif-time">
                       {haceCuanto(item.createdAt)}
                       {!sinLeer && " · leída"}
                     </span>
@@ -289,20 +290,15 @@ export default function NotificationsBell() {
                 </>
               );
 
-              const clases = `flex min-w-0 flex-1 gap-2.5 rounded-rk-sm px-1 py-2.5 text-left ${
-                sinLeer ? "" : "opacity-55"
-              }`;
-
               return (
                 <li
                   key={item.id}
-                  className="group flex items-start gap-2 px-3 py-1 transition-colors hover:bg-ink/[0.04]"
+                  data-tone={tono}
+                  className={`rk-notif-item${sinLeer ? " is-unread" : ""}`}
                 >
                   {/*
                     Con destino es un enlace; sin destino, un
-                    botón que solo marca. Antes siempre era un
-                    enlace, y las que no llevan a ningún sitio
-                    navegaban a "".
+                    botón que solo marca.
                   */}
                   {item.href ? (
                     <Link
@@ -311,7 +307,7 @@ export default function NotificationsBell() {
                         marcar(item.id);
                         setAbierto(false);
                       }}
-                      className={clases}
+                      className="rk-notif-main"
                     >
                       {interior}
                     </Link>
@@ -319,7 +315,7 @@ export default function NotificationsBell() {
                     <button
                       type="button"
                       onClick={() => marcar(item.id)}
-                      className={clases}
+                      className="rk-notif-main"
                     >
                       {interior}
                     </button>
@@ -331,9 +327,9 @@ export default function NotificationsBell() {
                       onClick={() => marcar(item.id)}
                       aria-label={`Marcar "${item.title}" como leída`}
                       title="Marcar como leída"
-                      className="rk-press mt-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-ink/60 transition-opacity hover:bg-ink/10 hover:text-ink focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                      className="rk-notif-check"
                     >
-                      <Check size={13} aria-hidden />
+                      <Check aria-hidden />
                     </button>
                   )}
                 </li>
@@ -345,12 +341,8 @@ export default function NotificationsBell() {
 
       {/* PIE */}
       {items.length > 0 && (
-        <div className="shrink-0 border-t border-line/10 px-4 py-2.5 text-center">
-          <Link
-            href="/notificaciones"
-            onClick={() => setAbierto(false)}
-            className="rk-press-sm inline-flex min-h-[2.75rem] items-center px-3 text-[13px] font-medium underline underline-offset-4 transition-opacity hover:opacity-70"
-          >
+        <div className="rk-notif-foot">
+          <Link href="/notificaciones" onClick={() => setAbierto(false)}>
             Ver todas
           </Link>
         </div>
@@ -383,12 +375,9 @@ export default function NotificationsBell() {
               role="dialog"
               aria-modal="true"
               aria-label="Centro de notificaciones"
-              className="rk-glass-strong rk-float animate-fade-up absolute inset-x-3 bottom-[calc(var(--rk-dock-h)+env(safe-area-inset-bottom)+0.75rem)] flex max-h-[65vh] flex-col overflow-hidden rounded-rk-lg"
+              className="rk-menu rk-menu-sheet rk-notif animate-fade-up absolute inset-x-3 bottom-[calc(var(--rk-dock-h)+env(safe-area-inset-bottom)+0.75rem)]"
             >
-              <div
-                aria-hidden
-                className="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-ink/15"
-              />
+              <span aria-hidden className="rk-menu-grabber" />
 
               {cuerpo}
             </div>
@@ -414,16 +403,12 @@ export default function NotificationsBell() {
         aria-expanded={abierto}
         aria-haspopup="dialog"
         title="Notificaciones"
-        className={`rk-press relative flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
-          abierto
-            ? "bg-ink/[0.08] text-ink"
-            : "text-ink/70 hover:bg-ink/[0.06] hover:text-ink"
-        }`}
+        className="rk-avatar-btn"
       >
-        <Bell size={18} aria-hidden />
+        <Bell aria-hidden />
 
         {noLeidas > 0 && (
-          <span className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold leading-none text-danger-contrast ring-2 ring-surface/80">
+          <span className="rk-notif-count">
             {noLeidas > 9 ? "9+" : noLeidas}
           </span>
         )}
@@ -434,7 +419,7 @@ export default function NotificationsBell() {
         <div
           role="dialog"
           aria-label="Centro de notificaciones"
-          className="rk-glass-strong rk-float animate-fade-up absolute right-0 top-[calc(100%+0.6rem)] z-[80] flex max-h-[26rem] w-[22rem] flex-col overflow-hidden rounded-rk-lg"
+          className="rk-menu rk-notif animate-fade-up absolute right-0 top-[calc(100%+0.75rem)] z-[80]"
         >
           {cuerpo}
         </div>

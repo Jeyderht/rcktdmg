@@ -129,7 +129,7 @@ export function ListaSugerencias({
       id={id}
       role="listbox"
       aria-label="Sugerencias de búsqueda"
-      className={`rk-card-elevated absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 max-h-[22rem] overflow-y-auto rounded-rk-md py-1.5 ${className}`}
+      className={`rk-glass-strong rk-float absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 max-h-[22rem] overflow-y-auto rounded-rk-md py-1.5 ${className}`}
     >
       {!hayTexto && (
         <li className="px-4 pb-1 pt-1.5">

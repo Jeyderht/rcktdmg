@@ -82,7 +82,7 @@ export default async function TagsPage() {
                 <li key={etiqueta.id}>
                   <Link
                     href={`/tienda?tag=${encodeURIComponent(etiqueta.slug)}`}
-                    className={`rk-press-sm inline-flex min-h-[2.75rem] items-center gap-2 rounded-full border border-line/15 px-4 transition-colors duration-fast ease-rk hover:border-ink/40 hover:bg-ink/[0.04] ${
+                    className={`rk-chip rk-press-sm min-h-[2.75rem] ${
                       peso > 0.6
                         ? "text-base font-semibold"
                         : peso > 0.3
@@ -98,7 +98,7 @@ export default async function TagsPage() {
 
                     {etiqueta.name}
 
-                    <span className="text-[11px] tabular-nums text-ink/45">
+                    <span className="rk-chip-count">
                       {etiqueta._count.products}
                     </span>
                   </Link>

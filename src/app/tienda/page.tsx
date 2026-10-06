@@ -310,7 +310,7 @@ export default async function Store({ searchParams }: StoreProps) {
           {/* Decoración CSS sutil: un halo y nada más. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-ink/[0.05] blur-[90px]"
+            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full rk-halo-marca blur-[90px]"
           />
 
           <p className="rk-kicker">RCKTDMG Store</p>

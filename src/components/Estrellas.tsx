@@ -26,7 +26,7 @@ export default function Estrellas({
 
   return (
     <span
-      className={`inline-flex items-center gap-0.5 ${className}`}
+      className={`rk-stars ${className}`}
       role="img"
       aria-label={`${acotado.toFixed(1).replace(".", ",")} de ${NOTA_MAXIMA}`}
     >
@@ -38,25 +38,17 @@ export default function Estrellas({
           <span
             key={indice}
             aria-hidden
-            className="relative inline-flex shrink-0"
+            className="rk-star"
             style={{ width: tamano, height: tamano }}
           >
-            <Star
-              size={tamano}
-              className="absolute inset-0 text-ink/20"
-              strokeWidth={1.75}
-            />
+            <Star size={tamano} strokeWidth={1.75} />
 
             {relleno > 0 && (
               <span
-                className="absolute inset-0 overflow-hidden"
+                className="rk-star-fill"
                 style={{ width: `${relleno * 100}%` }}
               >
-                <Star
-                  size={tamano}
-                  className="fill-ink text-ink"
-                  strokeWidth={1.75}
-                />
+                <Star size={tamano} strokeWidth={1.75} />
               </span>
             )}
           </span>

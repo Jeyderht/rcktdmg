@@ -241,7 +241,7 @@ export default function SolicitudForm({
   return (
     <form onSubmit={enviar} className="space-y-7">
       {rechazada && solicitudPrevia?.rejectionReason && (
-        <div className="rk-card border-danger/30 bg-danger/[0.06] p-4">
+        <div className="rk-upload-error rk-card">
           <p className="text-sm font-medium">
             Tu solicitud anterior no fue aprobada
           </p>
@@ -262,7 +262,7 @@ export default function SolicitudForm({
         <legend className="rk-eyebrow">Tu perfil</legend>
 
         <div>
-          <label htmlFor="publicName" className="text-sm font-medium">
+          <label htmlFor="publicName" className="rk-label">
             Nombre público
           </label>
 
@@ -278,7 +278,7 @@ export default function SolicitudForm({
         </div>
 
         <div>
-          <label htmlFor="username" className="text-sm font-medium">
+          <label htmlFor="username" className="rk-label">
             Nombre de usuario
           </label>
 
@@ -299,12 +299,12 @@ export default function SolicitudForm({
           </div>
 
           {errorUsername && (
-            <p className="mt-1.5 text-[13px] text-danger">{errorUsername}</p>
+            <p className="rk-upload-error mt-1.5">{errorUsername}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="specialty" className="text-sm font-medium">
+          <label htmlFor="specialty" className="rk-label">
             En qué te especializas
           </label>
 
@@ -320,7 +320,7 @@ export default function SolicitudForm({
         </div>
 
         <div>
-          <label htmlFor="bio" className="text-sm font-medium">
+          <label htmlFor="bio" className="rk-label">
             Biografía
           </label>
 
@@ -392,7 +392,7 @@ export default function SolicitudForm({
         <div>
           <label
             htmlFor="portfolioDescription"
-            className="text-sm font-medium"
+            className="rk-label"
           >
             Sobre tu portafolio
           </label>
@@ -415,7 +415,7 @@ export default function SolicitudForm({
         <div className="rk-divider" />
 
         <div>
-          <label htmlFor="portfolioUrl" className="text-sm font-medium">
+          <label htmlFor="portfolioUrl" className="rk-label">
             Enlace
           </label>
 
@@ -436,7 +436,7 @@ export default function SolicitudForm({
         <div>
           <span className="text-sm font-medium">Archivo</span>
 
-          <label className="rk-press mt-1.5 flex min-h-[2.75rem] w-full cursor-pointer items-center justify-center gap-2 rounded-rk-md border border-dashed border-line/25 px-4 py-3 text-sm transition-colors hover:border-ink/40">
+          <label className="rk-upload mt-1.5 justify-center">
             {subiendo ? (
               <>
                 <Loader2 size={15} aria-hidden className="animate-spin" />
@@ -482,7 +482,7 @@ export default function SolicitudForm({
         </p>
 
         <div>
-          <label htmlFor="experience" className="text-sm font-medium">
+          <label htmlFor="experience" className="rk-label">
             Experiencia
           </label>
 
@@ -553,7 +553,7 @@ export default function SolicitudForm({
       </fieldset>
 
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="rk-upload-error">
           {error}
         </p>
       )}

@@ -15,6 +15,9 @@ import {
   Plus,
   Settings,
   Wallet,
+  TrendingUp,
+  LayoutGrid,
+  CalendarDays,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -342,7 +345,7 @@ export default function CreatorDashboard() {
           <button
             type="button"
             onClick={loadDashboard}
-            className="rk-btn rk-btn-primary mt-5 rk-btn-compact !px-4 !py-2.5 !text-sm"
+            className="rk-btn rk-btn-primary mt-5 rk-btn-compact"
           >
             Intentar nuevamente
           </button>
@@ -412,7 +415,7 @@ export default function CreatorDashboard() {
         <section className="rk-fade-up relative overflow-hidden">
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-ink/[0.05] blur-[90px]"
+            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full rk-halo-marca blur-[90px]"
           />
 
           <p className="rk-eyebrow">RCKTDMG</p>
@@ -440,7 +443,7 @@ export default function CreatorDashboard() {
 
         {/* ========== IDENTIDAD DEL CREADOR ========== */}
         <section className="rk-fade-up rk-enter-1 mt-6">
-          <div className="rk-card flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div className="rk-row-card flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div className="flex min-w-0 items-center gap-4">
               <span className="rk-media relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full text-lg font-semibold text-ink/70 sm:h-16 sm:w-16 sm:text-xl">
                 {user?.avatarUrl ? (
@@ -514,7 +517,7 @@ export default function CreatorDashboard() {
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Link
                 href={`/creadores/${user.username}`}
-                className="rk-btn rk-btn-line !px-5 !py-2.5 !text-[13px]"
+                className="rk-btn rk-btn-line"
               >
                 <ExternalLink size={15} aria-hidden />
                 Ver mi perfil público
@@ -537,7 +540,7 @@ export default function CreatorDashboard() {
 
               <Link
                 href="/creadores/panel/perfil"
-                className="rk-btn rk-btn-ink mt-3 !px-5 !py-2.5 !text-[13px]"
+                className="rk-btn rk-btn-ink mt-3"
               >
                 Elegir mi nombre de usuario
               </Link>
@@ -559,46 +562,91 @@ export default function CreatorDashboard() {
           <div className="rk-divider mt-4" />
 
           {earnings ? (
-            <div className="mt-5 grid gap-3 md:grid-cols-3">
-              {/* La ganancia real del creador manda. */}
-              <div className="rk-card relative overflow-hidden border-ink/20 bg-ink/[0.04] p-5 sm:p-6">
-                <p className="rk-eyebrow !text-ink">
-                  Ganancias
-                </p>
+            (() => {
+              const bruto = Number(earnings.summary.grossRevenue) || 0;
+              const tuyo = Number(earnings.summary.creatorEarnings) || 0;
+              const comision = Number(earnings.summary.platformFees) || 0;
+              // Parte real que se queda el creador de lo vendido.
+              const parte = bruto > 0 ? Math.round((tuyo / bruto) * 100) : 0;
 
-                <p className="mt-3 text-[2rem] font-semibold tabular-nums leading-tight tracking-tight text-ink">
-                  {formatMoney(earnings.summary.creatorEarnings)}
-                </p>
+              // "S/ 1,280.00" → entero y céntimos (los céntimos van atenuados).
+              const monto = formatMoney(tuyo);
+              const corte = monto.search(/[.,]\d{2}$/);
+              const entero = corte > -1 ? monto.slice(0, corte) : monto;
+              const centimos = corte > -1 ? monto.slice(corte) : "";
 
-                <p className="mt-2 text-sm text-ink/60">
-                  Lo que te corresponde
-                </p>
-              </div>
+              return (
+                <div className="rk-dash-grid mt-5">
+                  {/* SALDO */}
+                  <div className="rk-dash-hero">
+                    <p className="rk-dash-label">Tus ganancias</p>
 
-              <div className="rk-card p-5 sm:p-6">
-                <p className="rk-eyebrow">Ingresos brutos</p>
+                    <p className="rk-dash-amount">
+                      {entero}
+                      <small>{centimos}</small>
+                    </p>
 
-                <p className="mt-3 text-[2rem] font-semibold tabular-nums leading-tight tracking-tight">
-                  {formatMoney(earnings.summary.grossRevenue)}
-                </p>
+                    <div className="rk-dash-chips">
+                      <span className="rk-dash-chip">
+                        <TrendingUp aria-hidden />
+                        {parte}% para ti
+                      </span>
 
-                <p className="mt-2 text-sm text-ink/60">
-                  Ventas antes de comisión
-                </p>
-              </div>
+                      <span className="rk-dash-chip">
+                        {earnings.summary.totalSales}{" "}
+                        {earnings.summary.totalSales === 1 ? "venta" : "ventas"}
+                      </span>
+                    </div>
 
-              <div className="rk-card p-5 sm:p-6">
-                <p className="rk-eyebrow">Comisión RCKTDMG</p>
+                    <nav className="rk-dash-tiles" aria-label="Accesos rápidos">
+                      <Link href="/creadores/panel/nuevo" className="rk-dash-tile">
+                        <Plus aria-hidden />
+                        Nuevo
+                      </Link>
 
-                <p className="mt-3 text-[2rem] font-semibold tabular-nums leading-tight tracking-tight">
-                  {formatMoney(earnings.summary.platformFees)}
-                </p>
+                      <Link href="/creadores/panel/retiros" className="rk-dash-tile">
+                        <Wallet aria-hidden />
+                        Retirar
+                      </Link>
 
-                <p className="mt-2 text-sm text-ink/60">
-                  Comisión de plataforma
-                </p>
-              </div>
-            </div>
+                      <Link href="/creadores/panel/recursos" className="rk-dash-tile">
+                        <LayoutGrid aria-hidden />
+                        Recursos
+                      </Link>
+                    </nav>
+                  </div>
+
+                  {/* REPARTO: lo tuyo frente a la comisión */}
+                  <div className="rk-dash-card rk-dash-ring-wrap">
+                    <div className="rk-dash-ring-box">
+                      <div
+                        className="rk-dash-ring"
+                        style={{ "--rk-ring": `${parte}%` } as React.CSSProperties}
+                        role="img"
+                        aria-label={`${parte}% de tus ventas es ganancia tuya`}
+                      />
+
+                      <div className="rk-dash-ring-center">
+                        <strong>{formatMoney(bruto)}</strong>
+                        <span>ventas brutas</span>
+                      </div>
+                    </div>
+
+                    <ul className="rk-dash-legend">
+                      <li>
+                        <span aria-hidden className="rk-dash-dot" />
+                        Lo tuyo <b>{formatMoney(tuyo)}</b>
+                      </li>
+
+                      <li>
+                        <span aria-hidden className="rk-dash-dot is-fee" />
+                        Comisión <b>{formatMoney(comision)}</b>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              );
+            })()
           ) : (
             <p className="mt-5 text-sm text-ink/60">
               No se pudieron cargar las ganancias.
@@ -803,46 +851,79 @@ export default function CreatorDashboard() {
           <div className="rk-divider mt-4" />
 
           {hasChartData ? (
-            <div className="rk-card mt-5 p-5 sm:p-6">
-              <div className="flex h-60 items-end gap-2 sm:gap-4">
-                {monthlyStats.map((month) => {
-                  const height =
-                    month.revenue > 0
-                      ? Math.max(
-                          (month.revenue / maxRevenue) * 100,
-                          8
-                        )
-                      : 3;
+            (() => {
+              // Con ganancias: barra apilada (lo tuyo + comisión).
+              // Sin ellas: solo el ingreso del mes.
+              const serie = earnings?.monthlyEarnings?.length
+                ? earnings.monthlyEarnings.map((m) => ({
+                    key: m.month,
+                    label: m.label,
+                    total: Number(m.grossRevenue) || 0,
+                    tuyo: Number(m.creatorEarnings) || 0,
+                  }))
+                : monthlyStats.map((m) => ({
+                    key: m.month,
+                    label: m.label,
+                    total: Number(m.revenue) || 0,
+                    tuyo: Number(m.revenue) || 0,
+                  }));
 
-                  return (
-                    <div
-                      key={month.month}
-                      className="flex h-full min-w-0 flex-1 flex-col items-center justify-end"
-                    >
-                      <p className="truncate text-[11px] font-semibold tabular-nums">
-                        {formatMoney(month.revenue)}
-                      </p>
+              const tope = Math.max(...serie.map((m) => m.total), 1);
 
-                      <p className="mt-0.5 text-[10px] text-ink/60">
-                        {month.sales}{" "}
-                        {month.sales === 1 ? "venta" : "ventas"}
-                      </p>
-
-                      <div className="mt-2 flex h-40 w-full items-end">
+              return (
+                <div className="rk-dash-card mt-5">
+                  <div className="rk-dash-chart">
+                    <div className="rk-dash-chart-plot">
+                      {serie.map((m) => (
                         <div
-                          className="w-full rounded-t-rk-sm bg-foreground/80 transition-[height] duration-slow ease-rk"
-                          style={{ height: `${height}%` }}
-                        />
-                      </div>
+                          key={m.key}
+                          className="rk-dash-col"
+                          title={`${m.label}: ${formatMoney(m.total)}`}
+                        >
+                          {m.total > m.tuyo && (
+                            <div
+                              className="rk-dash-bar-fee"
+                              style={{ height: `${((m.total - m.tuyo) / tope) * 100}%` }}
+                            />
+                          )}
 
-                      <p className="mt-2.5 truncate text-[11px] font-medium text-ink/60">
-                        {month.label}
-                      </p>
+                          <div
+                            className="rk-dash-bar-mine transition-[height] duration-slow ease-rk"
+                            style={{ height: `${Math.max((m.tuyo / tope) * 100, m.tuyo > 0 ? 3 : 0)}%` }}
+                          />
+                        </div>
+                      ))}
                     </div>
-                  );
-                })}
-              </div>
-            </div>
+
+                    <div aria-hidden className="rk-dash-scale">
+                      <span>S/ {Math.round(tope)}</span>
+                      <span>S/ {Math.round((tope * 2) / 3)}</span>
+                      <span>S/ {Math.round(tope / 3)}</span>
+                      <span>S/ 0</span>
+                    </div>
+                  </div>
+
+                  <div className="rk-dash-months" style={{ paddingRight: 52 }}>
+                    {serie.map((m) => (
+                      <span key={m.key}>{m.label}</span>
+                    ))}
+                  </div>
+
+                  {earnings?.monthlyEarnings?.length ? (
+                    <ul className="rk-dash-legend mt-4" style={{ justifyContent: "flex-start" }}>
+                      <li>
+                        <span aria-hidden className="rk-dash-dot" />
+                        Lo tuyo
+                      </li>
+                      <li>
+                        <span aria-hidden className="rk-dash-dot is-fee" />
+                        Comisión
+                      </li>
+                    </ul>
+                  ) : null}
+                </div>
+              );
+            })()
           ) : (
             <div className="mt-5">
               <EmptyState
@@ -942,14 +1023,14 @@ export default function CreatorDashboard() {
                     <div className="flex shrink-0 flex-col gap-1.5">
                       <Link
                         href={`/creadores/productos/${product.id}`}
-                        className="rk-btn rk-btn-glass rk-btn-compact !px-3 !py-1.5 !text-xs"
+                        className="rk-btn rk-btn-line rk-btn-compact"
                       >
                         Gestionar
                       </Link>
 
                       <Link
                         href={`/creadores/productos/${product.id}/estadisticas`}
-                        className="rk-btn rk-btn-ghost rk-btn-compact !px-3 !py-1.5 !text-xs"
+                        className="rk-btn rk-btn-ghost rk-btn-compact"
                       >
                         Estadísticas
                       </Link>
@@ -1019,35 +1100,39 @@ export default function CreatorDashboard() {
 
             <div className="rk-divider mt-4" />
 
-            <div className="rk-card mt-5 rk-divider-y px-4 sm:px-6">
-              {data.topProducts.map((product, index) => (
-                <Link
-                  key={product.productId}
-                  href={`/tienda/${product.productSlug}`}
-                  className="rk-press-sm flex items-center gap-4 py-4 transition-opacity hover:opacity-70"
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-sm font-semibold tabular-nums text-ink">
-                    {index + 1}
-                  </span>
+            <div className="rk-dash-card mt-5">
+              <ul className="rk-dash-list">
+                {data.topProducts.map((product) => {
+                  const iniciales = product.productName
+                    .split(/\s+/)
+                    .filter(Boolean)
+                    .slice(0, 2)
+                    .map((palabra) => palabra.charAt(0).toUpperCase())
+                    .join("");
 
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">
-                      {product.productName}
-                    </p>
+                  return (
+                    <li key={product.productId}>
+                      <Link href={`/tienda/${product.productSlug}`}>
+                        <span aria-hidden className="rk-dash-initials">
+                          {iniciales || "RK"}
+                        </span>
 
-                    <p className="mt-1 text-xs text-ink/60">
-                      {product.sales}{" "}
-                      {product.sales === 1
-                        ? "unidad vendida"
-                        : "unidades vendidas"}
-                    </p>
-                  </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="rk-dash-name">{product.productName}</p>
+                          <p className="rk-dash-sub">
+                            {product.sales}{" "}
+                            {product.sales === 1 ? "unidad vendida" : "unidades vendidas"}
+                          </p>
+                        </div>
 
-                  <p className="shrink-0 text-sm font-semibold tabular-nums">
-                    {formatMoney(product.revenue)}
-                  </p>
-                </Link>
-              ))}
+                        <p className="rk-dash-value">
+                          {formatMoney(product.revenue)}
+                        </p>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </section>
         )}
@@ -1063,40 +1148,53 @@ export default function CreatorDashboard() {
 
             <div className="rk-divider mt-4" />
 
-            <div className="rk-card mt-5 rk-divider-y px-4 sm:px-6">
-              {earnings.recentEarnings.map((earning) => (
-                <div
-                  key={earning.id}
-                  className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-4"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold">
-                      {earning.productName}
-                    </p>
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              {earnings.recentEarnings.map((earning) => {
+                const fecha = new Date(earning.createdAt);
 
-                    <p className="mt-1 text-xs text-ink/60">
-                      {earning.buyerName} ·{" "}
-                      {formatDate(earning.createdAt)}
-                    </p>
+                return (
+                  <article key={earning.id} className="rk-tabcard">
+                    <div className="rk-tabcard-top">
+                      <span className="rk-tabcard-tab">Venta</span>
 
-                    {/* Cifras reales de la venta: no se recalculan. */}
-                    <p className="mt-1.5 text-xs text-ink/60">
-                      Venta {formatMoney(earning.grossAmount)} ·
-                      Comisión {formatMoney(earning.platformFee)}
-                    </p>
-                  </div>
+                      <div className="rk-tabcard-meta">
+                        <span>
+                          <Clock aria-hidden />
+                          {fecha.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                        <span>
+                          <CalendarDays aria-hidden />
+                          {formatDate(earning.createdAt)}
+                        </span>
+                      </div>
+                    </div>
 
-                  <div className="shrink-0 text-right">
-                    <p className="text-base font-semibold tabular-nums text-ink">
-                      {formatMoney(earning.creatorAmount)}
-                    </p>
+                    <div className="rk-tabcard-body">
+                      <p className="rk-tabcard-title">{earning.productName}</p>
 
-                    <p className="mt-1 text-xs text-ink/60">
-                      Tu ganancia
-                    </p>
-                  </div>
-                </div>
-              ))}
+                      {/* Cifras reales de la venta: no se recalculan. */}
+                      <div className="rk-dash-chips">
+                        <span className="rk-dash-chip">
+                          <TrendingUp aria-hidden />
+                          +{formatMoney(earning.creatorAmount)} para ti
+                        </span>
+
+                        <span className="rk-dash-chip">× {earning.quantity}</span>
+                      </div>
+
+                      <div className="rk-tabcard-foot">
+                        <span>
+                          Cliente: <b>{earning.buyerName}</b>
+                        </span>
+
+                        <span>
+                          Comisión: <b>{formatMoney(earning.platformFee)}</b>
+                        </span>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </section>
         )}

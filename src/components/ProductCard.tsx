@@ -8,7 +8,7 @@ import Link from "next/link";
 
 import FavoriteButton from "@/components/FavoriteButton";
 import { getPriceDisplay, formatPrice } from "@/lib/pricing";
-import Estrellas from "@/components/Estrellas";
+import { ArrowUpRight } from "lucide-react";
 
 export type ProductCardData = {
   id: string;
@@ -153,6 +153,11 @@ export default function ProductCard({
               {pricing.discountPercent}% OFF
             </span>
           )}
+
+          {/* FLECHA: aparece al pasar el mouse (rk-card-action) */}
+          <span className="rk-card-action" aria-hidden="true">
+            <ArrowUpRight />
+          </span>
         </div>
       </Link>
 
@@ -164,47 +169,50 @@ export default function ProductCard({
       )}
 
       {/* INFORMACIÓN */}
-      <div className="px-1 pb-0.5 pt-2.5">
+      <div className="px-2 pb-1.5 pt-3">
         <Link href={`/tienda/${product.slug}`}>
-          <h3 className="line-clamp-2 min-h-[2.1rem] text-[13px] font-semibold leading-[1.05rem] tracking-tight transition-opacity group-hover:opacity-60">
-            {product.name}
-          </h3>
+          <h3 className="rk-tarjeta-nombre">{product.name}</h3>
         </Link>
 
-        {/* CREADOR: solo si se pasa el dato real. */}
-        {product.creator && (
-          <p className="mt-1 truncate text-[11px] text-ink/45">
-            {product.creator.username ? (
-              <Link
-                href={`/creadores/${product.creator.username}`}
-                className="transition-colors hover:text-ink"
-              >
-                {product.creator.name}
-              </Link>
-            ) : (
-              product.creator.name
+        {/*
+          CREADOR + VALORACIÓN en una fila. Cada dato solo se
+          pinta si llega real; sin reseñas no hay estrellas.
+        */}
+        {(product.creator ||
+          (product.avgRating != null && (product.reviewCount ?? 0) > 0)) && (
+          <p className="rk-card-meta">
+            {product.creator && (
+              <>
+                <span className="rk-card-avatar">
+                  {product.creator.name.charAt(0).toUpperCase()}
+                </span>
+                {product.creator.username ? (
+                  <Link
+                    href={`/creadores/${product.creator.username}`}
+                    className="truncate hover:text-ink"
+                  >
+                    {product.creator.name}
+                  </Link>
+                ) : (
+                  <span>{product.creator.name}</span>
+                )}
+              </>
+            )}
+
+            {product.avgRating != null && (product.reviewCount ?? 0) > 0 && (
+              <span className="rk-card-rating">
+                {product.avgRating.toFixed(1)}
+              </span>
             )}
           </p>
         )}
 
-        {/*
-          VALORACIÓN
-          Sin reseñas no se pinta nada: cinco estrellas vacías
-          se leen como "valorado mal", no como "sin valorar".
-        */}
-        {product.avgRating != null && (product.reviewCount ?? 0) > 0 && (
-          <p className="mt-1 flex items-center gap-1">
-            <Estrellas valor={product.avgRating} tamano={11} />
+        <hr className="rk-card-divider" />
 
-            <span className="text-[10px] tabular-nums text-ink/45">
-              ({product.reviewCount})
-            </span>
-          </p>
-        )}
-
-        <div className="mt-1.5 flex items-baseline gap-1.5">
-          <p className="text-[14px] font-semibold tabular-nums tracking-tight">
-            {formatPrice(pricing.price)}
+        <div className="flex items-center gap-1.5">
+          <p className="rk-tarjeta-precio">
+            <span className="rk-card-currency">S/</span>
+            {pricing.price.toFixed(2)}
           </p>
 
           {pricing.compareAtPrice !== null && (
@@ -215,9 +223,7 @@ export default function ProductCard({
 
           {/* Formato real del archivo, nunca supuesto. */}
           {product.fileFormat && (
-            <span className="ml-auto text-[10px] font-semibold uppercase tracking-wider text-ink/40">
-              {product.fileFormat}
-            </span>
+            <span className="rk-tarjeta-formato">{product.fileFormat}</span>
           )}
         </div>
       </div>

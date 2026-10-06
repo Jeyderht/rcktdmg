@@ -152,7 +152,7 @@ function PanelNavInterno({
   const identidad = (
     <div className="rk-divider-t mt-4 pt-4">
       <div className="flex items-center gap-2.5 px-1">
-        <span className="rk-media relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-[11px] font-semibold text-ink/70">
+        <span className="rk-avatar-anillo relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-[11px] font-semibold">
           {usuario.avatarUrl ? (
             <Image
               src={usuario.avatarUrl}
@@ -180,7 +180,7 @@ function PanelNavInterno({
       <form action="/api/auth/logout" method="POST" className="mt-2">
         <button
           type="submit"
-          className="rk-press flex w-full items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-left text-[13px] font-medium text-danger transition-colors hover:bg-danger/10"
+          className="rk-menu-item rk-menu-item-danger"
         >
           <LogOut size={16} aria-hidden className="shrink-0" />
           Cerrar sesión
@@ -198,7 +198,7 @@ function PanelNavInterno({
           onClick={() => setAbierto(true)}
           aria-label="Abrir el menú del panel"
           aria-expanded={abierto}
-          className="rk-press grid h-11 w-11 shrink-0 place-items-center rounded-rk-sm border border-line/15"
+          className="rk-hero-round rk-flecha shrink-0"
         >
           <Menu size={18} aria-hidden />
         </button>

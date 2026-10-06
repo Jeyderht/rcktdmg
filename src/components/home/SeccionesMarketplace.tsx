@@ -291,7 +291,7 @@ export default async function SeccionesMarketplace() {
             <div className="flex min-w-0 items-center gap-3.5">
               <span
                 aria-hidden
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06]"
+                className="rk-icon-tile h-10 w-10"
               >
                 <Layers size={18} />
               </span>

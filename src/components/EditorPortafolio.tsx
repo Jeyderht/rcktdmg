@@ -82,7 +82,7 @@ export default function EditorPortafolio({
                 setArrastrado(null);
               }}
               onDragEnd={() => setArrastrado(null)}
-              className={`rounded-rk-md border border-line/12 p-3.5 transition-opacity duration-fast ${
+              className={`rk-row-card transition-opacity duration-fast ${
                 arrastrado === indice ? "opacity-40" : ""
               }`}
             >
@@ -106,7 +106,7 @@ export default function EditorPortafolio({
                   onClick={() => mover(indice, indice - 1)}
                   disabled={indice === 0}
                   aria-label={`Subir el trabajo ${indice + 1}`}
-                  className="rk-press grid h-11 w-11 place-items-center rounded-rk-sm text-ink/55 transition-colors duration-fast hover:bg-ink/[0.06] hover:text-ink disabled:opacity-30"
+                  className="rk-notif-check disabled:opacity-30" style={{ margin: 0, width: 40, height: 40 }}
                 >
                   <ChevronUp size={16} aria-hidden />
                 </button>
@@ -116,7 +116,7 @@ export default function EditorPortafolio({
                   onClick={() => mover(indice, indice + 1)}
                   disabled={indice === trabajos.length - 1}
                   aria-label={`Bajar el trabajo ${indice + 1}`}
-                  className="rk-press grid h-11 w-11 place-items-center rounded-rk-sm text-ink/55 transition-colors duration-fast hover:bg-ink/[0.06] hover:text-ink disabled:opacity-30"
+                  className="rk-notif-check disabled:opacity-30" style={{ margin: 0, width: 40, height: 40 }}
                 >
                   <ChevronDown size={16} aria-hidden />
                 </button>
@@ -127,7 +127,7 @@ export default function EditorPortafolio({
                     alCambiar(trabajos.filter((_, i) => i !== indice))
                   }
                   aria-label={`Quitar el trabajo ${indice + 1}`}
-                  className="rk-press grid h-11 w-11 place-items-center rounded-rk-sm text-ink/55 transition-colors duration-fast hover:bg-danger/10 hover:text-danger"
+                  className="rk-icon-button-danger"
                 >
                   <X size={16} aria-hidden />
                 </button>
@@ -151,7 +151,7 @@ export default function EditorPortafolio({
                       <button
                         type="button"
                         onClick={() => cambiar(indice, { imageUrl: null })}
-                        className="rk-btn rk-btn-glass rk-btn-compact mt-2 w-full !px-2 !py-2 !text-[11px]"
+                        className="rk-btn rk-btn-line rk-btn-compact mt-2 w-full"
                       >
                         Quitar imagen
                       </button>
@@ -173,7 +173,7 @@ export default function EditorPortafolio({
                   <div>
                     <label
                       htmlFor={`titulo-${indice}`}
-                      className="text-[13px] font-medium"
+                      className="rk-label"
                     >
                       Título
                     </label>
@@ -193,7 +193,7 @@ export default function EditorPortafolio({
                   <div>
                     <label
                       htmlFor={`enlace-${indice}`}
-                      className="text-[13px] font-medium"
+                      className="rk-label"
                     >
                       Enlace
                     </label>
@@ -213,7 +213,7 @@ export default function EditorPortafolio({
                   <div>
                     <label
                       htmlFor={`desc-${indice}`}
-                      className="text-[13px] font-medium"
+                      className="rk-label"
                     >
                       Qué es
                     </label>

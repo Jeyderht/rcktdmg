@@ -67,7 +67,7 @@ export default function RecomendadosCliente() {
 
         <Link
           href="/tienda"
-          className="rk-press-sm inline-flex min-h-[2.75rem] shrink-0 items-center text-sm font-medium text-ink transition-opacity hover:opacity-75"
+          className="rk-btn rk-btn-line rk-btn-compact shrink-0"
         >
           Ver todo
         </Link>

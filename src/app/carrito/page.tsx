@@ -3,12 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { claseProporcion } from "@/lib/tipos-publicacion";
 import {
     CART_STORAGE_KEY,
     CART_UPDATED_EVENT,
@@ -203,156 +202,178 @@ export default function Cart() {
                         {/* ARTÍCULOS */}
                         <div className="rk-enter rk-enter-1 space-y-3">
                             {cart.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="rk-card flex gap-4 p-4"
-                                >
+                                <article key={item.id} className="rk-cart-item">
                                     <Link
                                         href={rutaDe(item)}
-                                        className="rk-press-sm shrink-0"
+                                        className="rk-cart-thumb"
                                         aria-label={item.name}
                                     >
-                                        {/* Contenido visual 9:16, siempre nítido. */}
-                                        <div
-                                            className={`rk-media ${claseProporcion(
-                                                {
-                                                categoriaSlug: item.categorySlug,
-                                                pieceType: item.pieceType as never,
-                                            }
-                                            )} relative w-16 overflow-hidden rounded-rk-sm sm:w-[4.5rem]`}
-                                        >
-                                            {item.coverUrl ? (
-                                                <Image
-                                                    src={item.coverUrl}
-                                                    alt={item.name}
-                                                    fill
-                                                    className="object-cover"
-                                                    sizes="72px"
-                                                />
-                                            ) : (
-                                                <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
-                                                    RK
-                                                </span>
-                                            )}
-                                        </div>
+                                        {item.coverUrl ? (
+                                            <Image
+                                                src={item.coverUrl}
+                                                alt={item.name}
+                                                fill
+                                                sizes="84px"
+                                            />
+                                        ) : null}
                                     </Link>
 
-                                    <div className="flex min-w-0 flex-1 flex-col">
-                                        <div className="flex items-start justify-between gap-3">
+                                    <div className="rk-cart-body">
+                                        <div className="rk-cart-head">
                                             <Link
                                                 href={rutaDe(item)}
-                                                className="min-w-0"
+                                                className="rk-cart-title"
                                             >
-                                                <h2 className="line-clamp-2 text-[15px] font-semibold leading-snug transition-opacity hover:opacity-70">
-                                                    {item.name}
-                                                </h2>
+                                                {item.name}
                                             </Link>
 
                                             <button
                                                 type="button"
                                                 onClick={() => remove(item.id)}
                                                 aria-label={`Quitar ${item.name}`}
-                                                className="rk-press flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/60 hover:bg-danger/10 hover:text-danger"
+                                                className="rk-icon-button rk-icon-button-danger"
                                             >
-                                                <Trash2 size={15} />
+                                                <Trash2 />
                                             </button>
                                         </div>
 
-                                        <p className="mt-1 text-sm text-ink/60">
+                                        <p className="rk-cart-meta">
                                             S/ {item.price.toFixed(2)} c/u
                                         </p>
 
-                                        <div className="mt-auto flex items-center justify-between gap-3 pt-3">
-                                            {/* CANTIDAD */}
-                                            <div className="flex items-center gap-1 rounded-full bg-ink/[0.05] p-1">
+                                        <div className="rk-cart-foot">
+                                            <div
+                                                className="rk-stepper rk-stepper-sm"
+                                                role="group"
+                                                aria-label="Cantidad"
+                                            >
                                                 <button
                                                     type="button"
                                                     onClick={() => decrease(item.id)}
                                                     aria-label="Reducir cantidad"
-                                                    className="rk-press flex h-7 w-7 items-center justify-center rounded-full bg-surface text-ink/70 shadow-rk-sm"
+                                                    className="rk-stepper-btn"
                                                 >
-                                                    <Minus size={13} />
+                                                    <Minus />
                                                 </button>
 
-                                                <span className="min-w-7 text-center text-sm font-semibold tabular-nums">
+                                                <output
+                                                    className="rk-stepper-value"
+                                                    aria-live="polite"
+                                                >
                                                     {item.quantity}
-                                                </span>
+                                                </output>
 
                                                 <button
                                                     type="button"
                                                     onClick={() => increase(item.id)}
                                                     aria-label="Aumentar cantidad"
-                                                    className="rk-press flex h-7 w-7 items-center justify-center rounded-full bg-surface text-ink/70 shadow-rk-sm"
+                                                    className="rk-stepper-btn"
                                                 >
-                                                    <Plus size={13} />
+                                                    <Plus />
                                                 </button>
                                             </div>
 
-                                            <p className="text-[15px] font-semibold">
-                                                S/{" "}
-                                                {(
-                                                    item.price * item.quantity
-                                                ).toFixed(2)}
+                                            <p className="rk-cart-total">
+                                                <span className="rk-card-currency">S/</span>
+                                                {(item.price * item.quantity).toFixed(2)}
                                             </p>
                                         </div>
                                     </div>
-                                </div>
+                                </article>
                             ))}
                         </div>
 
-                        {/* RESUMEN */}
-                        <div className="rk-enter rk-enter-2 lg:sticky lg:top-24 lg:self-start">
-                            <div className="rk-glass rounded-rk-lg p-5 sm:p-6">
-                                <h2 className="text-sm font-semibold">
-                                    Resumen del pedido
-                                </h2>
+                        {/* RESUMEN · estilo pase de abordar */}
+                        <div className="rk-enter rk-enter-2 grid gap-3 lg:sticky lg:top-24 lg:self-start">
+                            <article className="rk-receipt">
+                                <header className="rk-receipt-head">
+                                    <div>
+                                        <span className="rk-receipt-label">
+                                            Resumen del
+                                        </span>
+                                        <h2 className="rk-receipt-title">pedido</h2>
+                                    </div>
+                                </header>
+
+                                <ul className="rk-receipt-items">
+                                    {cart.map((item) => (
+                                        <li key={item.id} className="rk-receipt-item">
+                                            {item.coverUrl ? (
+                                                <Image
+                                                    src={item.coverUrl}
+                                                    alt=""
+                                                    width={40}
+                                                    height={40}
+                                                    className="rk-receipt-thumb"
+                                                />
+                                            ) : (
+                                                <span className="rk-receipt-thumb" />
+                                            )}
+                                            <span className="rk-receipt-name">
+                                                {item.name}
+                                                {item.quantity > 1
+                                                    ? ` × ${item.quantity}`
+                                                    : ""}
+                                            </span>
+                                            <span className="rk-receipt-price">
+                                                S/ {(item.price * item.quantity).toFixed(2)}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <dl className="rk-receipt-strip">
+                                    <div>
+                                        <dt>Artículos</dt>
+                                        <dd>{units}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Entrega</dt>
+                                        <dd>Digital</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Acceso</dt>
+                                        <dd>Inmediato</dd>
+                                    </div>
+                                </dl>
 
                                 {/* Solo importes reales: no hay
                                     descuentos ni impuestos calculados. */}
-                                <div className="mt-5 space-y-2.5 text-sm">
-                                    <div className="flex justify-between text-ink/60">
+                                <div className="rk-receipt-rows">
+                                    <div className="rk-receipt-row">
                                         <span>Subtotal</span>
-
-                                        <span className="tabular-nums">
-                                            S/ {total.toFixed(2)}
-                                        </span>
-                                    </div>
-
-                                    <div className="flex justify-between text-ink/60">
-                                        <span>
-                                            {units}{" "}
-                                            {units === 1
-                                                ? "artículo"
-                                                : "artículos"}
-                                        </span>
+                                        <span>S/ {total.toFixed(2)}</span>
                                     </div>
                                 </div>
 
-                                <div className="mt-5 flex items-baseline justify-between border-t border-line/10 pt-5">
-                                    <span className="text-sm font-medium">
-                                        Total
-                                    </span>
+                                <hr className="rk-receipt-cut" />
 
-                                    <span className="text-2xl font-semibold tracking-tight">
-                                        S/ {total.toFixed(2)}
-                                    </span>
-                                </div>
+                                <footer className="rk-receipt-foot">
+                                    <div className="rk-receipt-total">
+                                        <span className="rk-receipt-label">
+                                            Total a pagar
+                                        </span>
+                                        <strong>
+                                            <span className="rk-card-currency">S/</span>
+                                            {total.toFixed(2)}
+                                        </strong>
+                                    </div>
 
-                                <Link
-                                    href="/checkout"
-                                    className="rk-btn rk-btn-primary mt-6 w-full !py-3.5"
-                                >
-                                    Ir al pago
-                                    <ArrowRight size={16} />
-                                </Link>
+                                    <Link
+                                        href="/checkout"
+                                        className="rk-btn rk-btn-buy rk-btn-block"
+                                    >
+                                        Comprar ahora
+                                    </Link>
+                                </footer>
+                            </article>
 
-                                <Link
-                                    href="/tienda"
-                                    className="rk-btn rk-btn-glass mt-2.5 w-full !py-3"
-                                >
-                                    Seguir explorando
-                                </Link>
-                            </div>
+                            <Link
+                                href="/tienda"
+                                className="rk-btn rk-btn-line rk-btn-block"
+                            >
+                                Seguir explorando
+                            </Link>
                         </div>
                     </div>
                 )}

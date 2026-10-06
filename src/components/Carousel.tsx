@@ -86,7 +86,7 @@ export default function Carousel({
           type="button"
           onClick={() => desplazar(-1)}
           aria-label={`Ver anteriores de ${etiqueta}`}
-          className="rk-press rk-hit-44 rk-glass-strong absolute -left-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full shadow-rk sm:flex"
+          className="rk-press rk-hit-44 rk-glass-strong absolute -left-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full sm:flex"
         >
           <ChevronLeft size={18} />
         </button>
@@ -97,7 +97,7 @@ export default function Carousel({
           type="button"
           onClick={() => desplazar(1)}
           aria-label={`Ver siguientes de ${etiqueta}`}
-          className="rk-press rk-hit-44 rk-glass-strong absolute -right-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full shadow-rk sm:flex"
+          className="rk-press rk-hit-44 rk-glass-strong absolute -right-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full sm:flex"
         >
           <ChevronRight size={18} />
         </button>

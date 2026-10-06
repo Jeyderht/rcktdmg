@@ -27,8 +27,8 @@ export default function YaAdquirido({
 
   return (
     <div className="space-y-2">
-      <div className="rk-card flex items-center gap-2.5 rounded-rk-lg px-3.5 py-3">
-        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-foreground text-background">
+      <div className="rk-row-card flex items-center gap-2.5">
+        <span className="rk-check-dot">
           <Check size={15} aria-hidden />
         </span>
 

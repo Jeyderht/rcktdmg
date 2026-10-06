@@ -231,7 +231,7 @@ export default function SliceCorporativos({
               type="button"
               onClick={() => mover(-1)}
               aria-label="Anterior"
-              className="rk-press absolute left-0 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-line/15 bg-surface/80 backdrop-blur transition-colors hover:bg-surface"
+              className="rk-press absolute left-0 top-1/2 z-20 -translate-y-1/2 rk-hero-round rk-flecha"
             >
               <ChevronLeft size={19} aria-hidden />
             </button>
@@ -242,7 +242,7 @@ export default function SliceCorporativos({
               type="button"
               onClick={() => mover(1)}
               aria-label="Siguiente"
-              className="rk-press absolute right-0 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-line/15 bg-surface/80 backdrop-blur transition-colors hover:bg-surface"
+              className="rk-press absolute right-0 top-1/2 z-20 -translate-y-1/2 rk-hero-round rk-flecha"
             >
               <ChevronRight size={19} aria-hidden />
             </button>
@@ -253,7 +253,7 @@ export default function SliceCorporativos({
         {actual && (
           <div className="rk-fade-up mx-auto mt-8 flex w-full max-w-lg flex-col items-center gap-3 text-center">
             <div className="flex min-w-0 items-center gap-2 text-[13px] text-ink/60">
-              <span className="rk-media relative flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full">
+              <span className="rk-avatar-anillo relative flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full">
                 {actual.creador.avatarUrl ? (
                   <Image
                     src={actual.creador.avatarUrl}
@@ -303,7 +303,7 @@ export default function SliceCorporativos({
               <Link
                 href={`/tienda/${actual.slug}`}
                 aria-label={`Ver la ficha de ${actual.name}`}
-                className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-line/15 transition-colors hover:bg-ink/[0.04]"
+                className="rk-hero-round rk-flecha shrink-0"
               >
                 <ArrowUpRight size={18} aria-hidden />
               </Link>
@@ -352,7 +352,7 @@ function FavoritoCorporativo({ productId }: { productId: string }) {
       onClick={alternar}
       aria-pressed={guardado}
       aria-label={guardado ? "Quitar de guardados" : "Guardar"}
-      className="rk-press grid h-12 w-12 shrink-0 place-items-center rounded-full border border-line/15 transition-colors hover:bg-ink/[0.04]"
+      className="rk-hero-round rk-flecha shrink-0"
     >
       <Heart
         size={18}

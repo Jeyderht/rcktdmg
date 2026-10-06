@@ -246,7 +246,7 @@ export default function NuevoRecursoForm({
       <header className="rk-fade-up">
         <Link
           href="/creadores/panel"
-          className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
+          className="rk-auth-back"
         >
           <ChevronLeft size={15} />
           Creator Studio
@@ -356,7 +356,7 @@ export default function NuevoRecursoForm({
         {/* FORMATO, solo si el tipo ofrece más de uno */}
         {tipo && tipo.formatos.length > 1 && (
           <div className="mt-5">
-            <label htmlFor="formato" className="mb-2 block text-sm font-medium">
+            <label htmlFor="formato" className="rk-label mb-2 block">
               Pieza del evento
             </label>
 
@@ -408,7 +408,7 @@ export default function NuevoRecursoForm({
             <div>
               <label
                 htmlFor="name"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Nombre
               </label>
@@ -426,7 +426,7 @@ export default function NuevoRecursoForm({
             <div>
               <label
                 htmlFor="description"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Descripción
               </label>
@@ -460,7 +460,7 @@ export default function NuevoRecursoForm({
                 deducir por su cuenta.
               */}
               <div>
-                <span className="mb-2 block text-sm font-medium">
+                <span className="rk-label mb-2 block">
                   Categoría
                 </span>
 
@@ -481,7 +481,7 @@ export default function NuevoRecursoForm({
               <div>
                 <label
                   htmlFor="price"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Precio
                 </label>
@@ -509,7 +509,7 @@ export default function NuevoRecursoForm({
             <div>
               <label
                 htmlFor="accessType"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Tipo de acceso
               </label>
@@ -533,7 +533,7 @@ export default function NuevoRecursoForm({
             <div>
               <label
                 htmlFor="licenseType"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Licencia de uso
               </label>
@@ -559,7 +559,7 @@ export default function NuevoRecursoForm({
             </div>
 
             <div>
-              <p className="mb-2 block text-sm font-medium">
+              <p className="rk-label mb-2 block">
                 Etiquetas
                 <span className="ml-1.5 font-normal text-ink/45">
                   (opcional)
@@ -573,7 +573,7 @@ export default function NuevoRecursoForm({
               <div>
                 <label
                   htmlFor="color"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Color predominante
                   <span className="ml-1.5 font-normal text-ink/45">
@@ -603,7 +603,7 @@ export default function NuevoRecursoForm({
               </div>
 
               <div>
-                <p className="mb-2 block text-sm font-medium">
+                <p className="rk-label mb-2 block">
                   Tipo de recurso
                 </p>
 
@@ -658,7 +658,7 @@ export default function NuevoRecursoForm({
               <div className="rounded-rk-md border border-dashed border-line/20 bg-ink/[0.02] p-6 text-center transition-colors duration-normal ease-rk hover:border-ink/40">
                 <span
                   aria-hidden
-                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink"
+                  className="rk-empty-icon mx-auto text-ink"
                 >
                   <UploadCloud size={22} />
                 </span>
@@ -673,7 +673,7 @@ export default function NuevoRecursoForm({
 
                 <label
                   htmlFor="product-file"
-                  className="rk-btn rk-btn-primary mt-4 cursor-pointer rk-btn-compact !px-5 !py-2.5 !text-sm"
+                  className="rk-btn rk-btn-primary mt-4 cursor-pointer rk-btn-compact"
                 >
                   <FileUp size={15} />
                   {uploadingFile
@@ -871,7 +871,7 @@ export default function NuevoRecursoForm({
           {error && (
             <div
               role="alert"
-              className="rk-fade mt-5 rounded-rk-sm border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
+              className="rk-upload-error rk-fade mt-5"
             >
               {error}
             </div>
@@ -889,7 +889,7 @@ export default function NuevoRecursoForm({
           <div className="mt-6 flex flex-wrap justify-end gap-2.5">
             <Link
               href="/creadores/panel/recursos"
-              className="rk-btn rk-btn-glass"
+              className="rk-btn rk-btn-line"
             >
               Mis recursos
             </Link>

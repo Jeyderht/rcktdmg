@@ -149,7 +149,7 @@ export default function TagsInput({
         <ul className="mb-2 flex flex-wrap gap-2">
           {valor.map((tag) => (
             <li key={tag}>
-              <span className="inline-flex min-h-[2rem] items-center gap-1.5 rounded-full border border-line/15 bg-ink/[0.04] py-1 pl-3 pr-1.5 text-[13px]">
+              <span className="rk-chip rk-chip-active" style={{ paddingRight: 6 }}>
                 {tag}
 
                 <button

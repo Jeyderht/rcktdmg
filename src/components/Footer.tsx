@@ -46,52 +46,55 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="rk-onyx mt-16">
-      <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-5 lg:px-8 lg:py-16">
-        <div className="grid gap-10 lg:grid-cols-[1.2fr_2fr]">
+    <footer className="rk-footer">
+      <div className="rk-footer-inner">
+
+        {/* LLAMADA A CREADORES · franja de marca */}
+        <div className="rk-footer-cta">
+          <div>
+            <p className="rk-footer-cta-kicker">Para creadores</p>
+            <p className="rk-footer-cta-title">
+              Publica tus recursos y vende en RCKTDMG
+            </p>
+          </div>
+
+          <Link href="/creadores/unete" className="rk-btn rk-btn-ink">
+            Únete como creador
+          </Link>
+        </div>
+
+        <div className="rk-footer-main">
 
           {/* MARCA */}
-          <div>
-            <Link
-              href="/"
-              aria-label="RCKTDMG"
-              className="rk-press-sm inline-flex items-center"
-            >
-              <span className="flex h-9 w-9 items-center justify-center">
-                <Image
-                  src="/Isotipo.svg"
-                  alt=""
-                  width={240}
-                  height={240}
-                  /* Sin deformar, y sin pasar por el optimizador:
-                     Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-                  className="h-full w-full object-contain"
-                  unoptimized
-                />
-              </span>
+          <div className="rk-footer-brand">
+            <Link href="/" aria-label="RCKTDMG" className="rk-footer-logo">
+              <Image
+                src="/Isotipo.svg"
+                alt=""
+                width={240}
+                height={240}
+                /* Sin pasar por el optimizador: Next rechaza los SVG
+                   salvo con dangerouslyAllowSVG. */
+                unoptimized
+              />
             </Link>
 
-            <p className="mt-4 max-w-xs text-sm leading-6 text-ink/60">
+            <p className="rk-footer-text">
               Marketplace de recursos digitales. Compra, descarga
               y crea sin empezar desde cero.
             </p>
           </div>
 
           {/* NAVEGACIÓN */}
-          <div className="grid gap-8 sm:grid-cols-3">
+          <div className="rk-footer-nav">
             {SECTIONS.map((section) => (
               <nav key={section.title} aria-label={section.title}>
-                <h2 className="rk-kicker">{section.title}</h2>
+                <h2 className="rk-footer-title">{section.title}</h2>
 
-                <ul className="mt-4 space-y-0.5">
+                <ul className="rk-footer-links">
                   {section.links.map((link) => (
                     <li key={link.href}>
-                      <Link
-                        href={link.href}
-                        className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center rounded-full px-1 text-sm text-ink/60 transition-colors duration-fast hover:text-ink"
-                      >
-                        {link.label}
-                      </Link>
+                      <Link href={link.href}>{link.label}</Link>
                     </li>
                   ))}
                 </ul>
@@ -100,16 +103,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="rk-divider mt-12" />
-
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs text-ink/60">
-            © {year} RCKTDMG. Todos los derechos reservados.
-          </p>
-
-          <p className="text-xs text-ink/60">
-            Hecho para creadores.
-          </p>
+        <div className="rk-footer-bottom">
+          <p>© {year} RCKTDMG. Todos los derechos reservados.</p>
+          <p className="rk-footer-sign">Hecho para creadores.</p>
         </div>
       </div>
     </footer>

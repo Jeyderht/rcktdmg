@@ -146,7 +146,7 @@ export default function UserActions({
             type="button"
             disabled={pending !== null}
             onClick={() => runAction(item)}
-            className={`rk-btn rk-btn-compact !px-3.5 !py-2 !text-xs ${
+            className={`rk-btn rk-btn-compact ${
               item.tone === "danger"
                 ? "border border-danger/25 text-danger hover:bg-danger/10"
                 : "rk-btn-glass"

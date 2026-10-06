@@ -93,16 +93,13 @@ export default async function ConvierteteEnCreadorPage() {
         <section className="rk-fade-up rk-enter-1 mt-10">
           <ol className="grid gap-3 sm:grid-cols-2">
             {PASOS.map(({ icono: Icono, titulo, texto }, indice) => (
-              <li key={titulo} className="rk-tile rounded-rk-md p-5">
-                <div className="flex items-center gap-2.5">
-                  <Icono
-                    size={18}
-                    aria-hidden
-                    strokeWidth={1.75}
-                    className="shrink-0 text-ink/45"
-                  />
+              <li key={titulo} className="rk-tile p-5">
+                <div className="flex items-center justify-between gap-2.5">
+                  <span className="rk-icon-tile h-10 w-10">
+                    <Icono size={18} aria-hidden strokeWidth={1.75} />
+                  </span>
 
-                  <span className="text-[11px] font-semibold tabular-nums text-ink/40">
+                  <span className="rk-step-index">
                     0{indice + 1}
                   </span>
                 </div>

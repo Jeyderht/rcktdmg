@@ -211,11 +211,11 @@ export default async function UsuariosPage({
             return (
               <article
                 key={user.id}
-                className="rk-card flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between"
+                className="rk-row-card flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
               >
                 {/* DATOS */}
                 <div className="flex min-w-0 items-start gap-3.5">
-                  <span className="rk-media relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-ink/70">
+                  <span className="rk-avatar-anillo relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold">
                     {user.avatarUrl ? (
                       <Image
                         src={user.avatarUrl}

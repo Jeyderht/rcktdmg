@@ -248,7 +248,7 @@ export default function CreatorProfilePage() {
     return (
       <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
         <div className="mx-auto max-w-5xl">
-          <div className="rounded-rk-lg border border-danger/25 bg-danger/10 p-8">
+          <div className="rk-upload-error">
             <p className="font-medium text-danger">
               {error || "No se pudo cargar el perfil."}
             </p>
@@ -297,7 +297,7 @@ export default function CreatorProfilePage() {
                 href={`/creadores/${profile.username}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rk-btn rk-btn-glass rk-btn-compact w-fit !px-4 !py-2.5 !text-sm"
+                className="rk-btn rk-btn-line rk-btn-compact w-fit"
               >
                 Ver perfil público
               </Link>
@@ -461,7 +461,7 @@ export default function CreatorProfilePage() {
             )}
 
             {error && (
-              <div className="rk-fade rounded-rk-md border border-danger/25 bg-danger/10 px-5 py-4 text-sm text-danger">
+              <div className="rk-upload-error rk-fade">
                 {error}
               </div>
             )}
@@ -492,7 +492,7 @@ export default function CreatorProfilePage() {
               <div>
                 <label
                   htmlFor="name"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Nombre
                 </label>
@@ -513,12 +513,12 @@ export default function CreatorProfilePage() {
               <div>
                 <label
                   htmlFor="username"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Nombre de usuario
                 </label>
 
-                <div className="rk-input flex items-center !px-0 !py-0">
+                <div className="rk-input flex items-center">
                   <span className="pl-4 text-ink/60">
                     @
                   </span>
@@ -548,7 +548,7 @@ export default function CreatorProfilePage() {
               <div>
                 <label
                   htmlFor="publicName"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Nombre público
                 </label>
@@ -569,7 +569,7 @@ export default function CreatorProfilePage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Correo electrónico
                 </label>
@@ -594,7 +594,7 @@ export default function CreatorProfilePage() {
 
               <label
                 htmlFor="bio"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Biografía
               </label>
@@ -636,7 +636,7 @@ export default function CreatorProfilePage() {
               <div>
                 <label
                   htmlFor="websiteUrl"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Sitio web
                 </label>
@@ -655,7 +655,7 @@ export default function CreatorProfilePage() {
               <div>
                 <label
                   htmlFor="instagramUrl"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Instagram
                 </label>
@@ -674,7 +674,7 @@ export default function CreatorProfilePage() {
               <div>
                 <label
                   htmlFor="facebookUrl"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   Facebook
                 </label>
@@ -693,7 +693,7 @@ export default function CreatorProfilePage() {
               <div>
                 <label
                   htmlFor="tiktokUrl"
-                  className="mb-2 block text-sm font-medium"
+                  className="rk-label mb-2 block"
                 >
                   TikTok
                 </label>
@@ -777,7 +777,7 @@ export default function CreatorProfilePage() {
 
             <Link
               href="/creadores/panel"
-              className="rk-btn rk-btn-glass"
+              className="rk-btn rk-btn-line"
             >
               Cancelar
             </Link>

@@ -249,7 +249,7 @@ export default function PacksManager() {
           <button
             type="button"
             onClick={() => setAbierto(true)}
-            className="rk-btn rk-btn-ink !px-4 !py-2.5 !text-[13px]"
+            className="rk-btn rk-btn-ink"
           >
             <Plus size={15} aria-hidden />
             Nuevo pack
@@ -260,7 +260,7 @@ export default function PacksManager() {
       {error && (
         <p
           role="alert"
-          className="mt-4 rounded-rk-sm border border-danger/25 bg-danger/[0.06] px-4 py-3 text-sm text-danger"
+          className="rk-upload-error mt-4"
         >
           {error}
         </p>
@@ -286,7 +286,7 @@ export default function PacksManager() {
             <div>
               <label
                 htmlFor="pack-name"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Nombre
               </label>
@@ -305,7 +305,7 @@ export default function PacksManager() {
             <div>
               <label
                 htmlFor="pack-price"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Precio del pack (S/)
               </label>
@@ -340,7 +340,7 @@ export default function PacksManager() {
           <div className="mt-4">
             <label
               htmlFor="pack-desc"
-              className="mb-2 block text-sm font-medium"
+              className="rk-label mb-2 block"
             >
               Descripción
             </label>
@@ -357,7 +357,7 @@ export default function PacksManager() {
 
           {/* RECURSOS */}
           <div className="mt-5">
-            <p className="mb-2 block text-sm font-medium">
+            <p className="rk-label mb-2 block">
               Recursos incluidos
             </p>
 
@@ -422,7 +422,7 @@ export default function PacksManager() {
             <button
               type="button"
               onClick={limpiar}
-              className="rk-btn rk-btn-line !px-4 !py-2.5 !text-[13px]"
+              className="rk-btn rk-btn-line"
             >
               Cancelar
             </button>
@@ -430,7 +430,7 @@ export default function PacksManager() {
             <button
               type="submit"
               disabled={guardando}
-              className="rk-btn rk-btn-ink !px-5 !py-2.5 !text-[13px] disabled:opacity-50"
+              className="rk-btn rk-btn-ink disabled:opacity-50"
             >
               {guardando
                 ? "Guardando…"
@@ -509,7 +509,7 @@ export default function PacksManager() {
                     <button
                       type="button"
                       onClick={() => cambiarEstado(pack, "PUBLISHED")}
-                      className="rk-btn rk-btn-ink !px-3.5 !py-2 !text-[12px]"
+                      className="rk-btn rk-btn-ink"
                     >
                       Publicar
                     </button>
@@ -519,7 +519,7 @@ export default function PacksManager() {
                     <button
                       type="button"
                       onClick={() => cambiarEstado(pack, "ARCHIVED")}
-                      className="rk-btn rk-btn-line !px-3.5 !py-2 !text-[12px]"
+                      className="rk-btn rk-btn-line"
                     >
                       Archivar
                     </button>
@@ -552,7 +552,7 @@ export default function PacksManager() {
           <div className="mt-5 rounded-rk-sm border border-line/12 px-5 py-10 text-center">
             <div
               aria-hidden
-              className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-md bg-ink/[0.05]"
+              className="rk-empty-icon mx-auto"
             >
               <Layers size={20} className="text-ink/55" />
             </div>

@@ -3,11 +3,16 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import {
+  AlertTriangle,
+  Bell,
   BellOff,
   Check,
   CheckCheck,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  XCircle,
+  type LucideIcon,
 } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
@@ -29,11 +34,12 @@ import {
  * vive en la base y no en el navegador.
  */
 
-const PUNTO_TONO: Record<TonoNotificacion, string> = {
-  neutral: "bg-ink/25",
-  success: "bg-success",
-  warning: "bg-warning",
-  danger: "bg-danger",
+/* Icono de cada tono; el color lo pone rk-notif-item[data-tone]. */
+const ICONO_TONO: Record<TonoNotificacion, LucideIcon> = {
+  neutral: Bell,
+  success: CheckCircle2,
+  warning: AlertTriangle,
+  danger: XCircle,
 };
 
 export default function NotificacionesPage() {
@@ -162,7 +168,7 @@ export default function NotificacionesPage() {
               <button
                 type="button"
                 onClick={marcarTodas}
-                className="rk-btn rk-btn-line !px-4 !py-2.5 !text-[13px]"
+                className="rk-btn rk-btn-line"
               >
                 <CheckCheck size={15} aria-hidden />
                 Marcar todas como leídas
@@ -195,16 +201,17 @@ export default function NotificacionesPage() {
         ) : error ? (
           <p
             role="alert"
-            className="mt-6 rounded-rk-sm border border-danger/25 bg-danger/[0.06] px-4 py-3 text-sm text-danger"
+            className="rk-upload-error mt-6"
           >
             {error}
           </p>
         ) : cargando ? (
-          <div aria-busy="true" className="mt-6 space-y-2">
+          <div aria-busy="true" className="mt-6 grid gap-2">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="h-20 animate-pulse rounded-rk-sm bg-ink/[0.05]"
+                className="rk-skeleton"
+                style={{ height: 84, borderRadius: 20 }}
               />
             ))}
           </div>
@@ -219,35 +226,30 @@ export default function NotificacionesPage() {
           </div>
         ) : (
           <>
-            <ul className="mt-6 space-y-2">
+            <ul className="rk-notif-list rk-notif-page mt-6">
               {items.map((item) => {
                 const sinLeer = item.readAt === null;
+                const tono = tonoDe(item.type);
+                const Icono = ICONO_TONO[tono];
 
                 const interior = (
                   <>
-                    <span
-                      aria-hidden
-                      className={`mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${
-                        PUNTO_TONO[tonoDe(item.type)]
-                      }`}
-                    />
+                    <span aria-hidden className="rk-notif-icon">
+                      <Icono />
+                    </span>
 
-                    <span className="min-w-0 flex-1">
-                      <span
-                        className={`block text-[15px] leading-6 ${
-                          sinLeer ? "font-semibold" : "font-medium"
-                        }`}
-                      >
+                    <span className="rk-notif-text">
+                      <span className="rk-notif-item-title">
                         {item.title}
                       </span>
 
                       {item.body && (
-                        <span className="mt-1 block break-words text-sm leading-6 text-ink/60">
+                        <span className="rk-notif-item-body">
                           {item.body}
                         </span>
                       )}
 
-                      <span className="mt-1.5 block text-xs text-ink/45">
+                      <span className="rk-notif-time">
                         {haceCuanto(item.createdAt)}
                         {!sinLeer && " · leída"}
                       </span>
@@ -255,22 +257,17 @@ export default function NotificacionesPage() {
                   </>
                 );
 
-                const clases = `flex min-w-0 flex-1 items-start gap-3 rounded-rk-sm px-4 py-3.5 text-left transition-colors ${
-                  sinLeer
-                    ? "bg-ink/[0.03] hover:bg-ink/[0.06]"
-                    : "hover:bg-ink/[0.03]"
-                }`;
-
                 return (
                   <li
                     key={item.id}
-                    className="flex items-start gap-2 rounded-rk-sm border border-line/12"
+                    data-tone={tono}
+                    className={`rk-notif-item${sinLeer ? " is-unread" : ""}`}
                   >
                     {item.href ? (
                       <Link
                         href={item.href}
                         onClick={() => marcar(item.id)}
-                        className={clases}
+                        className="rk-notif-main"
                       >
                         {interior}
                       </Link>
@@ -278,7 +275,7 @@ export default function NotificacionesPage() {
                       <button
                         type="button"
                         onClick={() => marcar(item.id)}
-                        className={clases}
+                        className="rk-notif-main"
                       >
                         {interior}
                       </button>
@@ -290,9 +287,9 @@ export default function NotificacionesPage() {
                         onClick={() => marcar(item.id)}
                         aria-label={`Marcar "${item.title}" como leída`}
                         title="Marcar como leída"
-                        className="rk-press mr-2 mt-3 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink/50 hover:bg-ink/[0.07] hover:text-ink"
+                        className="rk-notif-check"
                       >
-                        <Check size={16} aria-hidden />
+                        <Check aria-hidden />
                       </button>
                     )}
                   </li>
@@ -303,19 +300,19 @@ export default function NotificacionesPage() {
             {totalPaginas > 1 && (
               <nav
                 aria-label="Paginación de notificaciones"
-                className="mt-8 flex items-center justify-center gap-2"
+                className="rk-reviews-pager mt-8"
               >
                 <button
                   type="button"
                   onClick={() => cargar(pagina - 1)}
                   disabled={pagina <= 1}
                   aria-label="Página anterior"
-                  className="rk-btn rk-btn-line !min-w-[2.75rem] !px-3 disabled:opacity-40"
+                  className="rk-btn rk-btn-line rk-btn-icon"
                 >
                   <ChevronLeft size={16} aria-hidden />
                 </button>
 
-                <span className="px-2 text-sm tabular-nums text-ink/60">
+                <span>
                   {pagina} de {totalPaginas}
                 </span>
 
@@ -324,7 +321,7 @@ export default function NotificacionesPage() {
                   onClick={() => cargar(pagina + 1)}
                   disabled={pagina >= totalPaginas}
                   aria-label="Página siguiente"
-                  className="rk-btn rk-btn-line !min-w-[2.75rem] !px-3 disabled:opacity-40"
+                  className="rk-btn rk-btn-line rk-btn-icon"
                 >
                   <ChevronRight size={16} aria-hidden />
                 </button>

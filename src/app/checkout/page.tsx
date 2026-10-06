@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Lock, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Check, Lock, ShoppingBag } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
 import { claseProporcion } from "@/lib/tipos-publicacion";
@@ -265,7 +265,7 @@ export default function CheckoutPage() {
         <Navbar />
 
         <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-10 sm:px-5">
-          <div className="rk-card h-32 animate-pulse" />
+          <div className="rk-skeleton" style={{ height: 128, borderRadius: 24 }} />
         </main>
       </>
     );
@@ -277,10 +277,10 @@ export default function CheckoutPage() {
         <Navbar />
 
         <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-8 sm:px-5 lg:pt-12">
-          <div className="rk-card px-6 py-16 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-rk-md bg-ink/[0.05]">
-              <ShoppingBag size={24} className="text-ink/60" />
-            </div>
+          <div className="rk-empty">
+            <span aria-hidden className="rk-empty-icon">
+              <ShoppingBag />
+            </span>
 
             {/*
               Si el carrito se vació porque lo que llevaba YA
@@ -290,11 +290,11 @@ export default function CheckoutPage() {
               que pagar" sin entender por qué había
               desaparecido su compra.
             */}
-            <h1 className="mt-5 text-xl font-semibold">
+            <h1 className="rk-empty-title">
               {yaEraSuyo ? "Ya lo tienes" : "No hay nada que pagar"}
             </h1>
 
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-ink/60">
+            <p className="rk-empty-text">
               {yaEraSuyo
                 ? error ||
                   "Lo que llevabas en el carrito ya lo habías comprado."
@@ -302,7 +302,7 @@ export default function CheckoutPage() {
             </p>
 
             {yaEraSuyo ? (
-              <div className="mt-7 flex flex-wrap justify-center gap-2.5">
+              <div className="rk-empty-actions">
                 <Link
                   href="/mi-cuenta/descargas"
                   className="rk-btn rk-btn-primary"
@@ -310,14 +310,16 @@ export default function CheckoutPage() {
                   Ir a mis descargas
                 </Link>
 
-                <Link href="/tienda" className="rk-btn rk-btn-glass">
+                <Link href="/tienda" className="rk-btn rk-btn-line">
                   Ir a la tienda
                 </Link>
               </div>
             ) : (
-              <Link href="/tienda" className="rk-btn rk-btn-primary mt-7">
-                Ir a la tienda
-              </Link>
+              <div className="rk-empty-actions">
+                <Link href="/tienda" className="rk-btn rk-btn-primary">
+                  Ir a la tienda
+                </Link>
+              </div>
             )}
           </div>
         </main>
@@ -331,13 +333,30 @@ export default function CheckoutPage() {
 
       <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-8 sm:px-5 lg:pb-24 lg:pt-12">
 
-        <Link
-          href="/carrito"
-          className="rk-press mb-5 inline-flex items-center gap-1.5 text-sm text-ink/60 transition-colors hover:text-ink"
-        >
-          <ArrowLeft size={15} />
+        <Link href="/carrito" className="rk-auth-back">
+          <ArrowLeft aria-hidden />
           Volver al carrito
         </Link>
+
+        {/* AVANCE: carrito hecho, confirmación en curso, pago pendiente */}
+        <ol className="rk-steps-line mb-7" aria-label="Pasos de la compra">
+          <li className="is-done">
+            <span className="rk-steps-dot">
+              <Check aria-hidden />
+            </span>
+            Carrito
+          </li>
+
+          <li className="is-current" aria-current="step">
+            <span className="rk-steps-dot">2</span>
+            Confirmar
+          </li>
+
+          <li>
+            <span className="rk-steps-dot">3</span>
+            Pago
+          </li>
+        </ol>
 
         <div className="rk-enter">
           <p className="rk-eyebrow">Paso final</p>
@@ -351,103 +370,116 @@ export default function CheckoutPage() {
           </p>
         </div>
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_340px]">
+        {/* RESUMEN · pase de abordar (el mismo del carrito) */}
+        <div className="rk-enter rk-enter-1 mx-auto mt-6 grid max-w-lg gap-3">
+          <article className="rk-receipt">
+            <header className="rk-receipt-head">
+              <div>
+                <span className="rk-receipt-label">Confirma tu</span>
+                <h2 className="rk-receipt-title">pedido</h2>
+              </div>
+            </header>
 
-          {/* RESUMEN DE ARTÍCULOS */}
-          <div className="rk-enter rk-enter-1 rk-card divide-y divide-line/10 p-5 sm:p-6">
-            {cart.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center gap-4 py-4 first:pt-0 last:pb-0"
-              >
-                {/* Contenido visual 9:16, siempre nítido. */}
-                <div
-                  className={`rk-media ${claseProporcion(
-                    {
-                    categoriaSlug: item.categorySlug,
-                    pieceType: item.pieceType as never,
-                  }
-                  )} relative w-14 shrink-0 overflow-hidden rounded-rk-sm`}
-                >
+            <ul className="rk-receipt-items">
+              {cart.map((item) => (
+                <li key={item.id} className="rk-receipt-item">
                   {item.coverUrl ? (
                     <Image
                       src={item.coverUrl}
-                      alt={item.name}
-                      fill
-                      className="object-cover"
-                      sizes="56px"
+                      alt=""
+                      width={40}
+                      height={40}
+                      className="rk-receipt-thumb"
                     />
                   ) : (
-                    <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
-                      RK
-                    </span>
+                    <span className="rk-receipt-thumb" />
                   )}
-                </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 text-[15px] font-medium leading-snug">
+                  <span className="rk-receipt-name">
                     {item.name}
-                  </p>
+                    {item.quantity > 1 ? ` × ${item.quantity}` : ""}
+                  </span>
 
-                  <p className="mt-1 text-sm text-ink/60">
-                    {item.quantity} × S/ {item.price.toFixed(2)}
-                  </p>
-                </div>
+                  <span className="rk-receipt-price">
+                    S/ {(item.price * item.quantity).toFixed(2)}
+                  </span>
+                </li>
+              ))}
+            </ul>
 
-                <p className="shrink-0 font-semibold">
-                  S/ {(item.price * item.quantity).toFixed(2)}
-                </p>
+            <dl className="rk-receipt-strip">
+              <div>
+                <dt>Artículos</dt>
+                <dd>{cart.reduce((n, item) => n + item.quantity, 0)}</dd>
               </div>
-            ))}
-          </div>
+              <div>
+                <dt>Entrega</dt>
+                <dd>Digital</dd>
+              </div>
+              <div>
+                <dt>Acceso</dt>
+                <dd>Inmediato</dd>
+              </div>
+            </dl>
 
-          {/* PAGO */}
-          <div className="rk-enter rk-enter-2 lg:sticky lg:top-24 lg:self-start">
-            <div className="rk-glass rounded-rk-lg p-5 sm:p-6">
-              <h2 className="text-sm font-semibold">Total a pagar</h2>
+            {/* Solo importes reales: sin descuentos ni impuestos inventados. */}
+            <div className="rk-receipt-rows">
+              <div className="rk-receipt-row">
+                <span>Subtotal</span>
+                <span>S/ {total.toFixed(2)}</span>
+              </div>
+            </div>
 
-              <p className="mt-3 text-3xl font-semibold tracking-tight">
-                S/ {total.toFixed(2)}
-              </p>
+            <hr className="rk-receipt-cut" />
 
-              {error && (
-                <div
-                  role="alert"
-                  className="animate-scale-in mt-5 rounded-rk-sm border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
-                >
-                  {error}
-
-                  {/*
-                    Si el rechazo fue por tenerlo ya, el camino
-                    natural no es reintentar: es ir a buscarlo
-                    donde está.
-                  */}
-                  {yaEraSuyo && (
-                    <Link
-                      href="/mi-cuenta/descargas"
-                      className="mt-2.5 inline-flex items-center gap-1.5 font-medium underline underline-offset-4"
-                    >
-                      Ir a mis descargas
-                    </Link>
-                  )}
-                </div>
-              )}
+            <footer className="rk-receipt-foot">
+              <div className="rk-receipt-total">
+                <span className="rk-receipt-label">Total a pagar</span>
+                <strong>
+                  <span className="rk-card-currency">S/</span>
+                  {total.toFixed(2)}
+                </strong>
+              </div>
 
               <button
                 type="button"
                 onClick={createOrder}
                 disabled={loading}
-                className="rk-btn rk-btn-primary mt-6 w-full !py-3.5"
+                className="rk-btn rk-btn-buy rk-btn-block"
               >
                 {loading ? "Creando pedido..." : "Continuar al pago"}
               </button>
+            </footer>
+          </article>
 
-              <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-ink/60">
-                <Lock size={12} />
-                Pago protegido
-              </p>
+          {/*
+            El aviso va FUERA del pase: dentro movería la línea
+            punteada y las muescas quedarían desalineadas.
+          */}
+          {error && (
+            <div
+              role="alert"
+              className="rk-upload-error animate-scale-in"
+              style={{ margin: 0 }}
+            >
+              {error}
+
+              {/* Si ya era suyo, el camino es ir a buscarlo. */}
+              {yaEraSuyo && (
+                <Link
+                  href="/mi-cuenta/descargas"
+                  className="mt-2 block font-semibold underline underline-offset-4"
+                >
+                  Ir a mis descargas
+                </Link>
+              )}
             </div>
-          </div>
+          )}
+
+          <span className="rk-pay-safe">
+            <Lock aria-hidden />
+            Pago protegido
+          </span>
         </div>
       </main>
     </>

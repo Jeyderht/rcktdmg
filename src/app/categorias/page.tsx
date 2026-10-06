@@ -82,7 +82,7 @@ export default async function CategoriesPage() {
         <section className="rk-fade-up relative overflow-hidden">
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full bg-ink/[0.05] blur-[90px]"
+            className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full rk-halo-marca blur-[90px]"
           />
 
           <p className="rk-eyebrow">RCKTDMG</p>
@@ -166,7 +166,7 @@ export default async function CategoriesPage() {
                       </p>
                     </div>
 
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-ink/60 transition-colors duration-normal ease-rk group-hover:bg-ink/[0.07] group-hover:text-ink">
+                    <span className="rk-icon-tile h-9 w-9 transition-colors duration-normal ease-rk group-hover:bg-ink/[0.07] group-hover:text-ink">
                       <ArrowUpRight size={16} />
                     </span>
                   </div>

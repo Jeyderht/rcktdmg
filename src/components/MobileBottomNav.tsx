@@ -72,11 +72,8 @@ export default function MobileBottomNav({
   }
 
   return (
-    <nav
-      aria-label="Navegación principal"
-      className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(env(safe-area-inset-bottom)+0.625rem)] md:hidden"
-    >
-      <div className="rk-glass rk-float mx-auto flex max-w-md items-stretch gap-0.5 rounded-rk-lg p-1.5">
+    <nav aria-label="Navegación principal" className="rk-dock">
+      <div className="rk-dock-bar">
         {items.map((item) => {
           const active = isActive(item.href);
           const Icon = item.icon;
@@ -86,37 +83,19 @@ export default function MobileBottomNav({
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`rk-press relative flex flex-1 flex-col items-center justify-center gap-1 rounded-rk-md py-2 ${
-                active
-                  ? "bg-ink/[0.07] text-ink"
-                  : "text-ink/60 hover:text-ink/70"
-              }`}
+              className="rk-dock-item"
             >
-              <span className="relative">
-                <Icon size={20} strokeWidth={active ? 2.4 : 1.8} />
+              <span className="rk-dock-icon">
+                <Icon />
 
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -right-2 -top-1.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-foreground px-1 text-[10px] font-semibold leading-none text-background ring-2 ring-surface/90">
+                  <span className="rk-dock-badge">
                     {item.badge > 9 ? "9+" : item.badge}
                   </span>
                 )}
               </span>
 
-              <span
-                className={`text-[10px] leading-none tracking-tight ${
-                  active ? "font-semibold" : "font-medium"
-                }`}
-              >
-                {item.label}
-              </span>
-
-              {/* Indicador de pestaña activa, en tinta. */}
-              {active && (
-                <span
-                  aria-hidden
-                  className="absolute inset-x-4 bottom-0.5 h-[2px] rounded-full bg-foreground"
-                />
-              )}
+              <span className="rk-dock-label">{item.label}</span>
             </Link>
           );
         })}

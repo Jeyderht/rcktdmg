@@ -42,7 +42,7 @@ export default async function Recomendados() {
 
           <Link
             href="/tienda"
-            className="rk-press-sm inline-flex min-h-[2.75rem] shrink-0 items-center text-sm font-medium underline underline-offset-4 transition-opacity hover:opacity-70"
+            className="rk-btn rk-btn-line rk-btn-compact shrink-0"
           >
             Ver todo
           </Link>

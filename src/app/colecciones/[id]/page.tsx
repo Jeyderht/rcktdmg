@@ -100,7 +100,7 @@ export default async function ColeccionPublicaPage({
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
         <Link
           href="/tienda"
-          className="rk-press-sm -ml-1 inline-flex min-h-[2.75rem] items-center gap-1 rounded-full pl-1 pr-2.5 text-[13px] font-medium text-ink/60 transition-colors duration-fast ease-rk hover:text-ink"
+          className="rk-auth-back"
         >
           <ChevronLeft size={15} />
           Tienda

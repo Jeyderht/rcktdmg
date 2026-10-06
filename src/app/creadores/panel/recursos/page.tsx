@@ -236,7 +236,7 @@ export default function RecursosPage() {
         {loading && (
           <div className="mt-7 space-y-3" aria-busy="true">
             {[0, 1].map((index) => (
-              <div key={index} className="rk-card flex gap-4 p-4">
+              <div key={index} className="rk-row-card flex gap-4">
                 <div className="rk-aspect-product w-20 shrink-0 animate-pulse rounded-rk-sm bg-ink/[0.06]" />
 
                 <div className="min-w-0 flex-1">
@@ -253,18 +253,18 @@ export default function RecursosPage() {
         {!loading && error && (
           <div
             role="alert"
-            className="rk-fade mt-7 rounded-rk-md border border-danger/25 bg-danger/10 p-5"
+            className="rk-upload-error rk-fade mt-7"
           >
             <p className="font-medium text-danger">
               No se pudieron cargar los recursos
             </p>
 
-            <p className="mt-1.5 text-sm text-danger">{error}</p>
+            <p className="rk-upload-error mt-1.5">{error}</p>
 
             <button
               type="button"
               onClick={cargarRecursos}
-              className="rk-btn rk-btn-primary mt-4 rk-btn-compact !px-4 !py-2.5 !text-sm"
+              className="rk-btn rk-btn-primary mt-4 rk-btn-compact"
             >
               Intentar nuevamente
             </button>
@@ -378,7 +378,7 @@ export default function RecursosPage() {
                   {/* MOTIVO REAL DEL RECHAZO */}
                   {product.status === "REJECTED" &&
                     product.rejectionReason && (
-                      <div className="mt-4 rounded-rk-md border border-danger/25 bg-danger/10 p-4">
+                      <div className="rk-upload-error mt-4">
                         <p className="text-sm font-semibold text-danger">
                           Recurso rechazado
                         </p>
@@ -396,21 +396,21 @@ export default function RecursosPage() {
                   <div className="mt-4 flex flex-wrap gap-2 border-t border-line/10 pt-4">
                     <Link
                       href={`/creadores/productos/${product.id}`}
-                      className="rk-btn rk-btn-glass rk-btn-compact !px-4 !py-2 !text-[13px]"
+                      className="rk-btn rk-btn-line rk-btn-compact"
                     >
                       Gestionar
                     </Link>
 
                     <Link
                       href={`/creadores/productos/${product.id}/estadisticas`}
-                      className="rk-btn rk-btn-ghost rk-btn-compact !px-4 !py-2 !text-[13px]"
+                      className="rk-btn rk-btn-ghost rk-btn-compact"
                     >
                       Estadísticas
                     </Link>
 
                     <Link
                       href={`/creadores/productos/${product.id}/imagenes`}
-                      className="rk-btn rk-btn-ghost rk-btn-compact !px-4 !py-2 !text-[13px]"
+                      className="rk-btn rk-btn-ghost rk-btn-compact"
                     >
                       Imágenes
                     </Link>
@@ -419,7 +419,7 @@ export default function RecursosPage() {
                       product.status === "REJECTED") && (
                       <Link
                         href={`/creadores/productos/${product.id}/editar`}
-                        className="rk-btn rk-btn-ghost rk-btn-compact !px-4 !py-2 !text-[13px]"
+                        className="rk-btn rk-btn-ghost rk-btn-compact"
                       >
                         Editar
                       </Link>
@@ -430,7 +430,7 @@ export default function RecursosPage() {
                         type="button"
                         onClick={() => enviarARevision(product.id)}
                         disabled={sendingId === product.id}
-                        className="rk-btn rk-btn-primary rk-btn-compact !px-4 !py-2 !text-[13px]"
+                        className="rk-btn rk-btn-primary rk-btn-compact"
                       >
                         <Send size={14} />
                         {sendingId === product.id
@@ -444,7 +444,7 @@ export default function RecursosPage() {
                         href={`/tienda/${product.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rk-btn rk-btn-primary rk-btn-compact !px-4 !py-2 !text-[13px]"
+                        className="rk-btn rk-btn-primary rk-btn-compact"
                       >
                         <ExternalLink size={14} />
                         Ver publicación

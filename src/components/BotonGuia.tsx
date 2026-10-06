@@ -27,7 +27,7 @@ export default function BotonGuia() {
     <button
       type="button"
       onClick={() => window.print()}
-      className="rk-btn rk-btn-glass"
+      className="rk-btn rk-btn-line"
     >
       <FileDown size={15} aria-hidden />
       Descargar la guía

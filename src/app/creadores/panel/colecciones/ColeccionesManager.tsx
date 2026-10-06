@@ -296,7 +296,7 @@ export default function ColeccionesManager() {
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label htmlFor="col-nombre" className="text-sm font-medium">
+              <label htmlFor="col-nombre" className="rk-label">
                 Nombre
               </label>
 
@@ -312,7 +312,7 @@ export default function ColeccionesManager() {
             </div>
 
             <div className="sm:col-span-2">
-              <label htmlFor="col-desc" className="text-sm font-medium">
+              <label htmlFor="col-desc" className="rk-label">
                 Descripción
               </label>
 
@@ -329,7 +329,7 @@ export default function ColeccionesManager() {
             </div>
 
             <div>
-              <label htmlFor="col-precio" className="text-sm font-medium">
+              <label htmlFor="col-precio" className="rk-label">
                 Precio de la colección (S/)
               </label>
 
@@ -648,7 +648,7 @@ export default function ColeccionesManager() {
           </fieldset>
 
           {error && (
-            <p role="alert" className="mt-4 text-sm text-danger">
+            <p role="alert" className="rk-upload-error mt-4">
               {error}
             </p>
           )}
@@ -657,7 +657,7 @@ export default function ColeccionesManager() {
             <button
               type="submit"
               disabled={enCurso === "guardar"}
-              className="rk-btn rk-btn-ink !px-5 !py-2.5 !text-[13px] disabled:opacity-60"
+              className="rk-btn rk-btn-ink disabled:opacity-60"
             >
               {enCurso === "guardar" ? (
                 <Loader2 size={15} aria-hidden className="animate-spin" />
@@ -670,7 +670,7 @@ export default function ColeccionesManager() {
             <button
               type="button"
               onClick={() => setEditando(null)}
-              className="rk-btn rk-btn-line !px-5 !py-2.5 !text-[13px]"
+              className="rk-btn rk-btn-line"
             >
               Cancelar
             </button>
@@ -680,7 +680,7 @@ export default function ColeccionesManager() {
         <button
           type="button"
           onClick={abrirNueva}
-          className="rk-btn rk-btn-ink !px-5 !py-2.5 !text-[13px]"
+          className="rk-btn rk-btn-ink"
         >
           <Plus size={15} aria-hidden />
           Nueva colección
@@ -688,7 +688,7 @@ export default function ColeccionesManager() {
       )}
 
       {error && !editando && (
-        <p role="alert" className="mt-4 text-sm text-danger">
+        <p role="alert" className="rk-upload-error mt-4">
           {error}
         </p>
       )}
@@ -747,7 +747,7 @@ export default function ColeccionesManager() {
                 existe.
               */}
               {coleccion.status === "REJECTED" && coleccion.rejectionReason && (
-                <p className="mt-3 rounded-rk-sm border border-danger/25 bg-danger/10 px-3 py-2 text-[13px] leading-5 text-danger">
+                <p className="rk-upload-error mt-3">
                   <span className="font-medium">Motivo del rechazo: </span>
                   {coleccion.rejectionReason}
                 </p>
@@ -772,7 +772,7 @@ export default function ColeccionesManager() {
                   <button
                     type="button"
                     onClick={() => abrirEdicion(coleccion)}
-                    className="rk-btn rk-btn-line !px-4 !py-2 !text-[13px]"
+                    className="rk-btn rk-btn-line"
                   >
                     Editar
                   </button>
@@ -793,7 +793,7 @@ export default function ColeccionesManager() {
                         coleccion.id
                       )
                     }
-                    className="rk-btn rk-btn-ink !px-4 !py-2 !text-[13px] disabled:opacity-60"
+                    className="rk-btn rk-btn-ink disabled:opacity-60"
                   >
                     {enCurso === coleccion.id ? (
                       <Loader2 size={14} aria-hidden className="animate-spin" />
@@ -808,7 +808,7 @@ export default function ColeccionesManager() {
                   <>
                     <Link
                       href={`/colecciones-comerciales/${coleccion.slug}`}
-                      className="rk-btn rk-btn-line !px-4 !py-2 !text-[13px]"
+                      className="rk-btn rk-btn-line"
                     >
                       <ExternalLink size={14} aria-hidden />
                       Ver ficha
@@ -827,7 +827,7 @@ export default function ColeccionesManager() {
                           coleccion.id
                         )
                       }
-                      className="rk-btn rk-btn-line !px-4 !py-2 !text-[13px] disabled:opacity-60"
+                      className="rk-btn rk-btn-line disabled:opacity-60"
                     >
                       <Archive size={14} aria-hidden />
                       Archivar
@@ -846,7 +846,7 @@ export default function ColeccionesManager() {
                     )
                   }
                   aria-label="Eliminar colección"
-                  className="rk-press rk-touch grid h-10 w-10 place-items-center rounded-full text-danger hover:bg-danger/10"
+                  className="rk-icon-button-danger"
                 >
                   <Trash2 size={15} aria-hidden />
                 </button>

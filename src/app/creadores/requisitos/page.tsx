@@ -77,11 +77,11 @@ export default function RequisitosPage() {
                 </p>
 
                 {tipo.formatos.length > 0 && (
-                  <ul className="mt-3.5 space-y-1">
+                  <ul className="mt-3">
                     {tipo.formatos.map((formato) => (
                       <li
                         key={formato.clave}
-                        className="flex items-baseline justify-between gap-3 text-[13px]"
+                        className="flex items-center justify-between gap-3 border-b border-line/10 py-2.5 text-[13px] last:border-0"
                       >
                         <span className="text-ink/60">{formato.nombre}</span>
 

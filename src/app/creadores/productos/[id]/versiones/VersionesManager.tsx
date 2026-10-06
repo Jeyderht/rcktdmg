@@ -236,7 +236,7 @@ export default function VersionesManager({
           <button
             type="button"
             onClick={() => setAbierto(true)}
-            className="rk-btn rk-btn-ink !px-4 !py-2.5 !text-[13px]"
+            className="rk-btn rk-btn-ink"
           >
             <Plus size={15} aria-hidden />
             Nueva versión
@@ -257,7 +257,7 @@ export default function VersionesManager({
       {error && (
         <p
           role="alert"
-          className="mt-4 rounded-rk-sm border border-danger/25 bg-danger/[0.06] px-4 py-3 text-sm text-danger"
+          className="rk-upload-error mt-4"
         >
           {error}
         </p>
@@ -281,7 +281,7 @@ export default function VersionesManager({
             <div>
               <label
                 htmlFor="version"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Número de versión
               </label>
@@ -305,7 +305,7 @@ export default function VersionesManager({
             <div>
               <label
                 htmlFor="archivo-version"
-                className="mb-2 block text-sm font-medium"
+                className="rk-label mb-2 block"
               >
                 Archivo de esta versión
               </label>
@@ -339,7 +339,7 @@ export default function VersionesManager({
           <div className="mt-4">
             <label
               htmlFor="changelog"
-              className="mb-2 block text-sm font-medium"
+              className="rk-label mb-2 block"
             >
               Qué cambia
               <span className="ml-1.5 font-normal text-ink/45">
@@ -370,7 +370,7 @@ export default function VersionesManager({
                 setAbierto(false);
                 setError("");
               }}
-              className="rk-btn rk-btn-line !px-4 !py-2.5 !text-[13px]"
+              className="rk-btn rk-btn-line"
             >
               Cancelar
             </button>
@@ -378,7 +378,7 @@ export default function VersionesManager({
             <button
               type="submit"
               disabled={guardando || subiendo || !fileUrl}
-              className="rk-btn rk-btn-ink !px-5 !py-2.5 !text-[13px] disabled:opacity-50"
+              className="rk-btn rk-btn-ink disabled:opacity-50"
             >
               {guardando ? "Publicando…" : "Publicar versión"}
             </button>
@@ -436,7 +436,7 @@ export default function VersionesManager({
                   <button
                     type="button"
                     onClick={() => hacerActual(v)}
-                    className="rk-btn rk-btn-line !px-3.5 !py-2 !text-[12px]"
+                    className="rk-btn rk-btn-line"
                   >
                     <RotateCcw size={13} aria-hidden />
                     Hacer vigente
@@ -457,7 +457,7 @@ export default function VersionesManager({
           <div className="mt-5 rounded-rk-sm border border-line/12 px-5 py-10 text-center">
             <div
               aria-hidden
-              className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-md bg-ink/[0.05]"
+              className="rk-empty-icon mx-auto"
             >
               <History size={20} className="text-ink/55" />
             </div>

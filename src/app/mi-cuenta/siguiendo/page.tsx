@@ -82,7 +82,7 @@ export default function SiguiendoPage() {
         {error && (
           <p
             role="alert"
-            className="mt-6 rounded-rk-sm border border-danger/25 bg-danger/[0.06] px-4 py-3 text-sm text-danger"
+            className="rk-upload-error mt-6"
           >
             {error}
           </p>
@@ -111,7 +111,7 @@ export default function SiguiendoPage() {
             {siguiendo.map(({ creador, desde }) => {
               const contenido = (
                 <>
-                  <span className="rk-media relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full">
+                  <span className="rk-avatar-anillo relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full">
                     {creador.avatarUrl ? (
                       <Image
                         src={creador.avatarUrl}

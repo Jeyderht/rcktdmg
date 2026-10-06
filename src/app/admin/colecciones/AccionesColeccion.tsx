@@ -81,7 +81,7 @@ export default function AccionesColeccion({
             type="button"
             disabled={enCurso !== null || !motivo.trim()}
             onClick={() => resolver("rechazar")}
-            className="rk-btn rk-btn-line !px-4 !py-2 !text-[13px] disabled:opacity-50"
+            className="rk-btn rk-btn-line disabled:opacity-50"
           >
             {enCurso === "rechazar" ? (
               <Loader2 size={14} aria-hidden className="animate-spin" />
@@ -97,7 +97,7 @@ export default function AccionesColeccion({
               setRechazando(false);
               setError("");
             }}
-            className="rk-btn rk-btn-glass !px-4 !py-2 !text-[13px]"
+            className="rk-btn rk-btn-line"
           >
             Cancelar
           </button>
@@ -118,7 +118,7 @@ export default function AccionesColeccion({
         type="button"
         disabled={enCurso !== null}
         onClick={() => resolver("publicar")}
-        className="rk-btn rk-btn-ink !px-4 !py-2 !text-[13px] disabled:opacity-60"
+        className="rk-btn rk-btn-ink disabled:opacity-60"
       >
         {enCurso === "publicar" ? (
           <Loader2 size={14} aria-hidden className="animate-spin" />
@@ -132,7 +132,7 @@ export default function AccionesColeccion({
         type="button"
         disabled={enCurso !== null}
         onClick={() => setRechazando(true)}
-        className="rk-btn rk-btn-line !px-4 !py-2 !text-[13px] disabled:opacity-60"
+        className="rk-btn rk-btn-line disabled:opacity-60"
       >
         <X size={14} aria-hidden />
         Rechazar

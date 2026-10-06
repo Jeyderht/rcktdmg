@@ -236,7 +236,7 @@ export default function TagsManager() {
       {error && (
         <p
           role="alert"
-          className="mt-4 rounded-rk-sm border border-danger/25 bg-danger/[0.06] px-4 py-3 text-sm text-danger"
+          className="rk-upload-error mt-4"
         >
           {error}
         </p>

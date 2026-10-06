@@ -132,7 +132,7 @@ export default function BuscadorSugerencias({
                 entrada.current?.focus();
               }}
               aria-label="Limpiar búsqueda"
-              className="rk-press rk-touch flex h-9 w-9 items-center justify-center rounded-full text-ink/60 hover:bg-ink/[0.06] hover:text-ink"
+              className="rk-icon-button rk-press rk-touch"
             >
               <X size={15} aria-hidden />
             </button>

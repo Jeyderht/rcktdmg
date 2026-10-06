@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Lock, Mail, UserRound } from "lucide-react";
 
 export default function RegistroPage() {
   const router = useRouter();
@@ -14,6 +14,7 @@ export default function RegistroPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [verPassword, setVerPassword] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -51,153 +52,141 @@ export default function RegistroPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-10 sm:px-5">
-      <div className="w-full max-w-md">
-
-        <Link
-          href="/"
-          className="rk-press mb-6 inline-flex items-center gap-1.5 text-sm text-ink/60 transition-colors hover:text-ink"
-        >
-          <ArrowLeft size={15} />
+    <main className="rk-auth">
+      <div className="rk-auth-inner">
+        <Link href="/" className="rk-auth-back">
+          <ArrowLeft aria-hidden />
           Volver al inicio
         </Link>
 
-        <div className="rk-enter mb-7 text-center">
-          <span className="mx-auto flex h-12 w-12 items-center justify-center">
+        <div className="rk-auth-brand rk-enter">
+          <span className="rk-auth-logo">
             <Image
               src="/Isotipo.svg"
               alt=""
               width={240}
               height={240}
-              /* Sin deformar, y sin pasar por el optimizador:
-                 Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-              className="h-full w-full object-contain"
+              /* Sin pasar por el optimizador: Next rechaza los SVG
+                 salvo con dangerouslyAllowSVG. */
               unoptimized
             />
           </span>
 
-          {/*
-            El nombre ya no se ve, pero el encabezado se queda:
-            es el `h1` de la página y sin él quedaría sin título
-            para quien la recorre con un lector de pantalla.
-          */}
+          {/* h1 para lectores de pantalla: el nombre no se ve. */}
           <h1 className="sr-only">RCKTDMG</h1>
 
-          <p className="mt-4 text-sm text-ink/60">
+          <p className="rk-auth-tagline">
             Recursos creativos para profesionales
           </p>
         </div>
 
-        <div className="rk-glass rk-enter rk-enter-1 rounded-rk-lg p-6 sm:p-8">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Crear cuenta
-          </h2>
+        <div className="rk-auth-card rk-enter rk-enter-1">
+          <nav className="rk-tabs rk-tabs-track" aria-label="Acceso">
+            <Link href="/login" className="rk-tab">
+              Iniciar sesión
+            </Link>
 
-          <p className="mt-1.5 text-sm text-ink/60">
-            Únete y empieza a descargar recursos.
-          </p>
+            <Link href="/registro" className="rk-tab" aria-current="page">
+              Crear cuenta
+            </Link>
+          </nav>
 
-          <form onSubmit={handleSubmit} className="mt-7 space-y-4">
-            <div>
-              <label
-                htmlFor="name"
-                className="mb-2 block text-sm font-medium"
-              >
+          <div>
+            <h2 className="rk-auth-title">Crear cuenta</h2>
+            <p className="rk-auth-sub">Únete y empieza a descargar recursos.</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="rk-auth-form">
+            <div className="rk-field">
+              <label htmlFor="name" className="rk-label">
                 Nombre
               </label>
 
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Tu nombre"
-                autoComplete="name"
-                required
-                className="rk-input"
-              />
+              <div className="rk-input-group">
+                <UserRound aria-hidden className="rk-input-icon" />
+                <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Tu nombre"
+                  autoComplete="name"
+                  required
+                  className="rk-input"
+                />
+              </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-2 block text-sm font-medium"
-              >
+            <div className="rk-field">
+              <label htmlFor="email" className="rk-label">
                 Correo electrónico
               </label>
 
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="correo@ejemplo.com"
-                autoComplete="email"
-                required
-                className="rk-input"
-              />
+              <div className="rk-input-group">
+                <Mail aria-hidden className="rk-input-icon" />
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="correo@ejemplo.com"
+                  autoComplete="email"
+                  required
+                  className="rk-input"
+                />
+              </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-2 block text-sm font-medium"
-              >
+            <div className="rk-field">
+              <label htmlFor="password" className="rk-label">
                 Contraseña
               </label>
 
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mínimo 8 caracteres"
-                autoComplete="new-password"
-                minLength={8}
-                required
-                className="rk-input"
-              />
+              <div className="rk-input-group">
+                <Lock aria-hidden className="rk-input-icon" />
+                <input
+                  id="password"
+                  type={verPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Mínimo 8 caracteres"
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                  className="rk-input"
+                />
 
-              <p className="mt-2 text-xs text-ink/60">
-                Usa al menos 8 caracteres.
-              </p>
+                <button
+                  type="button"
+                  onClick={() => setVerPassword((v) => !v)}
+                  aria-label={verPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  aria-pressed={verPassword}
+                  className="rk-input-suffix"
+                >
+                  {verPassword ? <EyeOff aria-hidden /> : <Eye aria-hidden />}
+                </button>
+              </div>
+
+              <p className="rk-hint">Usa al menos 8 caracteres.</p>
             </div>
 
             {error && (
-              <div
-                role="alert"
-                className="animate-scale-in rounded-rk-sm border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger"
-              >
+              <p role="alert" className="rk-upload-error animate-scale-in" style={{ margin: 0 }}>
                 {error}
-              </div>
+              </p>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="rk-btn rk-btn-primary rk-btn-cta w-full !py-3.5"
+              className="rk-btn rk-btn-primary rk-btn-large"
             >
               {loading ? "Creando cuenta..." : "Crear cuenta"}
             </button>
           </form>
-
-          <div className="mt-7 border-t border-line/10 pt-6 text-center">
-            <p className="text-sm text-ink/60">
-              ¿Ya tienes una cuenta?
-            </p>
-
-            <Link
-              href="/login"
-              className="rk-btn rk-btn-glass mt-3 w-full !py-3"
-            >
-              Iniciar sesión
-            </Link>
-          </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-ink/60">
-          © RCKTDMG
-        </p>
+        <p className="rk-auth-foot">© RCKTDMG</p>
       </div>
     </main>
   );

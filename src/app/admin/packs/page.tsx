@@ -69,7 +69,7 @@ export default async function AdminPacksPage() {
         <div className="mt-8 text-center">
           <div
             aria-hidden
-            className="mx-auto flex h-12 w-12 items-center justify-center rounded-rk-md bg-ink/[0.05]"
+            className="rk-empty-icon mx-auto"
           >
             <Layers size={20} className="text-ink/55" />
           </div>
