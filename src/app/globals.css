@@ -14818,6 +14818,19 @@ div.rk-upload-error > * + * {
   border-radius: 999px;
 }
 
+/* icono centrado aunque Tailwind cambie el display (sm:flex, flex xl:hidden):
+   con display:flex el icono quedaba pegado a la izquierda del círculo */
+.rk-topbar-btn {
+  align-items: center;
+  justify-content: center;
+}
+
+/* en oscuro el círculo se distingue del fondo */
+:root:not([data-theme="light"]) .rk-topbar-btn {
+  border-color: rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.05);
+}
+
 .rk-topbar-actions .rk-topbar-btn svg {
   width: 18px;
   height: 18px;
