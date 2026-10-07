@@ -15177,14 +15177,19 @@ div.rk-upload-error > * + * {
 .rk-promo {
   --rk-promo-w: min(780px, 86vw);
   position: relative;
-  padding: 12px 0 4px;
+  /*
+    El aire de arriba lo necesita para despegarse de la barra
+    superior y de las lengüetas que cuelgan de ella.
+  */
+  padding: 28px 0 12px;
   overflow: hidden;
 }
 
 @media (min-width: 640px) {
   .rk-promo {
     --rk-promo-w: min(780px, 72vw);
-    padding-top: 20px;
+    padding-top: 48px;
+    padding-bottom: 20px;
   }
 }
 
