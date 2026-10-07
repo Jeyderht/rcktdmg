@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 
 import type { PortadaHome } from "@/lib/portadas";
 
@@ -187,32 +187,32 @@ export default function SliderPortadas({
                   }}
                   draggable={false}
                 >
-                  <span className="rk-promo-text">
-                    {p.categoria && (
-                      <span className="rk-glass-on-image rk-promo-chip">
-                        {p.categoria}
-                      </span>
-                    )}
+                  {/* Categoría arriba a la izquierda. */}
+                  {p.categoria && (
+                    <span className="rk-glass-on-image rk-promo-chip">
+                      {p.categoria}
+                    </span>
+                  )}
 
+                  <span className="rk-promo-text">
                     <span className="rk-promo-title">{p.title}</span>
 
                     {p.subtitle && (
                       <span className="rk-promo-sub">{p.subtitle}</span>
                     )}
-                  </span>
 
-                  <span className="rk-promo-actions">
                     {p.precio && (
                       <span className="rk-promo-price">
                         <small>S/</small>
                         {p.precio}
                       </span>
                     )}
+                  </span>
 
-                    <span className="rk-btn rk-btn-primary rk-promo-cta">
-                      {p.ctaLabel}
-                      <ArrowRight aria-hidden />
-                    </span>
+                  {/* Solo el círculo con el ícono; el texto queda para lectores de pantalla. */}
+                  <span className="rk-btn rk-btn-line rk-btn-icon rk-promo-cta">
+                    <ArrowUpRight aria-hidden />
+                    <span className="sr-only">{p.ctaLabel}</span>
                   </span>
                 </Link>
               ) : (

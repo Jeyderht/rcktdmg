@@ -7,6 +7,7 @@ import { Suspense, useEffect, useState } from "react";
 import { Menu, X, LogOut } from "lucide-react";
 import * as Iconos from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import Isotipo from "@/components/Isotipo";
 
 export type ElementoPanel = {
   href: string;
@@ -224,16 +225,7 @@ function PanelNavInterno({
                 className="rk-press-sm flex items-center rounded-full p-1"
               >
                 <span className="flex h-8 w-8 items-center justify-center">
-                  <Image
-                    src="/Isotipo.svg"
-                    alt=""
-                    width={240}
-                    height={240}
-                    /* Sin deformar, y sin pasar por el optimizador:
-                       Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-                    className="h-full w-full object-contain"
-                    unoptimized
-                  />
+                  <Isotipo className="h-7 w-7" />
                 </span>
               </Link>
 

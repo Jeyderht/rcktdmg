@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Isotipo from "@/components/Isotipo";
 
 /**
  * Pie de página de RCKTDMG.
@@ -46,6 +47,16 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
+    <>
+      {/* Separador antes del pie: dos líneas con nodos y el isotipo al centro. */}
+      <div aria-hidden className="rk-separador">
+        <span className="rk-separador-linea" />
+        <span className="rk-separador-centro">
+          <Isotipo className="h-5 w-5" />
+        </span>
+        <span className="rk-separador-linea" />
+      </div>
+
     <footer className="rk-footer">
       <div className="rk-footer-inner">
 
@@ -81,15 +92,7 @@ export default function Footer() {
           {/* MARCA */}
           <div className="rk-footer-brand">
             <Link href="/" aria-label="RCKTDMG" className="rk-footer-logo">
-              <Image
-                src="/Isotipo.svg"
-                alt=""
-                width={240}
-                height={240}
-                /* Sin pasar por el optimizador: Next rechaza los SVG
-                   salvo con dangerouslyAllowSVG. */
-                unoptimized
-              />
+              <Isotipo className="h-7 w-7" />
             </Link>
 
             <p className="rk-footer-text">
@@ -129,5 +132,6 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+    </>
   );
 }

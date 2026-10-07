@@ -15344,19 +15344,22 @@ div.rk-upload-error > * + * {
 }
 
 /* ── información de la activa ─────────────────────────────────────────── */
+/* Categoría arriba; abajo, textos pequeños y algo transparentes y, a la
+   derecha, solo un círculo line con el ícono (el texto del botón queda
+   para lectores de pantalla). */
 .rk-promo-info {
   position: absolute;
   inset: 0;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 14px;
   padding: 22px 24px;
   background: linear-gradient(
     180deg,
-    transparent 35%,
-    rgb(8 9 12 / 0.35) 60%,
-    rgb(8 9 12 / 0.82) 100%
+    transparent 45%,
+    rgb(8 9 12 / 0.28) 70%,
+    rgb(8 9 12 / 0.66) 100%
   );
   color: #fff;
   text-decoration: none;
@@ -15364,10 +15367,12 @@ div.rk-upload-error > * + * {
 
 @media (min-width: 640px) {
   .rk-promo-info {
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
-    padding: 28px 30px;
+    padding: 26px 28px;
+  }
+
+  .rk-promo-chip {
+    top: 22px;
+    left: 26px;
   }
 }
 
@@ -15380,26 +15385,32 @@ div.rk-upload-error > * + * {
 .rk-promo-text {
   display: grid;
   justify-items: start;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
 }
 
+/* categoría: arriba a la izquierda */
 .rk-promo-chip {
-  padding: 4px 10px;
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 3px 9px;
   border-radius: 999px;
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
 }
 
 .rk-promo-title {
   display: -webkit-box;
-  max-width: 22ch;
+  max-width: 24ch;
   overflow: hidden;
-  font-size: clamp(1.125rem, 4.2vw, 2rem);
+  color: rgb(255 255 255 / 0.88);
+  font-size: clamp(0.9375rem, 2.6vw, 1.375rem);
   font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
@@ -15408,11 +15419,50 @@ div.rk-upload-error > * + * {
   display: -webkit-box;
   max-width: 46ch;
   overflow: hidden;
-  color: rgb(255 255 255 / 0.75);
-  font-size: 0.875rem;
+  color: rgb(255 255 255 / 0.6);
+  font-size: 0.8125rem;
   line-height: 1.5;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+.rk-promo-price {
+  color: rgb(255 255 255 / 0.65);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-promo-price small {
+  margin-right: 2px;
+  font-size: 0.6875rem;
+  opacity: 0.8;
+}
+
+/* botón: solo círculo con ícono, estilo line */
+.rk-promo-cta {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.rk-promo-cta svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* line sobre la foto: abajo con los textos y cristal claro con ícono
+   blanco en ambos temas (va sobre el degradado oscuro de la portada) */
+.rk-promo-info .rk-btn.rk-btn-line.rk-promo-cta,
+[data-theme="light"] .rk-promo-info .rk-btn.rk-btn-line.rk-promo-cta {
+  --rk-sec-glass: rgb(255 255 255 / 0.14);
+  align-self: flex-end;
+  color: #fff;
+  border-color: rgb(255 255 255 / 0.42);
 }
 
 @media (max-width: 639px) {
@@ -15424,45 +15474,15 @@ div.rk-upload-error > * + * {
   .rk-promo-sub {
     display: none;
   }
-}
 
-.rk-promo-actions {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: 14px;
-}
-
-.rk-promo-price {
-  font-size: 1.25rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.rk-promo-price small {
-  margin-right: 3px;
-  font-size: 0.75rem;
-  opacity: 0.7;
-}
-
-.rk-promo-cta {
-  pointer-events: none;
-}
-
-.rk-promo-cta svg {
-  width: 16px;
-  height: 16px;
-}
-
-@media (max-width: 639px) {
   .rk-promo-cta {
-    min-height: 38px;
-    padding: 0 14px;
-    font-size: 0.8125rem;
+    width: 38px;
+    height: 38px;
   }
 
-  .rk-promo-price {
-    font-size: 1rem;
+  .rk-promo-cta svg {
+    width: 16px;
+    height: 16px;
   }
 }
 
@@ -15670,4 +15690,417 @@ div.rk-upload-error > * + * {
   .rk-cta-modelo-card.is-left { left: -60px; }
   .rk-cta-modelo-card.is-right { right: -70px; }
   .rk-cta-modelo-card.is-bottom { left: -40px; }
+}
+
+
+/* ═══════════ AW · Ecosistema: fila con núcleo hexagonal ═══════════
+   Caja con proporción fija; todo dentro va en porcentaje del ancho.
+   Fondo de puntos, dos arcos y un haz vertical; al centro un
+   hexágono con el cohete en círculo negro; a los lados programas
+   de más fuerte (centro) a más tenue (bordes). */
+.rk-eco {
+  --rk-eco-punto: rgb(var(--rk-foreground) / 0.06);
+  --rk-eco-linea: rgb(var(--rk-foreground) / 0.04);
+  --rk-eco-blanco: rgb(var(--rk-card));
+  position: relative;
+  width: 100%;
+  max-width: 60rem;
+  margin-inline: auto;
+  aspect-ratio: 1.55 / 1;
+  overflow: hidden;
+  /* sin tarjeta: el fondo se desvanece hacia los bordes */
+  -webkit-mask-image: radial-gradient(68% 58% at 50% 50%, #000 45%, transparent 100%);
+          mask-image: radial-gradient(68% 58% at 50% 50%, #000 45%, transparent 100%);
+}
+@media (min-width: 640px) {
+  .rk-eco { aspect-ratio: 2.4 / 1; }
+}
+
+.rk-eco-puntos {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--rk-eco-punto) 1px, transparent 1.4px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(80% 90% at 50% 50%, #000 40%, transparent 100%);
+          mask-image: radial-gradient(80% 90% at 50% 50%, #000 40%, transparent 100%);
+}
+
+/* pulso de puntos: la retícula en color de marca se prende en
+   un anillo que sale del centro hacia afuera; dos ondas
+   desfasadas para que el pulso sea continuo */
+@property --rk-eco-r {
+  syntax: "<length-percentage>"; /* así un minificador puede dejar "0" */
+  inherits: false;
+  initial-value: 0%;
+}
+.rk-eco-pulso {
+  --rk-eco-chispa: #8f8bd6;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+[data-theme="dark"] .rk-eco-pulso { --rk-eco-chispa: #c3bfff; }
+.rk-eco-pulso::before,
+.rk-eco-pulso::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--rk-eco-chispa) 1.2px, transparent 1.8px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent calc(var(--rk-eco-r) - 7%), #000 var(--rk-eco-r), transparent calc(var(--rk-eco-r) + 7%));
+          mask-image: radial-gradient(circle at 50% 50%, transparent calc(var(--rk-eco-r) - 7%), #000 var(--rk-eco-r), transparent calc(var(--rk-eco-r) + 7%));
+  opacity: 0;
+  animation: rk-eco-pulso 6s cubic-bezier(0.25, 0.6, 0.4, 1) infinite;
+}
+.rk-eco-pulso::after { animation-delay: 3s; }
+@keyframes rk-eco-pulso {
+  0% { --rk-eco-r: 6%; opacity: 0; }
+  15% { opacity: 0.9; }
+  100% { --rk-eco-r: 72%; opacity: 0; }
+}
+
+.rk-eco-arco {
+  position: absolute;
+  left: 50%;
+  width: 84%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--rk-eco-linea);
+  background: rgb(var(--rk-marca-frio) / 0.03);
+  transform: translateX(-50%);
+}
+.rk-eco-arco.is-arriba { bottom: 64%; }
+.rk-eco-arco.is-abajo { top: 64%; background: rgb(var(--rk-marca-calido) / 0.03); }
+[data-theme="dark"] .rk-eco-arco { background: rgb(255 255 255 / 0.01); }
+
+/* núcleo: el envoltorio lleva la sombra (clip-path la cortaría) */
+.rk-eco-hexwrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+  z-index: 1;
+  filter: drop-shadow(0 14px 24px rgb(120 100 150 / 0.12));
+}
+@media (min-width: 640px) {
+  .rk-eco-hexwrap { width: 21%; }
+}
+.rk-eco-hex {
+  width: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffffff, #f1eff6);
+}
+[data-theme="dark"] .rk-eco-hex {
+  background: linear-gradient(180deg, #2a2b33, #1d1e24);
+}
+[data-theme="dark"] .rk-eco-hexwrap { filter: drop-shadow(0 14px 24px rgb(0 0 0 / 0.3)); }
+
+.rk-eco-nucleo {
+  position: relative;
+  overflow: hidden;
+  width: 62%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+}
+/* igual en ambos modos, como el ícono: degradado lavanda→durazno con brillo y cohete blanco */
+.rk-eco-nucleo {
+  --rk-eco-cohete: #fff;
+  --rk-eco-cohete-sombra: rgb(110 80 110 / 0.28);
+  background:
+    linear-gradient(118deg, transparent 52%, rgb(255 255 255 / 0.35) 60%, transparent 70%),
+    linear-gradient(135deg, #c9c6ea, #e6dde6 50%, #f8d3c3);
+  border: 1px solid rgb(255 255 255 / 0.4);
+  box-shadow: 0 8px 20px rgb(120 100 150 / 0.2);
+}
+[data-theme="dark"] .rk-eco-nucleo {
+  border-color: rgb(255 255 255 / 0.25);
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.35);
+}
+
+/* el cohete es una máscara del SVG para poder pintarlo con degradado;
+   la sombra va en el envoltorio porque la máscara la recortaría */
+.rk-eco-isotipo-wrap {
+  width: 50%;
+  aspect-ratio: 1;
+  filter: drop-shadow(0 6px 8px var(--rk-eco-cohete-sombra));
+}
+.rk-eco-isotipo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--rk-eco-cohete);
+  -webkit-mask: url("/marketing/cohete.svg") center / contain no-repeat;
+  mask: url("/marketing/cohete.svg") center / contain no-repeat;
+}
+
+/* programas */
+.rk-eco-app {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.rk-eco-app:hover { transform: translate(-50%, -50%) scale(1.06); }
+
+.rk-eco-app.is-fuerte-frio,
+.rk-eco-app.is-fuerte-calido,
+.rk-eco-app.is-blanco,
+.rk-eco-app.is-tenue {
+  background: #fff;
+  border: 1px solid rgb(0 0 0 / 0.05);
+}
+
+.rk-eco-app.is-fuerte-frio,
+.rk-eco-app.is-fuerte-calido {
+  width: 12.5%;
+  box-shadow: 0 10px 24px rgb(120 100 150 / 0.14);
+}
+
+.rk-eco-app.is-blanco {
+  width: 10%;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.05);
+}
+
+.rk-eco-app.is-tenue {
+  width: 7%;
+  opacity: 0.6;
+}
+
+/* modo oscuro: círculos grafito como el del centro */
+[data-theme="dark"] .rk-eco-app.is-fuerte-frio,
+[data-theme="dark"] .rk-eco-app.is-fuerte-calido,
+[data-theme="dark"] .rk-eco-app.is-blanco,
+[data-theme="dark"] .rk-eco-app.is-tenue {
+  background: linear-gradient(180deg, #2a2b33, #1d1e24);
+  border-color: rgb(255 255 255 / 0.07);
+  box-shadow: 0 10px 22px rgb(0 0 0 / 0.35);
+}
+[data-theme="dark"] .rk-eco-app.is-tenue { box-shadow: none; }
+
+/* Adobe: solo la sigla con su color oficial, sin cuadrado.
+   Se mide con el círculo (cqw) para que tenga el alto del logo de Figma. */
+.rk-eco-app { container-type: inline-size; }
+.rk-eco-adobe {
+  font-size: 40cqw;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.rk-eco-figma { height: 44%; width: auto; }
+
+/* ── animación ──────────────────────────────────────────────
+   1. Entrada: el núcleo aparece y los programas salen del
+      centro hacia los bordes (--rk-eco-i = distancia al centro).
+   2. Después solo se mueve el centro: el cohete se mece y una
+      neón fino gira alrededor.
+   Si la sección espera al scroll (.rk-revelar), la entrada
+   arranca cuando aparece (.rk-visto). */
+.rk-eco-hexwrap { animation: rk-eco-pop 0.7s cubic-bezier(0.32, 0.72, 0, 1) both; }
+
+.rk-eco-app {
+  animation: rk-eco-pop 0.7s cubic-bezier(0.32, 0.72, 0, 1) calc(0.15s + var(--rk-eco-i, 1) * 0.12s) both;
+}
+
+.rk-revelar:not(.rk-visto) .rk-eco-hexwrap,
+.rk-revelar:not(.rk-visto) .rk-eco-app { animation: none; opacity: 0; }
+
+.rk-eco-isotipo-wrap { animation: rk-eco-mecer 3.2s ease-in-out 1s infinite alternate; }
+
+/* neón solo en el círculo central: resplandor fino que gira, sin línea de borde */
+.rk-eco-hex { position: relative; }
+.rk-eco-hex::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 999px;
+  pointer-events: none;
+  background: conic-gradient(transparent 0 45%, #9d97ff 70%, #ffb59a 92%, transparent 100%);
+  filter: blur(3px);
+  opacity: 0.9;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+  animation: rk-eco-girar 4s linear infinite;
+}
+[data-theme="dark"] .rk-eco-hex::after { opacity: 1; }
+
+@keyframes rk-eco-girar {
+  to { rotate: 1turn; }
+}
+@keyframes rk-eco-pop {
+  from { opacity: 0; scale: 0.4; }
+}
+@keyframes rk-eco-mecer {
+  from { translate: 0 2%; rotate: -4deg; }
+  to { translate: 0 -3%; rotate: 3deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-eco-app { transition: none; }
+  .rk-eco-app,
+  .rk-eco-hexwrap,
+  .rk-eco-isotipo-wrap { animation: none; }
+  .rk-eco-hex::after { animation: none; }
+  .rk-eco-pulso { display: none; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   AX. PANTALLA DE CARGA (app/loading.tsx)
+   Minimal: el cohete solo, en el color del texto, y un arco
+   fino con el degradado de marca que gira alrededor.
+   Primero el cohete (estático) aparece de transparente a
+   opacidad 100%; luego el arco nace en 0 (largo y opacidad) y
+   crece mientras gira. Arranca con 0.1 s de
+   retraso para no parpadear en navegaciones rápidas.
+   (rk-carga, rk-carga-barra y rk-carga-pulso ya no se usan.)
+   ══════════════════════════════════════════════════════════ */
+@property --rk-cargador-largo {
+  syntax: "<length-percentage>"; /* así un minificador puede dejar "0" */
+  inherits: false;
+  initial-value: 0%;
+}
+
+.rk-cargador {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 104px;
+  aspect-ratio: 1;
+  color: rgb(var(--rk-foreground));
+}
+
+/* arco con el degradado de marca (lavanda → durazno) que se desvanece
+   hacia atrás; nace en 0 y crece hasta su largo mientras gira */
+.rk-cargador::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: conic-gradient(
+    transparent 0 calc(100% - var(--rk-cargador-largo)),
+    #9d97ff calc(100% - var(--rk-cargador-largo) * 0.45),
+    #ffb59a 100%
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
+  /* arranca cuando el cohete ya está completo: largo 0 y opacidad 0 → 100% */
+  animation:
+    rk-cargador-crecer 0.6s cubic-bezier(0.32, 0.72, 0, 1) 0.35s both,
+    rk-cargador-entrar 0.5s ease-out 0.35s both,
+    rk-cargador-girar 0.9s linear 0.35s infinite;
+}
+
+/* cohete: máscara del SVG pintada con el color del texto */
+.rk-cargador-cohete {
+  display: block;
+  width: 44%;
+  aspect-ratio: 1;
+  background: currentColor;
+  -webkit-mask: url("/marketing/cohete.svg") center / contain no-repeat;
+          mask: url("/marketing/cohete.svg") center / contain no-repeat;
+  /* estático: solo aparece de transparente a opacidad 100% */
+  animation: rk-cargador-entrar 0.35s ease-out 0.1s both;
+}
+
+@keyframes rk-cargador-entrar {
+  from { opacity: 0; }
+}
+@keyframes rk-cargador-crecer {
+  from { --rk-cargador-largo: 0%; }
+  to { --rk-cargador-largo: 45%; }
+}
+@keyframes rk-cargador-girar {
+  to { rotate: 1turn; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-cargador-cohete { animation: none; }
+  /* el arco sigue girando, más lento: es lo que dice «cargando» */
+  .rk-cargador::before { --rk-cargador-largo: 45%; animation: rk-cargador-girar 2.4s linear infinite; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   AY. ISOTIPO (components/Isotipo.tsx)
+   Solo el cohete, sin el cuadro negro: máscara del SVG pintada
+   con el color del texto (blanco en oscuro, negro en claro).
+   ══════════════════════════════════════════════════════════ */
+.rk-isotipo {
+  display: inline-block;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: url("/marketing/cohete.svg") center / contain no-repeat;
+          mask: url("/marketing/cohete.svg") center / contain no-repeat;
+}
+.rk-topbar-btn .rk-isotipo,
+.rk-footer-logo .rk-isotipo,
+.rk-auth-logo .rk-isotipo {
+  color: rgb(var(--rk-foreground));
+}
+
+/* ══════════════════════════════════════════════════════════
+   AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)
+   Dos líneas finas con un nodo cuadrado en cada punta y, al
+   centro, el isotipo dentro de un recuadro. Ocupa el hueco que
+   antes dejaba el margen superior del pie.
+   ══════════════════════════════════════════════════════════ */
+.rk-separador {
+  --rk-sep-color: rgb(var(--rk-foreground) / 0.12);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 80rem;
+  margin: 56px auto 0;
+  padding: 0 16px;
+  color: rgb(var(--rk-foreground) / 0.35);
+}
+
+.rk-separador-linea {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: var(--rk-sep-color);
+}
+
+/* nodos en las puntas */
+.rk-separador-linea::before,
+.rk-separador-linea::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--rk-sep-color);
+  border-radius: 2.5px;
+  background: rgb(var(--rk-background));
+  transform: translateY(-50%);
+}
+.rk-separador-linea::before { left: 0; }
+.rk-separador-linea::after { right: 0; }
+
+/* recuadro central con el isotipo */
+.rk-separador-centro {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--rk-sep-color);
+  border-radius: 11px;
+  background: rgb(var(--rk-foreground) / 0.025);
+}
+
+/* el pie queda más cerca: el separador ya marca la pausa */
+.rk-separador + .rk-footer {
+  margin-top: 40px;
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { IconoUsuario } from "@/components/iconos";
+import Isotipo from "@/components/Isotipo";
 
 export default function RegistroPage() {
   const router = useRouter();
@@ -62,15 +62,7 @@ export default function RegistroPage() {
 
         <div className="rk-auth-brand rk-enter">
           <span className="rk-auth-logo">
-            <Image
-              src="/Isotipo.svg"
-              alt=""
-              width={240}
-              height={240}
-              /* Sin pasar por el optimizador: Next rechaza los SVG
-                 salvo con dangerouslyAllowSVG. */
-              unoptimized
-            />
+            <Isotipo className="h-[38px] w-[38px]" />
           </span>
 
           {/* h1 para lectores de pantalla: el nombre no se ve. */}
