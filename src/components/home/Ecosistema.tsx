@@ -1,55 +1,60 @@
-import {
-  Image as ImageIcon,
-  Layers,
-  PenTool,
-  Share2,
-  Sparkles,
-  Type,
-  Video,
-  Wand2,
-} from "lucide-react";
+import type React from "react";
 
 /**
  * Ecosistema creativo.
  *
- * Composición radial: RCKTDMG en el centro y alrededor las
- * disciplinas que cubre el catálogo.
+ * Fila simétrica de programas con el cohete de RCKTDMG en un
+ * círculo de marca al centro. Todos los programas van en círculos
+ * blancos con su logo real: más grandes cerca del centro y
+ * tenues en los bordes. Detrás: retícula de puntos,
+ * dos arcos grandes.
  *
- * SOBRE QUÉ AFIRMA
+ * Animación (solo CSS, sección AW de globals.css): entrada del
+ * centro hacia afuera y, después, solo se mueve el centro: el
+ * cohete se mece y un neón fino gira alrededor. Al fondo,
+ * los puntos se prenden en pulso del centro hacia afuera. Respeta el
+ * movimiento reducido.
  *
- * Son campos del diseño, no integraciones. No se nombra
- * ninguna herramienta externa ni se insinúa que RCKTDMG se
- * conecte con nadie: eso sería anunciar algo que no existe.
+ * Indica con qué programas se abren los archivos del catálogo;
+ * no es una alianza ni una integración.
  *
- * SOBRE CÓMO ESTÁ HECHO
- *
- * Server Component: es contenido fijo, sin estado. Las líneas
- * son un SVG detrás; los nodos, elementos posicionados. En
- * escritorio el círculo completo; en tablet se reduce; en
- * móvil se abandona la forma radial y queda una rejilla, que
- * es la única manera de que ocho etiquetas se lean a 375px.
+ * Todo va en porcentaje dentro de una caja con proporción fija,
+ * así se ve igual en móvil y escritorio.
  */
 
-const NODOS = [
-  { etiqueta: "Diseño gráfico", icono: PenTool },
-  { etiqueta: "Ilustración", icono: Wand2 },
-  { etiqueta: "Edición de imagen", icono: ImageIcon },
-  { etiqueta: "Video", icono: Video },
-  { etiqueta: "IA creativa", icono: Sparkles },
-  { etiqueta: "Tipografía", icono: Type },
-  { etiqueta: "Social media", icono: Share2 },
-  { etiqueta: "Recursos", icono: Layers },
-] as const;
+type Nivel = "fuerte-frio" | "fuerte-calido" | "blanco" | "tenue";
 
-/* Posición de cada nodo sobre el círculo, en porcentaje. */
-const POSICIONES = NODOS.map((_, i) => {
-  const angulo = (i / NODOS.length) * Math.PI * 2 - Math.PI / 2;
+type Programa = {
+  nombre: string;
+  /** Centro del círculo, en % del ancho. */
+  x: number;
+  nivel: Nivel;
+  sigla?: string;
+  /** Color oficial de las letras del ícono de Adobe. */
+  letra?: string;
+  figma?: boolean;
+};
 
-  return {
-    x: 50 + Math.cos(angulo) * 38,
-    y: 50 + Math.sin(angulo) * 38,
-  };
-});
+const PROGRAMAS: Programa[] = [
+  { nombre: "InDesign", x: 5.5, nivel: "tenue", sigla: "Id", letra: "#FF3366" },
+  { nombre: "Illustrator", x: 18, nivel: "blanco", sigla: "Ai", letra: "#FF9A00" },
+  { nombre: "Photoshop", x: 33, nivel: "fuerte-frio", sigla: "Ps", letra: "#31A8FF" },
+  { nombre: "Figma", x: 67, nivel: "fuerte-calido", figma: true },
+  { nombre: "After Effects", x: 82, nivel: "blanco", sigla: "Ae", letra: "#D291FF" },
+  { nombre: "Premiere Pro", x: 94.5, nivel: "tenue", sigla: "Pr", letra: "#9999FF" },
+];
+
+function LogoFigma() {
+  return (
+    <svg viewBox="0 0 38 57" aria-hidden className="rk-eco-figma">
+      <path fill="#1ABCFE" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z" />
+      <path fill="#0ACF83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z" />
+      <path fill="#FF7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z" />
+      <path fill="#F24E1E" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z" />
+      <path fill="#A259FF" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z" />
+    </svg>
+  );
+}
 
 export default function Ecosistema() {
   return (
@@ -63,99 +68,54 @@ export default function Ecosistema() {
           </h2>
 
           <p className="mt-3 text-[15px] leading-7 text-ink/60">
-            Todo lo que rodea a una pieza terminada, en un mismo sitio.
+            Archivos listos para abrir y editar en los programas que ya usas.
           </p>
         </div>
 
-        {/* ══════════ RADIAL · desde 640px ══════════ */}
-        <div className="rk-fade-up rk-enter-1 mt-10 hidden sm:block">
-          <div className="relative mx-auto aspect-square w-full max-w-[34rem]">
-            {/* LÍNEAS */}
-            <svg
-              aria-hidden
-              viewBox="0 0 100 100"
-              className="absolute inset-0 h-full w-full"
-            >
-              <circle
-                cx="50"
-                cy="50"
-                r="38"
-                fill="none"
-                stroke="rgb(var(--rk-border) / 0.25)"
-                strokeWidth="0.25"
-              />
+        <div className="rk-fade-up rk-enter-1 rk-eco mt-8 sm:mt-10">
+          {/* Fondo: puntos (con pulso del centro hacia afuera) y arcos. */}
+          <div aria-hidden className="rk-eco-puntos" />
+          <div aria-hidden className="rk-eco-pulso" />
+          <div aria-hidden className="rk-eco-arco is-arriba" />
+          <div aria-hidden className="rk-eco-arco is-abajo" />
 
-              {POSICIONES.map((p, i) => (
-                <line
-                  key={i}
-                  x1="50"
-                  y1="50"
-                  x2={p.x}
-                  y2={p.y}
-                  stroke="rgb(var(--rk-border) / 0.3)"
-                  strokeWidth="0.2"
-                />
-              ))}
-            </svg>
-
-            {/* NÚCLEO */}
-            <div className="absolute left-1/2 top-1/2 flex h-28 w-28 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full rk-nucleo sm:h-32 sm:w-32">
-              <span className="text-[13px] font-bold uppercase tracking-[0.14em] sm:text-sm">
-                RCKTDMG
+          {/* Núcleo: cohete blanco sobre el degradado de marca. */}
+          <div className="rk-eco-hexwrap">
+          <div className="rk-eco-hex">
+            <div className="rk-eco-nucleo">
+              <span className="rk-eco-isotipo-wrap">
+                <span role="img" aria-label="RCKTDMG" className="rk-eco-isotipo" />
               </span>
             </div>
-
-            {/* NODOS */}
-            {NODOS.map(({ etiqueta, icono: Icono }, i) => (
-              <div
-                key={etiqueta}
-                className="absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5 text-center sm:w-28"
-                style={{
-                  left: `${POSICIONES[i].x}%`,
-                  top: `${POSICIONES[i].y}%`,
-                }}
-              >
-                <span className="rk-tile grid h-11 w-11 place-items-center rounded-full">
-                  <Icono
-                    size={17}
-                    aria-hidden
-                    strokeWidth={1.6}
-                    className="text-ink/60"
-                  />
-                </span>
-
-                <span className="text-[11px] font-medium leading-tight text-ink/65 sm:text-[12px]">
-                  {etiqueta}
-                </span>
-              </div>
-            ))}
           </div>
-        </div>
-
-        {/* ══════════ REJILLA · hasta 640px ══════════ */}
-        <div className="rk-fade-up rk-enter-1 mt-9 sm:hidden">
-          <div className="rk-nucleo mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full">
-            <span className="text-[12px] font-bold uppercase tracking-[0.14em]">
-              RCKTDMG
-            </span>
           </div>
 
-          <ul className="grid grid-cols-2 gap-2.5">
-            {NODOS.map(({ etiqueta, icono: Icono }) => (
+          {/* Programas */}
+          <ul aria-label="Programas compatibles">
+            {PROGRAMAS.map((p) => (
               <li
-                key={etiqueta}
-                className="rk-tile flex min-h-[3.25rem] items-center gap-2.5 rounded-rk-md px-3 py-2.5"
+                key={p.nombre}
+                className={`rk-eco-app is-${p.nivel}`}
+                style={
+                  {
+                    left: `${p.x}%`,
+                    // distancia al centro: ordena la entrada y el flote
+                    "--rk-eco-i": Math.ceil(Math.abs(p.x - 50) / 17),
+                  } as React.CSSProperties
+                }
+                title={p.nombre}
               >
-                <Icono
-                  size={16}
-                  aria-hidden
-                  strokeWidth={1.6}
-                  className="shrink-0 text-ink/55"
-                />
-
-                <span className="text-[12px] font-medium leading-tight text-ink/70">
-                  {etiqueta}
-                </span>
+                {p.figma ? (
+                  <LogoFigma />
+                ) : (
+                  <span
+                    className="rk-eco-adobe"
+                    style={{ color: p.letra }}
+                  >
+                    {p.sigla}
+                  </span>
+                )}
+                <span className="sr-only">{p.nombre}</span>
               </li>
             ))}
           </ul>

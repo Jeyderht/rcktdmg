@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useId, useRef, useState } from "react";
@@ -24,6 +23,7 @@ import {
   useTecladoSugerencias,
 } from "@/components/sugerencias";
 import { IconoBolsa, IconoBuscar } from "@/components/iconos";
+import Isotipo from "@/components/Isotipo";
 
 function SearchField({
   className,
@@ -302,16 +302,7 @@ function NavbarContent() {
               className="rk-topbar-btn"
             >
               <span className="flex h-6 w-6 items-center justify-center">
-                <Image
-                  src="/Isotipo.svg"
-                  alt=""
-                  width={240}
-                  height={240}
-                  /* Sin deformar, y sin pasar por el optimizador:
-                     Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-                  className="h-full w-full object-contain"
-                  unoptimized
-                />
+                <Isotipo className="h-[23px] w-[23px]" />
               </span>
             </Link>
 
@@ -536,16 +527,7 @@ export default function Navbar() {
           <div className="mx-auto w-full max-w-7xl">
             <div className="rk-topbar-bar">
               <span className="rk-topbar-btn">
-                <Image
-                  src="/Isotipo.svg"
-                  alt=""
-                  width={240}
-                  height={240}
-                  /* Sin deformar, y sin pasar por el optimizador:
-                     Next rechaza los SVG salvo con dangerouslyAllowSVG. */
-                  className="h-full w-full object-contain"
-                  unoptimized
-                />
+                <Isotipo className="h-[23px] w-[23px]" />
               </span>
             </div>
           </div>

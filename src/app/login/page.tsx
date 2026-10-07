@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import Isotipo from "@/components/Isotipo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -80,15 +80,7 @@ export default function LoginPage() {
 
         <div className="rk-auth-brand rk-enter">
           <span className="rk-auth-logo">
-            <Image
-              src="/Isotipo.svg"
-              alt=""
-              width={240}
-              height={240}
-              /* Sin pasar por el optimizador: Next rechaza los SVG
-                 salvo con dangerouslyAllowSVG. */
-              unoptimized
-            />
+            <Isotipo className="h-[38px] w-[38px]" />
           </span>
 
           {/* h1 para lectores de pantalla: el nombre no se ve. */}

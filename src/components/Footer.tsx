@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Isotipo from "@/components/Isotipo";
 
 /**
  * Pie de página de RCKTDMG.
@@ -46,21 +47,44 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
+    <>
+      {/* Separador antes del pie: dos líneas con nodos y el isotipo al centro. */}
+      <div aria-hidden className="rk-separador">
+        <span className="rk-separador-linea" />
+        <span className="rk-separador-centro">
+          <Isotipo className="h-5 w-5" />
+        </span>
+        <span className="rk-separador-linea" />
+      </div>
+
     <footer className="rk-footer">
       <div className="rk-footer-inner">
 
-        {/* LLAMADA A CREADORES · franja de marca */}
+        {/* LLAMADA A CREADORES · tarjeta de marca con el cohete */}
         <div className="rk-footer-cta">
-          <div>
+          <Image
+            src="/marketing/cohete.svg"
+            alt=""
+            aria-hidden
+            width={260}
+            height={260}
+            unoptimized
+            className="rk-footer-cta-cohete"
+          />
+
+          <div className="rk-footer-cta-body">
             <p className="rk-footer-cta-kicker">Para creadores</p>
+
             <p className="rk-footer-cta-title">
               Publica tus recursos y vende en RCKTDMG
             </p>
-          </div>
 
-          <Link href="/creadores/unete" className="rk-btn rk-btn-ink">
-            Únete como creador
-          </Link>
+            <div className="rk-footer-cta-actions">
+              <Link href="/creadores/unete" className="rk-btn rk-btn-ink">
+                Únete como creador
+              </Link>
+            </div>
+          </div>
         </div>
 
         <div className="rk-footer-main">
@@ -68,15 +92,7 @@ export default function Footer() {
           {/* MARCA */}
           <div className="rk-footer-brand">
             <Link href="/" aria-label="RCKTDMG" className="rk-footer-logo">
-              <Image
-                src="/Isotipo.svg"
-                alt=""
-                width={240}
-                height={240}
-                /* Sin pasar por el optimizador: Next rechaza los SVG
-                   salvo con dangerouslyAllowSVG. */
-                unoptimized
-              />
+              <Isotipo className="h-7 w-7" />
             </Link>
 
             <p className="rk-footer-text">
@@ -107,7 +123,13 @@ export default function Footer() {
           <p>© {year} RCKTDMG. Todos los derechos reservados.</p>
           <p className="rk-footer-sign">Hecho para creadores.</p>
         </div>
+
+        {/* Firma de marca: el logo en gris transparente sobre el degradado. */}
+        <div aria-hidden className="rk-footer-marca">
+          <span className="rk-footer-marca-logo" />
+        </div>
       </div>
     </footer>
+    </>
   );
 }
