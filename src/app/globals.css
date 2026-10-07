@@ -1367,33 +1367,6 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 /* ══════════════════════════════════════════════════════════
-   CARGA ENTRE RUTAS
-
-   La marca entra con un desvanecido corto y la barra recorre
-   su carril en bucle. Ambas usan transform y opacity, que el
-   compositor resuelve sin volver a maquetar la página.
-   ══════════════════════════════════════════════════════════ */
-@layer components {
-  .rk-carga {
-    animation: rk-fade var(--rk-transition-normal) var(--rk-ease) both;
-  }
-
-  .rk-carga-pulso {
-    animation: rk-carga-recorrido 1.15s var(--rk-ease) infinite;
-    will-change: transform;
-  }
-}
-
-@keyframes rk-carga-recorrido {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(200%);
-  }
-}
-
-/* ══════════════════════════════════════════════════════════
    APARICIÓN AL ENTRAR EN PANTALLA
 
    La clase la pone JavaScript, nunca el HTML servido. Es
@@ -1434,7 +1407,6 @@ input[type="search"]::-webkit-search-results-decoration {
     transition: none;
   }
 }
-
 
 /* ══════════════════════════════════════════════════════════
    TABLEROS — SIDEBAR, CAJÓN Y BARRA
@@ -1486,51 +1458,6 @@ input[type="search"]::-webkit-search-results-decoration {
     width: 2px;
     border-radius: 2px;
     background: rgb(var(--rk-accent));
-  }
-
-  /*
-    TABLA DEL PANEL
-
-    El desplazamiento horizontal vive DENTRO de la tabla, no en
-    la página: una tabla ancha no debería obligar a mover el
-    sitio entero de lado.
-  */
-  .rk-panel-tabla {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .rk-panel-tabla > table {
-    width: 100%;
-    min-width: 34rem;
-    border-collapse: collapse;
-  }
-
-  .rk-panel-tabla th {
-    text-align: left;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgb(var(--rk-foreground) / 0.5);
-    padding: 0.625rem 0.75rem;
-    border-bottom: 1px solid var(--rk-border-color);
-    white-space: nowrap;
-  }
-
-  .rk-panel-tabla td {
-    padding: 0.75rem;
-    font-size: 0.715rem;
-    border-bottom: 1px solid rgb(var(--rk-foreground) / 0.06);
-  }
-
-  .rk-panel-tabla tbody tr {
-    transition: background-color 160ms var(--rk-ease-soft);
-  }
-
-  .rk-panel-tabla tbody tr:hover {
-    background: rgb(var(--rk-foreground) / 0.035);
   }
 }
 
@@ -2087,14 +2014,12 @@ h6 {
   pseudoelementos, así que el efecto no se pierde.
 */
 .rk-btn-ink:not(.absolute),
-.rk-btn-primary:not(.absolute),
-.rk-btn-glow:not(.absolute) {
+.rk-btn-primary:not(.absolute) {
   position: relative;
 }
 
 .rk-btn-ink,
-.rk-btn-primary,
-.rk-btn-glow {
+.rk-btn-primary {
   background: linear-gradient(135deg, #ffffff 0%, #e9e9ec 48%, #ffffff 100%);
   color: #111;
   border-color: rgb(255 255 255 / 0.95);
@@ -2106,8 +2031,7 @@ h6 {
 
 /* Línea de luz en el canto de arriba. */
 .rk-btn-ink::before,
-.rk-btn-primary::before,
-.rk-btn-glow::before {
+.rk-btn-primary::before {
   content: "";
   position: absolute;
   left: 22%;
@@ -2125,8 +2049,7 @@ h6 {
 
 /* Resplandor en el canto de abajo. */
 .rk-btn-ink::after,
-.rk-btn-primary::after,
-.rk-btn-glow::after {
+.rk-btn-primary::after {
   content: "";
   position: absolute;
   left: 22%;
@@ -2142,8 +2065,7 @@ h6 {
 }
 
 .rk-btn-ink:hover:not(:disabled),
-.rk-btn-primary:hover:not(:disabled),
-.rk-btn-glow:hover:not(:disabled) {
+.rk-btn-primary:hover:not(:disabled) {
   background: linear-gradient(135deg, #ffffff 0%, #e9e9ec 48%, #ffffff 100%);
   color: #111;
   filter: brightness(1.04);
@@ -2159,10 +2081,8 @@ h6 {
 */
 [data-theme="light"] .rk-btn-ink,
 [data-theme="light"] .rk-btn-primary,
-[data-theme="light"] .rk-btn-glow,
 [data-theme="light"] .rk-btn-ink:hover:not(:disabled),
-[data-theme="light"] .rk-btn-primary:hover:not(:disabled),
-[data-theme="light"] .rk-btn-glow:hover:not(:disabled) {
+[data-theme="light"] .rk-btn-primary:hover:not(:disabled) {
   background: #15161b;
   color: #ffffff;
   border-color: transparent;
@@ -2173,9 +2093,7 @@ h6 {
 [data-theme="light"] .rk-btn-ink::before,
 [data-theme="light"] .rk-btn-ink::after,
 [data-theme="light"] .rk-btn-primary::before,
-[data-theme="light"] .rk-btn-primary::after,
-[data-theme="light"] .rk-btn-glow::before,
-[data-theme="light"] .rk-btn-glow::after {
+[data-theme="light"] .rk-btn-primary::after {
   display: none;
 }
 
@@ -2891,13 +2809,6 @@ html[data-theme="dark"] {
   gap: 0.375rem;
 }
 
-.rk-btn-icono {
-  min-height: 2.75rem;
-  width: 2.75rem;
-  padding: 0;
-  aspect-ratio: 1;
-}
-
 /* En táctil el dedo manda: 44 px mínimos. */
 @media (pointer: coarse) {
   .rk-btn-compact {
@@ -3165,18 +3076,15 @@ html[data-theme="dark"] {
    Una fila responde con el fondo, nunca con desplazamiento: una
    tabla cuyas filas se mueven es imposible de leer.
 */
-.rk-tabla tbody tr,
 table tbody tr {
   transition: background-color var(--rx-t-micro) var(--rx-curva);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .rk-tabla tbody tr:hover,
   table tbody tr:hover {
     background: rgb(255 255 255 / 0.03);
   }
 
-  [data-theme="light"] .rk-tabla tbody tr:hover,
   [data-theme="light"] table tbody tr:hover {
     background: rgb(0 0 0 / 0.025);
   }
@@ -3485,7 +3393,6 @@ table .rk-btn:hover:not(:disabled) {
   }
 }
 
-
 /* ╔═══════════════════════════════════════════════════════════════════════╗
    ║  ACTUALIZACIÓN DE COMPONENTES · octubre 2026                           ║
    ╠═══════════════════════════════════════════════════════════════════════╣
@@ -3497,13 +3404,12 @@ table .rk-btn:hover:not(:disabled) {
    ║     A2. Primary degradado  → rk-btn-primary (frío → cálido)           ║
    ║     A3. Line               → cristal con blur + lengüeta detrás       ║
    ║     A4. Secondary · Glass  → vidrio transparente con blur             ║
-   ║     A5. Semánticos         → danger · buy (verde) · warning (ámbar)   ║
-   ║     A6. Extras             → link · spinner · aria-pressed · segment  ║
+   ║     A5. Semánticos         → danger · buy (verde)                     ║
+   ║     A6. Extras             → aria-pressed · segment                   ║
    ║  B. CAMPOS                 → rk-input · rk-select · rk-textarea +     ║
    ║                              rk-field · rk-label · rk-hint · grupos   ║
    ║  C. TARJETA DE RECURSO     → rk-tarjeta (borde limpio) + C2 refinada  ║
-   ║  D. VIDRIO SOBRE IMAGEN    → rk-glass-panel · rk-prompt · rk-pill ·   ║
-   ║                              rk-checklist · rk-checkbox · rk-status   ║
+   ║  D. VIDRIO SOBRE IMAGEN    → tokens --rk-gv-*                         ║
    ║  E. CANTIDAD E ICONO       → rk-stepper · rk-icon-button-danger       ║
    ║  F. ITEM DE CARRITO        → rk-cart-item                             ║
    ║  G. SEPARADORES            → rk-divider                               ║
@@ -3514,18 +3420,15 @@ table .rk-btn:hover:not(:disabled) {
    ║  L. TARJETAS INFO          → rk-card                                  ║
    ║  M. PASOS                  → rk-step                                  ║
    ║  N. RESUMEN PEDIDO         → rk-receipt                               ║
-   ║  O. CAPAS                  → rk-overlay · rk-modal · rk-sheet ·       ║
-   ║                              rk-drawer                                ║
-   ║  P. AVISOS                 → rk-toast                                 ║
    ║  Q. PLANES                 → rk-plan                                  ║
    ║  R. COMPARACIÓN            → rk-compare                               ║
    ║  S. PREGUNTAS              → rk-faq · rk-help                         ║
    ║  T. PESTAÑAS               → rk-tabs · rk-panel-* (lengüeta)          ║
-   ║  U. CARGA Y VACÍOS         → rk-skeleton · rk-carga · rk-empty        ║
+   ║  U. CARGA Y VACÍOS         → rk-skeleton · rk-empty                   ║
    ║  V. SUBIDA DE ARCHIVOS     → rk-upload · rk-progress                  ║
    ║  W. TABLAS                 → rk-table · rk-pagination                 ║
    ║  X. PERFIL Y MÉTRICAS      → rk-profile · rk-tabs-track · rk-stat ·   ║
-   ║                              rk-meter · rk-text-iris · rk-empty-glow  ║
+   ║                              rk-text-iris                             ║
    ║  Y. MENÚ DE CUENTA         → rk-avatar-btn · rk-menu                  ║
    ║  Z. RESEÑAS                → rk-rating · rk-stars · rk-review         ║
    ║  AA. NOTIFICACIONES        → rk-notif-* (campana, panel, página)      ║
@@ -3573,7 +3476,7 @@ table .rk-btn:hover:not(:disabled) {
   transition: opacity var(--rx-t-micro) var(--rx-curva);
 }
 
-/* icon · alias en inglés de rk-btn-icono */
+/* icon · botón cuadrado solo con icono */
 .rk-btn-icon {
   min-height: 2.75rem;
   width: 2.75rem;
@@ -3742,8 +3645,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* botón de icono: sin lengüeta */
-.rk-btn.rk-btn-line.rk-btn-icon::after,
-.rk-btn.rk-btn-line.rk-btn-icono::after {
+.rk-btn.rk-btn-line.rk-btn-icon::after {
   display: none;
 }
 
@@ -3862,8 +3764,7 @@ table .rk-btn:hover:not(:disabled) {
    Ajustar tono con --rk-dan-tono (canales RGB).
    buy y warning: el mismo estilo que danger, en verde y ámbar (ver 6b y 6c). */
 .rk-btn-danger,
-.rk-btn-buy,
-.rk-btn-warning {
+.rk-btn-buy {
   --rk-dan-tono: 248 96 96;
   --rk-dan-fondo: 74 20 24;
 
@@ -3886,8 +3787,7 @@ table .rk-btn:hover:not(:disabled) {
 
 @media (hover: hover) and (pointer: fine) {
   .rk-btn-danger:hover:not(:disabled),
-  .rk-btn-buy:hover:not(:disabled),
-  .rk-btn-warning:hover:not(:disabled) {
+  .rk-btn-buy:hover:not(:disabled) {
     color: #fff;
     border-color: rgb(var(--rk-dan-tono) / 0.8);
     box-shadow:
@@ -3897,14 +3797,12 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-btn-danger:focus-visible,
-.rk-btn-buy:focus-visible,
-.rk-btn-warning:focus-visible {
+.rk-btn-buy:focus-visible {
   outline-color: rgb(var(--rk-dan-tono));
 }
 
 [data-theme="light"] .rk-btn-danger,
-[data-theme="light"] .rk-btn-buy,
-[data-theme="light"] .rk-btn-warning {
+[data-theme="light"] .rk-btn-buy {
   --rk-dan-tono: 206 40 40;
   --rk-dan-fondo: 255 244 244;
 
@@ -3917,8 +3815,7 @@ table .rk-btn:hover:not(:disabled) {
 
 @media (hover: hover) and (pointer: fine) {
   [data-theme="light"] .rk-btn-danger:hover:not(:disabled),
-  [data-theme="light"] .rk-btn-buy:hover:not(:disabled),
-  [data-theme="light"] .rk-btn-warning:hover:not(:disabled) {
+  [data-theme="light"] .rk-btn-buy:hover:not(:disabled) {
     color: rgb(var(--rk-dan-tono));
     border-color: rgb(var(--rk-dan-tono) / 0.55);
     box-shadow:
@@ -3939,73 +3836,6 @@ table .rk-btn:hover:not(:disabled) {
   --rk-dan-tono: 9 135 87;
   --rk-dan-fondo: 236 252 244;
   color: rgb(var(--rk-dan-tono));
-}
-
-/* 6c. WARNING · mismo estilo que danger, en ámbar
-   Para acciones que piden atención sin ser destructivas
-   (pendiente, revisar, reintentar). */
-.rk-btn-warning {
-  --rk-dan-tono: 251 191 36;
-  --rk-dan-fondo: 66 44 8;
-  color: rgb(255 243 214 / 0.94);
-}
-
-[data-theme="light"] .rk-btn-warning {
-  --rk-dan-tono: 166 105 6;
-  --rk-dan-fondo: 255 248 230;
-  color: rgb(var(--rk-dan-tono));
-}
-
-/* ── A6. ──────────────────────────────────────────────────────────── */
-/* ── 7b. EXTRAS · link · spinner · pressed · segment ───────────────── */
-
-/* link · botón con aspecto de texto (Ver todo, Olvidé mi contraseña) */
-.rk-btn.rk-btn-link {
-  min-height: 44px;
-  padding: 0 4px;
-  border-color: transparent;
-  background:
-    linear-gradient(currentColor, currentColor) 0 calc(100% - 12px) / 0% 1px
-    no-repeat;
-  color: var(--rx-texto);
-  box-shadow: none;
-  transition:
-    background-size var(--rx-t-hover) var(--rx-curva),
-    color var(--rx-t-micro) var(--rx-curva),
-    opacity var(--rx-t-micro) var(--rx-curva);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rk-btn.rk-btn-link:hover:not(:disabled) {
-    background-size: 100% 1px;
-    transform: none;
-  }
-}
-
-/* spinner · indicador de carga dentro del botón
-   <button class="rk-btn rk-btn-primary" data-loading="true">
-     <span class="rk-btn-spinner" aria-hidden="true"></span> Procesando…
-   </button> */
-.rk-btn-spinner {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  flex: none;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  border-right-color: transparent;
-  animation: rk-btn-spinner 0.7s linear infinite;
-}
-
-.rk-btn[data-loading="true"] > .rk-btn-spinner,
-.rk-btn[data-cargando="true"] > .rk-btn-spinner {
-  opacity: 1;
-}
-
-@keyframes rk-btn-spinner {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* pressed · estado activo con aria-pressed="true"
@@ -4113,11 +3943,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rk-btn-spinner {
-    animation-duration: 1.6s;
-  }
 
-  .rk-btn.rk-btn-link,
   .rk-segment-option {
     transition: none;
   }
@@ -4133,9 +3959,8 @@ table .rk-btn:hover:not(:disabled) {
    ÍNDICE
    1. Base vidrio        → input · select · textarea
    2. Estados            → hover · focus · disabled · error · success
-   3. Tamaños            → rk-input-sm · rk-input-lg
-   4. Select y textarea  → flecha propia · alto mínimo
-   5. Estructura         → rk-field · rk-label · rk-hint · rk-input-group
+   3. Select y textarea  → flecha propia · alto mínimo
+   4. Estructura         → rk-field · rk-label · rk-hint · rk-input-group
    Ajustes: --rk-in-relleno (fondo), --rk-in-borde (borde),
             --rk-iris-1/2/3 (colores del foco), --rk-in-blur
    ═══════════════════════════════════════════════════════════════════════ */
@@ -4268,8 +4093,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-input[data-estado="ok"],
-.rk-textarea[data-estado="ok"],
-.rk-input.rk-input-success {
+.rk-textarea[data-estado="ok"] {
   --rk-in-tono: 52 211 153;
 }
 
@@ -4281,8 +4105,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-input[data-estado="ok"],
-[data-theme="light"] .rk-textarea[data-estado="ok"],
-[data-theme="light"] .rk-input.rk-input-success {
+[data-theme="light"] .rk-textarea[data-estado="ok"] {
   --rk-in-tono: 9 135 87;
 }
 
@@ -4291,8 +4114,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-textarea[aria-invalid="true"],
 .rk-input.rk-input-error,
 .rk-input[data-estado="ok"],
-.rk-textarea[data-estado="ok"],
-.rk-input.rk-input-success {
+.rk-textarea[data-estado="ok"] {
   --rk-in-borde: rgb(var(--rk-in-tono) / 0.5);
   --rk-in-borde-alto: rgb(var(--rk-in-tono) / 0.65);
   --rk-in-halo: inset 0 0 14px rgb(var(--rk-in-tono) / 0.12);
@@ -4303,33 +4125,12 @@ table .rk-btn:hover:not(:disabled) {
 .rk-textarea[aria-invalid="true"]:focus,
 .rk-input.rk-input-error:focus,
 .rk-input[data-estado="ok"]:focus,
-.rk-textarea[data-estado="ok"]:focus,
-.rk-input.rk-input-success:focus {
+.rk-textarea[data-estado="ok"]:focus {
   --rk-in-borde: rgb(var(--rk-in-tono) / 0.8);
   --rk-in-borde-alto: rgb(var(--rk-in-tono) / 0.9);
   --rk-in-halo:
     inset 0 0 16px rgb(var(--rk-in-tono) / 0.14),
     0 0 0 3px rgb(var(--rk-in-tono) / 0.1);
-}
-
-/* ── 3. TAMAÑOS ─────────────────────────────────────────────────────── */
-.rk-input-sm {
-  min-height: 40px;
-  padding: 0 12px;
-  font-size: 0.77rem;
-  border-radius: var(--rk-radius-sm);
-}
-
-.rk-input-lg {
-  min-height: 56px;
-  padding: 0 20px;
-  font-size: 0.88rem;
-}
-
-@media (pointer: coarse) {
-  .rk-input-sm {
-    min-height: 44px;
-  }
 }
 
 /* ── 4. SELECT Y TEXTAREA ───────────────────────────────────────────── */
@@ -4365,7 +4166,7 @@ table .rk-btn:hover:not(:disabled) {
      </div>
      <p class="rk-hint" id="correo-hint">Te enviaremos el recibo aquí.</p>
    </div>
-   Para error: aria-invalid="true" en el campo + rk-hint-error.
+   Para error: aria-invalid="true" en el campo.
    ───────────────────────────────────────────────────────────────────── */
 .rk-field {
   display: grid;
@@ -4379,25 +4180,11 @@ table .rk-btn:hover:not(:disabled) {
   color: var(--rx-texto);
 }
 
-.rk-label-optional {
-  margin-left: 6px;
-  font-weight: 400;
-  color: rgb(var(--rk-muted));
-}
-
 .rk-hint {
   margin: 0;
   font-size: 0.715rem;
   line-height: 1.45;
   color: rgb(var(--rk-muted));
-}
-
-.rk-hint-error {
-  color: rgb(var(--rk-danger));
-}
-
-.rk-hint-success {
-  color: rgb(var(--rk-success));
 }
 
 .rk-input-group {
@@ -4454,11 +4241,6 @@ table .rk-btn:hover:not(:disabled) {
   letter-spacing: 0.14em;
   color: rgb(var(--rk-muted));
   transition: color var(--rx-t-micro) var(--rx-curva);
-}
-
-.rk-label-optional {
-  text-transform: none;
-  letter-spacing: 0.02em;
 }
 
 .rk-field:focus-within > .rk-label {
@@ -4649,12 +4431,6 @@ table .rk-btn:hover:not(:disabled) {
   transition: opacity var(--rx-t-micro) var(--rx-curva);
 }
 
-.rk-tarjeta-creador {
-  margin: 4px 0 0;
-  font-size: 11px;
-  color: rgb(var(--rk-muted));
-}
-
 .rk-tarjeta-precio {
   margin: 0;
   font-size: 12.5px;
@@ -4693,24 +4469,15 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   VIDRIO SOBRE IMAGEN  ·  panel · prompt · pill · checklist · status
+   VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*
    ═══════════════════════════════════════════════════════════════════════
-   Elementos transparentes para poner encima de fotos o fondos con
-   color (estilo "Plan your next trip"). Bordes limpios, sin sombras.
-   ÍNDICE
-   1. Tokens          → --rk-gv-*
-   2. Panel           → rk-glass-panel · -title · -text · rk-glass-divider
-   3. Prompt          → rk-prompt · -icon · -field · -send
-   4. Pill            → rk-pill (+ aria-pressed="true")
-   5. Checklist       → rk-checklist · -item · -time · rk-checkbox
-   6. Status          → rk-status · rk-status-dot
+   Vidrio transparente para poner encima de fotos o fondos con color.
+   Bordes limpios, sin sombras.
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* ── 1. TOKENS ──────────────────────────────────────────────────────── */
 :root {
   --rk-gv-texto: 255 255 255;
-  --rk-gv-velo: 0.07;          /* relleno de pills, prompt, status */
-  --rk-gv-velo-panel: 0.08;    /* relleno del panel */
+  --rk-gv-velo: 0.07;          /* relleno del vidrio */
   --rk-gv-borde: 0.14;         /* opacidad del borde */
   --rk-gv-blur: 22px;
 }
@@ -4718,367 +4485,7 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] {
   --rk-gv-texto: 255 255 255;
   --rk-gv-velo: 0.1;
-  --rk-gv-velo-panel: 0.08;
   --rk-gv-borde: 0.22;
-}
-
-/* tema claro: el vidrio aclara lo que tiene detrás (no lo oscurece) */
-[data-theme="light"] .rk-glass-panel {
-  -webkit-backdrop-filter: blur(var(--rk-gv-blur)) saturate(1.2) brightness(1.08);
-  backdrop-filter: blur(var(--rk-gv-blur)) saturate(1.2) brightness(1.08);
-}
-
-/* ── 2. PANEL ───────────────────────────────────────────────────────── */
-.rk-glass-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  min-width: 0;
-  gap: 16px;
-  padding: 22px;
-  border-radius: 22px;
-  border: 1px solid rgb(255 255 255 / var(--rk-gv-borde));
-  background: rgb(255 255 255 / var(--rk-gv-velo-panel));
-  -webkit-backdrop-filter: blur(var(--rk-gv-blur)) saturate(1.3);
-  backdrop-filter: blur(var(--rk-gv-blur)) saturate(1.3);
-  color: rgb(var(--rk-gv-texto));
-}
-
-[data-theme="dark"] .rk-glass-panel {
-  background: rgb(40 40 40 / 0.18);
-}
-
-.rk-glass-panel-title {
-  margin: 0;
-  font-size: 1.32rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  color: inherit;
-  background: none;
-  -webkit-text-fill-color: currentColor;
-}
-
-.rk-glass-panel-text {
-  margin: -8px 0 0;
-  font-size: 0.825rem;
-  line-height: 1.4;
-  color: rgb(var(--rk-gv-texto) / 0.85);
-}
-
-.rk-glass-panel-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  font-size: 0.935rem;
-  font-weight: 500;
-}
-
-.rk-glass-divider {
-  height: 1px;
-  border: 0;
-  margin: 4px 0;
-  background: rgb(var(--rk-gv-texto) / 0.3);
-}
-
-/* ── 3. PROMPT · campo con icono y botón enviar ──────────────────────
-   <form class="rk-prompt">
-     <svg class="rk-prompt-icon">…</svg>
-     <input class="rk-prompt-field" placeholder="…">
-     <button class="rk-prompt-send" aria-label="Enviar">…</button>
-   </form> */
-.rk-prompt {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 52px;
-  padding: 5px 5px 5px 16px;
-  border-radius: 16px;
-  border: 1px solid rgb(255 255 255 / var(--rk-gv-borde));
-  background: rgb(255 255 255 / var(--rk-gv-velo));
-  color: rgb(var(--rk-gv-texto));
-  transition: border-color var(--rx-t-micro) var(--rx-curva);
-}
-
-.rk-prompt:focus-within {
-  border-color: rgb(255 255 255 / 0.45);
-}
-
-[data-theme="light"] .rk-prompt:focus-within {
-  border-color: rgb(255 255 255 / 0.95);
-}
-
-.rk-prompt-icon {
-  width: 18px;
-  height: 18px;
-  flex: none;
-  opacity: 0.9;
-}
-
-.rk-prompt-field {
-  flex: 1;
-  min-width: 0;
-  height: 40px;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: 0.825rem;
-  outline: none;
-  caret-color: currentColor;
-}
-
-.rk-prompt-field::placeholder {
-  color: rgb(var(--rk-gv-texto) / 0.6);
-}
-
-.rk-prompt-send {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  width: 42px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid rgb(255 255 255 / var(--rk-gv-borde));
-  background: rgb(255 255 255 / var(--rk-gv-velo));
-  color: inherit;
-  cursor: pointer;
-  transition:
-    background-color var(--rx-t-micro) var(--rx-curva),
-    border-color var(--rx-t-micro) var(--rx-curva);
-}
-
-.rk-prompt-send svg {
-  width: 18px;
-  height: 18px;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rk-prompt-send:hover {
-    background: rgb(255 255 255 / calc(var(--rk-gv-velo) * 2.2));
-    border-color: rgb(255 255 255 / 0.45);
-  }
-}
-
-.rk-prompt-send:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
-.rk-prompt-send:active {
-  transform: scale(0.96);
-}
-
-/* ── 4. PILL · opción seleccionable transparente ─────────────────────
-   <button class="rk-pill" aria-pressed="false">scenic route</button> */
-.rk-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.rk-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 40px;
-  padding: 0 16px;
-  border-radius: 999px;
-  border: 1px solid rgb(255 255 255 / var(--rk-gv-borde));
-  background: rgb(255 255 255 / var(--rk-gv-velo));
-  color: rgb(var(--rk-gv-texto));
-  font: inherit;
-  font-size: 0.825rem;
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    background-color var(--rx-t-micro) var(--rx-curva),
-    border-color var(--rx-t-micro) var(--rx-curva),
-    color var(--rx-t-micro) var(--rx-curva);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rk-pill:hover {
-    border-color: rgb(255 255 255 / 0.45);
-  }
-}
-
-.rk-pill[aria-pressed="true"] {
-  background: rgb(255 255 255 / 0.92);
-  border-color: rgb(255 255 255 / 0.92);
-  color: #15161b;
-}
-
-[data-theme="light"] .rk-pill[aria-pressed="true"] {
-  background: rgb(255 255 255 / 0.95);
-  border-color: rgb(255 255 255 / 0.95);
-  color: #15161b;
-}
-
-.rk-pill:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
-.rk-pill:active {
-  transform: scale(0.97);
-}
-
-/* ── 5. CHECKLIST · hora + casilla + texto ───────────────────────────
-   <ul class="rk-checklist">
-     <li><label class="rk-checklist-item">
-       <span class="rk-checklist-time">9:30</span>
-       <input type="checkbox" class="rk-checkbox" checked>
-       <span class="rk-checklist-text">Summit push</span>
-     </label></li>
-   </ul> */
-.rk-checklist {
-  display: grid;
-  gap: 4px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.rk-checklist-item {
-  display: grid;
-  grid-template-columns: 3.75rem 22px 1fr;
-  align-items: center;
-  gap: 12px;
-  min-height: 44px;
-  cursor: pointer;
-}
-
-.rk-checklist-time {
-  font-size: 0.825rem;
-  font-variant-numeric: tabular-nums;
-  color: rgb(var(--rk-gv-texto) / 0.9);
-}
-
-.rk-checklist-text {
-  font-size: 0.825rem;
-  font-weight: 500;
-  transition:
-    color var(--rx-t-micro) var(--rx-curva),
-    opacity var(--rx-t-micro) var(--rx-curva);
-}
-
-.rk-checklist-item:has(.rk-checkbox:checked) .rk-checklist-text {
-  text-decoration: line-through;
-  opacity: 0.55;
-}
-
-.rk-checkbox {
-  -webkit-appearance: none;
-  appearance: none;
-  display: grid;
-  place-content: center;
-  width: 22px;
-  height: 22px;
-  margin: 0;
-  border-radius: 6px;
-  border: 1px solid rgb(var(--rk-gv-texto) / 0.25);
-  background: rgb(255 255 255 / var(--rk-gv-velo));
-  cursor: pointer;
-  transition:
-    background-color var(--rx-t-micro) var(--rx-curva),
-    border-color var(--rx-t-micro) var(--rx-curva);
-}
-
-/* palomita: dibujada con máscara para tomar el color del texto */
-.rk-checkbox::before {
-  content: "";
-  width: 12px;
-  height: 12px;
-  background: rgb(var(--rk-gv-texto) / 0.45);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat;
-}
-
-.rk-checkbox:checked {
-  background: rgb(255 255 255 / 0.95);
-  border-color: rgb(255 255 255 / 0.95);
-}
-
-.rk-checkbox:checked::before {
-  background: #15161b;
-}
-
-[data-theme="light"] .rk-checkbox:checked {
-  background: rgb(255 255 255 / 0.95);
-  border-color: rgb(255 255 255 / 0.95);
-}
-
-.rk-checkbox:focus-visible {
-  outline: 2px solid rgb(var(--rk-gv-texto));
-  outline-offset: 2px;
-}
-
-/* ── 6. STATUS · aviso con punto ─────────────────────────────────────
-   <p class="rk-status"><span class="rk-status-dot"></span>Trail rerouted</p>
-   Color del punto: --rk-status-tono (por defecto blanco). */
-.rk-status {
-  --rk-status-tono: var(--rk-gv-texto);
-
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 46px;
-  margin: 0;
-  padding: 0 16px;
-  border-radius: 14px;
-  border: 1px solid rgb(255 255 255 / var(--rk-gv-borde));
-  background: rgb(255 255 255 / var(--rk-gv-velo));
-  color: rgb(var(--rk-gv-texto));
-  font-size: 0.825rem;
-}
-
-.rk-status-dot {
-  position: relative;
-  flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgb(var(--rk-status-tono));
-}
-
-/* halo que late suave */
-.rk-status-dot::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  background: rgb(var(--rk-status-tono) / 0.25);
-  animation: rk-status-latido 2s ease-in-out infinite;
-}
-
-@keyframes rk-status-latido {
-  0%, 100% { transform: scale(0.8); opacity: 0.9; }
-  50% { transform: scale(1.25); opacity: 0.3; }
-}
-
-.rk-status-ok { --rk-status-tono: 52 211 153; }
-.rk-status-warning { --rk-status-tono: 251 191 36; }
-.rk-status-danger { --rk-status-tono: 248 96 96; }
-
-@media (prefers-reduced-motion: reduce) {
-  .rk-status-dot::after {
-    animation: none;
-  }
-
-  .rk-prompt,
-  .rk-prompt-send,
-  .rk-pill,
-  .rk-checkbox,
-  .rk-checklist-text {
-    transition: none;
-  }
-
-  .rk-pill:active,
-  .rk-prompt-send:active {
-    transform: none;
-  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -5708,10 +5115,6 @@ table .rk-btn:hover:not(:disabled) {
      .rk-divider           → línea horizontal (div o hr)
      .rk-divider-t / -b    → borde arriba / abajo de un bloque
      .rk-divider-y         → línea entre cada hijo de una lista
-     .rk-divider-fade      → se desvanece en los extremos
-     .rk-divider-dashed    → punteada
-     .rk-divider-vertical  → vertical, entre elementos en fila
-     .rk-divider-label     → línea con texto al centro ("o continúa con")
    ═══════════════════════════════════════════════════════════════════════ */
 :root,
 [data-theme="dark"] {
@@ -5741,53 +5144,6 @@ table .rk-btn:hover:not(:disabled) {
   border-top: 1px solid var(--rk-linea);
 }
 
-.rk-divider-fade {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--rk-linea) 18%,
-    var(--rk-linea) 82%,
-    transparent
-  );
-}
-
-.rk-divider-dashed {
-  background: repeating-linear-gradient(
-    90deg,
-    var(--rk-linea) 0 6px,
-    transparent 6px 11px
-  );
-}
-
-.rk-divider-vertical {
-  width: 1px;
-  height: auto;
-  align-self: stretch;
-  min-height: 1em;
-  background: var(--rk-linea);
-}
-
-.rk-divider-label {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: auto;
-  background: none;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgb(var(--rk-muted));
-}
-
-.rk-divider-label::before,
-.rk-divider-label::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--rk-linea);
-}
-
 /* las líneas propias de los componentes nuevos usan el mismo color */
 .rk-card-divider {
   background: var(--rk-linea);
@@ -5813,7 +5169,6 @@ table .rk-btn:hover:not(:disabled) {
      activo: .rk-chip-active · [aria-pressed="true"] · [aria-current]
              · [data-activo="true"] → degradado del primary
      .rk-chip-count              → número pequeño dentro del chip
-     .rk-chip-remove             → × para quitar un filtro
    BADGE (estado, no se toca)
      .rk-badge + -neutral · -accent · -success · -warning · -danger
      .rk-badge-dot               → punto de color antes del texto
@@ -5923,35 +5278,6 @@ table .rk-btn:hover:not(:disabled) {
 .rk-chip[aria-current] .rk-chip-count,
 .rk-chip[data-activo="true"] .rk-chip-count {
   background: rgb(21 22 27 / 0.1);
-}
-
-.rk-chip-remove {
-  display: inline-grid;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  margin-right: -6px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: inherit;
-  font-size: 12.5px;
-  line-height: 1;
-  opacity: 0.6;
-  cursor: pointer;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rk-chip-remove:hover {
-    opacity: 1;
-    background: rgb(127 127 127 / 0.15);
-  }
-}
-
-.rk-chip-remove:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 1px;
 }
 
 /* ── H2. BADGE ──────────────────────────────────────────────────────── */
@@ -6542,18 +5868,15 @@ table .rk-btn:hover:not(:disabled) {
     0 0 0 3px rgb(var(--rk-iris-1) / 0.1);
 }
 
-.rk-buscador > svg,
-.rk-buscador-icono {
+.rk-buscador > svg {
   color: rgb(var(--rk-muted));
 }
 
-.rk-buscador:focus-within > svg,
-.rk-buscador:focus-within .rk-buscador-icono {
+.rk-buscador:focus-within > svg {
   color: rgb(var(--rk-iris-2));
 }
 
-[data-theme="light"] .rk-buscador:focus-within > svg,
-[data-theme="light"] .rk-buscador:focus-within .rk-buscador-icono {
+[data-theme="light"] .rk-buscador:focus-within > svg {
   color: rgb(var(--rk-iris-1));
 }
 
@@ -7006,25 +6329,6 @@ table .rk-btn:hover:not(:disabled) {
   -webkit-text-fill-color: currentColor;
 }
 
-.rk-receipt-code {
-  display: inline-flex;
-  align-items: center;
-  height: 26px;
-  padding: 0 11px;
-  border-radius: 999px;
-  background: #15161b;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-[data-theme="dark"] .rk-receipt-code {
-  background: #fff;
-  color: #15161b;
-}
-
 /* artículos */
 .rk-receipt-items {
   display: grid;
@@ -7156,117 +6460,9 @@ table .rk-btn:hover:not(:disabled) {
   font-size: 11.5px;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   O. VENTANAS Y HOJAS  ·  rk-overlay · rk-modal · rk-sheet · rk-drawer
-   ═══════════════════════════════════════════════════════════════════════
-   Mismo vidrio del sistema. El fondo se oscurece y se desenfoca.
-     .rk-overlay       → fondo que cubre la página (contiene la ventana)
-     .rk-modal         → ventana centrada (confirmar, eliminar, avisos)
-     .rk-sheet         → hoja que sube desde abajo (móvil: filtros, opciones)
-     .rk-drawer        → panel lateral (menú, cuenta)
-   Abrir/cerrar: atributo data-open="true" en .rk-overlay.
-   Piezas: -head · -title · -text · -icon · -actions · rk-sheet-grip
-   ═══════════════════════════════════════════════════════════════════════ */
-
-/* ── O1. FONDO ──────────────────────────────────────────────────────── */
-.rk-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  display: grid;
-  place-items: center;
-  padding: 16px;
-  background: rgb(6 7 10 / 0.5);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity var(--rx-t-entrada) var(--rx-curva),
-    visibility 0s linear var(--rx-t-entrada);
-}
-
-[data-theme="light"] .rk-overlay {
-  background: rgb(21 22 27 / 0.28);
-}
-
-.rk-overlay[data-open="true"] {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity var(--rx-t-entrada) var(--rx-curva);
-}
-
-/* ── O2. SUPERFICIE COMÚN ───────────────────────────────────────────── */
-.rk-modal,
-.rk-sheet,
-.rk-drawer {
-  display: grid;
-  gap: 14px;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  background: rgb(24 25 30 / 0.72);
-  -webkit-backdrop-filter: blur(28px) saturate(1.5);
-  backdrop-filter: blur(28px) saturate(1.5);
-  color: var(--rx-texto);
-}
-
-[data-theme="light"] .rk-modal,
-[data-theme="light"] .rk-sheet,
-[data-theme="light"] .rk-drawer {
-  border-color: rgb(255 255 255 / 0.8);
-  background: rgb(255 255 255 / 0.82);
-}
-
-/* ── O3. VENTANA CENTRADA ───────────────────────────────────────────── */
-.rk-modal {
-  width: min(100%, 26rem);
-  padding: 24px;
-  border-radius: 26px;
-  transform: translateY(10px) scale(0.98);
-  transition: transform var(--rx-t-entrada) var(--rx-curva);
-}
-
-.rk-overlay[data-open="true"] .rk-modal {
-  transform: none;
-}
-
-.rk-modal-icon {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1px solid rgb(255 255 255 / 0.12);
-  background: rgb(255 255 255 / 0.06);
-}
-
-.rk-modal-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
 /* icono rojo, mismo lenguaje que danger */
-.rk-modal-icon-danger {
-  border-color: rgb(248 96 96 / 0.5);
-  background: rgb(74 20 24);
-  box-shadow: inset 0 0 10px rgb(248 96 96 / 0.3);
-  color: rgb(255 226 226);
-}
 
-[data-theme="light"] .rk-modal-icon {
-  border-color: rgb(21 22 27 / 0.08);
-  background: #fff;
-}
-
-[data-theme="light"] .rk-modal-icon-danger {
-  border-color: rgb(206 40 40 / 0.3);
-  background: rgb(255 244 244);
-  box-shadow: inset 0 0 8px rgb(206 40 40 / 0.1);
-  color: rgb(206 40 40);
-}
-
-.rk-modal-title,
-.rk-sheet-title,
-.rk-drawer-title {
+.rk-sheet-title {
   margin: 0;
   font-size: 0.99rem;
   font-weight: 600;
@@ -7277,299 +6473,13 @@ table .rk-btn:hover:not(:disabled) {
   -webkit-text-fill-color: currentColor;
 }
 
-.rk-modal-text,
-.rk-sheet-text {
-  margin: -6px 0 0;
-  font-size: 0.77rem;
-  line-height: 1.55;
-  color: rgb(var(--rk-muted));
-}
-
-.rk-modal-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.rk-modal-actions > .rk-btn {
-  width: 100%;
-  padding: 0 12px;
-}
-
-/* ── O4. HOJA INFERIOR ──────────────────────────────────────────────── */
-.rk-overlay:has(> .rk-sheet) {
-  place-items: end stretch;
-  padding: 0;
-}
-
-.rk-sheet {
-  width: 100%;
-  max-width: 36rem;
-  margin: 0 auto;
-  padding: 10px 20px calc(env(safe-area-inset-bottom) + 20px);
-  border-bottom: 0;
-  border-radius: 28px 28px 0 0;
-  transform: translateY(100%);
-  transition: transform var(--rx-t-entrada) var(--rx-curva);
-}
-
-.rk-overlay[data-open="true"] .rk-sheet {
-  transform: none;
-}
-
 /* agarradera: misma forma de la lengüeta, arriba */
-.rk-sheet-grip {
-  justify-self: center;
-  width: 40px;
-  height: 5px;
-  margin-bottom: 4px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.28);
-}
 
-[data-theme="light"] .rk-sheet-grip {
-  background: rgb(21 22 27 / 0.18);
-}
-
-.rk-sheet-head,
-.rk-drawer-head {
+.rk-sheet-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-}
-
-/* ── O5. PANEL LATERAL ──────────────────────────────────────────────── */
-.rk-overlay:has(> .rk-drawer) {
-  place-items: stretch end;
-  padding: 10px;
-}
-
-.rk-drawer {
-  align-content: start;
-  width: min(100%, 22rem);
-  padding: 20px;
-  border-radius: 26px;
-  transform: translateX(calc(100% + 12px));
-  transition: transform var(--rx-t-entrada) var(--rx-curva);
-  overflow-y: auto;
-}
-
-.rk-overlay[data-open="true"] .rk-drawer {
-  transform: none;
-}
-
-/* enlaces del panel: misma cápsula activa que el menú */
-.rk-drawer-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 48px;
-  padding: 0 14px;
-  border-radius: 16px;
-  border: 1px solid transparent;
-  color: rgb(var(--rk-muted));
-  font-size: 0.825rem;
-  text-decoration: none;
-  transition:
-    background-color var(--rx-t-micro) var(--rx-curva),
-    color var(--rx-t-micro) var(--rx-curva);
-}
-
-.rk-drawer-link svg {
-  width: 19px;
-  height: 19px;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rk-drawer-link:hover:not([aria-current="page"]) {
-    color: var(--rx-texto);
-    background: rgb(255 255 255 / 0.04);
-  }
-
-  [data-theme="light"] .rk-drawer-link:hover:not([aria-current="page"]) {
-    background: rgb(21 22 27 / 0.04);
-  }
-}
-
-.rk-drawer-link[aria-current="page"] {
-  border-color: rgb(255 255 255 / 0.14);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.07));
-  color: var(--rx-texto);
-}
-
-[data-theme="light"] .rk-drawer-link[aria-current="page"] {
-  border-color: rgb(21 22 27 / 0.08);
-  background: #fff;
-}
-
-.rk-drawer-link:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rk-overlay,
-  .rk-modal,
-  .rk-sheet,
-  .rk-drawer,
-  .rk-drawer-link {
-    transition: none;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
-   P. AVISOS  ·  rk-toast
-   ═══════════════════════════════════════════════════════════════════════
-   Mensaje corto que aparece arriba (sobre la barra) y se va solo.
-   Mismo vidrio del menú; el punto de color dice el tipo.
-   <div class="rk-toasts" aria-live="polite">
-     <div class="rk-toast rk-toast-success" data-open="true" role="status">
-       <span class="rk-toast-icon">✓</span>
-       <div class="rk-toast-body">
-         <p class="rk-toast-title">Añadido al carrito</p>
-         <p class="rk-toast-text">Flyer Noche Tropical</p>
-       </div>
-       <a class="rk-toast-action">Ver</a>
-     </div>
-   </div>
-   Tipos: rk-toast-success · rk-toast-warning · rk-toast-danger (sin
-   tipo = neutro). Mostrar/ocultar con data-open="true|false".
-   ═══════════════════════════════════════════════════════════════════════ */
-.rk-toasts {
-  position: fixed;
-  top: calc(env(safe-area-inset-top) + 12px);
-  left: 50%;
-  z-index: 70;
-  display: grid;
-  gap: 8px;
-  width: min(calc(100% - 24px), 24rem);
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-
-.rk-toast {
-  --rk-ts-tono: 236 236 241;
-
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  min-height: 56px;
-  padding: 8px 8px 8px 10px;
-  border-radius: 20px;
-  border: 1px solid rgb(255 255 255 / 0.12);
-  background: rgb(24 25 30 / 0.72);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
-  backdrop-filter: blur(24px) saturate(1.6);
-  color: var(--rx-texto);
-  pointer-events: auto;
-  opacity: 0;
-  transform: translateY(-12px) scale(0.98);
-  transition:
-    opacity var(--rx-t-entrada) var(--rx-curva),
-    transform var(--rx-t-entrada) var(--rx-curva);
-}
-
-.rk-toast[data-open="true"] {
-  opacity: 1;
-  transform: none;
-}
-
-[data-theme="light"] .rk-toast {
-  --rk-ts-tono: 60 62 72;
-  border-color: rgb(255 255 255 / 0.85);
-  background: rgb(255 255 255 / 0.85);
-}
-
-.rk-toast-success { --rk-ts-tono: 52 211 153; }
-.rk-toast-warning { --rk-ts-tono: 251 191 36; }
-.rk-toast-danger  { --rk-ts-tono: 248 113 113; }
-
-[data-theme="light"] .rk-toast-success { --rk-ts-tono: 9 135 87; }
-[data-theme="light"] .rk-toast-warning { --rk-ts-tono: 166 105 6; }
-[data-theme="light"] .rk-toast-danger  { --rk-ts-tono: 206 40 40; }
-
-/* icono en círculo con brillo interior del tono (como buy / danger) */
-.rk-toast-icon {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid rgb(var(--rk-ts-tono) / 0.45);
-  background: rgb(var(--rk-ts-tono) / 0.14);
-  box-shadow: inset 0 0 10px rgb(var(--rk-ts-tono) / 0.25);
-  color: rgb(var(--rk-ts-tono));
-}
-
-.rk-toast-icon svg {
-  width: 17px;
-  height: 17px;
-}
-
-/* miniatura en lugar de icono (p. ej. el recurso añadido) */
-.rk-toast-thumb {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
-  object-fit: cover;
-}
-
-.rk-toast-body {
-  min-width: 0;
-}
-
-.rk-toast-title {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-}
-
-.rk-toast-text {
-  overflow: hidden;
-  margin: 2px 0 0;
-  font-size: 11px;
-  color: rgb(var(--rk-muted));
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* acción: cápsula pequeña tipo ink */
-.rk-toast-action {
-  display: inline-flex;
-  align-items: center;
-  height: 34px;
-  padding: 0 14px;
-  border-radius: 999px;
-  border: 0;
-  background: #fff;
-  color: #15161b;
-  font: inherit;
-  font-size: 11px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-[data-theme="light"] .rk-toast-action {
-  background: #15161b;
-  color: #fff;
-}
-
-.rk-toast-action:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rk-toast {
-    transition: opacity var(--rx-t-entrada) linear;
-    transform: none;
-  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -7770,11 +6680,7 @@ table .rk-btn:hover:not(:disabled) {
      </div>
      <div class="rk-compare-row" role="row">
        <span role="rowheader">Licencia comercial</span>
-       <span role="cell"><i class="rk-compare-yes" aria-label="Incluido"></i></span>
-       <span role="cell"><i class="rk-compare-no">Limitado</i></span> …
-     </div>
-     <div class="rk-compare-row rk-compare-foot" role="row">
-       <span></span><span><a class="rk-btn rk-btn-ink …">Comprar</a></span> …
+       <span role="cell"><i class="rk-compare-yes" aria-label="Incluido"></i></span> …
      </div>
    </div>
    ═══════════════════════════════════════════════════════════════════════ */
@@ -7822,17 +6728,6 @@ table .rk-btn:hover:not(:disabled) {
   font-weight: 500;
 }
 
-/* filas alternas: cápsula clara */
-.rk-compare-row:not(.rk-compare-head):not(.rk-compare-foot):nth-child(even) {
-  background: rgb(255 255 255 / 0.06);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.05);
-}
-
-[data-theme="light"] .rk-compare-row:not(.rk-compare-head):not(.rk-compare-foot):nth-child(even) {
-  background: #fff;
-  box-shadow: none;
-}
-
 /* cabecera: nombre, precio y periodo */
 .rk-compare-head {
   padding-top: 14px;
@@ -7875,26 +6770,7 @@ table .rk-btn:hover:not(:disabled) {
     #15161b;
 }
 
-/* no incluido o limitado: texto gris */
-.rk-compare-no {
-  font-size: 11px;
-  font-style: normal;
-  color: rgb(var(--rk-muted));
-}
-
 /* pie con botones */
-.rk-compare-foot {
-  padding-top: 8px;
-  padding-bottom: 6px;
-  gap: 6px;
-}
-
-.rk-compare-foot .rk-btn {
-  width: 100%;
-  min-height: 36px;
-  padding: 0 8px;
-  font-size: 11px;
-}
 
 @media (max-width: 480px) {
   .rk-compare-row {
@@ -7921,18 +6797,12 @@ table .rk-btn:hover:not(:disabled) {
   backdrop-filter: none;
 }
 
-.rk-compare-row,
-.rk-compare-row:not(.rk-compare-head):not(.rk-compare-foot):nth-child(even),
-[data-theme="light"] .rk-compare-row:not(.rk-compare-head):not(.rk-compare-foot):nth-child(even) {
+.rk-compare-row {
   min-height: 48px;
   padding: 0 2px;
   border-radius: 0;
   background: none;
   box-shadow: none;
-}
-
-.rk-compare-row + .rk-compare-row:not(.rk-compare-foot) {
-  border-top: 1px solid var(--rk-linea);
 }
 
 .rk-compare-row > span:first-child {
@@ -7966,20 +6836,6 @@ table .rk-btn:hover:not(:disabled) {
   background: currentColor;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat;
-}
-
-.rk-compare-no {
-  font-size: 11px;
-  color: rgb(var(--rk-muted) / 0.85);
-}
-
-.rk-compare-foot {
-  padding-top: 16px;
-  border-top: 1px solid var(--rk-linea);
-}
-
-.rk-compare-foot .rk-btn {
-  min-height: 34px;
 }
 
 /* ── R3. COMPARACIÓN TIPO TABLA DE PRECIOS ───────────────────────────
@@ -8051,12 +6907,6 @@ table .rk-btn:hover:not(:disabled) {
   letter-spacing: 0;
 }
 
-/* selector de periodo encima de la tabla */
-.rk-compare-period {
-  display: flex;
-  margin-bottom: 14px;
-}
-
 /* título de grupo */
 .rk-compare-group,
 .rk-compare-row.rk-compare-group {
@@ -8091,21 +6941,6 @@ table .rk-btn:hover:not(:disabled) {
   font-size: 11px;
   font-style: normal;
   color: var(--rx-texto);
-}
-
-/* enlace con flecha */
-.rk-compare-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 11px;
-  color: rgb(var(--rk-iris-1));
-  text-decoration: none;
-}
-
-.rk-compare-link::after {
-  content: "↗";
-  font-size: 11px;
 }
 
 /* check en color */
@@ -8186,7 +7021,6 @@ table .rk-btn:hover:not(:disabled) {
        <div class="rk-faq-a">…</div>
      </details>
    </div>
-   <aside class="rk-faq-help">…¿Aún tienes dudas? + botón…</aside>
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── S1. INTRO ──────────────────────────────────────────────────────── */
@@ -8337,42 +7171,6 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ── S3. ¿AÚN TIENES DUDAS? ─────────────────────────────────────────── */
-.rk-faq-help {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px 18px;
-  padding: 22px;
-  border-radius: 20px;
-  border: 1px solid rgb(var(--rk-iris-2) / 0.18);
-  background:
-    radial-gradient(90% 140% at 100% 0%, rgb(var(--rk-iris-2) / 0.16), transparent 60%),
-    linear-gradient(135deg, rgb(var(--rk-iris-2) / 0.08), rgb(255 255 255 / 0.03));
-  color: var(--rx-texto);
-}
-
-[data-theme="light"] .rk-faq-help {
-  border-color: rgb(20 160 180 / 0.14);
-  background:
-    radial-gradient(90% 140% at 100% 0%, rgb(190 240 230 / 0.7), transparent 60%),
-    linear-gradient(135deg, rgb(225 245 245), rgb(240 250 248));
-}
-
-.rk-faq-help-title {
-  margin: 0;
-  font-size: 0.99rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-}
-
-.rk-faq-help-text {
-  margin: 6px 0 0;
-  max-width: 22rem;
-  font-size: 0.6875rem;
-  line-height: 1.55;
-  color: rgb(var(--rk-muted));
-}
 
 @media (prefers-reduced-motion: reduce) {
   .rk-faq-icon::before,
@@ -8935,13 +7733,12 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   U. CARGA Y VACÍOS  ·  rk-skeleton · rk-carga · rk-empty
+   U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty
    ═══════════════════════════════════════════════════════════════════════
    U1. rk-skeleton: bloque de vidrio con un brillo que lo recorre.
-       Formas: rk-skeleton-line · rk-skeleton-circle · rk-skeleton-media
+       Formas: rk-skeleton-line · rk-skeleton-circle
        <div class="rk-skeleton rk-skeleton-line" style="width:60%"></div>
        Plantilla de tarjeta: <div class="rk-skeleton-card">…</div>
-   U2. rk-carga (loading.tsx): la barra pasa a degradado frío → cálido.
    U3. rk-empty (EmptyState.tsx): icono en vidrio con lengüeta detrás,
        título, texto y acciones.
    ═══════════════════════════════════════════════════════════════════════ */
@@ -9008,11 +7805,6 @@ table .rk-btn:hover:not(:disabled) {
   flex: none;
 }
 
-.rk-skeleton-media {
-  aspect-ratio: 4 / 3;
-  border-radius: 16px;
-}
-
 /* plantilla de tarjeta de recurso */
 .rk-skeleton-card {
   display: grid;
@@ -9020,28 +7812,6 @@ table .rk-btn:hover:not(:disabled) {
   padding: 10px 10px 14px;
   border: 1px solid var(--rk-linea);
   border-radius: 22px;
-}
-
-.rk-skeleton-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* ── U2. PANTALLA DE CARGA ──────────────────────────────────────────── */
-.rk-carga-barra,
-[data-theme="light"] .rk-carga-barra {
-  background: rgb(127 127 127 / 0.16);
-}
-
-.rk-carga-pulso,
-[data-theme="light"] .rk-carga-pulso {
-  background: linear-gradient(
-    90deg,
-    rgb(var(--rk-iris-1)),
-    rgb(var(--rk-iris-2)),
-    rgb(var(--rk-iris-3))
-  );
 }
 
 /* ── U3. ESTADO VACÍO ───────────────────────────────────────────────── */
@@ -9460,22 +8230,15 @@ table .rk-btn:hover:not(:disabled) {
    Para admin y creadores. La tabla vive en una caja de vidrio con su
    propio scroll horizontal (la página nunca se mueve de lado).
      <div class="rk-table-wrap">
-       <div class="rk-table-toolbar">…buscador · filtros…</div>
        <div class="rk-table-scroll">
-         <table class="rk-table rk-table-stack">
+         <table class="rk-table">
            <thead><tr><th>Creador</th><th class="rk-table-num">Monto</th>…
            <tbody><tr><td data-label="Creador">…</td>…
          </table>
        </div>
-       <div class="rk-table-footer">…rk-pagination…</div>
      </div>
-   Celdas: rk-table-user (avatar + nombre + correo) · rk-table-num ·
-           rk-table-muted · rk-table-actions
+   Celdas: rk-table-num · rk-table-muted · rk-table-actions
    Fila elegida: aria-selected="true" → fondo de vidrio.
-   rk-table-stack: en móvil cada fila pasa a ser una tarjeta y cada
-   celda muestra su data-label.
-   Además: rk-panel-tabla y rk-tabla (las del proyecto) toman el
-   mismo aspecto.
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── W1. CAJA ───────────────────────────────────────────────────────── */
@@ -9491,34 +8254,6 @@ table .rk-btn:hover:not(:disabled) {
   background: rgb(255 255 255 / 0.5);
 }
 
-.rk-table-toolbar,
-.rk-table-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px 14px;
-}
-
-.rk-table-toolbar {
-  border-bottom: 1px solid var(--rk-linea);
-}
-
-.rk-table-footer {
-  border-top: 1px solid var(--rk-linea);
-  color: rgb(var(--rk-muted));
-  font-size: 0.6875rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.rk-table-title {
-  margin: 0;
-  color: var(--rx-texto);
-  font-size: 0.825rem;
-  font-weight: 600;
-}
-
 .rk-table-scroll {
   width: 100%;
   overflow-x: auto;
@@ -9527,8 +8262,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ── W2. TABLA ──────────────────────────────────────────────────────── */
-.rk-table,
-.rk-panel-tabla > table {
+.rk-table {
   width: 100%;
   min-width: 34rem;
   border-collapse: separate;
@@ -9536,8 +8270,7 @@ table .rk-btn:hover:not(:disabled) {
   isolation: isolate;
 }
 
-.rk-table th,
-.rk-panel-tabla th {
+.rk-table th {
   padding: 11px 14px;
   border-bottom: 1px solid var(--rk-linea);
   color: rgb(var(--rk-muted));
@@ -9549,8 +8282,7 @@ table .rk-btn:hover:not(:disabled) {
   white-space: nowrap;
 }
 
-.rk-table td,
-.rk-panel-tabla td {
+.rk-table td {
   position: relative;
   padding: 13px 14px;
   border-bottom: 1px solid var(--rk-linea);
@@ -9559,27 +8291,20 @@ table .rk-btn:hover:not(:disabled) {
   vertical-align: middle;
 }
 
-.rk-table tbody tr:last-child td,
-.rk-panel-tabla tbody tr:last-child td {
+.rk-table tbody tr:last-child td {
   border-bottom: 0;
 }
 
-.rk-table tbody tr,
-.rk-panel-tabla tbody tr,
-.rk-tabla tbody tr {
+.rk-table tbody tr {
   transition: background-color var(--rx-t-micro) var(--rx-curva);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .rk-table tbody tr:hover,
-  .rk-panel-tabla tbody tr:hover,
-  .rk-tabla tbody tr:hover {
+  .rk-table tbody tr:hover {
     background: rgb(255 255 255 / 0.035);
   }
 
-  [data-theme="light"] .rk-table tbody tr:hover,
-  [data-theme="light"] .rk-panel-tabla tbody tr:hover,
-  [data-theme="light"] .rk-tabla tbody tr:hover {
+  [data-theme="light"] .rk-table tbody tr:hover {
     background: rgb(255 255 255 / 0.6);
   }
 }
@@ -9612,37 +8337,6 @@ table .rk-btn:hover:not(:disabled) {
 .rk-table td.rk-table-muted {
   color: rgb(var(--rk-muted));
   white-space: nowrap;
-}
-
-.rk-table-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.rk-table-avatar {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 34px;
-  height: 34px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: linear-gradient(
-    135deg,
-    rgb(var(--rk-iris-1) / 0.55),
-    rgb(var(--rk-iris-2) / 0.45)
-  );
-  color: #fff;
-  font-size: 0.6875rem;
-  font-weight: 700;
-}
-
-.rk-table-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .rk-table-user-name {
@@ -9771,140 +8465,15 @@ table .rk-btn:hover:not(:disabled) {
    acción. Arriba quién + estado; al medio tres datos separados por
    líneas (valor arriba, etiqueta abajo); abajo la acción. Un velo iris
    suave entra por la derecha. */
-@media (max-width: 639px) {
-  .rk-table.rk-table-stack {
-    min-width: 0;
-  }
-
-  .rk-table.rk-table-stack thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-
-  .rk-table.rk-table-stack,
-  .rk-table.rk-table-stack tbody {
-    display: block;
-  }
-
-  .rk-table.rk-table-stack tbody {
-    display: grid;
-    gap: 12px;
-    padding: 12px;
-  }
-
-  .rk-table.rk-table-stack tbody tr {
-    position: relative;
-    display: grid;
-    grid-template-columns: auto auto auto 1fr;
-    grid-template-areas:
-      "user   user   user  estado"
-      "monto  metodo fecha fecha"
-      "accion accion accion accion";
-    row-gap: 16px;
-    padding: 16px;
-    border: 1px solid var(--rk-linea);
-    border-radius: 22px;
-    background:
-      radial-gradient(90% 70% at 100% 100%, rgb(var(--rk-iris-2) / 0.12), transparent 70%),
-      radial-gradient(70% 60% at 100% 0%, rgb(var(--rk-iris-1) / 0.14), transparent 70%),
-      rgb(255 255 255 / 0.03);
-  }
-
-  [data-theme="light"] .rk-table.rk-table-stack tbody tr {
-    background:
-      radial-gradient(90% 70% at 100% 100%, rgb(var(--rk-iris-2) / 0.16), transparent 70%),
-      radial-gradient(70% 60% at 100% 0%, rgb(var(--rk-iris-3) / 0.22), transparent 70%),
-      rgb(255 255 255 / 0.75);
-  }
-
-  .rk-table.rk-table-stack tbody tr td {
-    display: block;
-    min-width: 0;
-    padding: 0;
-    border: 0;
-    text-align: left;
-  }
-
-  .rk-table.rk-table-stack tbody tr td::before {
-    content: none;
-  }
-
-  .rk-table.rk-table-stack tbody tr td:nth-child(1) { grid-area: user; }
-  .rk-table.rk-table-stack tbody tr td:nth-child(2) { grid-area: monto; }
-  .rk-table.rk-table-stack tbody tr td:nth-child(3) { grid-area: metodo; }
-  .rk-table.rk-table-stack tbody tr td:nth-child(4) { grid-area: estado; justify-self: end; align-self: start; }
-  .rk-table.rk-table-stack tbody tr td:nth-child(5) { grid-area: fecha; }
-  .rk-table.rk-table-stack tbody tr td:nth-child(6) { grid-area: accion; }
-
-  /* datos del medio: valor arriba, etiqueta abajo, líneas entre ellos */
-  .rk-table.rk-table-stack tbody tr td:nth-child(2),
-  .rk-table.rk-table-stack tbody tr td:nth-child(3),
-  .rk-table.rk-table-stack tbody tr td:nth-child(5) {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 0 14px;
-    border-left: 1px solid var(--rk-linea);
-    color: var(--rx-texto);
-    font-size: 0.715rem;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .rk-table.rk-table-stack tbody tr td:nth-child(2) {
-    padding-left: 0;
-    border-left: 0;
-  }
-
-  .rk-table.rk-table-stack tbody tr td:nth-child(2)[data-label]::after,
-  .rk-table.rk-table-stack tbody tr td:nth-child(3)[data-label]::after,
-  .rk-table.rk-table-stack tbody tr td:nth-child(5)[data-label]::after {
-    content: attr(data-label);
-    color: rgb(var(--rk-muted));
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0;
-    text-transform: lowercase;
-  }
-
-  .rk-table.rk-table-stack tbody tr td.rk-table-num {
-    text-align: left;
-  }
-
-  .rk-table.rk-table-stack tbody tr td.rk-table-actions {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .rk-table.rk-table-stack .rk-table-avatar {
-    width: 44px;
-    height: 44px;
-    font-size: 0.715rem;
-  }
-
-  .rk-table.rk-table-stack .rk-table-user-name {
-    font-size: 0.825rem;
-  }
-
-  .rk-table-footer {
-    justify-content: center;
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .rk-table tbody tr,
-  .rk-panel-tabla tbody tr,
-  .rk-tabla tbody tr {
+  .rk-table tbody tr {
     transition: none;
   }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat · rk-meter
+   X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat
    ═══════════════════════════════════════════════════════════════════════
    X1. rk-profile: avatar con aro de vidrio + botón de cámara (ink) que
        asoma por debajo como lengüeta; nombre, badge y cargo.
@@ -9912,10 +8481,7 @@ table .rk-btn:hover:not(:disabled) {
        con cristal y lengüeta. Admite iconos.
    X3. rk-stat: tarjeta de dos capas. Arriba la cifra (rk-stat-main),
        abajo una franja de datos (rk-stat-foot). Variante iris: rk-stat-iris
-   X4. rk-meter: medidor de rayitas con relleno frío → cálido y una
-       perla al final. Avance: style="--rk-meter: 40%"
    X5. rk-text-iris: texto con degradado violeta → cian.
-   X6. rk-empty-glow: estado vacío sin caja y con halo iris en el icono.
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── X1. CABECERA DE PERFIL ─────────────────────────────────────────── */
@@ -9966,36 +8532,6 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* botón de cámara: asoma por abajo, como lengüeta */
-.rk-profile-avatar-btn {
-  position: absolute;
-  left: 50%;
-  bottom: -8px;
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 24px;
-  border: 0;
-  border-radius: 9px;
-  background: #15161b;
-  color: #fff;
-  cursor: pointer;
-  transform: translateX(-50%);
-}
-
-[data-theme="dark"] .rk-profile-avatar-btn {
-  background: #f4f4f6;
-  color: #15161b;
-}
-
-.rk-profile-avatar-btn svg {
-  width: 13px;
-  height: 13px;
-}
-
-.rk-profile-avatar-btn:focus-visible {
-  outline: 2px solid rgb(var(--rk-iris-2));
-  outline-offset: 2px;
-}
 
 .rk-profile-name {
   margin: 0;
@@ -10041,28 +8577,6 @@ table .rk-btn:hover:not(:disabled) {
   width: 15px;
   height: 15px;
   flex: none;
-}
-
-/* barra de pestañas + acción a la derecha */
-.rk-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.rk-toolbar .rk-btn svg {
-  flex: none;
-  width: 16px;
-  height: 16px;
-}
-
-.rk-toolbar-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
 }
 
 /* ── X3. TARJETA DE MÉTRICA ─────────────────────────────────────────── */
@@ -10135,14 +8649,6 @@ table .rk-btn:hover:not(:disabled) {
   font-weight: 500;
 }
 
-.rk-stat-value .rk-stat-of {
-  margin-left: 8px;
-  color: rgb(var(--rk-muted));
-  font-size: 0.77rem;
-  font-weight: 500;
-  letter-spacing: 0;
-}
-
 .rk-stat-foot {
   display: flex;
   align-items: center;
@@ -10182,68 +8688,6 @@ table .rk-btn:hover:not(:disabled) {
   }
 }
 
-/* ── X4. MEDIDOR ────────────────────────────────────────────────────── */
-.rk-meter {
-  --rk-meter: 0%;
-  position: relative;
-  height: 18px;
-  margin: 0 4px;
-}
-
-/* rayitas */
-.rk-meter::before {
-  content: "";
-  position: absolute;
-  inset: 2px 0;
-  background: repeating-linear-gradient(
-    90deg,
-    rgb(127 127 127 / 0.32) 0 2px,
-    transparent 2px 7px
-  );
-  -webkit-mask: linear-gradient(90deg, #000, #000);
-  mask: linear-gradient(90deg, #000, #000);
-}
-
-/* relleno: las rayitas avanzadas toman el degradado */
-.rk-meter::after {
-  content: "";
-  position: absolute;
-  inset: 2px auto 2px 0;
-  width: var(--rk-meter);
-  background: linear-gradient(
-    90deg,
-    rgb(var(--rk-iris-1)),
-    rgb(var(--rk-iris-2)) 60%,
-    rgb(var(--rk-iris-3))
-  );
-  -webkit-mask: repeating-linear-gradient(90deg, #000 0 2px, transparent 2px 7px);
-  mask: repeating-linear-gradient(90deg, #000 0 2px, transparent 2px 7px);
-  transition: width var(--rx-t-hover, 0.3s) var(--rx-curva, ease);
-}
-
-/* perla */
-.rk-meter-knob {
-  position: absolute;
-  top: 50%;
-  left: var(--rk-meter);
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  background: rgb(var(--rk-iris-2));
-  box-shadow: 0 0 0 4px rgb(255 255 255 / 0.9);
-  transform: translate(-50%, -50%);
-  transition: left var(--rx-t-hover, 0.3s) var(--rx-curva, ease);
-}
-
-[data-theme="dark"] .rk-meter-knob,
-:root:not([data-theme="light"]) .rk-meter-knob {
-  box-shadow: 0 0 0 4px rgb(255 255 255 / 0.14);
-}
-
-[data-theme="light"] .rk-meter-knob {
-  box-shadow: 0 0 0 4px #fff, 0 0 0 5px rgb(21 22 27 / 0.08);
-}
-
 /* ── X5. TEXTO IRIS ─────────────────────────────────────────────────── */
 .rk-text-iris {
   background: linear-gradient(90deg, rgb(var(--rk-iris-3)), rgb(var(--rk-iris-1)) 45%, rgb(var(--rk-iris-2)));
@@ -10257,37 +8701,6 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ── X6. VACÍO CON HALO ─────────────────────────────────────────────── */
-.rk-empty.rk-empty-glow {
-  border: 0;
-  padding-block: 36px;
-}
-
-.rk-empty-glow .rk-empty-icon {
-  width: 96px;
-  height: 96px;
-  border-radius: 999px;
-}
-
-.rk-empty-glow .rk-empty-icon::before {
-  border-color: transparent;
-  background:
-    radial-gradient(
-      circle at 35% 30%,
-      rgb(var(--rk-iris-3) / 0.35),
-      rgb(var(--rk-iris-1) / 0.22) 50%,
-      rgb(var(--rk-iris-2) / 0.22)
-    );
-}
-
-.rk-empty-glow .rk-empty-icon::after {
-  display: none;
-}
-
-.rk-empty-glow .rk-empty-icon svg {
-  width: 34px;
-  height: 34px;
-  color: rgb(var(--rk-iris-1));
-}
 
 @media (max-width: 520px) {
   .rk-profile {
@@ -10297,13 +8710,6 @@ table .rk-btn:hover:not(:disabled) {
   .rk-profile-avatar {
     width: 76px;
     height: 76px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rk-meter::after,
-  .rk-meter-knob {
-    transition: none;
   }
 }
 
@@ -10324,7 +8730,7 @@ table .rk-btn:hover:not(:disabled) {
                svg Modo oscuro <span class="rk-menu-switch"></span></button>
            </div>
            <hr class="rk-menu-sep">
-           <button class="rk-menu-item rk-menu-item-danger">svg Salir</button>
+           <button class="rk-menu-item">svg Salir</button>
          </nav>
        </div>
    ═══════════════════════════════════════════════════════════════════════ */
@@ -10598,12 +9004,6 @@ table .rk-btn:hover:not(:disabled) {
   color: rgb(var(--rk-muted));
 }
 
-.rk-menu-item-end {
-  margin-left: auto;
-  color: rgb(var(--rk-muted));
-  font-size: 0.6875rem;
-}
-
 .rk-menu-item[aria-current="page"] {
   border-color: rgb(255 255 255 / 0.1);
   background: rgb(255 255 255 / 0.09);
@@ -10668,40 +9068,6 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* salir: bloque rojo suave */
-.rk-menu-item.rk-menu-item-danger {
-  border-color: transparent;
-  background: rgb(248 96 96 / 0.12);
-}
-
-.rk-menu-item-danger,
-.rk-menu-item-danger svg {
-  color: rgb(248 113 113);
-}
-
-[data-theme="light"] .rk-menu-item.rk-menu-item-danger {
-  background: rgb(254 226 226 / 0.85);
-}
-
-[data-theme="light"] .rk-menu-item-danger,
-[data-theme="light"] .rk-menu-item-danger svg {
-  color: rgb(214 48 56);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rk-menu-item.rk-menu-item-danger:hover {
-    border-color: rgb(248 96 96 / 0.3);
-    background: rgb(248 96 96 / 0.2);
-  }
-
-  [data-theme="light"] .rk-menu-item.rk-menu-item-danger:hover {
-    border-color: rgb(214 48 56 / 0.2);
-    background: rgb(254 215 215);
-  }
-
-  .rk-menu-item-danger:hover svg {
-    color: inherit;
-  }
-}
 
 .rk-menu-sep {
   height: 1px;
@@ -11250,15 +9616,6 @@ table .rk-btn:hover:not(:disabled) {
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 6px;
-}
-
-.rk-notif-group-label {
-  margin: 10px 12px 6px;
-  color: rgb(var(--rk-muted));
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .rk-notif-foot {
@@ -12687,8 +11044,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-done-actions .rk-btn,
-.rk-done-note .rk-btn,
-.rk-done-dev-btn {
+.rk-done-note .rk-btn {
   width: 100%;
   text-decoration: none;
 }
@@ -12933,20 +11289,6 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-footer-bottom p {
   margin: 0;
-}
-
-.rk-footer-sign {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.rk-footer-sign::before {
-  content: "";
-  width: 18px;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--rk-marca-degradado);
 }
 
 /* ── AH5a. MÉTODOS DE PAGO ─────────────────────────────────────────
@@ -13356,16 +11698,6 @@ table .rk-btn:hover:not(:disabled) {
   height: 15px;
 }
 
-/* barras de gráfico (panel del creador): degradado de marca */
-.rk-bar {
-  border-radius: 10px 10px 4px 4px;
-  background: linear-gradient(180deg, rgb(var(--rk-marca-calido)), rgb(var(--rk-marca-centro)) 50%, rgb(var(--rk-marca-frio)));
-}
-
-[data-theme="light"] .rk-bar {
-  background: linear-gradient(180deg, rgb(var(--rk-iris-3)), rgb(var(--rk-iris-1)));
-}
-
 /* líneas de un pedido dentro de rk-row-card (Mis compras / Descargas) */
 .rk-row-items {
   display: grid;
@@ -13608,15 +11940,6 @@ div.rk-upload-error > * + * {
 
 [data-theme="light"] .rk-hero-round.rk-flecha {
   background: rgb(255 255 255 / 0.85);
-}
-
-/* núcleo del ecosistema (inicio): círculo con la marca */
-.rk-nucleo {
-  background: var(--rk-marca-degradado);
-  box-shadow:
-    0 0 0 6px rgb(var(--rk-marca-calido) / 0.12),
-    0 0 0 14px rgb(var(--rk-marca-frio) / 0.08);
-  color: rgb(var(--rk-marca-tinta));
 }
 
 /* portada de marca (cuando no hay imagen) y avatar con aro */
@@ -14099,34 +12422,6 @@ div.rk-upload-error > * + * {
   background: rgb(255 255 255 / 0.75);
 }
 
-.rk-dash-card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.rk-dash-card-head h2 {
-  margin: 0;
-  color: var(--rx-texto);
-  font-size: 0.88rem;
-  font-weight: 600;
-}
-
-.rk-dash-card-head a,
-.rk-dash-card-head span {
-  color: rgb(var(--rk-muted));
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.rk-dash-card-head span {
-  text-decoration: none;
-}
-
 /* ── AL2. ANILLO ────────────────────────────────────────────────────── */
 .rk-dash-ring-wrap {
   display: grid;
@@ -14281,18 +12576,6 @@ div.rk-upload-error > * + * {
   font-weight: 600;
   text-align: right;
   font-variant-numeric: tabular-nums;
-}
-
-.rk-dash-up {
-  display: block;
-  margin-top: 2px;
-  color: rgb(52 211 153);
-  font-size: 0.6875rem;
-  font-weight: 600;
-}
-
-[data-theme="light"] .rk-dash-up {
-  color: rgb(9 135 87);
 }
 
 /* ── AL4. BARRAS APILADAS ───────────────────────────────────────────── */
@@ -14561,7 +12844,6 @@ div.rk-upload-error > * + * {
 /* ── rellenos con texto: marca + tinta oscura ────────────────────────── */
 .rk-avatar-btn-img,
 .rk-profile-initials,
-.rk-table-avatar,
 .rk-review-avatar,
 .rk-creator-avatar {
   background: var(--rk-marca-degradado);
@@ -14654,22 +12936,9 @@ div.rk-upload-error > * + * {
   color: rgb(var(--rk-iris-2));
 }
 
-/* perla del medidor: marfil con aro */
-.rk-meter-knob {
-  background: rgb(var(--rk-marca-calido));
-}
-
 /* punto de "sin leer" y estado vacío con halo */
 .is-unread .rk-notif-icon::after {
   background: var(--rk-marca-degradado);
-}
-
-.rk-empty-glow .rk-empty-icon svg {
-  color: rgb(var(--rk-iris-3));
-}
-
-[data-theme="light"] .rk-empty-glow .rk-empty-icon svg {
-  color: rgb(var(--rk-iris-2));
 }
 
 .rk-notif-item[data-tone="accent"] {
@@ -14689,11 +12958,6 @@ div.rk-upload-error > * + * {
   background:
     radial-gradient(70% 160% at 100% 50%, rgb(var(--rk-marca-calido) / 0.7), transparent 70%),
     linear-gradient(90deg, rgb(var(--rk-marca-frio) / 0.75), rgb(var(--rk-marca-centro) / 0.9));
-}
-
-/* barra de carga global con degradado de marca */
-.rk-carga-pulso {
-  background: var(--rk-marca-degradado);
 }
 
 /* botón de quitar usado solo (sin rk-icon-button): círculo de 40px */
@@ -15830,7 +14094,6 @@ div.rk-upload-error > * + * {
   }
 }
 
-
 /* ═══════════ AU · Categorías del inicio (debajo del slider) ═══════════ */
 .rk-home-categorias {
   padding: 28px 0 44px;
@@ -15850,7 +14113,6 @@ div.rk-upload-error > * + * {
     padding-top: 72px;
   }
 }
-
 
 /* ═══════════ AV · CTA final con la modelo (estilo hero) ═══════════
    La sección usa rk-card, rk-kicker, rk-display, rk-btn,
@@ -15909,7 +14171,6 @@ div.rk-upload-error > * + * {
   .rk-cta-modelo-card.is-right { right: -70px; }
   .rk-cta-modelo-card.is-bottom { left: -40px; }
 }
-
 
 /* ═══════════ AW · Ecosistema: fila con núcleo hexagonal ═══════════
    Caja con proporción fija; todo dentro va en porcentaje del ancho.
@@ -16181,7 +14442,6 @@ div.rk-upload-error > * + * {
    opacidad 100%; luego el arco nace en 0 (largo y opacidad) y
    crece mientras gira. Arranca con 0.1 s de
    retraso para no parpadear en navegaciones rápidas.
-   (rk-carga, rk-carga-barra y rk-carga-pulso ya no se usan.)
    ══════════════════════════════════════════════════════════ */
 @property --rk-cargador-largo {
   syntax: "<length-percentage>"; /* así un minificador puede dejar "0" */
