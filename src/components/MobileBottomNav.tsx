@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, Heart, Home, ShoppingBag, UserRound } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Heart } from "lucide-react";
+import { IconoBolsa, IconoExplorar, IconoInicio, IconoUsuario } from "@/components/iconos";
 
 type MobileBottomNavProps = {
   cartCount: number;
@@ -13,7 +13,7 @@ type MobileBottomNavProps = {
 type NavItem = {
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
   badge?: number;
 };
 
@@ -38,12 +38,12 @@ export default function MobileBottomNav({
     {
       href: "/",
       label: "Inicio",
-      icon: Home,
+      icon: IconoInicio,
     },
     {
       href: "/tienda",
       label: "Explorar",
-      icon: Compass,
+      icon: IconoExplorar,
     },
     {
       href: "/mi-cuenta/favoritos",
@@ -53,13 +53,13 @@ export default function MobileBottomNav({
     {
       href: "/carrito",
       label: "Carrito",
-      icon: ShoppingBag,
+      icon: IconoBolsa,
       badge: cartCount,
     },
     {
       href: isLoggedIn ? "/mi-cuenta" : "/login",
       label: isLoggedIn ? "Cuenta" : "Entrar",
-      icon: UserRound,
+      icon: IconoUsuario,
     },
   ];
 

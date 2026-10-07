@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
-import { Check, Loader2, Plus, Power, Trash2, X } from "lucide-react";
+import { Check, Loader2, Plus, Power, X } from "lucide-react";
 
 import SubirPortada from "@/components/SubirPortada";
 import { esSlugDelSistema } from "@/lib/tipos-publicacion";
@@ -10,6 +10,7 @@ import {
   LARGO_DESCRIPCION_CATEGORIA,
   LARGO_NOMBRE_CATEGORIA,
 } from "@/lib/categorias";
+import { IconoBasura } from "@/components/iconos";
 
 type Categoria = {
   id: string;
@@ -414,7 +415,7 @@ export default function CategoriasManager() {
                         title="Eliminar"
                         className="rk-icon-button-danger"
                       >
-                        <Trash2 size={16} aria-hidden />
+                        <IconoBasura size={16} aria-hidden />
                       </button>
                     )}
                   </>

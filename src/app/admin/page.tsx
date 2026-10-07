@@ -11,7 +11,6 @@ import {
   TrendingUp,
   Package,
   UserPlus,
-  UserRound,
   Users,
   Wallet,
 } from "lucide-react";
@@ -19,6 +18,7 @@ import {
 import { getAdminStats } from "@/lib/admin-stats";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
+import { IconoUsuario } from "@/components/iconos";
 
 export const metadata: Metadata = {
   title: "Administración",
@@ -732,7 +732,7 @@ export default async function Admin() {
                 >
                   <span className="flex min-w-0 flex-1 items-center gap-2">
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-ink/60">
-                      <UserRound size={13} />
+                      <IconoUsuario size={13} />
                     </span>
 
                     <span className="truncate text-[13px] font-medium">
@@ -846,7 +846,7 @@ export default async function Admin() {
               href: "/admin/usuarios?rol=CREATOR",
               label: "Creadores",
               description: "Estados, verificación y catálogo",
-              icon: UserRound,
+              icon: IconoUsuario,
             },
             {
               href: "/admin/usuarios/nuevo",

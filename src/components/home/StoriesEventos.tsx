@@ -11,7 +11,6 @@ import {
   Check,
   ChevronRight,
   Heart,
-  ShoppingBag,
   X,
 } from "lucide-react";
 
@@ -24,6 +23,7 @@ import {
   alternarFavorito,
   useEsFavorito,
 } from "@/components/favoritos-store";
+import { IconoBolsaCompra } from "@/components/iconos";
 
 /**
  * Stories de eventos.
@@ -533,7 +533,7 @@ function BotonCarrito({ flyer }: { flyer: TarjetaHome }) {
       {anadido ? (
         <Check size={18} aria-hidden />
       ) : (
-        <ShoppingBag size={18} aria-hidden />
+        <IconoBolsaCompra size={18} aria-hidden />
       )}
     </button>
   );

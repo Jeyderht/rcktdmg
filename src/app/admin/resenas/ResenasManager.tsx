@@ -8,8 +8,8 @@ import {
   Eye,
   EyeOff,
   Star,
-  Trash2,
 } from "lucide-react";
+import { IconoBasura } from "@/components/iconos";
 
 type ResenaAdmin = {
   id: string;
@@ -298,7 +298,7 @@ export default function ResenasManager() {
                         title="Eliminar definitivamente"
                         className="rk-press flex h-11 w-11 items-center justify-center rounded-rk-sm text-ink/60 hover:bg-danger/10 hover:text-danger"
                       >
-                        <Trash2 size={16} aria-hidden />
+                        <IconoBasura size={16} aria-hidden />
                       </button>
                     </div>
                   </div>

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
@@ -12,6 +12,7 @@ import {
     CART_STORAGE_KEY,
     CART_UPDATED_EVENT,
 } from "@/components/useCartCount";
+import { IconoBasura, IconoBolsa } from "@/components/iconos";
 
 type CartItem = {
     id: string;
@@ -177,7 +178,7 @@ export default function Cart() {
                             onClick={clearCart}
                             className="rk-chip"
                         >
-                            <Trash2 size={13} />
+                            <IconoBasura size={13} />
                             Vaciar carrito
                         </button>
                     )}
@@ -187,7 +188,7 @@ export default function Cart() {
                     /* CARRITO VACÍO */
                     <div className="mt-6">
                         <EmptyState
-                            icon={ShoppingBag}
+                            icon={IconoBolsa}
                             title="Tu carrito está vacío"
                             description="Agrega un recurso para comenzar."
                             action={{
@@ -233,7 +234,7 @@ export default function Cart() {
                                                 aria-label={`Quitar ${item.name}`}
                                                 className="rk-icon-button rk-icon-button-danger"
                                             >
-                                                <Trash2 />
+                                                <IconoBasura />
                                             </button>
                                         </div>
 

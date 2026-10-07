@@ -6,10 +6,9 @@ import {
   Lock,
   Pencil,
   Plus,
-  Search,
-  Trash2,
   X,
 } from "lucide-react";
+import { IconoBasura, IconoBuscar } from "@/components/iconos";
 
 type TagAdmin = {
   id: string;
@@ -217,7 +216,7 @@ export default function TagsManager() {
 
       {/* BUSCAR */}
       <div className="relative mt-3">
-        <Search
+        <IconoBuscar
           size={16}
           aria-hidden
           className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink/45"
@@ -355,7 +354,7 @@ export default function TagsManager() {
                         aria-label={`Eliminar ${tag.name}`}
                         className="rk-press flex h-11 w-11 items-center justify-center rounded-rk-sm text-ink/60 hover:bg-danger/10 hover:text-danger"
                       >
-                        <Trash2 size={15} aria-hidden />
+                        <IconoBasura size={15} aria-hidden />
                       </button>
                     </div>
                   )}

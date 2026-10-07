@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Eye, EyeOff, Lock, Mail, UserRound } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { IconoUsuario } from "@/components/iconos";
 
 export default function RegistroPage() {
   const router = useRouter();
@@ -103,7 +104,7 @@ export default function RegistroPage() {
               </label>
 
               <div className="rk-input-group">
-                <UserRound aria-hidden className="rk-input-icon" />
+                <IconoUsuario aria-hidden className="rk-input-icon" />
                 <input
                   id="name"
                   type="text"

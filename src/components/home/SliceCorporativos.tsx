@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
-  ShoppingBag,
 } from "lucide-react";
 
 import { formatPrice } from "@/lib/pricing";
@@ -19,6 +18,7 @@ import {
 } from "@/components/useCartCount";
 import { useSwipe } from "@/components/useSwipe";
 import { ASPECTO_CORPORATIVO, type TarjetaHome } from "@/lib/home";
+import { IconoBolsaCompra } from "@/components/iconos";
 
 /**
  * Carrusel en perspectiva para los recursos corporativos.
@@ -411,7 +411,7 @@ function CarritoCorporativo({ recurso }: { recurso: TarjetaHome }) {
       onClick={anadir}
       className="rk-btn rk-btn-primary h-12 min-w-0 flex-1 !rounded-full"
     >
-      <ShoppingBag size={16} aria-hidden />
+      <IconoBolsaCompra size={16} aria-hidden />
       {anadido ? "Añadido" : "Añadir al carrito"}
     </button>
   );

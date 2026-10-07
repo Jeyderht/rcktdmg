@@ -10,15 +10,14 @@ import {
   LogOut,
   Moon,
   Settings,
-  ShoppingBag,
   UserPlus,
-  UserRound,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { useTheme } from "@/components/ThemeProvider";
 import type { SessionUser } from "@/components/useSessionUser";
+import { IconoBolsa, IconoUsuario } from "@/components/iconos";
 
 /**
  * Menú de cuenta.
@@ -191,7 +190,7 @@ export default function AccountMenu({
             onClick={() => setOpen(false)}
             className="rk-menu-item"
           >
-            <UserRound aria-hidden />
+            <IconoUsuario aria-hidden />
             Ver perfil
           </Link>
 
@@ -200,7 +199,7 @@ export default function AccountMenu({
             onClick={() => setOpen(false)}
             className="rk-menu-item"
           >
-            <ShoppingBag aria-hidden />
+            <IconoBolsa aria-hidden />
             Mis compras
           </Link>
 
@@ -333,7 +332,7 @@ export default function AccountMenu({
             />
           </span>
         ) : (
-          <UserRound aria-hidden />
+          <IconoUsuario aria-hidden />
         )}
       </button>
 

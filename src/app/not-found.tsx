@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Compass, Home, Search } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { paginaPrivada } from "@/lib/seo";
+import { IconoBuscar, IconoExplorar, IconoInicio } from "@/components/iconos";
 
 /*
   Un 404 no se indexa. Next ya devuelve el código 410/404 en
@@ -34,7 +34,7 @@ export default function NotFound() {
         <p aria-hidden className="rk-404 rk-text-iris">404</p>
 
         <span aria-hidden className="rk-empty-icon mt-2">
-          <Compass />
+          <IconoExplorar />
         </span>
 
         <p className="rk-kicker mt-4">Error 404</p>
@@ -50,12 +50,12 @@ export default function NotFound() {
 
         <div className="mt-8 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row">
           <Link href="/" className="rk-btn rk-btn-primary">
-            <Home size={16} aria-hidden />
+            <IconoInicio size={16} aria-hidden />
             Ir al inicio
           </Link>
 
           <Link href="/tienda" className="rk-btn rk-btn-line">
-            <Search size={16} aria-hidden />
+            <IconoBuscar size={16} aria-hidden />
             Explorar recursos
           </Link>
         </div>

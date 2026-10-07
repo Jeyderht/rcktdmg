@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 
 import {
   ListaSugerencias,
   useSugerencias,
   useTecladoSugerencias,
 } from "@/components/sugerencias";
+import { IconoBuscar } from "@/components/iconos";
 
 /**
  * Buscador de la tienda, con sugerencias.
@@ -92,7 +93,7 @@ export default function BuscadorSugerencias({
           ) : null
         )}
 
-        <Search
+        <IconoBuscar
           size={18}
           aria-hidden
           className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink/45"

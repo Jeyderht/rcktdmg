@@ -8,12 +8,13 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, ImagePlus, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, ImagePlus } from "lucide-react";
 
 import { claseProporcion } from "@/lib/tipos-publicacion";
 
 import { subirImagen } from "@/lib/storage/client-upload";
 import PortadaSlider from "@/components/panel/PortadaSlider";
+import { IconoBasura } from "@/components/iconos";
 
 type Product = {
   /** Decide el marco con el que se previsualiza. */
@@ -880,7 +881,7 @@ export default function EditarImagenesPage() {
                           title="Eliminar imagen"
                           className="rk-press rk-glass-on-image flex h-8 w-8 items-center justify-center rounded-full text-danger disabled:opacity-40"
                         >
-                          <Trash2 size={14} />
+                          <IconoBasura size={14} />
                         </button>
                       </div>
                     </div>

@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import {
   ArrowRight,
   ArrowUpRight,
-  Search,
   Compass,
   ShoppingBag,
   Download,
@@ -38,6 +37,7 @@ import { portadasActivas } from "@/lib/portadas";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { SITIO, absoluta, paginaPublica } from "@/lib/seo";
+import { IconoBuscar } from "@/components/iconos";
 
 export const dynamic = "force-dynamic";
 
@@ -330,7 +330,7 @@ export default async function Home() {
                     borde oscuro al enfocarlo, y perdía el vidrio.
                   */}
                   <div className="rk-buscador rk-buscador-hero">
-                    <Search
+                    <IconoBuscar
                       size={18}
                       aria-hidden
                       className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-ink/45"
