@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SearchX, X } from "lucide-react";
 
-import ProductCard from "@/components/ProductCard";
+import GaleriaTienda from "./GaleriaTienda";
 import Paginacion from "@/components/Paginacion";
 import { consultarCatalogo } from "@/lib/catalogo-consulta";
 import {
@@ -105,10 +105,14 @@ export default async function StoreResults({
       {/* RESULTADOS */}
       {productos.length > 0 ? (
         <>
-          <div className="rk-fade-up rk-enter-1 mt-6 rk-rejilla">
-            {productos.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+          {/*
+            Galería: solo portadas, 3 columnas en móvil. Al tocar
+            una se abre su tarjeta con precio e información.
+            aTarjeta ya entrega datos planos (números y textos),
+            así que pasan tal cual al componente de cliente.
+          */}
+          <div className="rk-fade-up rk-enter-1 mt-6">
+            <GaleriaTienda productos={productos} />
           </div>
 
           <Paginacion
@@ -164,17 +168,12 @@ export function StoreResultsSkeleton() {
 
       <div className="rk-divider mt-4" />
 
-      <div className="mt-6 rk-rejilla">
-        {Array.from({ length: 10 }).map((_, index) => (
-          <div key={index}>
-            <div className="rk-aspect-product w-full animate-pulse rounded-rk-md bg-ink/[0.06]" />
-
-            <div className="px-0.5 pt-2.5">
-              <div className="h-3 w-full animate-pulse rounded-full bg-ink/[0.06]" />
-              <div className="mt-2 h-3 w-2/3 animate-pulse rounded-full bg-ink/[0.05]" />
-              <div className="mt-3 h-4 w-16 animate-pulse rounded-full bg-ink/[0.07]" />
-            </div>
-          </div>
+      <div className="mt-6 rk-galeria">
+        {Array.from({ length: 12 }).map((_, index) => (
+          <div
+            key={index}
+            className="aspect-[4/5] w-full animate-pulse rounded-[14px] bg-ink/[0.06]"
+          />
         ))}
       </div>
     </div>
