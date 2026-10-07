@@ -12893,7 +12893,7 @@ table .rk-btn:hover:not(:disabled) {
 /* ── AH6. FIRMA DE MARCA ────────────────────────────────────────────
    Como la referencia: la superficie del pie termina con esquinas
    redondeadas que se montan sobre una banda con el degradado de
-   marca, y dentro de la banda el nombre en grande, en gris. */
+   marca, y dentro de la banda el logo en gris. */
 .rk-footer-marca {
   position: relative;
   overflow: hidden;
@@ -12910,7 +12910,8 @@ table .rk-btn:hover:not(:disabled) {
   user-select: none;
 }
 
-/* borde inferior redondeado de la superficie del pie, encima de la banda */
+/* borde inferior redondeado de la superficie del pie, encima de la banda:
+   mismo tono que .rk-footer (su vidrio sobre el fondo de la página) */
 .rk-footer-marca::before {
   content: "";
   position: absolute;
@@ -12919,37 +12920,29 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 0 0 26px 26px;
   background:
     linear-gradient(rgb(255 255 255 / 0.025), rgb(255 255 255 / 0.025)),
-    rgb(var(--rk-background));
+    var(--rx-fondo);
 }
 [data-theme="light"] .rk-footer-marca::before {
   background:
     linear-gradient(rgb(255 255 255 / 0.6), rgb(255 255 255 / 0.6)),
-    rgb(var(--rk-background));
+    var(--rx-fondo);
 }
 
-.rk-footer-marca span {
+/* logo blanco usado como máscara, pintado en gris muy transparente */
+.rk-footer-marca-logo {
   position: relative;
-  white-space: nowrap;
-  font-size: clamp(3rem, 14vw, 10.5rem);
-  font-weight: 700;
-  letter-spacing: -0.055em;
-  line-height: 1;
-  color: rgb(var(--rk-marca-tinta) / 0.12);
-}
-
-.rk-footer-marca sup {
-  font-size: 0.14em;
-  font-weight: 500;
-  letter-spacing: 0;
-  vertical-align: top;
-  position: relative;
-  top: 0.55em;
-  margin-left: 0.15em;
+  display: block;
+  width: clamp(140px, 36vw, 180px);
+  aspect-ratio: 511 / 76;
+  background: rgb(var(--rk-marca-tinta) / 0.12);
+  -webkit-mask: url("/marketing/rcktstudio-logo.svg") center / contain no-repeat;
+          mask: url("/marketing/rcktstudio-logo.svg") center / contain no-repeat;
 }
 
 @media (min-width: 1024px) {
   .rk-footer-marca { margin: 32px -20px -32px; padding-top: 32px; }
   .rk-footer-marca::before { height: 32px; border-radius: 0 0 32px 32px; }
+  .rk-footer-marca-logo { width: clamp(180px, 17vw, 240px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

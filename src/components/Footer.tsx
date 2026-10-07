@@ -124,11 +124,9 @@ export default function Footer() {
           <p className="rk-footer-sign">Hecho para creadores.</p>
         </div>
 
-        {/* Firma de marca: el nombre grande sobre el degradado, cortado abajo. */}
+        {/* Firma de marca: el logo en gris transparente sobre el degradado. */}
         <div aria-hidden className="rk-footer-marca">
-          <span>
-            RCKTDMG<sup>™</sup>
-          </span>
+          <span className="rk-footer-marca-logo" />
         </div>
       </div>
     </footer>
