@@ -13153,15 +13153,15 @@ table .rk-btn:hover:not(:disabled) {
           mask-composite: intersect;
 }
 
-/* Móvil: la banda termina pegada al borde inferior y guarda dentro el
-   hueco del menú flotante (alto del menú + área segura), para que el
-   menú no tape el logo. */
+/* Móvil: la banda termina pegada al borde inferior (el body no reserva
+   hueco cuando hay pie) y mide 90px desde el borde redondeado, menú
+   incluido. Sin logo: no cabe sobre el menú, queda solo el degradado
+   con el brillo del borde. */
 @media (max-width: 767px) {
   .rk-footer-marca {
-    height: auto;
-    padding-bottom: calc(var(--rk-dock-h) + env(safe-area-inset-bottom, 0px) + 24px);
+    height: calc(26px + 90px + env(safe-area-inset-bottom, 0px));
   }
-  .rk-footer-marca-logo { margin-top: 32px; }
+  .rk-footer-marca-logo { display: none; }
 }
 
 @media (min-width: 1024px) {
