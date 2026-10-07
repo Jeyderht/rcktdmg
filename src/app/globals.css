@@ -15521,3 +15521,62 @@ div.rk-upload-error > * + * {
     padding-top: 72px;
   }
 }
+
+
+/* ═══════════ AV · CTA final con la modelo (estilo hero) ═══════════
+   La sección usa rk-card, rk-kicker, rk-display, rk-btn,
+   rk-card-glass y rk-chip. Aquí solo va lo propio: el círculo
+   de marca, la foto recortada y dónde flotan las tarjetas. */
+.rk-cta-modelo-grad {
+  background: linear-gradient(90deg, #8d8ad0, #b08aa6 55%, #d99a80);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.rk-cta-modelo-stage {
+  position: relative; z-index: 1;
+  width: min(100%, 560px); margin: 36px auto 0;
+  display: flex; justify-content: center;
+}
+.rk-cta-modelo-circle {
+  position: absolute; left: 50%; top: 4%; transform: translateX(-50%);
+  width: min(86%, 440px); aspect-ratio: 1 / 1; border-radius: 50%;
+  background: linear-gradient(150deg, #b7b3ee, #dcd3ea 50%, #fcc6b0);
+  box-shadow: 0 30px 80px rgb(141 138 208 / .25);
+}
+.rk-cta-modelo-img {
+  position: relative; width: min(74%, 380px); height: auto; display: block;
+  -webkit-mask-image: linear-gradient(180deg, #000 86%, transparent 100%);
+          mask-image: linear-gradient(180deg, #000 86%, transparent 100%);
+}
+.rk-cta-modelo-card {
+  position: absolute; z-index: 3;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px 10px 10px;
+}
+.rk-cta-modelo-card.is-left { left: 0; top: 18%; }
+.rk-cta-modelo-card.is-right { right: 0; top: 34%; padding: 12px 14px; }
+.rk-cta-modelo-card.is-bottom { left: 4%; bottom: 14%; }
+.rk-cta-modelo-ico {
+  width: 32px; height: 32px; border-radius: 10px; flex: none;
+  display: grid; place-items: center;
+  background: rgb(var(--rk-primary)); color: rgb(var(--rk-on-primary));
+}
+.rk-cta-modelo-only-movil { display: none !important; }
+
+/* Móvil: las tarjetas quedan como burbujas de ícono en el borde
+   del círculo, para no tapar a la modelo. */
+@media (max-width: 639px) {
+  .rk-cta-modelo-txt { display: none !important; }
+  .rk-cta-modelo-only-movil { display: grid !important; }
+  .rk-cta-modelo-card,
+  .rk-cta-modelo-card.is-right { padding: 6px; border-radius: 999px; gap: 0; }
+  .rk-cta-modelo-ico { width: 34px; height: 34px; border-radius: 999px; }
+  .rk-cta-modelo-card.is-left { left: 4%; top: 22%; }
+  .rk-cta-modelo-card.is-right { right: 4%; top: 46%; left: auto; }
+  .rk-cta-modelo-card.is-bottom { left: 8%; bottom: 16%; }
+}
+
+@media (min-width: 1024px) {
+  .rk-cta-modelo-card.is-left { left: -60px; }
+  .rk-cta-modelo-card.is-right { right: -70px; }
+  .rk-cta-modelo-card.is-bottom { left: -40px; }
+}

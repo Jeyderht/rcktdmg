@@ -26,6 +26,7 @@ import CarruselCreadores from "@/components/home/CarruselCreadores";
 import Ecosistema from "@/components/home/Ecosistema";
 import MasDisenos from "@/components/home/MasDisenos";
 import ConvierteteEnCreador from "@/components/home/ConvierteteEnCreador";
+import CtaModelo from "@/components/home/CtaModelo";
 import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
 import {
   conteosDeDisenos,
@@ -613,57 +614,8 @@ export default async function Home() {
         {/* ══════════ PREGUNTAS FRECUENTES ══════════ */}
         <PreguntasFrecuentes />
 
-        {/* ══════════ CTA FINAL ══════════ */}
-        <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-4 sm:px-5 lg:px-8 lg:pb-24">
-          <div className="rk-onyx rk-fade-up relative overflow-hidden rounded-rk-xl px-6 py-16 text-center sm:px-10 sm:py-24">
-            {/* Retícula sobre la superficie oscura. */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-[0.5]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px), linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px)",
-                backgroundSize: "4rem 4rem",
-                maskImage:
-                  "radial-gradient(60% 60% at 50% 40%, #000 10%, transparent 100%)",
-                WebkitMaskImage:
-                  "radial-gradient(60% 60% at 50% 40%, #000 10%, transparent 100%)",
-              }}
-            />
-
-            <div className="relative">
-              <p className="rk-kicker justify-center">
-                Descarga permanente
-              </p>
-
-              <h2 className="rk-display mx-auto mt-6 max-w-3xl !text-[clamp(2.25rem,6vw,4rem)]">
-                Tu próximo proyecto empieza aquí.
-              </h2>
-
-              <p className="mx-auto mt-6 max-w-md text-[15px] leading-8 text-ink/60">
-                Explora los recursos publicados y descarga el que
-                necesites.
-              </p>
-
-              <div className="mt-10 flex flex-wrap justify-center gap-3">
-                <Link
-                  href="/tienda"
-                  className="rk-btn rk-btn-paper"
-                >
-                  Ir a la tienda
-                  <ArrowRight size={16} />
-                </Link>
-
-                <Link
-                  href="/registro"
-                  className="rk-btn rk-btn-line"
-                >
-                  Crear cuenta
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* ══════════ CTA FINAL (con la modelo) ══════════ */}
+        <CtaModelo />
       </main>
 
       <Footer />
