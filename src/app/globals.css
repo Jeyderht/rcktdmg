@@ -15181,14 +15181,14 @@ div.rk-upload-error > * + * {
     El aire de arriba lo necesita para despegarse de la barra
     superior y de las lengüetas que cuelgan de ella.
   */
-  padding: 28px 0 12px;
+  padding: 44px 0 12px;
   overflow: hidden;
 }
 
 @media (min-width: 640px) {
   .rk-promo {
     --rk-promo-w: min(780px, 72vw);
-    padding-top: 48px;
+    padding-top: 72px;
     padding-bottom: 20px;
   }
 }
@@ -15498,5 +15498,26 @@ div.rk-upload-error > * + * {
   .rk-promo-dot-fill {
     animation: none;
     transform: scaleX(1);
+  }
+}
+
+
+/* ═══════════ AU · Categorías del inicio (debajo del slider) ═══════════ */
+.rk-home-categorias {
+  padding: 28px 0 44px;
+}
+
+/* Sin slider, la sección no queda pegada a la barra superior. */
+.rk-home-categorias:first-child {
+  padding-top: 44px;
+}
+
+@media (min-width: 1024px) {
+  .rk-home-categorias {
+    padding: 40px 0 64px;
+  }
+
+  .rk-home-categorias:first-child {
+    padding-top: 72px;
   }
 }

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import {
@@ -17,6 +16,9 @@ import Recomendados from "@/components/home/Recomendados";
 import SelectorBusqueda from "@/components/home/SelectorBusqueda";
 import HeroFlyers from "@/components/home/HeroFlyers";
 import SliderPortadas from "@/components/home/SliderPortadas";
+import CarpetasCategorias, {
+  aCarpetas,
+} from "@/components/categorias/CarpetasCategorias";
 import StoriesEventos from "@/components/home/StoriesEventos";
 import SliceCorporativos from "@/components/home/SliceCorporativos";
 import SeccionColecciones from "@/components/home/SeccionColecciones";
@@ -131,12 +133,19 @@ export default async function Home() {
             products: { where: { status: "PUBLISHED" } },
           },
         },
-        // Portadas reales para ilustrar la categoría.
+        // Hasta tres portadas reales: asoman de la carpeta.
         products: {
-          where: { status: "PUBLISHED", coverUrl: { not: null } },
+          where: { status: "PUBLISHED" },
           orderBy: { createdAt: "desc" },
-          take: 1,
-          select: { id: true, coverUrl: true },
+          take: 3,
+          select: {
+            coverUrl: true,
+            images: {
+              orderBy: { sortOrder: "asc" },
+              take: 1,
+              select: { url: true },
+            },
+          },
         },
       },
     }),
@@ -274,6 +283,40 @@ export default async function Home() {
 
         {/* ══════════ SLIDER DE PORTADAS ══════════ */}
         {promos.length > 0 && <SliderPortadas portadas={promos} />}
+
+        {/* ══════════ CATEGORÍAS (debajo del slider) ══════════ */}
+        {categories.length > 0 && (
+          <section className="rk-home-categorias">
+            <div className="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-8">
+              <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="rk-kicker">Explora</p>
+
+                  <h2 className="rk-title mt-2 text-2xl sm:text-3xl">
+                    Categorías
+                  </h2>
+                </div>
+
+                <Link
+                  href="/categorias"
+                  className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
+                >
+                  Ver todas
+                  <ArrowRight
+                    size={16}
+                    className="transition-transform duration-normal ease-rk group-hover:translate-x-0.5"
+                  />
+                </Link>
+              </div>
+
+              <CarpetasCategorias
+                categorias={aCarpetas(categories)}
+                nivelTitulo="h3"
+                className="rk-fade-up rk-enter-1 mt-6 sm:mt-8"
+              />
+            </div>
+          </section>
+        )}
 
         {/* ══════════ HERO ══════════ */}
         <section className="relative overflow-hidden">
@@ -463,118 +506,6 @@ export default async function Home() {
 
         {/* ══════════ CORPORATIVOS ══════════ */}
         <SliceCorporativos recursos={corporativos.recursos} />
-
-        {/* ══════════ CATEGORÍAS ══════════ */}
-        {categories.length > 0 && (
-          <section className="border-t border-line/10">
-            <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
-              <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
-                <div>
-                  <p className="rk-kicker">Explora</p>
-
-                  <h2 className="rk-title mt-3 text-[2rem] sm:text-5xl">
-                    Por categoría
-                  </h2>
-                </div>
-
-                <Link
-                  href="/categorias"
-                  className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
-                >
-                  Ver todas
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform duration-normal ease-rk group-hover:translate-x-0.5"
-                  />
-                </Link>
-              </div>
-
-              {/*
-                Solo aparecen las categorías que tienen recursos
-                publicados: la consulta ya descarta las vacías, así
-                que nunca se pinta una tarjeta sin nada detrás.
-
-                La rejilla se adapta al número real de categorías:
-                con una sola, una tarjeta suelta dentro de cuatro
-                columnas se vería rota.
-              */}
-              <div
-                className={`rk-fade-up rk-enter-1 mt-10 grid gap-3 sm:gap-4 ${
-                  categories.length === 1
-                    ? "max-w-md"
-                    : categories.length === 2
-                      ? "sm:grid-cols-2"
-                      : categories.length === 3
-                        ? "sm:grid-cols-2 lg:grid-cols-3"
-                        : "sm:grid-cols-2 lg:grid-cols-4"
-                }`}
-              >
-                {categories.map((category) => {
-                  const portada = category.products[0]?.coverUrl;
-
-                  return (
-                    <Link
-                      key={category.id}
-                      href={`/tienda?categoria=${category.slug}`}
-                      className="rk-press group relative block overflow-hidden rounded-rk-lg"
-                    >
-                      {/* La imagen manda; el texto va encima. */}
-                      <div className="rk-frame !rounded-rk-lg relative aspect-[4/3] w-full sm:aspect-[16/10]">
-                        {portada ? (
-                          <Image
-                            src={portada}
-                            alt=""
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                          />
-                        ) : (
-                          <span
-                            aria-hidden
-                            className="flex h-full items-center justify-center text-[11px] uppercase tracking-[0.3em] text-ink/30"
-                          >
-                            RCKTDMG
-                          </span>
-                        )}
-
-                        {/*
-                          Velo oscuro solo sobre la zona del texto:
-                          la imagen sigue nítida, sin desenfoque.
-                        */}
-                        <span
-                          aria-hidden
-                          className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black/75 via-black/35 to-transparent"
-                        />
-
-                        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 sm:p-5">
-                          <div className="min-w-0">
-                            <h3 className="truncate text-lg font-semibold tracking-tight text-white sm:text-xl">
-                              {category.name}
-                            </h3>
-
-                            <p className="mt-1 text-xs text-white/70">
-                              {category._count.products}{" "}
-                              {category._count.products === 1
-                                ? "recurso"
-                                : "recursos"}
-                            </p>
-                          </div>
-
-                          <span
-                            aria-hidden
-                            className="rk-glass-on-image flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white transition-transform duration-normal ease-rk group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                          >
-                            <ArrowUpRight size={16} />
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* ══════════ RECURSOS DESTACADOS ══════════ */}
         <section className="border-t border-line/10">

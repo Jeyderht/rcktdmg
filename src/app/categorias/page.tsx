@@ -1,10 +1,11 @@
-import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 
 import { paginaPublica } from "@/lib/seo";
 import { LayoutGrid } from "lucide-react";
 
+import CarpetasCategorias, {
+  aCarpetas,
+} from "@/components/categorias/CarpetasCategorias";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
@@ -104,64 +105,10 @@ export default async function CategoriesPage() {
             />
           </div>
         ) : (
-          <div className="rk-fade-up rk-enter-1 rk-folder-grid mt-10">
-            {withProducts.map((category) => {
-              /* Hasta tres portadas reales, las más recientes,
-                 asoman de la carpeta como hojas. */
-              const portadas = category.products
-                .map((p) => p.coverUrl || p.images[0]?.url || null)
-                .filter((url): url is string => Boolean(url))
-                .slice(0, 3);
-
-              const total = category._count.products;
-
-              return (
-                <Link
-                  key={category.id}
-                  href={`/tienda?categoria=${category.slug}`}
-                  className="rk-folder rk-press"
-                  aria-label={`${category.name}: ${total} ${
-                    total === 1 ? "recurso" : "recursos"
-                  }`}
-                >
-                  <span aria-hidden className="rk-folder-back" />
-
-                  <span aria-hidden className="rk-folder-papers">
-                    {portadas.length > 0 ? (
-                      portadas.map((url) => (
-                        <span key={url} className="rk-folder-paper">
-                          <Image
-                            src={url}
-                            alt=""
-                            fill
-                            className="object-cover"
-                            sizes="(min-width: 1024px) 18vw, (min-width: 640px) 26vw, 40vw"
-                          />
-                        </span>
-                      ))
-                    ) : (
-                      <span className="rk-folder-paper rk-folder-paper-empty" />
-                    )}
-                  </span>
-
-                  <span className="rk-folder-front">
-                    <span aria-hidden className="rk-folder-badge">
-                      {category.name.charAt(0).toUpperCase()}
-                    </span>
-
-                    <span className="rk-folder-text">
-                      <h2 className="rk-folder-title">{category.name}</h2>
-
-                      {/* Contador real de recursos publicados. */}
-                      <span className="rk-folder-count">
-                        {total} {total === 1 ? "recurso" : "recursos"}
-                      </span>
-                    </span>
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
+          <CarpetasCategorias
+            categorias={aCarpetas(withProducts)}
+            className="rk-fade-up rk-enter-1 mt-10"
+          />
         )}
       </main>
 
