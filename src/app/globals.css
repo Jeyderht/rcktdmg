@@ -12949,23 +12949,140 @@ table .rk-btn:hover:not(:disabled) {
   background: var(--rk-marca-degradado);
 }
 
+/* ── AH5a. MÉTODOS DE PAGO ─────────────────────────────────────────
+   Logos en un solo color, el de la web: máscaras de
+   public/pagos/*-mono.svg pintadas con el color del texto, sobre
+   sellos de vidrio como los chips. Sin degradados. */
+.rk-footer-pagos {
+  margin: 32px 6px 0;
+}
+
+.rk-footer-pagos-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rk-pago {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--rk-linea);
+  background: rgb(var(--rk-foreground) / 0.04);
+  color: rgb(var(--rk-foreground) / 0.72);
+}
+
+.rk-pago-logo {
+  display: block;
+  background: currentColor;
+  -webkit-mask: var(--rk-pago-logo) center / contain no-repeat;
+          mask: var(--rk-pago-logo) center / contain no-repeat;
+}
+
+.rk-pago.is-visa .rk-pago-logo {
+  --rk-pago-logo: url("/pagos/visa-mono.svg");
+  width: 46px;
+  height: 15px;
+}
+
+.rk-pago.is-yape .rk-pago-logo {
+  --rk-pago-logo: url("/pagos/yape-mono.svg");
+  width: 30px;
+  height: 32px;
+}
+
+.rk-pago.is-plin .rk-pago-logo {
+  --rk-pago-logo: url("/pagos/plin-mono.svg");
+  width: 30px;
+  height: 30px;
+}
+
+/* ── AH5b. CRÉDITOS Y VOLVER ARRIBA ─────────────────────────────── */
+.rk-footer-extra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 18px 6px 0;
+  color: rgb(var(--rk-muted));
+  font-size: 0.6875rem;
+}
+
+.rk-footer-by {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.rk-footer-by-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgb(var(--rk-foreground));
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.rk-footer-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(var(--rk-foreground) / 0.8);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.rk-footer-top-ico {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--rk-marca-degradado);
+  color: #15161b;
+  transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.rk-footer-top-ico svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-footer-top:hover .rk-footer-top-ico {
+    transform: translateY(-3px);
+  }
+}
+
 /* ── AH6. FIRMA DE MARCA ────────────────────────────────────────────
    Como la referencia: la superficie del pie termina con esquinas
    redondeadas que se montan sobre una banda con el degradado de
-   marca, y dentro de la banda el logo en gris. */
+   marca, y dentro de la banda el logo en gris, pegado abajo y cortado.
+   Banda baja y degradado parejo (sin centro blanco). */
 .rk-footer-marca {
   position: relative;
   overflow: hidden;
   display: grid;
-  place-items: center;
-  height: clamp(96px, 17vw, 190px);
+  place-items: end center;
+  /* banda baja: el logo queda pegado abajo y cortado */
+  height: clamp(88px, 13vw, 150px);
   margin: 28px -16px -28px;
   padding-top: 26px;
-  background:
-    radial-gradient(45% 120% at 30% 60%, rgb(255 255 255 / 0.55), transparent 70%),
-    radial-gradient(60% 140% at 10% 100%, rgb(var(--rk-marca-frio) / 0.95), transparent 70%),
-    radial-gradient(55% 140% at 92% 30%, rgb(var(--rk-marca-calido) / 0.95), transparent 70%),
-    var(--rk-marca-degradado);
+  /* degradado parejo, sin centro blanco */
+  background: linear-gradient(
+    90deg,
+    rgb(var(--rk-marca-frio)) 0%,
+    #d9d2df 42%,
+    #ecd5d0 68%,
+    rgb(var(--rk-marca-calido)) 100%
+  );
   user-select: none;
 }
 
@@ -12987,15 +13104,53 @@ table .rk-btn:hover:not(:disabled) {
     var(--rx-fondo);
 }
 
-/* logo blanco usado como máscara, pintado en gris muy transparente */
+/* brillo de color de marca (sin blanco) que pasa por el borde de arriba de la banda: ::after tiene la
+   misma forma que ::before pero 3px más alta y va detrás, así solo
+   asoma una línea fina que sigue la curva */
+.rk-footer-marca::before { z-index: 1; }
+.rk-footer-marca::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 0;
+  height: 29px;
+  border-radius: 0 0 29px 29px;
+  background:
+    linear-gradient(90deg, transparent 38%, #a39cff 45%, #d6c2f5 50%, #ffae8c 55%, transparent 62%) no-repeat,
+    rgb(var(--rk-marca-frio) / 0.25);
+  background-size: 260% 100%, auto;
+  background-position: 120% 0, 0 0;
+  animation: rk-banda-brillo 5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes rk-banda-brillo {
+  0% { background-position: 120% 0, 0 0; }
+  60%, 100% { background-position: -20% 0, 0 0; }
+}
+@media (min-width: 1024px) {
+  .rk-footer-marca::after { height: 35px; border-radius: 0 0 35px 35px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rk-footer-marca::after { animation: none; }
+}
+
+/* logo blanco usado como máscara, pintado en gris muy transparente;
+   la segunda máscara lo corta por abajo y lo desvanece hacia abajo */
 .rk-footer-marca-logo {
   position: relative;
   display: block;
   width: clamp(200px, 60vw, 260px);
   aspect-ratio: 511 / 76;
+  transform: translateY(24%);
   background: rgb(var(--rk-marca-tinta) / 0.12);
-  -webkit-mask: url("/marketing/rcktstudio-logo.svg") center / contain no-repeat;
-          mask: url("/marketing/rcktstudio-logo.svg") center / contain no-repeat;
+  -webkit-mask:
+    url("/marketing/rcktstudio-logo.svg") center / contain no-repeat,
+    linear-gradient(180deg, #000 20%, transparent 88%);
+  -webkit-mask-composite: source-in;
+          mask:
+    url("/marketing/rcktstudio-logo.svg") center / contain no-repeat,
+    linear-gradient(180deg, #000 20%, transparent 88%);
+          mask-composite: intersect;
 }
 
 /* Móvil: la banda termina pegada al borde inferior y guarda dentro el
@@ -13006,7 +13161,7 @@ table .rk-btn:hover:not(:disabled) {
     height: auto;
     padding-bottom: calc(var(--rk-dock-h) + env(safe-area-inset-bottom, 0px) + 24px);
   }
-  .rk-footer-marca-logo { margin-block: 32px; }
+  .rk-footer-marca-logo { margin-top: 32px; }
 }
 
 @media (min-width: 1024px) {
@@ -16166,4 +16321,135 @@ div.rk-upload-error > * + * {
 /* el pie queda más cerca: el separador ya marca la pausa */
 .rk-separador + .rk-footer {
   margin-top: 40px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)
+   Solo portadas: 3 columnas en móvil, 4 en tablet y 5 en
+   escritorio. Al tocar una se abre su tarjeta en una hoja.
+   ══════════════════════════════════════════════════════════ */
+.rk-galeria {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .rk-galeria { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+}
+@media (min-width: 1024px) {
+  .rk-galeria { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+}
+
+.rk-galeria-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: rgb(var(--rk-foreground) / 0.06);
+  cursor: pointer;
+}
+.rk-galeria-item img {
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .rk-galeria-item:hover img { transform: scale(1.04); }
+}
+.rk-galeria-item:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-calido));
+  outline-offset: 2px;
+}
+.rk-galeria-vacio {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: rgb(var(--rk-foreground) / 0.3);
+}
+
+/* hoja con la tarjeta */
+.rk-galeria-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.rk-galeria-fondo {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgb(8 9 12 / 0.55);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  cursor: default;
+  animation: rk-galeria-fondo 0.25s ease-out both;
+}
+.rk-galeria-hoja {
+  position: relative;
+  width: min(340px, 100%);
+  max-height: calc(100svh - 32px);
+  overflow-y: auto;
+  padding: 14px 14px 16px;
+  border: 1px solid var(--rk-linea);
+  border-radius: 28px;
+  background: rgb(var(--rk-background));
+  box-shadow: 0 30px 60px rgb(0 0 0 / 0.25);
+  animation: rk-galeria-hoja 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+.rk-galeria-cerrar {
+  /* mismo botón del sistema sobre fotos (rk-glass-on-image, 32px);
+     8px dentro de la imagen, que empieza a 22px del borde de la hoja */
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+}
+.rk-galeria-cerrar svg { width: 14px; height: 14px; }
+/* dentro de la hoja la tarjeta mide lo que su contenido (en la
+   rejilla se estira para igualar filas) */
+.rk-galeria-hoja .rx-pestana,
+.rk-galeria-hoja .rk-tarjeta {
+  height: auto;
+  min-height: 0;
+}
+/* sobre la imagen solo quedan favorito (arriba a la izquierda) y
+   cerrar (arriba a la derecha): sin categoría, pack ni flecha */
+.rk-galeria-hoja span.rk-glass-on-image,
+.rk-galeria-hoja .rk-card-action { display: none; }
+.rk-galeria-hoja .rk-tarjeta > .absolute.right-2.top-2 {
+  /* favorito del sistema, 8px dentro de la imagen (que empieza a 7px
+     del borde de la tarjeta) */
+  top: 15px;
+  right: auto;
+  left: 15px;
+}
+
+.rk-galeria-acciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+@keyframes rk-galeria-fondo { from { opacity: 0; } }
+@keyframes rk-galeria-hoja { from { opacity: 0; transform: translateY(16px) scale(0.98); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-galeria-fondo,
+  .rk-galeria-hoja { animation: none; }
+  .rk-galeria-item img { transition: none; }
 }

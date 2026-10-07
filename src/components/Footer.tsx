@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUp } from "lucide-react";
 import Isotipo from "@/components/Isotipo";
 
 /**
@@ -41,6 +42,17 @@ const SECTIONS: {
       { href: "/carrito", label: "Carrito" },
     ],
   },
+];
+
+/**
+ * Medios de pago aceptados. Los logos van en un solo color, el del
+ * texto de la web (máscaras de public/pagos/*-mono.svg; los
+ * originales a color quedan en la misma carpeta).
+ */
+const PAGOS = [
+  { nombre: "Visa", clase: "visa" },
+  { nombre: "Yape", clase: "yape" },
+  { nombre: "Plin", clase: "plin" },
 ];
 
 export default function Footer() {
@@ -119,9 +131,40 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* MÉTODOS DE PAGO · logos en el color de la web */}
+        <div className="rk-footer-pagos">
+          <h2 className="rk-footer-title">Métodos de pago</h2>
+
+          <ul className="rk-footer-pagos-lista" aria-label="Métodos de pago">
+            {PAGOS.map((pago) => (
+              <li key={pago.nombre} className={`rk-pago is-${pago.clase}`}>
+                <span role="img" aria-label={pago.nombre} className="rk-pago-logo" />
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <div className="rk-footer-bottom">
           <p>© {year} RCKTDMG. Todos los derechos reservados.</p>
-          <p className="rk-footer-sign">Hecho para creadores.</p>
+        </div>
+
+        {/* Créditos y volver arriba */}
+        <div className="rk-footer-extra">
+          <p className="rk-footer-by">
+            Diseñado por
+            <span className="rk-footer-by-marca">
+              <Isotipo className="h-4 w-4" />
+              Rckt Studio
+            </span>
+          </p>
+
+          {/* href="#" sube al inicio; el scroll suave lo da el html. */}
+          <a href="#" className="rk-footer-top">
+            Volver arriba
+            <span aria-hidden className="rk-footer-top-ico">
+              <ArrowUp />
+            </span>
+          </a>
         </div>
 
         {/* Firma de marca: el logo en gris transparente sobre el degradado. */}
