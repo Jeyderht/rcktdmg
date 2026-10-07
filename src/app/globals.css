@@ -12947,7 +12947,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-footer-marca-logo {
   position: relative;
   display: block;
-  width: clamp(140px, 36vw, 180px);
+  width: clamp(200px, 60vw, 260px);
   aspect-ratio: 511 / 76;
   background: rgb(var(--rk-marca-tinta) / 0.12);
   -webkit-mask: url("/marketing/rcktstudio-logo.svg") center / contain no-repeat;
@@ -12968,7 +12968,7 @@ table .rk-btn:hover:not(:disabled) {
 @media (min-width: 1024px) {
   .rk-footer-marca { margin: 32px -20px -32px; padding-top: 32px; }
   .rk-footer-marca::before { height: 32px; border-radius: 0 0 32px 32px; }
-  .rk-footer-marca-logo { width: clamp(180px, 17vw, 240px); }
+  .rk-footer-marca-logo { width: clamp(280px, 25vw, 360px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

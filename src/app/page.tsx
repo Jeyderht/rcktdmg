@@ -25,7 +25,6 @@ import SeccionColecciones from "@/components/home/SeccionColecciones";
 import CarruselCreadores from "@/components/home/CarruselCreadores";
 import Ecosistema from "@/components/home/Ecosistema";
 import MasDisenos from "@/components/home/MasDisenos";
-import ConvierteteEnCreador from "@/components/home/ConvierteteEnCreador";
 import CtaModelo from "@/components/home/CtaModelo";
 import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
 import {
@@ -35,7 +34,6 @@ import {
   flyersParaStories,
 } from "@/lib/home";
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
-import { getSession } from "@/lib/session";
 import { portadasActivas } from "@/lib/portadas";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
@@ -94,12 +92,6 @@ export default async function Home() {
    * No hay cifras, productos, categorías ni creadores de
    * ejemplo: si algo no existe, su sección no se pinta.
    */
-  /*
-    La sesión decide si se enseña la llamada a convertirse en
-    creador: a quien ya publica no se le propone empezar.
-  */
-  const session = await getSession();
-
   const [
     products,
     categories,
@@ -572,9 +564,6 @@ export default async function Home() {
 
         {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
         <Ecosistema />
-
-        {/* ══════════ CONVIÉRTETE EN CREADOR ══════════ */}
-        <ConvierteteEnCreador rol={session?.role ?? null} />
 
         {/* ══════════ CÓMO FUNCIONA ══════════ */}
         <section className="border-t border-line/10">
