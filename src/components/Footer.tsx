@@ -49,18 +49,31 @@ export default function Footer() {
     <footer className="rk-footer">
       <div className="rk-footer-inner">
 
-        {/* LLAMADA A CREADORES · franja de marca */}
+        {/* LLAMADA A CREADORES · tarjeta de marca con el cohete */}
         <div className="rk-footer-cta">
-          <div>
+          <Image
+            src="/marketing/cohete.svg"
+            alt=""
+            aria-hidden
+            width={260}
+            height={260}
+            unoptimized
+            className="rk-footer-cta-cohete"
+          />
+
+          <div className="rk-footer-cta-body">
             <p className="rk-footer-cta-kicker">Para creadores</p>
+
             <p className="rk-footer-cta-title">
               Publica tus recursos y vende en RCKTDMG
             </p>
-          </div>
 
-          <Link href="/creadores/unete" className="rk-btn rk-btn-ink">
-            Únete como creador
-          </Link>
+            <div className="rk-footer-cta-actions">
+              <Link href="/creadores/unete" className="rk-btn rk-btn-ink">
+                Únete como creador
+              </Link>
+            </div>
+          </div>
         </div>
 
         <div className="rk-footer-main">
@@ -106,6 +119,13 @@ export default function Footer() {
         <div className="rk-footer-bottom">
           <p>© {year} RCKTDMG. Todos los derechos reservados.</p>
           <p className="rk-footer-sign">Hecho para creadores.</p>
+        </div>
+
+        {/* Firma de marca: el nombre grande sobre el degradado, cortado abajo. */}
+        <div aria-hidden className="rk-footer-marca">
+          <span>
+            RCKTDMG<sup>™</sup>
+          </span>
         </div>
       </div>
     </footer>

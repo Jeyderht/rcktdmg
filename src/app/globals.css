@@ -12680,20 +12680,36 @@ table .rk-btn:hover:not(:disabled) {
   margin: 0 auto;
 }
 
-/* ── AH2. FRANJA CTA ────────────────────────────────────────────────── */
+/* ── AH2. TARJETA CTA DE CREADORES ──────────────────────────────────
+   Tarjeta grande con el degradado de marca, titular fuerte, dos
+   botones y el cohete de la marca como sello a la derecha. */
 .rk-footer-cta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 22px;
-  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  padding: 36px 24px;
+  border-radius: 28px;
   background:
     radial-gradient(70% 160% at 100% 50%, rgb(var(--rk-marca-calido) / 0.95), transparent 70%),
     radial-gradient(60% 160% at 0% 50%, rgb(var(--rk-marca-frio) / 0.9), transparent 70%),
     var(--rk-marca-degradado);
   color: rgb(var(--rk-marca-tinta));
+}
+
+.rk-footer-cta-cohete {
+  position: absolute;
+  right: -30px;
+  top: 50%;
+  width: 190px;
+  height: auto;
+  transform: translateY(-50%) rotate(-4deg);
+  opacity: 0.35;
+  pointer-events: none;
+  user-select: none;
+}
+
+.rk-footer-cta-body {
+  position: relative;
+  max-width: 34rem;
 }
 
 .rk-footer-cta-kicker {
@@ -12706,12 +12722,20 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-footer-cta-title {
-  max-width: 24ch;
-  margin: 6px 0 0;
-  font-size: clamp(1.25rem, 4.5vw, 1.625rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  max-width: 18ch;
+  margin: 10px 0 0;
+  font-size: clamp(1.75rem, 6vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.rk-footer-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
 }
 
 .rk-footer-cta .rk-btn {
@@ -12719,7 +12743,7 @@ table .rk-btn:hover:not(:disabled) {
   text-decoration: none;
 }
 
-/* sobre la franja de marca el botón siempre es tinta oscura */
+/* sobre la tarjeta de marca el botón siempre es tinta oscura */
 .rk-footer-cta .rk-btn.rk-btn-ink,
 [data-theme="dark"] .rk-footer-cta .rk-btn.rk-btn-ink,
 [data-theme="light"] .rk-footer-cta .rk-btn.rk-btn-ink {
@@ -12727,6 +12751,11 @@ table .rk-btn:hover:not(:disabled) {
   background: rgb(var(--rk-marca-tinta));
   box-shadow: none;
   color: #fff;
+}
+
+@media (min-width: 768px) {
+  .rk-footer-cta { padding: 56px 48px; border-radius: 32px; }
+  .rk-footer-cta-cohete { right: 40px; width: 280px; opacity: 0.45; }
 }
 
 /* ── AH3. MARCA ─────────────────────────────────────────────────────── */
@@ -12859,6 +12888,68 @@ table .rk-btn:hover:not(:disabled) {
   height: 6px;
   border-radius: 999px;
   background: var(--rk-marca-degradado);
+}
+
+/* ── AH6. FIRMA DE MARCA ────────────────────────────────────────────
+   Como la referencia: la superficie del pie termina con esquinas
+   redondeadas que se montan sobre una banda con el degradado de
+   marca, y dentro de la banda el nombre en grande, en gris. */
+.rk-footer-marca {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  height: clamp(96px, 17vw, 190px);
+  margin: 28px -16px -28px;
+  padding-top: 26px;
+  background:
+    radial-gradient(45% 120% at 30% 60%, rgb(255 255 255 / 0.55), transparent 70%),
+    radial-gradient(60% 140% at 10% 100%, rgb(var(--rk-marca-frio) / 0.95), transparent 70%),
+    radial-gradient(55% 140% at 92% 30%, rgb(var(--rk-marca-calido) / 0.95), transparent 70%),
+    var(--rk-marca-degradado);
+  user-select: none;
+}
+
+/* borde inferior redondeado de la superficie del pie, encima de la banda */
+.rk-footer-marca::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 26px;
+  border-radius: 0 0 26px 26px;
+  background:
+    linear-gradient(rgb(255 255 255 / 0.025), rgb(255 255 255 / 0.025)),
+    rgb(var(--rk-background));
+}
+[data-theme="light"] .rk-footer-marca::before {
+  background:
+    linear-gradient(rgb(255 255 255 / 0.6), rgb(255 255 255 / 0.6)),
+    rgb(var(--rk-background));
+}
+
+.rk-footer-marca span {
+  position: relative;
+  white-space: nowrap;
+  font-size: clamp(3rem, 14vw, 10.5rem);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 1;
+  color: rgb(var(--rk-marca-tinta) / 0.12);
+}
+
+.rk-footer-marca sup {
+  font-size: 0.14em;
+  font-weight: 500;
+  letter-spacing: 0;
+  vertical-align: top;
+  position: relative;
+  top: 0.55em;
+  margin-left: 0.15em;
+}
+
+@media (min-width: 1024px) {
+  .rk-footer-marca { margin: 32px -20px -32px; padding-top: 32px; }
+  .rk-footer-marca::before { height: 32px; border-radius: 0 0 32px 32px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
