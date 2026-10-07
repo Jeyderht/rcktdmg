@@ -353,6 +353,20 @@ h6 {
       var(--rk-dock-h) + env(safe-area-inset-bottom) + 1.25rem
     );
   }
+
+  /* Con pie, la banda final llega al borde de la pantalla y es ella
+     la que reserva el hueco del menú (padding-bottom de .rk-footer-marca). */
+  body:has(.rk-footer) {
+    padding-bottom: 0;
+  }
+
+  /* Lo que asoma al hacer scroll rápido o rebote: el tono del pie. */
+  html:has(.rk-footer) {
+    background-color: color-mix(in srgb, #fff 2.5%, var(--rx-fondo));
+  }
+  html[data-theme="light"]:has(.rk-footer) {
+    background-color: color-mix(in srgb, #fff 60%, var(--rx-fondo));
+  }
 }
 
 /*
@@ -5986,8 +6000,9 @@ table .rk-btn:hover:not(:disabled) {
 .rk-dock {
   position: fixed;
   inset: auto 0 0;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
   z-index: 50;
-  padding: 0 12px calc(env(safe-area-inset-bottom) + 10px);
+  padding: 0 12px;
   pointer-events: none;
 }
 
@@ -12937,6 +12952,17 @@ table .rk-btn:hover:not(:disabled) {
   background: rgb(var(--rk-marca-tinta) / 0.12);
   -webkit-mask: url("/marketing/rcktstudio-logo.svg") center / contain no-repeat;
           mask: url("/marketing/rcktstudio-logo.svg") center / contain no-repeat;
+}
+
+/* Móvil: la banda termina pegada al borde inferior y guarda dentro el
+   hueco del menú flotante (alto del menú + área segura), para que el
+   menú no tape el logo. */
+@media (max-width: 767px) {
+  .rk-footer-marca {
+    height: auto;
+    padding-bottom: calc(var(--rk-dock-h) + env(safe-area-inset-bottom, 0px) + 24px);
+  }
+  .rk-footer-marca-logo { margin-block: 32px; }
 }
 
 @media (min-width: 1024px) {
