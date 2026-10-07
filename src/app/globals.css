@@ -2,6 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Tamaños arbitrarios de Tailwind (text-[15px]…), un 12 % más
+  compactos como el resto de la escala, sin bajar de 11px (lo que ya
+  medía menos se queda igual). Van aquí, pegados a las utilidades,
+  para que las reglas rk-* de más abajo sigan ganando como antes.
+  Las variantes responsive de Tailwind salen al final del CSS, así
+  que siguen mandando sobre estas.
+*/
+.text-\[12px\] { font-size: 11px; }
+.text-\[13px\] { font-size: 11.5px; }
+.text-\[14px\] { font-size: 12.5px; }
+.text-\[15px\] { font-size: 13px; }
+.text-\[17px\] { font-size: 15px; }
+.text-\[22px\] { font-size: 19.5px; }
+.text-\[1\.4rem\] { font-size: 1.232rem; }
+.text-\[1\.6rem\] { font-size: 1.408rem; }
+.text-\[1\.75rem\] { font-size: 1.54rem; }
+.text-\[2rem\] { font-size: 1.76rem; }
+.text-\[2\.25rem\] { font-size: 1.98rem; }
+.\!text-\[12px\] { font-size: 11px !important; }
+.\!text-\[13px\] { font-size: 11.5px !important; }
+.\!text-\[clamp\(2\.1rem\2c 6vw\2c 3\.6rem\)\] { font-size: clamp(1.848rem, 5.28vw, 3.168rem) !important; }
+
+/* lg:text-[2.1rem] sale después que esto: la clase doble le gana sin
+   cambiar el orden frente a las reglas rk-* */
+@media (min-width: 1024px) {
+  .lg\:text-\[2\.1rem\].lg\:text-\[2\.1rem\] { font-size: 1.848rem; }
+}
+
+/*
+  Párrafos con interlineado fijo: con la letra un 12 % menor quedaban
+  demasiado abiertos, así que su line-height baja en la misma
+  proporción (solo estas parejas de tamaño + leading).
+*/
+.text-\[15px\].leading-7 { line-height: 1.54rem; }
+.text-\[13px\].leading-6 { line-height: 1.32rem; }
+
+/* párrafo del hero de inicio (único leading-8): en móvil, y desde sm,
+   donde el line-height lo pone sm:text-lg */
+.text-base.leading-8 { line-height: 1.76rem; }
+@media (min-width: 640px) {
+  .text-base.leading-8 { line-height: 1.54rem; }
+}
+
 /* ==========================================================
    RCKTDMG — DESIGN SYSTEM
    ----------------------------------------------------------
@@ -547,7 +591,7 @@ input[type="search"]::-webkit-search-results-decoration {
     gap: 0.5rem;
     border-radius: var(--rk-radius-full);
     padding: 0.6875rem 1.375rem;
-    font-size: 0.9375rem;
+    font-size: 0.825rem;
     font-weight: 500;
     line-height: 1;
     white-space: nowrap;
@@ -776,7 +820,7 @@ input[type="search"]::-webkit-search-results-decoration {
     font-weight: 600;
     letter-spacing: -0.035em;
     line-height: 0.97;
-    font-size: clamp(2.5rem, 8.5vw, 5.5rem);
+    font-size: clamp(2.2rem, 7.48vw, 4.84rem);
     text-wrap: balance;
   }
 
@@ -909,7 +953,7 @@ input[type="search"]::-webkit-search-results-decoration {
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     padding: 0.75rem 1rem;
-    font-size: 0.9375rem;
+    font-size: 0.825rem;
     color: rgb(var(--rk-foreground));
     outline: none;
     transition:
@@ -972,7 +1016,7 @@ input[type="search"]::-webkit-search-results-decoration {
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     padding: 0.5rem 1rem;
-    font-size: 0.8125rem;
+    font-size: 0.715rem;
     font-weight: 500;
     color: rgb(var(--rk-muted) / 0.78);
     transition:
@@ -1097,7 +1141,7 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   .rk-subtitle {
-    font-size: 0.9375rem;
+    font-size: 0.825rem;
     line-height: 1.75;
     color: rgb(var(--rk-muted) / 0.62);
   }
@@ -1477,7 +1521,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
   .rk-panel-tabla td {
     padding: 0.75rem;
-    font-size: 0.8125rem;
+    font-size: 0.715rem;
     border-bottom: 1px solid rgb(var(--rk-foreground) / 0.06);
   }
 
@@ -1915,7 +1959,7 @@ body {
   background-color: var(--rx-fondo);
   background-image: none;
   color: var(--rx-texto);
-  font-size: 15px;
+  font-size: 13px;
   letter-spacing: -0.015em;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -1970,7 +2014,7 @@ h6 {
 }
 
 .rk-display {
-  font-size: clamp(40px, 6.4vw, 72px);
+  font-size: clamp(35px, 5.63vw, 63.5px);
   line-height: 1.06;
   letter-spacing: -0.04em;
 }
@@ -2563,7 +2607,7 @@ h6 {
 .rk-chip,
 .rk-glass-on-image {
   border-radius: 999px;
-  font-size: 12.5px;
+  font-size: 11px;
   border: 1px solid rgb(255 255 255 / 0.2);
   color: #d5d7db;
   background: rgb(255 255 255 / 0.06);
@@ -2821,7 +2865,7 @@ html[data-theme="dark"] {
   padding: 0 24px;
   border-radius: var(--rk-radius-full);
   font-weight: 500;
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   gap: 0.5rem;
   border: 1px solid var(--rx-b-boton);
   transition:
@@ -2843,7 +2887,7 @@ html[data-theme="dark"] {
 .rk-btn-compact {
   min-height: 2rem;
   padding: 0 0.875rem;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   gap: 0.375rem;
 }
 
@@ -3288,7 +3332,7 @@ table .rk-btn:hover:not(:disabled) {
   border: 0;
   outline: none;
   border-radius: inherit;
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   color: rgb(var(--rk-foreground));
 }
 
@@ -3330,7 +3374,7 @@ table .rk-btn:hover:not(:disabled) {
   padding: 0 1.125rem;
   border-radius: var(--rk-radius-full);
   border: 1px solid transparent;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 500;
   line-height: 1;
   white-space: nowrap;
@@ -3391,13 +3435,13 @@ table .rk-btn:hover:not(:disabled) {
 .rk-buscador-compacto .rk-buscador-campo {
   height: 2.875rem;
   padding: 0 6rem 0 2.75rem;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
 }
 
 .rk-buscador-compacto .rk-buscador-accion {
   height: 2.125rem;
   padding: 0 0.875rem;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 /*
@@ -3430,7 +3474,7 @@ table .rk-btn:hover:not(:disabled) {
   .rk-buscador-accion {
     height: 2.25rem;
     padding: 0 0.875rem;
-    font-size: 0.8125rem;
+    font-size: 0.715rem;
   }
 }
 
@@ -3508,7 +3552,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-btn-large {
   min-height: 54px;
   padding: 0 34px;
-  font-size: 1rem;
+  font-size: 0.88rem;
   gap: 0.625rem;
 }
 
@@ -4026,7 +4070,7 @@ table .rk-btn:hover:not(:disabled) {
   background: transparent;
   color: rgb(var(--rk-muted));
   font: inherit;
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
@@ -4133,7 +4177,7 @@ table .rk-btn:hover:not(:disabled) {
   box-shadow: var(--rk-in-brillo), var(--rk-in-halo);
   color: var(--rx-texto);
   font: inherit;
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   letter-spacing: 0.005em;
   line-height: 1.4;
   caret-color: rgb(var(--rk-iris-2));
@@ -4272,14 +4316,14 @@ table .rk-btn:hover:not(:disabled) {
 .rk-input-sm {
   min-height: 40px;
   padding: 0 12px;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   border-radius: var(--rk-radius-sm);
 }
 
 .rk-input-lg {
   min-height: 56px;
   padding: 0 20px;
-  font-size: 1rem;
+  font-size: 0.88rem;
 }
 
 @media (pointer: coarse) {
@@ -4329,7 +4373,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-label {
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 500;
   letter-spacing: 0.01em;
   color: var(--rx-texto);
@@ -4343,7 +4387,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-hint {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   line-height: 1.45;
   color: rgb(var(--rk-muted));
 }
@@ -4394,7 +4438,7 @@ table .rk-btn:hover:not(:disabled) {
   padding: 0 10px;
   z-index: 1;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
 }
 
 .rk-input-group > .rk-input-suffix ~ .rk-input,
@@ -4593,7 +4637,7 @@ table .rk-btn:hover:not(:disabled) {
 /* textos de la info (clases opcionales; la app usa Tailwind) */
 .rk-tarjeta-nombre {
   margin: 0;
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 600;
   line-height: 1.05rem;
   letter-spacing: -0.01em;
@@ -4613,7 +4657,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-tarjeta-precio {
   margin: 0;
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 600;
   letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
@@ -4705,7 +4749,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-glass-panel-title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.32rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.15;
@@ -4716,7 +4760,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-glass-panel-text {
   margin: -8px 0 0;
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   line-height: 1.4;
   color: rgb(var(--rk-gv-texto) / 0.85);
 }
@@ -4726,7 +4770,7 @@ table .rk-btn:hover:not(:disabled) {
   align-items: center;
   gap: 8px;
   margin: 0;
-  font-size: 1.0625rem;
+  font-size: 0.935rem;
   font-weight: 500;
 }
 
@@ -4779,7 +4823,7 @@ table .rk-btn:hover:not(:disabled) {
   background: transparent;
   color: inherit;
   font: inherit;
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   outline: none;
   caret-color: currentColor;
 }
@@ -4845,7 +4889,7 @@ table .rk-btn:hover:not(:disabled) {
   background: rgb(255 255 255 / var(--rk-gv-velo));
   color: rgb(var(--rk-gv-texto));
   font: inherit;
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   white-space: nowrap;
   cursor: pointer;
   transition:
@@ -4907,13 +4951,13 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-checklist-time {
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-variant-numeric: tabular-nums;
   color: rgb(var(--rk-gv-texto) / 0.9);
 }
 
 .rk-checklist-text {
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 500;
   transition:
     color var(--rx-t-micro) var(--rx-curva),
@@ -4987,7 +5031,7 @@ table .rk-btn:hover:not(:disabled) {
   border: 1px solid rgb(255 255 255 / var(--rk-gv-borde));
   background: rgb(255 255 255 / var(--rk-gv-velo));
   color: rgb(var(--rk-gv-texto));
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
 }
 
 .rk-status-dot {
@@ -5093,7 +5137,7 @@ table .rk-btn:hover:not(:disabled) {
   background: rgb(255 255 255 / 0.05);
   color: inherit;
   font: inherit;
-  font-size: 1rem;
+  font-size: 0.88rem;
   line-height: 1;
   cursor: pointer;
   transition:
@@ -5155,7 +5199,7 @@ table .rk-btn:hover:not(:disabled) {
   min-width: 2rem;
   padding: 0 4px;
   text-align: center;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
@@ -5332,7 +5376,7 @@ table .rk-btn:hover:not(:disabled) {
 
 /* nombre y precio */
 .rk-tarjeta-nombre {
-  font-size: 13.5px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1.12rem;
   letter-spacing: -0.012em;
@@ -5340,7 +5384,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-tarjeta-precio {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.02em;
 }
@@ -5360,7 +5404,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 6px;
   margin-top: 6px;
   min-width: 0;
-  font-size: 11.5px;
+  font-size: 11px;
   color: rgb(var(--rk-muted));
 }
 
@@ -5573,7 +5617,7 @@ table .rk-btn:hover:not(:disabled) {
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin: 2px 0 0;
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: -0.012em;
@@ -5625,7 +5669,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-cart-total {
   margin: 0;
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 600;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
@@ -5642,7 +5686,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-cart-item .rk-stepper-value {
-  font-size: 12.5px;
+  font-size: 11px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5789,7 +5833,7 @@ table .rk-btn:hover:not(:disabled) {
   backdrop-filter: blur(12px) saturate(1.4);
   box-shadow: none;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
@@ -5892,7 +5936,7 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 50%;
   background: transparent;
   color: inherit;
-  font-size: 14px;
+  font-size: 12.5px;
   line-height: 1;
   opacity: 0.6;
   cursor: pointer;
@@ -6420,7 +6464,7 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 999px;
   border: 1px solid transparent;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   text-decoration: none;
   transition:
     background-color var(--rx-t-micro) var(--rx-curva),
@@ -6812,7 +6856,7 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 50%;
   background: #fff;
   color: #15161b;
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
@@ -6853,7 +6897,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-step-title {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: -0.015em;
   line-height: 1.3;
@@ -6864,7 +6908,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-step-text {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   line-height: 1.55;
   color: rgb(21 22 27 / 0.58);
 }
@@ -6953,7 +6997,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-receipt-title {
   margin: 0;
-  font-size: 1.375rem;
+  font-size: 1.21rem;
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.1;
@@ -6970,7 +7014,7 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 999px;
   background: #15161b;
   color: #fff;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -7007,7 +7051,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-receipt-name {
   overflow: hidden;
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 500;
   line-height: 1.3;
   text-overflow: ellipsis;
@@ -7015,7 +7059,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-receipt-price {
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
@@ -7051,7 +7095,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-receipt-strip dd {
   margin: 3px 0 0;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
@@ -7061,7 +7105,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-receipt-rows {
   display: grid;
   gap: 8px;
-  font-size: 13px;
+  font-size: 11.5px;
 }
 
 .rk-receipt-row {
@@ -7102,14 +7146,14 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-receipt-total strong {
-  font-size: 28px;
+  font-size: 24.5px;
   font-weight: 600;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
 }
 
 .rk-receipt-total strong .rk-card-currency {
-  font-size: 13px;
+  font-size: 11.5px;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -7224,7 +7268,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-sheet-title,
 .rk-drawer-title {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: 0.99rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.25;
@@ -7236,7 +7280,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-modal-text,
 .rk-sheet-text {
   margin: -6px 0 0;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   line-height: 1.55;
   color: rgb(var(--rk-muted));
 }
@@ -7326,7 +7370,7 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 16px;
   border: 1px solid transparent;
   color: rgb(var(--rk-muted));
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   text-decoration: none;
   transition:
     background-color var(--rx-t-micro) var(--rx-curva),
@@ -7479,7 +7523,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-toast-title {
   margin: 0;
-  font-size: 13.5px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.25;
@@ -7488,7 +7532,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-toast-text {
   overflow: hidden;
   margin: 2px 0 0;
-  font-size: 12px;
+  font-size: 11px;
   color: rgb(var(--rk-muted));
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -7505,7 +7549,7 @@ table .rk-btn:hover:not(:disabled) {
   background: #fff;
   color: #15161b;
   font: inherit;
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -7585,7 +7629,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-plan-name {
   margin: 0;
-  font-size: 1.0625rem;
+  font-size: 0.935rem;
   font-weight: 500;
   letter-spacing: -0.015em;
   color: inherit;
@@ -7612,7 +7656,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-plan-desc {
   margin: 0;
   padding: 0 8px;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   line-height: 1.55;
   color: rgb(var(--rk-muted));
   min-height: 2.5rem;
@@ -7638,7 +7682,7 @@ table .rk-btn:hover:not(:disabled) {
   align-items: center;
   gap: 2px;
   margin: 0;
-  font-size: 2.25rem;
+  font-size: 1.98rem;
   font-weight: 400;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -7648,7 +7692,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-plan-cur {
   align-self: flex-start;
   margin-top: 3px;
-  font-size: 1rem;
+  font-size: 0.88rem;
   color: rgb(var(--rk-muted));
 }
 
@@ -7662,7 +7706,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-plan-pricebox > .rk-btn {
   min-height: 40px;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
 }
 
 /* beneficios con check simple */
@@ -7672,7 +7716,7 @@ table .rk-btn:hover:not(:disabled) {
   margin: 2px 0 0;
   padding: 0 8px;
   list-style: none;
-  font-size: 12.5px;
+  font-size: 11px;
 }
 
 .rk-plan-features li {
@@ -7761,7 +7805,7 @@ table .rk-btn:hover:not(:disabled) {
   min-height: 46px;
   padding: 0 10px;
   border-radius: 16px;
-  font-size: 12.5px;
+  font-size: 11px;
 }
 
 .rk-compare-row > span {
@@ -7802,7 +7846,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-compare-head b {
   margin-top: 4px;
-  font-size: 1.125rem;
+  font-size: 0.99rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
@@ -7849,17 +7893,17 @@ table .rk-btn:hover:not(:disabled) {
   width: 100%;
   min-height: 36px;
   padding: 0 8px;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 @media (max-width: 480px) {
   .rk-compare-row {
     padding: 0 6px;
-    font-size: 11.5px;
+    font-size: 11px;
   }
 
   .rk-compare-head b {
-    font-size: 1rem;
+    font-size: 0.88rem;
   }
 }
 
@@ -7909,7 +7953,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-compare-head b {
-  font-size: 1.125rem;
+  font-size: 0.99rem;
   font-weight: 700;
 }
 
@@ -7925,7 +7969,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-compare-no {
-  font-size: 12px;
+  font-size: 11px;
   color: rgb(var(--rk-muted) / 0.85);
 }
 
@@ -7961,13 +8005,13 @@ table .rk-btn:hover:not(:disabled) {
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 500;
   color: var(--rx-texto);
 }
 
 .rk-compare-head small {
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
@@ -7978,7 +8022,7 @@ table .rk-btn:hover:not(:disabled) {
   display: flex;
   align-items: flex-start;
   margin-top: 6px;
-  font-size: 1.875rem;
+  font-size: 1.65rem;
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -8003,7 +8047,7 @@ table .rk-btn:hover:not(:disabled) {
   min-height: 36px;
   margin-top: 12px;
   padding: 0 6px;
-  font-size: 11.5px;
+  font-size: 11px;
   letter-spacing: 0;
 }
 
@@ -8024,7 +8068,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-compare-group > span:first-child {
   grid-column: 1 / -1;
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--rx-texto);
 }
@@ -8044,7 +8088,7 @@ table .rk-btn:hover:not(:disabled) {
 
 /* valores: texto normal y oscuro (no gris) */
 .rk-compare-val {
-  font-size: 12.5px;
+  font-size: 11px;
   font-style: normal;
   color: var(--rx-texto);
 }
@@ -8054,7 +8098,7 @@ table .rk-btn:hover:not(:disabled) {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 12px;
+  font-size: 11px;
   color: rgb(var(--rk-iris-1));
   text-decoration: none;
 }
@@ -8072,7 +8116,7 @@ table .rk-btn:hover:not(:disabled) {
 
 @media (max-width: 480px) {
   .rk-compare-head b {
-    font-size: 1.5rem;
+    font-size: 1.32rem;
   }
 }
 
@@ -8169,7 +8213,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-faq-title {
   margin: 0;
-  font-size: clamp(1.75rem, 6vw, 2.75rem);
+  font-size: clamp(1.54rem, 5.28vw, 2.42rem);
   font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1.05;
@@ -8178,7 +8222,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-faq-sub {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   color: rgb(var(--rk-muted));
 }
 
@@ -8220,7 +8264,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 14px;
   min-height: 56px;
   padding: 12px 12px 12px 16px;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 500;
   line-height: 1.4;
   list-style: none;
@@ -8275,7 +8319,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-faq-a {
   margin: -4px 0 0;
   padding: 0 52px 16px 16px;
-  font-size: 0.78rem;
+  font-size: 0.6875rem;
   line-height: 1.65;
   color: rgb(var(--rk-muted));
 }
@@ -8317,7 +8361,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-faq-help-title {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: 0.99rem;
   font-weight: 500;
   letter-spacing: -0.02em;
 }
@@ -8325,7 +8369,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-faq-help-text {
   margin: 6px 0 0;
   max-width: 22rem;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   line-height: 1.55;
   color: rgb(var(--rk-muted));
 }
@@ -8483,12 +8527,12 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 16px 16px 4px 16px;
   border: 1px solid rgb(255 255 255 / 0.08);
   background: rgb(255 255 255 / 0.08);
-  font-size: 12.5px;
+  font-size: 11px;
 }
 
 .rk-help-reply {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 11px;
   line-height: 1.6;
   color: rgb(255 255 255 / 0.82);
 }
@@ -8525,7 +8569,7 @@ table .rk-btn:hover:not(:disabled) {
   border: 1px solid rgb(255 255 255 / 0.12);
   background: rgb(255 255 255 / 0.05);
   color: rgb(255 255 255 / 0.88);
-  font-size: 11.5px;
+  font-size: 11px;
   text-decoration: none;
   transition:
     background-color var(--rx-t-micro) var(--rx-curva),
@@ -8573,7 +8617,7 @@ table .rk-btn:hover:not(:disabled) {
   background: transparent;
   color: #fff;
   font: inherit;
-  font-size: 12.5px;
+  font-size: 11px;
   outline: none;
 }
 
@@ -8622,7 +8666,7 @@ table .rk-btn:hover:not(:disabled) {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: 11.5px;
   color: rgb(var(--rk-muted));
 }
 
@@ -8636,7 +8680,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-help-title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.32rem;
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.15;
@@ -8647,7 +8691,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-help-text {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   line-height: 1.6;
   color: rgb(var(--rk-muted));
 }
@@ -8794,7 +8838,7 @@ table .rk-btn:hover:not(:disabled) {
   padding: 0 14px;
   border-radius: 999px;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
@@ -9069,7 +9113,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-empty-title {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 1.0625rem;
+  font-size: 0.935rem;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -9078,7 +9122,7 @@ table .rk-btn:hover:not(:disabled) {
   max-width: 30ch;
   margin: 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   line-height: 1.6;
 }
 
@@ -9229,13 +9273,13 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-upload-title {
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 600;
 }
 
 .rk-upload-hint {
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   line-height: 1.5;
 }
 
@@ -9276,7 +9320,7 @@ table .rk-btn:hover:not(:disabled) {
   margin: 0;
   overflow: hidden;
   color: var(--rx-texto);
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -9288,7 +9332,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 6px;
   margin: 3px 0 0;
   color: rgb(52 211 153);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -9304,7 +9348,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-upload-meta {
   margin: 2px 0 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -9319,7 +9363,7 @@ table .rk-btn:hover:not(:disabled) {
   min-height: 32px;
   padding: 0 12px;
   gap: 6px;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 .rk-upload-actions .rk-btn svg {
@@ -9373,7 +9417,7 @@ table .rk-btn:hover:not(:disabled) {
   display: flex;
   justify-content: space-between;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -9391,7 +9435,7 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 14px;
   background: rgb(var(--rk-dan-tono) / 0.1);
   color: rgb(var(--rk-dan-tono));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   line-height: 1.5;
 }
 
@@ -9464,14 +9508,14 @@ table .rk-btn:hover:not(:disabled) {
 .rk-table-footer {
   border-top: 1px solid var(--rk-linea);
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
 .rk-table-title {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 600;
 }
 
@@ -9511,7 +9555,7 @@ table .rk-btn:hover:not(:disabled) {
   padding: 13px 14px;
   border-bottom: 1px solid var(--rk-linea);
   color: var(--rx-texto);
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   vertical-align: middle;
 }
 
@@ -9562,7 +9606,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-table-muted {
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 .rk-table td.rk-table-muted {
@@ -9591,7 +9635,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(var(--rk-iris-2) / 0.45)
   );
   color: #fff;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 700;
 }
 
@@ -9613,7 +9657,7 @@ table .rk-btn:hover:not(:disabled) {
   margin: 1px 0 0;
   overflow: hidden;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -9626,7 +9670,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-table-actions .rk-btn {
   min-height: 32px;
   padding: 0 12px;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 .rk-table-actions .rk-btn + .rk-btn {
@@ -9653,7 +9697,7 @@ table .rk-btn:hover:not(:disabled) {
   background: transparent;
   color: rgb(var(--rk-muted));
   font: inherit;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   text-decoration: none;
@@ -9806,7 +9850,7 @@ table .rk-btn:hover:not(:disabled) {
     padding: 0 14px;
     border-left: 1px solid var(--rk-linea);
     color: var(--rx-texto);
-    font-size: 0.8125rem;
+    font-size: 0.715rem;
     font-weight: 600;
     white-space: nowrap;
   }
@@ -9839,11 +9883,11 @@ table .rk-btn:hover:not(:disabled) {
   .rk-table.rk-table-stack .rk-table-avatar {
     width: 44px;
     height: 44px;
-    font-size: 0.8125rem;
+    font-size: 0.715rem;
   }
 
   .rk-table.rk-table-stack .rk-table-user-name {
-    font-size: 0.9375rem;
+    font-size: 0.825rem;
   }
 
   .rk-table-footer {
@@ -9916,7 +9960,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(var(--rk-iris-3) / 0.6)
   );
   color: #fff;
-  font-size: 1.5rem;
+  font-size: 1.32rem;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
@@ -9956,7 +10000,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-profile-name {
   margin: 0;
   color: var(--rx-texto);
-  font-size: clamp(1.5rem, 5vw, 2.125rem);
+  font-size: clamp(1.32rem, 4.4vw, 1.87rem);
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.1;
@@ -9969,7 +10013,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 8px 12px;
   margin-top: 10px;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
 }
 
 /* ── X2. PESTAÑAS EN CARRIL ─────────────────────────────────────────── */
@@ -10071,14 +10115,14 @@ table .rk-btn:hover:not(:disabled) {
 .rk-stat-label {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 500;
 }
 
 .rk-stat-value {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 1.5rem;
+  font-size: 1.32rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
@@ -10087,14 +10131,14 @@ table .rk-btn:hover:not(:disabled) {
 .rk-stat-value small {
   margin-left: 2px;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 500;
 }
 
 .rk-stat-value .rk-stat-of {
   margin-left: 8px;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 500;
   letter-spacing: 0;
 }
@@ -10106,7 +10150,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 10px;
   padding: 11px 14px 12px 16px;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
 }
 
 .rk-stat-chip {
@@ -10118,7 +10162,7 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 10px;
   background: rgb(255 255 255 / 0.08);
   color: var(--rx-texto);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
@@ -10316,7 +10360,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(var(--rk-iris-3) / 0.6)
   );
   color: #fff;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 700;
 }
 
@@ -10421,7 +10465,7 @@ table .rk-btn:hover:not(:disabled) {
   flex: none;
   width: 48px;
   height: 48px;
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   box-shadow:
     0 0 0 2px rgb(22 23 28),
     0 0 0 4px rgb(var(--rk-iris-2) / 0.8);
@@ -10440,7 +10484,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-menu-name {
   display: block;
   overflow: hidden;
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -10451,7 +10495,7 @@ table .rk-btn:hover:not(:disabled) {
   margin-top: 2px;
   overflow: hidden;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -10459,7 +10503,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-menu-text {
   margin: 4px 0 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   line-height: 1.5;
 }
 
@@ -10478,7 +10522,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(var(--rk-iris-3))
   );
   color: #fff;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 600;
   text-decoration: none;
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
@@ -10537,7 +10581,7 @@ table .rk-btn:hover:not(:disabled) {
   background: transparent;
   color: var(--rx-texto);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 500;
   text-align: left;
   text-decoration: none;
@@ -10751,7 +10795,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-rating-value {
   margin: 0;
-  font-size: 3rem;
+  font-size: 2.64rem;
   font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -10761,7 +10805,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-rating-total {
   margin: 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -10780,7 +10824,7 @@ table .rk-btn:hover:not(:disabled) {
   align-items: center;
   gap: 10px;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -10923,7 +10967,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-review-form-title {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 600;
 }
 
@@ -10938,7 +10982,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-review-count {
   margin: 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -11003,7 +11047,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(var(--rk-iris-2) / 0.45)
   );
   color: #fff;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 700;
 }
 
@@ -11017,7 +11061,7 @@ table .rk-btn:hover:not(:disabled) {
   margin: 0;
   overflow: hidden;
   color: var(--rx-texto);
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -11052,13 +11096,13 @@ table .rk-btn:hover:not(:disabled) {
   gap: 8px;
   margin: 3px 0 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 .rk-review-text {
   margin: 12px 0 0;
   color: var(--rx-texto);
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   line-height: 1.65;
   white-space: pre-line;
   opacity: 0.85;
@@ -11071,7 +11115,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 10px;
   margin-top: 18px;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -11082,7 +11126,7 @@ table .rk-btn:hover:not(:disabled) {
   border: 1px dashed var(--rk-linea);
   border-radius: 18px;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   line-height: 1.6;
 }
 
@@ -11170,7 +11214,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 8px;
   margin: 0;
   color: var(--rx-texto);
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 600;
 }
 
@@ -11181,7 +11225,7 @@ table .rk-btn:hover:not(:disabled) {
   background: transparent;
   color: rgb(var(--rk-iris-1));
   font: inherit;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -11228,7 +11272,7 @@ table .rk-btn:hover:not(:disabled) {
   min-height: 42px;
   border-radius: 14px;
   color: var(--rx-texto);
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 600;
   text-decoration: none;
 }
@@ -11351,7 +11395,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-notif-item-title {
   display: block;
   color: var(--rx-texto);
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 500;
   line-height: 1.4;
 }
@@ -11364,7 +11408,7 @@ table .rk-btn:hover:not(:disabled) {
   display: block;
   margin-top: 2px;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
@@ -11419,7 +11463,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 10px;
   padding: 36px 16px;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   text-align: center;
 }
 
@@ -11461,11 +11505,11 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-notif-page .rk-notif-item-title {
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
 }
 
 .rk-notif-page .rk-notif-item-body {
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -11493,7 +11537,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 8px;
   min-height: 44px;
   color: var(--rx-texto);
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   text-decoration: none;
 }
 
@@ -11562,7 +11606,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 8px;
   margin: 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
 }
 
 .rk-buy-before s {
@@ -11572,7 +11616,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-buy-price {
   margin: 8px 0 0;
   color: var(--rx-texto);
-  font-size: 2.25rem;
+  font-size: 1.98rem;
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1;
@@ -11608,7 +11652,7 @@ table .rk-btn:hover:not(:disabled) {
   align-items: center;
   gap: 10px;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   line-height: 1.4;
 }
 
@@ -11682,7 +11726,7 @@ table .rk-btn:hover:not(:disabled) {
     0 0 0 2px rgb(14 15 19),
     0 0 0 3px rgb(var(--rk-iris-2) / 0.7);
   color: #fff;
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-weight: 700;
 }
 
@@ -11704,7 +11748,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 6px;
   margin: 2px 0 0;
   color: var(--rx-texto);
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 600;
 }
 
@@ -11729,7 +11773,7 @@ table .rk-btn:hover:not(:disabled) {
   margin: 1px 0 0;
   overflow: hidden;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -11753,14 +11797,14 @@ table .rk-btn:hover:not(:disabled) {
 .rk-detail-title {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 600;
 }
 
 .rk-detail-text {
   margin: 10px 0 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   line-height: 1.7;
   white-space: pre-line;
 }
@@ -11786,13 +11830,13 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-specs dt {
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
 }
 
 .rk-specs dd {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 600;
   text-align: right;
   font-variant-numeric: tabular-nums;
@@ -11851,7 +11895,7 @@ table .rk-btn:hover:not(:disabled) {
   background: transparent;
   color: rgb(var(--rk-muted));
   font: inherit;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   text-align: left;
   text-decoration: none;
   cursor: pointer;
@@ -12035,7 +12079,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-sheet-title {
   margin: 0;
-  font-size: 1.0625rem;
+  font-size: 0.935rem;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -12074,7 +12118,7 @@ table .rk-btn:hover:not(:disabled) {
 /* lista de orden dentro de la hoja: mismas opciones que escritorio */
 .rk-sheet-body .rk-filter-option {
   min-height: 48px;
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -12122,7 +12166,7 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 999px;
   background: rgb(255 255 255 / 0.04);
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   text-decoration: none;
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
@@ -12215,7 +12259,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-auth-tagline {
   margin: 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
 }
 
 /* ── AD3. TARJETA ───────────────────────────────────────────────────── */
@@ -12251,13 +12295,13 @@ table .rk-btn:hover:not(:disabled) {
 .rk-auth-card .rk-tabs-track .rk-tab {
   justify-content: center;
   min-height: 40px;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
 }
 
 .rk-auth-title {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 1.5rem;
+  font-size: 1.32rem;
   font-weight: 600;
   letter-spacing: -0.02em;
 }
@@ -12265,7 +12309,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-auth-sub {
   margin: 6px 0 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
 }
 
 .rk-auth-form {
@@ -12310,7 +12354,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-auth-foot {
   margin: 22px 0 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   text-align: center;
 }
 
@@ -12346,7 +12390,7 @@ table .rk-btn:hover:not(:disabled) {
   justify-items: center;
   gap: 8px;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 500;
   text-align: center;
 }
@@ -12383,7 +12427,7 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 999px;
   background: rgb(255 255 255 / 0.04);
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -12528,7 +12572,7 @@ table .rk-btn:hover:not(:disabled) {
   max-width: 18ch;
   margin: 0;
   color: var(--rx-texto);
-  font-size: clamp(1.625rem, 6vw, 2.25rem);
+  font-size: clamp(1.43rem, 5.28vw, 1.98rem);
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.1;
@@ -12538,7 +12582,7 @@ table .rk-btn:hover:not(:disabled) {
   max-width: 42ch;
   margin: 4px 0 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   line-height: 1.65;
 }
 
@@ -12576,7 +12620,7 @@ table .rk-btn:hover:not(:disabled) {
   margin: 0;
   color: var(--rx-texto);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   overflow-wrap: anywhere;
 }
 
@@ -12601,7 +12645,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 8px;
   margin: 0;
   color: rgb(var(--rk-tone));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 600;
 }
 
@@ -12613,7 +12657,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-done-note p:not(.rk-done-note-title) {
   margin: 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   line-height: 1.6;
 }
 
@@ -12624,7 +12668,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-done-dev {
   margin: 4px 0 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 /* ── AG5. ACCIONES ──────────────────────────────────────────────────── */
@@ -12739,7 +12783,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-footer-cta-title {
   max-width: 18ch;
   margin: 10px 0 0;
-  font-size: clamp(1.75rem, 6vw, 2.75rem);
+  font-size: clamp(1.54rem, 5.28vw, 2.42rem);
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1.05;
@@ -12818,7 +12862,7 @@ table .rk-btn:hover:not(:disabled) {
   max-width: 34ch;
   margin: 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   line-height: 1.6;
 }
 
@@ -12856,7 +12900,7 @@ table .rk-btn:hover:not(:disabled) {
   align-items: center;
   min-height: 40px;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   text-decoration: none;
   transition: color var(--rx-t-micro) var(--rx-curva);
 }
@@ -12884,7 +12928,7 @@ table .rk-btn:hover:not(:disabled) {
   padding-top: 20px;
   border-top: 1px solid var(--rk-linea);
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 .rk-footer-bottom p {
@@ -13000,13 +13044,13 @@ table .rk-btn:hover:not(:disabled) {
 .rk-table-head h2 {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 600;
 }
 
 .rk-table-head a {
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-decoration: none;
 }
@@ -13021,13 +13065,13 @@ table .rk-btn:hover:not(:disabled) {
   margin: 0;
   padding: 44px 18px;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   text-align: center;
 }
 
 .rk-table td a.rk-table-link {
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-underline-offset: 3px;
 }
@@ -13092,7 +13136,7 @@ table .rk-btn:hover:not(:disabled) {
   margin: 0;
   overflow: hidden;
   color: var(--rx-texto);
-  font-size: 0.9375rem;
+  font-size: 0.825rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -13102,7 +13146,7 @@ table .rk-btn:hover:not(:disabled) {
   margin: 3px 0 0;
   overflow: hidden;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -13118,7 +13162,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-row-card-amount {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 1.0625rem;
+  font-size: 0.935rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
@@ -13126,7 +13170,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-row-card-meta {
   margin: 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   line-height: 1.5;
 }
 
@@ -13197,7 +13241,7 @@ table .rk-btn:hover:not(:disabled) {
   display: block;
   overflow: hidden;
   color: var(--rx-texto);
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 600;
   text-decoration: none;
   text-overflow: ellipsis;
@@ -13207,7 +13251,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-row-items .rk-btn {
   min-height: 38px;
   padding: 0 16px;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   text-decoration: none;
 }
 
@@ -13358,7 +13402,7 @@ table .rk-btn:hover:not(:disabled) {
 div.rk-upload-error {
   padding: 16px 18px;
   border-radius: 18px;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
 }
 
 div.rk-upload-error > * + * {
@@ -13396,7 +13440,7 @@ div.rk-upload-error > * + * {
   margin: 0;
   padding: 0 8px;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -13445,7 +13489,7 @@ div.rk-upload-error > * + * {
 /* página 404 */
 .rk-404 {
   margin: 0;
-  font-size: clamp(5rem, 22vw, 9rem);
+  font-size: clamp(4.4rem, 19.36vw, 7.92rem);
   font-weight: 700;
   letter-spacing: -0.06em;
   line-height: 0.9;
@@ -13529,7 +13573,7 @@ div.rk-upload-error > * + * {
   margin: 0;
   overflow: hidden;
   color: rgb(var(--rk-marca-tinta));
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-weight: 600;
   text-align: center;
   text-overflow: ellipsis;
@@ -13609,7 +13653,7 @@ div.rk-upload-error > * + * {
     0 0 0 4px rgb(14 15 19),
     0 0 0 5px rgb(255 255 255 / 0.18);
   color: rgb(var(--rk-marca-tinta));
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 700;
 }
 
@@ -13636,7 +13680,7 @@ div.rk-upload-error > * + * {
 .rk-hero-name h1 {
   margin: 0;
   color: var(--rx-texto);
-  font-size: clamp(1.5rem, 5vw, 1.875rem);
+  font-size: clamp(1.32rem, 4.4vw, 1.65rem);
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.15;
@@ -13659,7 +13703,7 @@ div.rk-upload-error > * + * {
   gap: 6px;
   margin: 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
 }
 
 .rk-hero-bio {
@@ -13668,7 +13712,7 @@ div.rk-upload-error > * + * {
   margin: 8px 0 0;
   overflow: hidden;
   color: rgb(var(--rk-muted));
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   line-height: 1.6;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
@@ -13738,14 +13782,14 @@ div.rk-upload-error > * + * {
 .rk-hero-stats dt {
   order: 2;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 .rk-hero-stats dd {
   order: 1;
   margin: 0;
   color: var(--rx-texto);
-  font-size: 1.0625rem;
+  font-size: 0.935rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
@@ -13769,7 +13813,7 @@ div.rk-upload-error > * + * {
 .rk-hero-tabs .rk-tab {
   text-decoration: none;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   letter-spacing: 0.04em;
 }
 
@@ -13803,14 +13847,14 @@ div.rk-upload-error > * + * {
 
 .rk-dash-label {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 500;
   opacity: 0.7;
 }
 
 .rk-dash-amount {
   margin: 0;
-  font-size: clamp(2.25rem, 9vw, 3rem);
+  font-size: clamp(1.98rem, 7.92vw, 2.64rem);
   font-weight: 600;
   letter-spacing: -0.035em;
   line-height: 1;
@@ -13837,7 +13881,7 @@ div.rk-upload-error > * + * {
   border: 1px solid rgb(255 255 255 / 0.6);
   border-radius: 999px;
   background: rgb(255 255 255 / 0.35);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
@@ -13863,7 +13907,7 @@ div.rk-upload-error > * + * {
   border-radius: 20px;
   background: rgb(255 255 255 / 0.3);
   color: inherit;
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 500;
   text-align: center;
   text-decoration: none;
@@ -13911,14 +13955,14 @@ div.rk-upload-error > * + * {
 .rk-dash-card-head h2 {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-weight: 600;
 }
 
 .rk-dash-card-head a,
 .rk-dash-card-head span {
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -13979,7 +14023,7 @@ div.rk-upload-error > * + * {
 
 .rk-dash-ring-center strong {
   color: var(--rx-texto);
-  font-size: 1.75rem;
+  font-size: 1.54rem;
   font-weight: 600;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
@@ -13987,7 +14031,7 @@ div.rk-upload-error > * + * {
 
 .rk-dash-ring-center span {
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 .rk-dash-legend {
@@ -13999,7 +14043,7 @@ div.rk-upload-error > * + * {
   padding: 0;
   list-style: none;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
 .rk-dash-legend li {
@@ -14052,7 +14096,7 @@ div.rk-upload-error > * + * {
   border-radius: 999px;
   background: var(--rk-marca-degradado);
   color: rgb(var(--rk-marca-tinta));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 700;
 }
 
@@ -14060,7 +14104,7 @@ div.rk-upload-error > * + * {
   margin: 0;
   overflow: hidden;
   color: var(--rx-texto);
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   text-overflow: ellipsis;
@@ -14078,7 +14122,7 @@ div.rk-upload-error > * + * {
   flex: none;
   margin: 0;
   color: var(--rx-texto);
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 600;
   text-align: right;
   font-variant-numeric: tabular-nums;
@@ -14197,7 +14241,7 @@ div.rk-upload-error > * + * {
   border-radius: 22px 22px 0 0;
   background: var(--rk-tc-fondo);
   color: var(--rx-texto);
-  font-size: 0.875rem;
+  font-size: 0.77rem;
   font-weight: 600;
 }
 
@@ -14219,7 +14263,7 @@ div.rk-upload-error > * + * {
   gap: 4px 12px;
   padding: 0 6px 8px 0;
   color: rgb(var(--rk-muted));
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -14245,7 +14289,7 @@ div.rk-upload-error > * + * {
 .rk-tabcard-title {
   margin: 0;
   color: var(--rx-texto);
-  font-size: 1.0625rem;
+  font-size: 0.935rem;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -14267,7 +14311,7 @@ div.rk-upload-error > * + * {
   padding-top: 12px;
   border-top: 1px solid var(--rk-linea);
   color: rgb(var(--rk-muted));
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -14528,7 +14572,7 @@ div.rk-upload-error > * + * {
   padding: 10px 0;
   border-bottom: 1px solid var(--rk-linea);
   color: var(--rx-texto);
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
 }
 
 .rk-specs > li:last-child {
@@ -15086,7 +15130,7 @@ div.rk-upload-error > * + * {
   border-radius: 14px;
   background: rgb(var(--rk-marca-tinta));
   color: rgb(var(--rk-marca-centro));
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
 }
 
@@ -15100,7 +15144,7 @@ div.rk-upload-error > * + * {
   margin: 0;
   overflow: hidden;
   color: rgb(var(--rk-marca-tinta));
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -15110,7 +15154,7 @@ div.rk-upload-error > * + * {
 
 .rk-folder-count {
   color: rgb(var(--rk-marca-tinta) / 0.6);
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -15164,15 +15208,15 @@ div.rk-upload-error > * + * {
     width: 30px;
     height: 30px;
     border-radius: 10px;
-    font-size: 0.875rem;
+    font-size: 0.77rem;
   }
 
   .rk-folder-title {
-    font-size: 0.9375rem;
+    font-size: 0.825rem;
   }
 
   .rk-folder-count {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
   }
 
   .rk-folder-back {
@@ -15426,7 +15470,7 @@ div.rk-upload-error > * + * {
   max-width: 24ch;
   overflow: hidden;
   color: rgb(255 255 255 / 0.88);
-  font-size: clamp(0.9375rem, 2.6vw, 1.375rem);
+  font-size: clamp(0.825rem, 2.29vw, 1.21rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.15;
@@ -15439,7 +15483,7 @@ div.rk-upload-error > * + * {
   max-width: 46ch;
   overflow: hidden;
   color: rgb(255 255 255 / 0.6);
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   line-height: 1.5;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -15447,7 +15491,7 @@ div.rk-upload-error > * + * {
 
 .rk-promo-price {
   color: rgb(255 255 255 / 0.65);
-  font-size: 0.8125rem;
+  font-size: 0.715rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }

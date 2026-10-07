@@ -86,6 +86,27 @@ const config: Config = {
         inter: ["var(--font-sora)", "system-ui", "sans-serif"],
       },
 
+      /*
+        La escala de Tailwind, un 12 % más compacta (xs se queda en
+        11px, el mínimo). Cada line-height es el de Tailwind por
+        defecto: solo baja el tamaño de la letra.
+      */
+      fontSize: {
+        xs: ["0.6875rem", { lineHeight: "1rem" }],
+        sm: ["0.77rem", { lineHeight: "1.25rem" }],
+        base: ["0.88rem", { lineHeight: "1.5rem" }],
+        lg: ["0.99rem", { lineHeight: "1.75rem" }],
+        xl: ["1.1rem", { lineHeight: "1.75rem" }],
+        "2xl": ["1.32rem", { lineHeight: "2rem" }],
+        "3xl": ["1.65rem", { lineHeight: "2.25rem" }],
+        "4xl": ["1.98rem", { lineHeight: "2.5rem" }],
+        "5xl": ["2.64rem", { lineHeight: "1" }],
+        "6xl": ["3.3rem", { lineHeight: "1" }],
+        "7xl": ["3.96rem", { lineHeight: "1" }],
+        "8xl": ["5.28rem", { lineHeight: "1" }],
+        "9xl": ["7.04rem", { lineHeight: "1" }],
+      },
+
       colors: {
         background: token("background"),
         surface: token("surface"),
