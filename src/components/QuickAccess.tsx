@@ -7,7 +7,6 @@ import {
   ArrowRight,
   BarChart3,
   ClipboardCheck,
-  Bell,
   CreditCard,
   Download,
   FolderHeart,
@@ -18,23 +17,20 @@ import {
   Package,
   Plus,
   Receipt,
-  ScrollText,
   Settings,
   Shield,
-  ShoppingBag,
   Sparkles,
-  UserRound,
   Users,
   Wallet,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 import type { SessionUser } from "@/components/useSessionUser";
+import { IconoBolsa, IconoCampana, IconoTicket, IconoUsuario } from "@/components/iconos";
 
 type QuickLink = {
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: React.ComponentType<{ size?: number | string; className?: string }>;
   /** Solo en los accesos de cliente, que son los destacados. */
   description?: string;
 };
@@ -53,7 +49,7 @@ const ADMIN_LINKS: QuickLink[] = [
   {
     href: "/admin/usuarios?rol=CREATOR",
     label: "Creadores",
-    icon: UserRound,
+    icon: IconoUsuario,
   },
   { href: "/admin/recursos", label: "Recursos", icon: Package },
   {
@@ -142,7 +138,7 @@ const CLIENT_LINKS: QuickLink[] = [
   {
     href: "/mi-cuenta/licencias",
     label: "Licencias",
-    icon: ScrollText,
+    icon: IconoTicket,
     description: "Qué puedes hacer con lo que compraste",
   },
   {
@@ -154,13 +150,13 @@ const CLIENT_LINKS: QuickLink[] = [
   {
     href: "/notificaciones",
     label: "Notificaciones",
-    icon: Bell,
+    icon: IconoCampana,
     description: "Tu actividad y avisos",
   },
   {
     href: "/mi-cuenta/siguiendo",
     label: "Siguiendo",
-    icon: UserRound,
+    icon: IconoUsuario,
     description: "Creadores a los que sigues",
   },
   {
@@ -172,7 +168,7 @@ const CLIENT_LINKS: QuickLink[] = [
   {
     href: "/carrito",
     label: "Carrito",
-    icon: ShoppingBag,
+    icon: IconoBolsa,
     description: "Revisa lo que tienes pendiente de pagar",
   },
   {
@@ -340,7 +336,7 @@ export default function QuickAccess({
                 className="rk-card rk-card-hover rk-press group flex items-center gap-2.5 !rounded-rk-sm p-3"
               >
                 <span className="rk-icon-tile h-9 w-9">
-                  <UserRound size={16} />
+                  <IconoUsuario size={16} />
                 </span>
 
                 <span className="min-w-0 flex-1">

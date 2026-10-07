@@ -6,9 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useId, useRef, useState } from "react";
 import {
   Heart,
-  Search,
   Shield,
-  ShoppingBag,
   Sparkles,
   X,
 } from "lucide-react";
@@ -25,6 +23,7 @@ import {
   useSugerencias,
   useTecladoSugerencias,
 } from "@/components/sugerencias";
+import { IconoBolsa, IconoBuscar } from "@/components/iconos";
 
 function SearchField({
   className,
@@ -104,7 +103,7 @@ function SearchField({
           desaparecía. Ahora el borde y el fondo viven fuera.
         */}
         <div className="rk-buscador rk-buscador-compacto">
-          <Search
+          <IconoBuscar
             size={16}
             className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink/45"
           />
@@ -338,7 +337,7 @@ function NavbarContent() {
                   onClick={irAlBuscadorDeLaTienda}
                   className="rk-press inline-flex h-11 items-center gap-2 rounded-full border border-line/10 bg-surface/60 px-4 text-sm text-ink/60 backdrop-blur-xl transition-colors hover:border-ink/30 hover:text-ink"
                 >
-                  <Search size={15} aria-hidden />
+                  <IconoBuscar size={15} aria-hidden />
                   Buscar en la tienda
                 </button>
               ) : (
@@ -364,7 +363,7 @@ function NavbarContent() {
                 {mobileSearchOpen && !enLaTienda ? (
                   <X size={18} />
                 ) : (
-                  <Search size={18} />
+                  <IconoBuscar size={18} />
                 )}
               </button>
 
@@ -382,7 +381,7 @@ function NavbarContent() {
                 badge={cartCount}
                 className="hidden sm:flex"
               >
-                <ShoppingBag size={18} />
+                <IconoBolsa size={18} />
               </IconAction>
 
               {/* TEMA: claro / oscuro / sistema */}

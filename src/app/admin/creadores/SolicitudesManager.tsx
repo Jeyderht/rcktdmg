@@ -6,7 +6,6 @@ import {
   Check,
   ExternalLink,
   FileDown,
-  Inbox,
   Loader2,
   X,
 } from "lucide-react";
@@ -18,6 +17,7 @@ import {
   type EstadoSolicitud,
   type SolicitudVista,
 } from "@/lib/solicitudes-comun";
+import { IconoBandeja } from "@/components/iconos";
 
 type Recuento = {
   pendientes: number;
@@ -182,7 +182,7 @@ export default function SolicitudesManager() {
       ) : solicitudes.length === 0 ? (
         <div className="mt-8">
           <EmptyState
-            icon={Inbox}
+            icon={IconoBandeja}
             title="No hay solicitudes"
             description="Cuando alguien pida ser creador, aparecerá aquí."
           />

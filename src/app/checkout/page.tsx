@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Check, Lock, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Check, Lock } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
 import { claseProporcion } from "@/lib/tipos-publicacion";
@@ -11,6 +11,7 @@ import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
 } from "@/components/useCartCount";
+import { IconoBolsaCompra } from "@/components/iconos";
 
 type CartItem = {
   id: string;
@@ -279,7 +280,7 @@ export default function CheckoutPage() {
         <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-8 sm:px-5 lg:pt-12">
           <div className="rk-empty">
             <span aria-hidden className="rk-empty-icon">
-              <ShoppingBag />
+              <IconoBolsaCompra />
             </span>
 
             {/*

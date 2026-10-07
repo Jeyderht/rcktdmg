@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ImagePlus, Loader2, Trash2 } from "lucide-react";
+import { ImagePlus, Loader2 } from "lucide-react";
+import { IconoBasura } from "@/components/iconos";
 
 /**
  * Subida de portada, con vista previa.
@@ -108,7 +109,7 @@ export default function SubirPortada({
               aria-label="Quitar portada"
               className="rk-icon-button-danger"
             >
-              <Trash2 size={15} aria-hidden />
+              <IconoBasura size={15} aria-hidden />
             </button>
           </div>
         </div>

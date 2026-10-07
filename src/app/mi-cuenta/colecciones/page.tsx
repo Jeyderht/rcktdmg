@@ -9,7 +9,6 @@ import {
   FolderHeart,
   Pencil,
   Plus,
-  Trash2,
   X,
 } from "lucide-react";
 
@@ -17,6 +16,7 @@ import AccountPageHeader from "@/components/AccountPageHeader";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
+import { IconoBasura } from "@/components/iconos";
 
 type Product = {
   id: string;
@@ -446,7 +446,7 @@ export default function ColeccionesPage() {
                           title="Eliminar colección"
                           className="rk-press flex h-9 w-9 items-center justify-center rounded-full text-ink/60 transition-colors duration-fast ease-rk hover:bg-danger/10 hover:text-danger disabled:opacity-50"
                         >
-                          <Trash2 size={15} />
+                          <IconoBasura size={15} />
                         </button>
                       </div>
                     </div>

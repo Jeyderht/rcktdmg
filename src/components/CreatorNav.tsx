@@ -8,11 +8,11 @@ import {
   Layers,
   Package,
   Plus,
-  UserRound,
   Users,
   Wallet,
   Library,
 } from "lucide-react";
+import { IconoUsuario } from "@/components/iconos";
 
 /**
  * Navegación del Creator Studio.
@@ -66,7 +66,7 @@ const SECTIONS = [
   {
     href: "/creadores/panel/perfil",
     label: "Perfil",
-    icon: UserRound,
+    icon: IconoUsuario,
   },
 ] as const;
 

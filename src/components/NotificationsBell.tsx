@@ -3,13 +3,11 @@
 import Link from "next/link";
 import {
   AlertTriangle,
-  Bell,
   BellOff,
   Check,
   CheckCircle2,
   X,
   XCircle,
-  type LucideIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -20,6 +18,7 @@ import {
   type NotificacionVista,
   type TonoNotificacion,
 } from "@/lib/notificaciones-comun";
+import { IconoCampana } from "@/components/iconos";
 
 /**
  * Centro de notificaciones.
@@ -34,8 +33,8 @@ import {
  */
 
 /* Icono de cada tono; el color lo pone rk-notif-item[data-tone]. */
-const ICONO_TONO: Record<TonoNotificacion, LucideIcon> = {
-  neutral: Bell,
+const ICONO_TONO: Record<TonoNotificacion, React.ComponentType<{ size?: number | string; className?: string }>> = {
+  neutral: IconoCampana,
   success: CheckCircle2,
   warning: AlertTriangle,
   danger: XCircle,
@@ -405,7 +404,7 @@ export default function NotificationsBell() {
         title="Notificaciones"
         className="rk-topbar-btn"
       >
-        <Bell aria-hidden />
+        <IconoCampana aria-hidden />
 
         {noLeidas > 0 && (
           <span className="rk-notif-count">

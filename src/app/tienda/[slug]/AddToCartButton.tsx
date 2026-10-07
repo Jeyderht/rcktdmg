@@ -1,12 +1,13 @@
 "use client";
 
-import { Check, ShoppingBag } from "lucide-react";
+import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
 } from "@/components/useCartCount";
+import { IconoBolsaCompra } from "@/components/iconos";
 
 type Props = {
   product: {
@@ -87,7 +88,7 @@ export default function AddToCartButton({ product }: Props) {
         </>
       ) : (
         <>
-          <ShoppingBag size={17} />
+          <IconoBolsaCompra size={17} />
           Agregar al carrito
         </>
       )}

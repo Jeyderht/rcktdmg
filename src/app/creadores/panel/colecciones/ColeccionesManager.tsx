@@ -14,9 +14,7 @@ import {
   Library,
   Loader2,
   Plus,
-  Search,
   Send,
-  Trash2,
   X,
 } from "lucide-react";
 
@@ -36,6 +34,7 @@ import {
   type ColeccionVista,
   type EstadoColeccion,
 } from "@/lib/colecciones-comerciales-comun";
+import { IconoBasura, IconoBuscar } from "@/components/iconos";
 
 type Recurso = {
   id: string;
@@ -560,7 +559,7 @@ export default function ColeccionesManager() {
             {/* ── BUSCADOR Y FILTRO ── */}
             <div className="mt-5 flex flex-wrap gap-2">
               <div className="relative min-w-[12rem] flex-1">
-                <Search
+                <IconoBuscar
                   size={14}
                   aria-hidden
                   className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink/40"
@@ -848,7 +847,7 @@ export default function ColeccionesManager() {
                   aria-label="Eliminar colección"
                   className="rk-icon-button-danger"
                 >
-                  <Trash2 size={15} aria-hidden />
+                  <IconoBasura size={15} aria-hidden />
                 </button>
               </div>
             </li>

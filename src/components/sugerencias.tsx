@@ -7,8 +7,8 @@ import {
   Folder,
   Tag as TagIcon,
   TrendingUp,
-  User,
 } from "lucide-react";
+import { IconoUsuario } from "@/components/iconos";
 
 /**
  * Sugerencias de búsqueda: datos y presentación.
@@ -38,7 +38,7 @@ const ICONOS = {
   recurso: FileText,
   categoria: Folder,
   etiqueta: TagIcon,
-  creador: User,
+  creador: IconoUsuario,
 } as const;
 
 const ROTULOS = {

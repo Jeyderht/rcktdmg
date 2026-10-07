@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ShoppingBag } from "lucide-react";
+import { Check } from "lucide-react";
 
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
 } from "@/components/useCartCount";
+import { IconoBolsaCompra } from "@/components/iconos";
 
 /**
  * Añade una colección comercial al carrito.
@@ -84,7 +85,7 @@ export default function AnadirColeccionAlCarrito({
         </>
       ) : (
         <>
-          <ShoppingBag size={16} aria-hidden />
+          <IconoBolsaCompra size={16} aria-hidden />
           Añadir la colección
         </>
       )}

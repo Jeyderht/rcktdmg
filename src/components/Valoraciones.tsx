@@ -7,7 +7,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
-  Trash2,
 } from "lucide-react";
 
 import {
@@ -17,6 +16,7 @@ import {
   type ResenaVista,
   type ResumenValoracion,
 } from "@/lib/resenas-comun";
+import { IconoBasura } from "@/components/iconos";
 
 /**
  * Valoraciones de un recurso.
@@ -424,7 +424,7 @@ export default function Valoraciones({
                 aria-label="Eliminar mi valoración"
                 className="rk-icon-button-danger"
               >
-                <Trash2 aria-hidden />
+                <IconoBasura aria-hidden />
               </button>
             </div>
           </div>

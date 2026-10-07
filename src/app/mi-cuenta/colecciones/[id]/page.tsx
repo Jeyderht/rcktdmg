@@ -4,11 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { FolderOpen, Globe, Lock, Trash2 } from "lucide-react";
+import { FolderOpen, Globe, Lock } from "lucide-react";
 
 import AccountPageHeader from "@/components/AccountPageHeader";
 import EmptyState from "@/components/EmptyState";
 import { claseProporcion } from "@/lib/tipos-publicacion";
+import { IconoBasura } from "@/components/iconos";
 
 type Product = {
     id: string;
@@ -399,7 +400,7 @@ export default function CollectionDetailPage() {
                                             title="Quitar de la colección"
                                             className="rk-press flex h-9 w-9 items-center justify-center rounded-full text-ink/60 transition-colors duration-fast ease-rk hover:bg-danger/10 hover:text-danger disabled:opacity-50"
                                         >
-                                            <Trash2 size={15} />
+                                            <IconoBasura size={15} />
                                         </button>
                                     </div>
                                 </div>

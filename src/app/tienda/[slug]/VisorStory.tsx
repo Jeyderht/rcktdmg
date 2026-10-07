@@ -11,7 +11,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
-  ShoppingBag,
   X,
 } from "lucide-react";
 
@@ -23,6 +22,7 @@ import {
   useEsFavorito,
 } from "@/components/favoritos-store";
 import { anadirAlCarrito } from "@/components/useCartCount";
+import { IconoBolsaCompra } from "@/components/iconos";
 
 /** Cuánto dura cada imagen antes de pasar sola. */
 const DURACION = 4500;
@@ -437,7 +437,7 @@ function BotonCarrito({
       {anadido ? (
         <Check size={18} aria-hidden />
       ) : (
-        <ShoppingBag size={18} aria-hidden />
+        <IconoBolsaCompra size={18} aria-hidden />
       )}
     </button>
   );

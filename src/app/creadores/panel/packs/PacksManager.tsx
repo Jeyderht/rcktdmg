@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { Layers, Pencil, Plus, Trash2 } from "lucide-react";
+import { Layers, Pencil, Plus } from "lucide-react";
 
 import { formatPrice } from "@/lib/pricing";
 import {
@@ -11,6 +11,7 @@ import {
   LARGO_NOMBRE_PACK,
   type PackVista,
 } from "@/lib/packs-comun";
+import { IconoBasura } from "@/components/iconos";
 
 type ProductoPropio = {
   id: string;
@@ -540,7 +541,7 @@ export default function PacksManager() {
                     aria-label={`Eliminar ${pack.name}`}
                     className="rk-press flex h-11 w-11 items-center justify-center rounded-rk-sm text-ink/60 hover:bg-danger/10 hover:text-danger"
                   >
-                    <Trash2 size={15} aria-hidden />
+                    <IconoBasura size={15} aria-hidden />
                   </button>
                 </div>
               </div>
