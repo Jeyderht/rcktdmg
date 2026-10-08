@@ -15819,3 +15819,746 @@ div.rk-upload-error > * + * {
   }
   .rk-sp-slide { transform: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   rk-adm · Dashboard del panel admin (admin/page.tsx)
+
+   Bento de tres columnas en escritorio: «Ingresos» con el orbe de
+   marca, comisión + dona de pedidos/recursos, y «Mi plataforma» con
+   la tarjeta de marca, creadores destacados y últimas ventas. En
+   móvil todo va en una columna. Sin sombras fuertes: vidrio claro,
+   bordes finos y los colores de marca.
+   ═══════════════════════════════════════════════════════════════════ */
+.rk-adm-cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.rk-adm-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.rk-adm-circulo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--rk-foreground) / 0.08);
+  background: rgb(255 255 255 / 0.7);
+  color: rgb(var(--rk-foreground));
+}
+
+.rk-adm-circulo.is-chico {
+  width: 32px;
+  height: 32px;
+}
+
+.rk-adm-aviso {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  display: grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #e5484d;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.rk-adm-pildora {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--rk-foreground) / 0.08);
+  background: rgb(255 255 255 / 0.7);
+  color: rgb(var(--rk-foreground));
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rk-adm-pildora.is-negra {
+  border-color: #15161b;
+  background: #15161b;
+  color: #f4f2f1;
+}
+
+.rk-adm-pildora.is-linea {
+  width: 100%;
+  background: transparent;
+}
+
+[data-theme="dark"] .rk-adm-circulo,
+[data-theme="dark"] .rk-adm-pildora:not(.is-negra) {
+  border-color: rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.05);
+}
+
+[data-theme="dark"] .rk-adm-pildora.is-negra {
+  border-color: #f4f2f1;
+  background: #f4f2f1;
+  color: #15161b;
+}
+
+.rk-adm-bento {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+@media (min-width: 1024px) {
+  .rk-adm-bento {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .rk-adm-bento {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 0.95fr);
+  }
+}
+
+.rk-adm-col {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rk-adm-card-titulo {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.rk-adm-mini-etiqueta {
+  font-size: 11px;
+  color: rgb(var(--rk-foreground) / 0.55);
+}
+
+.rk-adm-vacio {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 13px;
+  color: rgb(var(--rk-foreground) / 0.55);
+}
+
+/* ── Ingresos: orbe, pestañas y vidrio con barras ─────────────────── */
+.rk-adm-balance {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 20px;
+  border-radius: 28px;
+}
+
+.rk-adm-orbe {
+  position: relative;
+  height: 170px;
+  margin: 0 -20px -40px;
+  pointer-events: none;
+  perspective: 600px;
+}
+
+/* resplandor de marca detrás del anillo */
+.rk-adm-orbe::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  width: 260px;
+  height: 150px;
+  margin-left: -130px;
+  border-radius: 999px;
+  background:
+    radial-gradient(closest-side at 35% 50%, rgb(157 151 255 / 0.55), transparent),
+    radial-gradient(closest-side at 70% 55%, rgb(240 169 138 / 0.55), transparent);
+  filter: blur(18px);
+}
+
+.rk-adm-orbe-anillo {
+  position: absolute;
+  left: 50%;
+  top: -20px;
+  width: 230px;
+  height: 230px;
+  margin-left: -115px;
+  border-radius: 999px;
+  background: conic-gradient(
+    from 30deg,
+    #8e8ad8,
+    #f4f2f1,
+    #f8d6c6,
+    #f0a98a,
+    #c9a2c9,
+    #9d97ff,
+    #fff,
+    #8e8ad8
+  );
+  -webkit-mask: radial-gradient(circle, transparent 30%, #000 33%, #000 64%, transparent 67%);
+          mask: radial-gradient(circle, transparent 30%, #000 33%, #000 64%, transparent 67%);
+  transform: rotateX(64deg) rotateZ(-12deg);
+  animation: rk-adm-gira 16s linear infinite;
+}
+
+/* brillo de vidrio sobre el anillo */
+.rk-adm-orbe-brillo {
+  position: absolute;
+  left: 50%;
+  top: 48px;
+  width: 190px;
+  height: 70px;
+  margin-left: -95px;
+  border-radius: 999px;
+  background:
+    radial-gradient(closest-side at 30% 40%, rgb(255 255 255 / 0.95), transparent 70%),
+    radial-gradient(closest-side at 72% 60%, rgb(255 255 255 / 0.6), transparent 70%);
+  filter: blur(6px);
+  mix-blend-mode: soft-light;
+}
+
+@keyframes rk-adm-gira {
+  to { transform: rotateX(64deg) rotateZ(348deg); }
+}
+
+.rk-adm-pestanas {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 4px;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.7);
+  background: rgb(255 255 255 / 0.5);
+  -webkit-backdrop-filter: blur(14px);
+          backdrop-filter: blur(14px);
+}
+
+.rk-adm-pestana {
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 999px;
+  color: rgb(21 22 27 / 0.75);
+  font-size: 12px;
+  font-weight: 500;
+  transition: background-color 0.25s ease;
+}
+
+.rk-adm-pestana[aria-selected="true"] {
+  background: #fff;
+  color: #15161b;
+  box-shadow: 0 1px 3px rgb(21 22 27 / 0.12);
+}
+
+.rk-adm-vidrio {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgb(255 255 255 / 0.7);
+  background: rgb(255 255 255 / 0.55);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+          backdrop-filter: blur(22px) saturate(1.3);
+}
+
+[data-theme="dark"] .rk-adm-vidrio,
+[data-theme="dark"] .rk-adm-pestanas {
+  border-color: rgb(255 255 255 / 0.1);
+  background: rgb(255 255 255 / 0.06);
+}
+
+[data-theme="dark"] .rk-adm-pestana {
+  color: rgb(255 255 255 / 0.7);
+}
+
+[data-theme="dark"] .rk-adm-pestana[aria-selected="true"] {
+  color: #15161b;
+}
+
+.rk-adm-cifra {
+  margin-top: 2px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-adm-dos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.rk-adm-dos dt {
+  font-size: 11px;
+  color: rgb(var(--rk-foreground) / 0.55);
+}
+
+.rk-adm-dos dd {
+  margin: 2px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-adm-barras {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+  min-height: 150px;
+  margin-top: 18px;
+  padding-top: 8px;
+  background: repeating-linear-gradient(
+    to top,
+    transparent 0 49px,
+    rgb(var(--rk-foreground) / 0.08) 49px 50px
+  );
+}
+
+.rk-adm-barras-mes {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.rk-adm-barras-grupo {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+}
+
+.rk-adm-barra {
+  display: block;
+  width: 9px;
+  border-radius: 999px 999px 3px 3px;
+  transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rk-adm-barra.is-bruto {
+  background: linear-gradient(180deg, #8e8ad8, #b7b3f0);
+}
+
+.rk-adm-barra.is-comision {
+  background: linear-gradient(180deg, #f0a98a, #f8d6c6);
+}
+
+.rk-adm-barra.is-creadores {
+  background: linear-gradient(180deg, #c9a2c9, #e6d3e6);
+}
+
+.rk-adm-barras-label {
+  font-size: 10px;
+  text-transform: capitalize;
+  color: rgb(var(--rk-foreground) / 0.5);
+}
+
+.rk-adm-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 14px;
+  font-size: 11px;
+  color: rgb(var(--rk-foreground) / 0.65);
+}
+
+.rk-adm-leyenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rk-adm-leyenda .rk-adm-barra {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+/* ── Comisión: cifras y barra con rayado ──────────────────────────── */
+.rk-adm-meta {
+  padding: 18px 20px 20px;
+  border-radius: 24px;
+}
+
+.rk-adm-meta-cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rk-adm-meta-cifras {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.rk-adm-meta-valor {
+  margin-top: 2px;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-adm-meta-valor span {
+  font-weight: 500;
+  color: rgb(var(--rk-foreground) / 0.5);
+}
+
+.rk-adm-progreso {
+  height: 12px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgb(var(--rk-foreground) / 0.07) 0 4px,
+    transparent 4px 8px
+  );
+  box-shadow: inset 0 0 0 1px rgb(var(--rk-foreground) / 0.06);
+}
+
+.rk-adm-progreso span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #b7b3f0, #c9a2c9 55%, #f0a98a);
+}
+
+/* ── Dona con pestañas tipo carpeta ───────────────────────────────── */
+.rk-adm-carpeta {
+  display: flex;
+  align-items: flex-end;
+}
+
+.rk-adm-carpeta-pestana {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 18px 18px 0 0;
+  color: rgb(var(--rk-foreground) / 0.5);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.rk-adm-carpeta-pestana[aria-selected="true"] {
+  background: rgb(255 255 255 / 0.75);
+  color: rgb(var(--rk-foreground));
+}
+
+[data-theme="dark"] .rk-adm-carpeta-pestana[aria-selected="true"] {
+  background: rgb(255 255 255 / 0.06);
+}
+
+.rk-adm-carpeta-num {
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: rgb(var(--rk-foreground) / 0.07);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.rk-adm-dona-cuerpo {
+  padding: 20px;
+  border-radius: 0 24px 24px 24px;
+}
+
+.rk-adm-dona-fila {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.rk-adm-dona-grafico {
+  position: relative;
+  flex: none;
+  width: 136px;
+  height: 136px;
+}
+
+.rk-adm-dona-grafico svg {
+  width: 100%;
+  height: 100%;
+}
+
+.rk-adm-dona-fondo {
+  fill: none;
+  stroke: rgb(var(--rk-foreground) / 0.06);
+  stroke-width: 18;
+}
+
+.rk-adm-dona-centro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.rk-adm-dona-centro span {
+  font-size: 11px;
+  color: rgb(var(--rk-foreground) / 0.55);
+}
+
+.rk-adm-dona-centro b {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.rk-adm-dona-leyenda {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.rk-adm-dona-leyenda li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rk-adm-dona-leyenda i {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 999px;
+}
+
+.rk-adm-dona-leyenda span {
+  flex: 1;
+  color: rgb(var(--rk-foreground) / 0.7);
+}
+
+.rk-adm-dona-leyenda b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Mi plataforma: tarjeta de marca apilada ──────────────────────── */
+.rk-adm-cuenta-cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rk-adm-tarjeta-pila {
+  position: relative;
+  padding-top: 12px;
+}
+
+.rk-adm-tarjeta-atras {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 6px;
+  height: 40px;
+  border-radius: 18px;
+  background: linear-gradient(90deg, #c8c9d6, #c9a2c9, #f0a98a);
+  opacity: 0.55;
+}
+
+.rk-adm-tarjeta-atras.is-2 {
+  left: 4%;
+  right: 4%;
+  top: 0;
+  opacity: 0.3;
+}
+
+.rk-adm-tarjeta {
+  position: relative;
+  display: flex;
+  aspect-ratio: 1.62;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 20px;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgb(255 255 255 / 0.6);
+  background:
+    radial-gradient(70% 90% at 100% 0%, rgb(255 255 255 / 0.55), transparent 60%),
+    linear-gradient(135deg, #f8d6c6 0%, #e9c9dc 35%, #c9c3f0 70%, #b7b3f0 100%);
+  color: #15161b;
+}
+
+.rk-adm-tarjeta-arriba {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rk-adm-tarjeta-iso {
+  width: 26px;
+  height: 26px;
+  color: #15161b;
+}
+
+.rk-adm-tarjeta-marca {
+  font-size: 20px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.rk-adm-tarjeta-etiqueta {
+  font-size: 11px;
+  color: rgb(21 22 27 / 0.6);
+}
+
+.rk-adm-tarjeta-valor {
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-adm-tarjeta-abajo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+/* ── Creadores destacados y últimas ventas ────────────────────────── */
+.rk-adm-rapidos {
+  padding: 16px 18px;
+  border-radius: 22px;
+}
+
+.rk-adm-rapidos-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.rk-adm-avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #15161b;
+}
+
+.rk-adm-avatar.is-mas {
+  border: 1px solid rgb(var(--rk-foreground) / 0.15);
+  color: rgb(var(--rk-foreground) / 0.6);
+}
+
+.rk-adm-avatar.is-tono-0 { background: #d9d6f7; }
+.rk-adm-avatar.is-tono-1 { background: #f6d9cc; }
+.rk-adm-avatar.is-tono-2 { background: #ead7ea; }
+.rk-adm-avatar.is-tono-3 { background: #e3e4ec; }
+
+.rk-adm-ventas ul {
+  margin-top: 10px;
+}
+
+.rk-adm-ventas a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 2px;
+}
+
+.rk-adm-venta-icono {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #15161b;
+  color: #f4f2f1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .rk-adm-venta-icono {
+  background: #f4f2f1;
+  color: #15161b;
+}
+
+.rk-adm-venta-nombre {
+  display: block;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rk-adm-venta-sub {
+  display: block;
+  overflow: hidden;
+  font-size: 11px;
+  color: rgb(var(--rk-foreground) / 0.5);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rk-adm-venta-monto {
+  flex: none;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 420px) {
+  .rk-adm-dona-fila {
+    gap: 14px;
+  }
+
+  .rk-adm-dona-grafico {
+    width: 118px;
+    height: 118px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-adm-orbe-anillo {
+    animation: none;
+  }
+}
