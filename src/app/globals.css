@@ -15474,3 +15474,15 @@ div.rk-upload-error > * + * {
     font-size: 12px;
   }
 }
+
+/* Separador bajo la barra superior (inicio): mismo dibujo que el del
+   pie, con menos aire arriba y algo de aire abajo antes del slider. */
+.rk-separador.rk-separador-arriba {
+  margin: 14px auto 18px;
+}
+
+@media (min-width: 1024px) {
+  .rk-separador.rk-separador-arriba {
+    margin: 20px auto 28px;
+  }
+}

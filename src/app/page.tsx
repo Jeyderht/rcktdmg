@@ -275,6 +275,14 @@ export default async function Home() {
 
       <main>
 
+        {/*
+          Separador entre la barra superior y el slider: la línea
+          con nodos del separador del pie, sin el isotipo.
+        */}
+        <div aria-hidden className="rk-separador rk-separador-arriba">
+          <span className="rk-separador-linea" />
+        </div>
+
         {/* ══════════ SLIDER DE PORTADAS ══════════ */}
         {promos.length > 0 && <SliderPortadas portadas={promos} />}
 
