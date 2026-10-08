@@ -209,10 +209,11 @@ function IconAction({
 }
 
 /**
- * Píldora de rol: «Creador · Admin». La opción elegida va en blanco
- * con su borde; la otra queda sobre la píldora oscura.
- * Fuera de los paneles (inicio, tienda…) un admin ve «Admin»
- * elegida por defecto; dentro, manda la sección en la que está.
+ * Píldora de rol: «Creador · Admin».
+ * Fuera de los paneles (inicio, tienda…) queda apagada: píldora
+ * gris con los textos en gris. Dentro de un panel se enciende como
+ * un interruptor: la píldora pasa a negro y la sección en la que
+ * estás va en blanco, como la perilla.
  * Un creador solo ve «Creador».
  */
 function RolSwitch({
@@ -224,15 +225,19 @@ function RolSwitch({
   enAdmin: boolean;
   enStudio: boolean;
 }) {
-  const adminElegido = esAdmin && !enStudio;
-  const creadorElegido = enStudio || !esAdmin;
+  const adminElegido = esAdmin && enAdmin;
+  const encendido = enStudio || adminElegido;
 
   return (
-    <nav aria-label="Paneles" className="rk-rol">
+    <nav
+      aria-label="Paneles"
+      className="rk-rol"
+      data-encendido={encendido || undefined}
+    >
       <Link
         href="/creadores/panel"
         aria-current={enStudio ? "page" : undefined}
-        data-elegido={creadorElegido || undefined}
+        data-elegido={enStudio || undefined}
         className="rk-rol-opcion"
       >
         Creador
@@ -240,7 +245,7 @@ function RolSwitch({
       {esAdmin && (
         <Link
           href="/admin"
-          aria-current={enAdmin ? "page" : undefined}
+          aria-current={adminElegido ? "page" : undefined}
           data-elegido={adminElegido || undefined}
           className="rk-rol-opcion"
         >
