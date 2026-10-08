@@ -36,7 +36,7 @@ export default function MasDisenos({
       unidad: ["colección", "colecciones"],
     },
     {
-      titulo: "Corporativos",
+      titulo: "General",
       texto: "Piezas para comunicar con una marca detrás.",
       href: "/tienda?categoria=corporativos",
       icono: Briefcase,

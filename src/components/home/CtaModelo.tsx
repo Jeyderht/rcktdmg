@@ -83,7 +83,7 @@ export default function CtaModelo() {
               </b>
               <span className="mt-2 flex gap-1.5">
                 <span className="rk-chip">Eventos</span>
-                <span className="rk-chip">Corporativos</span>
+                <span className="rk-chip">General</span>
               </span>
             </span>
           </div>
