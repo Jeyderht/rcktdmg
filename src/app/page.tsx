@@ -97,7 +97,6 @@ export default async function Home() {
   const [
     products,
     categories,
-    creators,
     productCount,
     portadas,
     flyers,
@@ -140,31 +139,6 @@ export default async function Home() {
               take: 1,
               select: { url: true },
             },
-          },
-        },
-      },
-    }),
-
-    prisma.user.findMany({
-      where: {
-        role: { in: ["CREATOR", "ADMIN"] },
-        creatorStatus: "APPROVED",
-        username: { not: null },
-        products: { some: { status: "PUBLISHED" } },
-      },
-      orderBy: [{ isVerified: "desc" }, { createdAt: "asc" }],
-      take: 4,
-      select: {
-        id: true,
-        name: true,
-        publicName: true,
-        username: true,
-        avatarUrl: true,
-        bio: true,
-        isVerified: true,
-        _count: {
-          select: {
-            products: { where: { status: "PUBLISHED" } },
           },
         },
       },
@@ -293,40 +267,6 @@ export default async function Home() {
         {/* ══════════ SLIDER DE PORTADAS ══════════ */}
         {promos.length > 0 && <SliderPortadas portadas={promos} />}
 
-        {/* ══════════ CATEGORÍAS (debajo del slider) ══════════ */}
-        {categories.length > 0 && (
-          <section className="rk-home-categorias">
-            <div className="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-8">
-              <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
-                <div>
-                  <p className="rk-kicker">Explora</p>
-
-                  <h2 className="rk-title mt-2 text-2xl sm:text-3xl">
-                    Categorías
-                  </h2>
-                </div>
-
-                <Link
-                  href="/categorias"
-                  className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
-                >
-                  Ver todas
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform duration-normal ease-rk group-hover:translate-x-0.5"
-                  />
-                </Link>
-              </div>
-
-              <CarpetasCategorias
-                categorias={aCarpetas(categoriasInicio, programasInicio)}
-                nivelTitulo="h3"
-                className="rk-fade-up rk-enter-1 mt-6 sm:mt-8"
-              />
-            </div>
-          </section>
-        )}
-
         {/* ══════════ HERO ══════════ */}
         <section className="relative overflow-hidden">
           <div className="mx-auto w-full max-w-7xl px-4 pb-16 pt-12 sm:px-5 lg:px-8 lg:pb-24 lg:pt-20">
@@ -437,48 +377,6 @@ export default async function Home() {
                     Ver creadores
                   </Link>
                 </div>
-
-                {/*
-                  Cifras reales del catálogo. Son conteos de la
-                  base de datos, no estimaciones.
-                */}
-                <dl className="mt-12 flex flex-wrap gap-x-10 gap-y-5">
-                  {[
-                    {
-                      valor: productCount,
-                      etiqueta:
-                        productCount === 1 ? "recurso" : "recursos",
-                    },
-                    {
-                      valor: categories.length,
-                      etiqueta:
-                        categories.length === 1
-                          ? "categoría"
-                          : "categorías",
-                    },
-                    {
-                      valor: creators.length,
-                      etiqueta:
-                        creators.length === 1
-                          ? "creador"
-                          : "creadores",
-                    },
-                  ].map((dato) => (
-                    <div key={dato.etiqueta}>
-                      <dt className="sr-only">{dato.etiqueta}</dt>
-
-                      <dd>
-                        <span className="rk-title block text-3xl tabular-nums sm:text-4xl">
-                          {dato.valor}
-                        </span>
-
-                        <span className="mt-1.5 block text-[11px] uppercase tracking-[0.18em] text-ink/45">
-                          {dato.etiqueta}
-                        </span>
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
               </div>
 
               {/*
@@ -517,6 +415,40 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
+        {/* ══════════ CATEGORÍAS (debajo del hero) ══════════ */}
+        {categories.length > 0 && (
+          <section className="rk-home-categorias">
+            <div className="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-8">
+              <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="rk-kicker">Explora</p>
+
+                  <h2 className="rk-title mt-2 text-2xl sm:text-3xl">
+                    Categorías
+                  </h2>
+                </div>
+
+                <Link
+                  href="/categorias"
+                  className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
+                >
+                  Ver todas
+                  <ArrowRight
+                    size={16}
+                    className="transition-transform duration-normal ease-rk group-hover:translate-x-0.5"
+                  />
+                </Link>
+              </div>
+
+              <CarpetasCategorias
+                categorias={aCarpetas(categoriasInicio, programasInicio)}
+                nivelTitulo="h3"
+                className="rk-fade-up rk-enter-1 mt-6 sm:mt-8"
+              />
+            </div>
+          </section>
+        )}
 
         {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */}
         <SelectorBusqueda />
