@@ -5,8 +5,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useId, useRef, useState } from "react";
 import {
   Heart,
-  Shield,
-  Sparkles,
   X,
 } from "lucide-react";
 
@@ -210,6 +208,42 @@ function IconAction({
   );
 }
 
+/**
+ * Píldora de rol: «Admin · Studio». La sección en la que estás
+ * va en blanco con su borde; la otra queda sobre la píldora oscura.
+ * Un creador solo ve «Studio».
+ */
+function RolSwitch({
+  esAdmin,
+  enAdmin,
+  enStudio,
+}: {
+  esAdmin: boolean;
+  enAdmin: boolean;
+  enStudio: boolean;
+}) {
+  return (
+    <nav aria-label="Paneles" className="rk-rol">
+      {esAdmin && (
+        <Link
+          href="/admin"
+          aria-current={enAdmin ? "page" : undefined}
+          className="rk-rol-opcion"
+        >
+          Admin
+        </Link>
+      )}
+      <Link
+        href="/creadores/panel"
+        aria-current={enStudio ? "page" : undefined}
+        className="rk-rol-opcion"
+      >
+        Studio
+      </Link>
+    </nav>
+  );
+}
+
 function NavbarContent() {
   const pathname = usePathname();
 
@@ -386,26 +420,6 @@ function NavbarContent() {
                 CREATOR: [Creator Studio] [Notificaciones] [Cuenta]
                 CLIENT:  [Notificaciones] [Cuenta]
               */}
-              {user?.role === "ADMIN" && (
-                <Link
-                  href="/admin"
-                  className="rk-btn rk-btn-line hidden !px-3.5 !text-[13px] xl:inline-flex"
-                >
-                  <Shield size={14} />
-                  Mi panel
-                </Link>
-              )}
-
-              {(user?.role === "CREATOR" || user?.role === "ADMIN") && (
-                <Link
-                  href="/creadores/panel"
-                  className="rk-btn rk-btn-line hidden !px-3.5 !text-[13px] xl:inline-flex"
-                >
-                  <Sparkles size={14} />
-                  Creator Studio
-                </Link>
-              )}
-
               {loading ? (
                 <div
                   aria-hidden
@@ -413,26 +427,18 @@ function NavbarContent() {
                 />
               ) : user ? (
                 <>
-                  {/* En móvil y tablet el rol se resuelve por icono. */}
-                  {user.role === "ADMIN" && (
-                    <IconAction
-                      href="/admin"
-                      label="Mi panel"
-                      className="flex xl:hidden"
-                    >
-                      <Shield size={18} />
-                    </IconAction>
-                  )}
-
+                  {/*
+                    Interruptor de rol: Admin / Studio en una sola
+                    píldora, el activo en blanco. Mismo en todos los
+                    tamaños.
+                  */}
                   {(user.role === "CREATOR" ||
                     user.role === "ADMIN") && (
-                    <IconAction
-                      href="/creadores/panel"
-                      label="Creator Studio"
-                      className="flex xl:hidden"
-                    >
-                      <Sparkles size={18} />
-                    </IconAction>
+                    <RolSwitch
+                      esAdmin={user.role === "ADMIN"}
+                      enAdmin={isActive("/admin")}
+                      enStudio={isActive("/creadores")}
+                    />
                   )}
 
                   <NotificationsBell />

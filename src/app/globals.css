@@ -15394,3 +15394,83 @@ div.rk-upload-error > * + * {
   .rk-hc-marco { display: none; }
   .rk-hc-switch i { transform: translateX(0.58em); }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   rk-rol · Interruptor de rol en la barra superior (Navbar)
+
+   «Admin · Studio» en una píldora oscura; la sección activa va
+   en una píldora blanca con borde oscuro, como un interruptor de dos
+   posiciones. En oscuro se invierte: píldora clara, activa oscura.
+   ═══════════════════════════════════════════════════════════════════ */
+.rk-rol {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  height: 44px;
+  padding: 3px;
+  border-radius: 999px;
+  background: #15161b;
+  font-family: var(--font-sora), system-ui, sans-serif;
+}
+
+.rk-rol-opcion {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 9px 0 11px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  color: #f4f2f1;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition:
+    background-color var(--rx-t-hover, 0.2s) ease,
+    color var(--rx-t-hover, 0.2s) ease;
+}
+
+.rk-rol-opcion[aria-current="page"] {
+  background: #f4f2f1;
+  color: #15161b;
+  border-color: #15161b;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-rol-opcion:not([aria-current="page"]):hover {
+    background: rgb(255 255 255 / 0.1);
+  }
+}
+
+.rk-rol-opcion:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-frio));
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .rk-rol {
+  background: #f4f2f1;
+}
+
+[data-theme="dark"] .rk-rol-opcion {
+  color: #15161b;
+}
+
+[data-theme="dark"] .rk-rol-opcion[aria-current="page"] {
+  background: #15161b;
+  color: #f4f2f1;
+  border-color: #f4f2f1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dark"] .rk-rol-opcion:not([aria-current="page"]):hover {
+    background: rgb(21 22 27 / 0.08);
+  }
+}
+
+/* En pantallas muy estrechas, un poco más compacto */
+@media (max-width: 380px) {
+  .rk-rol-opcion {
+    padding: 0 7px 0 8px;
+    font-size: 12px;
+  }
+}
