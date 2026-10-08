@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
+import VacioCaja from "@/components/VacioCaja";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import {
@@ -187,10 +187,15 @@ export default function Cart() {
                 {cart.length === 0 ? (
                     /* CARRITO VACÍO */
                     <div className="mt-6">
-                        <EmptyState
+                        <VacioCaja
+                            kicker="Carrito"
+                            marca="#0"
+                            estadoTitulo="Tu pedido"
+                            estadoDato="0 recursos"
+                            estadoTexto="Esperando recursos"
                             icon={IconoBolsa}
                             title="Tu carrito está vacío"
-                            description="Agrega un recurso para comenzar."
+                            description="Agrega plantillas desde la tienda y aparecerán aquí, listas para pagar."
                             action={{
                                 href: "/tienda",
                                 label: "Explorar recursos",
