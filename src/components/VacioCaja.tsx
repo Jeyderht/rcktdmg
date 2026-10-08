@@ -88,6 +88,11 @@ export default function VacioCaja({
             <stop offset=".5" stopColor="#fff" stopOpacity=".55" />
             <stop offset="1" stopColor="#fff" stopOpacity="0" />
           </linearGradient>
+          <linearGradient id="rk-vacio-tapa-g" x1="0" y1="0" x2="1" y2="0">
+            <stop className="t1" offset="0" />
+            <stop className="t2" offset=".48" />
+            <stop className="t3" offset="1" />
+          </linearGradient>
           <clipPath id="rk-vacio-tapa">
             <polygon points="92,92 348,92 384,160 56,160" />
           </clipPath>
@@ -97,7 +102,7 @@ export default function VacioCaja({
         <polygon className="c-in2" points="318,62 280,92 318,92" />
         <polygon className="c-sol c-sol-izq" points="0,0 52,0 122,62 92,92" />
         <polygon className="c-sol c-sol-der" points="440,0 388,0 318,62 348,92" />
-        <polygon className="c-tapa" points="92,92 348,92 384,160 56,160" />
+        <polygon className="c-tapa" points="92,92 348,92 384,160 56,160" fill="url(#rk-vacio-tapa-g)" />
         <g clipPath="url(#rk-vacio-tapa)">
           <g transform="skewX(-24)">
             <rect className="c-brillo" x="-120" y="80" width="140" height="90" fill="url(#rk-vacio-brillo)" />
