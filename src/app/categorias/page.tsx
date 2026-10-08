@@ -14,7 +14,7 @@ import { prisma } from "@/lib/prisma";
 export const metadata: Metadata = paginaPublica({
   titulo: "Categorías",
   descripcion:
-    "Explora los recursos digitales de RCKTDMG por categoría.",
+    "Explora los recursos digitales de RcktX por categoría.",
   ruta: "/categorias",
 });
 
@@ -83,7 +83,7 @@ export default async function CategoriesPage() {
             className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full rk-halo-marca blur-[90px]"
           />
 
-          <p className="rk-eyebrow">RCKTDMG</p>
+          <p className="rk-eyebrow">RcktX</p>
 
           <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl lg:text-5xl">
             Categorías

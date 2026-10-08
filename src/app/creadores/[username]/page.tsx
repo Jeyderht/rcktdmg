@@ -152,7 +152,7 @@ export async function generateMetadata({
     ? creator.bio.replace(/\s+/g, " ").trim().slice(0, 160)
     : `${displayName} publica ${recursos} ${
         recursos === 1 ? "recurso" : "recursos"
-      } en RCKTDMG.`;
+      } en RcktX.`;
 
   /*
     El perfil está paginado. La página 2 enseña recursos que

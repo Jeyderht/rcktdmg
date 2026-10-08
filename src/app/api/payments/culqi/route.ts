@@ -78,7 +78,7 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           amount,
           currency_code: "PEN",
-          description: `Pedido RCKTDMG ${order.id}`,
+          description: `Pedido RcktX ${order.id}`,
           client_details: {
             first_name: String(session.name || "Cliente"),
             email: String(session.email),

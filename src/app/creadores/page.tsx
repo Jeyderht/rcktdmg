@@ -13,7 +13,7 @@ import { getSession } from "@/lib/session";
 export const metadata: Metadata = paginaPublica({
   titulo: "Creadores",
   descripcion:
-    "Descubre a los creadores de RCKTDMG y publica tus propios recursos.",
+    "Descubre a los creadores de RcktX y publica tus propios recursos.",
   ruta: "/creadores",
 });
 
@@ -131,7 +131,7 @@ export default async function CreatorsPage() {
               {!isCreator && (
                 <p className="mx-auto mt-5 max-w-lg text-xs text-ink/60">
                   Las cuentas de creador las habilita el equipo de
-                  RCKTDMG desde administración.
+                  RcktX desde administración.
                 </p>
               )}
             </div>
@@ -144,7 +144,7 @@ export default async function CreatorsPage() {
             <p className="rk-eyebrow">Comunidad</p>
 
             <h2 className="rk-title mt-2 text-2xl sm:text-3xl">
-              Creadores en RCKTDMG
+              Creadores en RcktX
             </h2>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

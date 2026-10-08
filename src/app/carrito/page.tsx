@@ -158,7 +158,7 @@ export default function Cart() {
                 {/* ENCABEZADO */}
                 <div className="rk-enter flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <p className="rk-eyebrow">RCKTDMG</p>
+                        <p className="rk-eyebrow">RcktX</p>
 
                         <h1 className="rk-title mt-2 text-[2rem] sm:text-4xl">
                             Carrito

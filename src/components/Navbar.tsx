@@ -293,7 +293,7 @@ function NavbarContent() {
                 enlace se quedaría sin nombre: ya no hay texto
                 dentro que se lo dé.
               */
-              aria-label="RCKTDMG"
+              aria-label="RcktX"
               /*
                 Relleno simétrico. El `pr-2` despegaba del borde
                 al logotipo de texto; sin él dejaba el isotipo

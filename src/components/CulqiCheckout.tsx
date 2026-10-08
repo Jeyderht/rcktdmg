@@ -154,7 +154,7 @@ export default function CulqiCheckout({
              * Configuramos los datos del Checkout.
              */
             window.Culqi.settings({
-                title: "RCKTDMG",
+                title: "RcktX",
                 currency: "PEN",
                 amount: checkoutAmount,
                 order: data.culqiOrderId,

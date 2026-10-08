@@ -1,5 +1,5 @@
 /**
- * Tipos compartidos del almacenamiento de RCKTDMG.
+ * Tipos compartidos del almacenamiento de RcktX.
  *
  * Hay dos destinos y nunca se mezclan:
  *

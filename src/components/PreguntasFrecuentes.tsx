@@ -79,7 +79,7 @@ const PREGUNTAS: Pregunta[] = [
     ),
   },
   {
-    pregunta: "¿Puedo vender mis diseños en RCKTDMG?",
+    pregunta: "¿Puedo vender mis diseños en RcktX?",
     respuesta: (
       <p>
         Sí. Envía tu solicitud en{" "}

@@ -418,7 +418,7 @@ export default function CreatorDashboard() {
             className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full rk-halo-marca blur-[90px]"
           />
 
-          <p className="rk-eyebrow">RCKTDMG</p>
+          <p className="rk-eyebrow">RcktX</p>
 
           <div className="mt-2.5 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
             <div className="min-w-0">
@@ -964,7 +964,7 @@ export default function CreatorDashboard() {
                 <EmptyState
                   icon={Package}
                   title="Todavía no tienes recursos"
-                  description="Crea tu primer recurso para empezar a vender en RCKTDMG."
+                  description="Crea tu primer recurso para empezar a vender en RcktX."
                   action={{
                     href: "/creadores/panel/nuevo",
                     label: "Crear recurso",

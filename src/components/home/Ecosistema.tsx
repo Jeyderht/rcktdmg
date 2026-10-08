@@ -3,7 +3,7 @@ import type React from "react";
 /**
  * Ecosistema creativo.
  *
- * Fila simétrica de programas con el cohete de RCKTDMG en un
+ * Fila simétrica de programas con el cohete de RcktX en un
  * círculo de marca al centro. Todos los programas van en círculos
  * blancos con su logo real: más grandes cerca del centro y
  * tenues en los bordes. Detrás: retícula de puntos,
@@ -64,7 +64,7 @@ export default function Ecosistema() {
           <p className="rk-kicker justify-center">El sitio</p>
 
           <h2 className="rk-title mt-3 text-[1.75rem] sm:text-4xl">
-            Ecosistema creativo RCKTDMG
+            Ecosistema creativo RcktX
           </h2>
 
           <p className="mt-3 text-[15px] leading-7 text-ink/60">
@@ -84,7 +84,7 @@ export default function Ecosistema() {
           <div className="rk-eco-hex">
             <div className="rk-eco-nucleo">
               <span className="rk-eco-isotipo-wrap">
-                <span role="img" aria-label="RCKTDMG" className="rk-eco-isotipo" />
+                <span role="img" aria-label="RcktX" className="rk-eco-isotipo" />
               </span>
             </div>
           </div>

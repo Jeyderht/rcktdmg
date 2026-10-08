@@ -1,4 +1,4 @@
-# RCKTDMG
+# RcktX
 Base de una plataforma tipo marketplace de recursos digitales, pensada para crecer hacia un ecosistema estilo Freepik con identidad propia.
 
 ## Roles

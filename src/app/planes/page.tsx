@@ -14,7 +14,7 @@ import { prisma } from "@/lib/prisma";
 export const metadata: Metadata = paginaPublica({
   titulo: "Planes",
   descripcion:
-    "Planes de suscripción de RCKTDMG para descargar recursos digitales.",
+    "Planes de suscripción de RcktX para descargar recursos digitales.",
   ruta: "/planes",
 });
 
@@ -39,7 +39,7 @@ export default async function PlansPage() {
         {/* ENCABEZADO */}
         <section className="rk-enter">
           <div className="rk-glass rounded-rk-xl px-6 py-10 text-center sm:px-10 sm:py-12">
-            <p className="rk-eyebrow">RCKTDMG</p>
+            <p className="rk-eyebrow">RcktX</p>
 
             <h1 className="mt-2.5 text-[2rem] font-semibold leading-tight sm:text-4xl lg:text-5xl">
               Planes

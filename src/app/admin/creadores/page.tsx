@@ -24,7 +24,7 @@ export default function AdminSolicitudesPage() {
         </h1>
 
         <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
-          Quién ha pedido publicar en RCKTDMG, con su portafolio.
+          Quién ha pedido publicar en RcktX, con su portafolio.
           Aprobar abre su perfil público y le da acceso al Creator
           Studio; rechazar exige un motivo, que él verá.
         </p>

@@ -66,7 +66,7 @@ export default function RegistroPage() {
           </span>
 
           {/* h1 para lectores de pantalla: el nombre no se ve. */}
-          <h1 className="sr-only">RCKTDMG</h1>
+          <h1 className="sr-only">RcktX</h1>
 
           <p className="rk-auth-tagline">
             Recursos creativos para profesionales
@@ -179,7 +179,7 @@ export default function RegistroPage() {
           </form>
         </div>
 
-        <p className="rk-auth-foot">© RCKTDMG</p>
+        <p className="rk-auth-foot">© RcktX</p>
       </div>
     </main>
   );

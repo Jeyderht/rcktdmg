@@ -258,7 +258,7 @@ export default function NuevoRecursoForm({
 
         <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
           Completa la información y sube el archivo para
-          publicarlo en RCKTDMG.
+          publicarlo en RcktX.
         </p>
       </header>
 

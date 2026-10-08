@@ -12,7 +12,7 @@ import { listarPacksPublicos } from "@/lib/packs";
 export const metadata: Metadata = paginaPublica({
   titulo: "Packs",
   descripcion:
-    "Colecciones de recursos digitales de RCKTDMG, con varios recursos por un precio único.",
+    "Colecciones de recursos digitales de RcktX, con varios recursos por un precio único.",
   ruta: "/packs",
 });
 
@@ -33,7 +33,7 @@ export default async function PacksPage() {
 
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
         <section className="rk-fade-up">
-          <p className="rk-kicker">RCKTDMG Store</p>
+          <p className="rk-kicker">RcktX Store</p>
 
           <h1 className="rk-title mt-3 text-[2rem] sm:text-4xl lg:text-5xl">
             Packs

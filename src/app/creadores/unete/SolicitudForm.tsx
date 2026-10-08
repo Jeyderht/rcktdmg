@@ -403,7 +403,7 @@ export default function SolicitudForm({
             onChange={(e) => setPortfolioDescription(e.target.value)}
             maxLength={LARGO_DESCRIPCION_PORTAFOLIO}
             rows={3}
-            placeholder="Qué tipo de trabajo haces y qué vas a publicar en RCKTDMG."
+            placeholder="Qué tipo de trabajo haces y qué vas a publicar en RcktX."
             className="rk-textarea mt-1.5 w-full"
           />
 

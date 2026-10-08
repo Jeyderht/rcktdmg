@@ -325,7 +325,7 @@ export default function CreatorProfilePage() {
             ) : (
               <div className="rk-media flex h-full w-full items-center justify-center bg-gradient-to-br from-ink/[0.12] via-ink/[0.05] to-transparent">
                 <span className="text-[10px] font-medium uppercase tracking-[0.35em] text-ink/60">
-                  RCKTDMG CREATOR
+                  RcktX Creator
                 </span>
               </div>
             )}
@@ -539,7 +539,7 @@ export default function CreatorProfilePage() {
                 </div>
 
                 <p className="mt-2 text-xs text-ink/60">
-                  Será tu identificador público en RCKTDMG.
+                  Será tu identificador público en RcktX.
                 </p>
               </div>
 
@@ -752,7 +752,7 @@ export default function CreatorProfilePage() {
             </div>
 
             <p className="mt-5 text-xs leading-5 text-ink/60">
-              La verificación es administrada por RCKTDMG y no puede modificarse desde este formulario.
+              La verificación es administrada por RcktX y no puede modificarse desde este formulario.
             </p>
 
           </section>

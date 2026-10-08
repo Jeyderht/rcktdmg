@@ -221,7 +221,7 @@ function PanelNavInterno({
             <div className="flex items-center justify-between gap-2">
               <Link
                 href="/"
-                aria-label="RCKTDMG"
+                aria-label="RcktX"
                 className="rk-press-sm flex items-center rounded-full p-1"
               >
                 <span className="flex h-8 w-8 items-center justify-center">

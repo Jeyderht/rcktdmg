@@ -72,7 +72,7 @@ export default function CarruselCreadores({
             </h2>
 
             <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">
-              Quienes publican en RCKTDMG. Cada perfil reúne todo su
+              Quienes publican en RcktX. Cada perfil reúne todo su
               trabajo.
             </p>
           </div>

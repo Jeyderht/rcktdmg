@@ -44,7 +44,7 @@ export const dynamic = "force-dynamic";
 
 /*
   La home es la portada del sitio. Su título no lleva el
-  sufijo "· RCKTDMG" de la plantilla porque ya es la marca;
+  sufijo "· RcktX" de la plantilla porque ya es la marca;
   por eso se declara como `absolute`.
 */
 export const metadata: Metadata = {

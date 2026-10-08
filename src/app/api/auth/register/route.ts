@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     await notificarAdmins({
       type: "USER_REGISTERED",
       title: "Nuevo usuario registrado",
-      body: user.name || "Cuenta nueva en RCKTDMG",
+      body: user.name || "Cuenta nueva en RcktX",
       href: "/admin/usuarios",
     });
 

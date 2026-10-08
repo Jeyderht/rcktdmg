@@ -66,7 +66,7 @@ export default function MasDisenos({
 
     Antes se filtraban los vacíos y, si se vaciaban todos, la
     sección entera desaparecía. El efecto era que alguien podía
-    concluir que RCKTDMG no vende colecciones, cuando lo que
+    concluir que RcktX no vende colecciones, cuando lo que
     pasa es que aún no hay ninguna publicada. Un camino sin
     contenido lo dice y sigue llevando a su sección, que es
     donde aparecerá lo que se publique.
