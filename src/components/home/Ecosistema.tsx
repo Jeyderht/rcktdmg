@@ -1,4 +1,5 @@
 import type React from "react";
+import { LogoFigma } from "@/components/programas/LogosProgramas";
 
 /**
  * Ecosistema creativo.
@@ -43,18 +44,6 @@ const PROGRAMAS: Programa[] = [
   { nombre: "After Effects", x: 82, nivel: "blanco", sigla: "Ae", letra: "#D291FF" },
   { nombre: "Premiere Pro", x: 94.5, nivel: "tenue", sigla: "Pr", letra: "#9999FF" },
 ];
-
-function LogoFigma() {
-  return (
-    <svg viewBox="0 0 38 57" aria-hidden className="rk-eco-figma">
-      <path fill="#1ABCFE" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z" />
-      <path fill="#0ACF83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z" />
-      <path fill="#FF7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z" />
-      <path fill="#F24E1E" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z" />
-      <path fill="#A259FF" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z" />
-    </svg>
-  );
-}
 
 export default function Ecosistema() {
   return (
@@ -106,7 +95,7 @@ export default function Ecosistema() {
                 title={p.nombre}
               >
                 {p.figma ? (
-                  <LogoFigma />
+                  <LogoFigma className="rk-eco-figma" />
                 ) : (
                   <span
                     className="rk-eco-adobe"

@@ -13435,6 +13435,17 @@ div.rk-upload-error > * + * {
      </a>
    ═══════════════════════════════════════════════════════════════════════ */
 
+/* Enlace: la carpeta arriba y el nombre con el total debajo */
+.rk-folder-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .rk-folder {
   --rk-fd-back: rgb(168 170 190);
   --rk-fd-brillo: rgb(255 255 255 / 0.4);
@@ -13447,7 +13458,18 @@ div.rk-upload-error > * + * {
   -webkit-tap-highlight-color: transparent;
 }
 
-[data-theme="light"] .rk-folder {
+[data-theme="light"] /* Enlace: la carpeta arriba y el nombre con el total debajo */
+.rk-folder-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rk-folder {
   --rk-fd-back: rgb(184 186 204);
 }
 
@@ -13527,7 +13549,8 @@ div.rk-upload-error > * + * {
   display: flex;
   align-items: flex-end;
   gap: 12px;
-  padding: 0 7% 9%;
+  /* margen izquierdo y de abajo iguales (los % van sobre el ancho) */
+  padding: 0 7% 7%;
   /* vidrio con los colores de marca: frío → centro → cálido */
   background:
     linear-gradient(180deg, var(--rk-fd-brillo), transparent 24%),
@@ -13553,17 +13576,58 @@ div.rk-upload-error > * + * {
   font-weight: 700;
 }
 
+/* Programas de la carpeta: círculos de vidrio con su isotipo,
+   montados uno sobre otro, antes del nombre. */
+.rk-folder-programas {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+.rk-folder-programa {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.7);
+  background: rgb(255 255 255 / 0.42);
+  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+          backdrop-filter: blur(10px) saturate(1.3);
+  container-type: inline-size;
+}
+
+.rk-folder-programa + .rk-folder-programa { margin-left: -9px; }
+
+.rk-prog-figma { height: 48%; width: auto; }
+
+.rk-prog-sigla {
+  font-size: 40cqw;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.rk-prog-sigla.is-ps { color: #1f7fd1; }
+.rk-prog-sigla.is-canva { color: #7a5af5; }
+
+@media (max-width: 639px) {
+  .rk-folder-programa { width: 18px; height: 18px; }
+  .rk-folder-programa + .rk-folder-programa { margin-left: -5px; }
+}
+
 .rk-folder-text {
   display: grid;
   min-width: 0;
   gap: 1px;
+  padding: 0 4px;
 }
 
 .rk-folder-title {
   margin: 0;
   overflow: hidden;
-  color: rgb(var(--rk-marca-tinta));
-  font-size: 1.1rem;
+  color: rgb(var(--rk-foreground) / 0.78);
+  font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -13572,26 +13636,29 @@ div.rk-upload-error > * + * {
 }
 
 .rk-folder-count {
-  color: rgb(var(--rk-marca-tinta) / 0.6);
-  font-size: 0.88rem;
+  color: rgb(var(--rk-foreground) / 0.48);
+  font-size: 0.7rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .rk-folder:hover .rk-folder-paper:nth-child(1) {
+  .rk-folder-item:hover .rk-folder-paper:nth-child(1) {
     transform: translateY(-12%);
   }
 
-  .rk-folder:hover .rk-folder-paper:nth-child(2) {
+  .rk-folder-item:hover .rk-folder-paper:nth-child(2) {
     transform: translate(-6%, -8%) rotate(-4deg);
   }
 
-  .rk-folder:hover .rk-folder-paper:nth-child(3) {
+  .rk-folder-item:hover .rk-folder-paper:nth-child(3) {
     transform: translate(6%, -8%) rotate(4deg);
   }
 }
 
-.rk-folder:focus-visible {
+.rk-folder-item:focus-visible {
   border-radius: 18px;
   outline: 2px solid rgb(var(--rk-iris-3));
   outline-offset: 4px;
@@ -13619,8 +13686,8 @@ div.rk-upload-error > * + * {
 
 @media (max-width: 639px) {
   .rk-folder-front {
-    gap: 8px;
-    padding: 0 8% 10%;
+    gap: 5px;
+    padding: 0 7% 7%;
   }
 
   .rk-folder-badge {
@@ -13631,11 +13698,11 @@ div.rk-upload-error > * + * {
   }
 
   .rk-folder-title {
-    font-size: 0.825rem;
+    font-size: 0.74rem;
   }
 
   .rk-folder-count {
-    font-size: 0.6875rem;
+    font-size: 0.62rem;
   }
 
   .rk-folder-back {
@@ -14113,6 +14180,25 @@ div.rk-upload-error > * + * {
     padding-top: 72px;
   }
 }
+
+/* En el inicio solo van 3 carpetas, en una fila; el diseño de la
+   carpeta es el mismo de /categorias. */
+.rk-home-categorias .rk-folder-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .rk-home-categorias .rk-folder-grid { gap: 18px; }
+}
+
+/* En escritorio cada carpeta mide lo mismo que en la rejilla de 4 */
+@media (min-width: 1024px) {
+  .rk-home-categorias .rk-folder-grid {
+    grid-template-columns: repeat(3, calc((100% - 54px) / 4));
+  }
+}
+
 
 /* ═══════════ AV · CTA final con la modelo (estilo hero) ═══════════
    La sección usa rk-card, rk-kicker, rk-display, rk-btn,

@@ -10,6 +10,7 @@ import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { prisma } from "@/lib/prisma";
+import { programasPorCategoria } from "@/lib/programas-categoria";
 
 export const metadata: Metadata = paginaPublica({
   titulo: "Categorías",
@@ -70,6 +71,10 @@ export default async function CategoriesPage() {
     (category) => category._count.products > 0
   );
 
+  const programas = await programasPorCategoria(
+    withProducts.map((c) => c.id)
+  );
+
   return (
     <>
       <Navbar />
@@ -106,7 +111,7 @@ export default async function CategoriesPage() {
           </div>
         ) : (
           <CarpetasCategorias
-            categorias={aCarpetas(withProducts)}
+            categorias={aCarpetas(withProducts, programas)}
             className="rk-fade-up rk-enter-1 mt-10"
           />
         )}

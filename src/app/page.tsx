@@ -37,6 +37,7 @@ import {
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
 import { portadasActivas } from "@/lib/portadas";
 import { prisma } from "@/lib/prisma";
+import { programasPorCategoria } from "@/lib/programas-categoria";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { SITIO, absoluta, paginaPublica } from "@/lib/seo";
 import { IconoBuscar } from "@/components/iconos";
@@ -222,6 +223,12 @@ export default async function Home() {
     portadasActivas().catch(() => []),
   ]);
 
+  /* Solo 3 carpetas en el inicio; sus programas en una consulta. */
+  const categoriasInicio = categories.slice(0, 3);
+  const programasInicio = await programasPorCategoria(
+    categoriasInicio.map((c) => c.id)
+  );
+
   /*
     Datos estructurados de la home.
 
@@ -312,7 +319,7 @@ export default async function Home() {
               </div>
 
               <CarpetasCategorias
-                categorias={aCarpetas(categories)}
+                categorias={aCarpetas(categoriasInicio, programasInicio)}
                 nivelTitulo="h3"
                 className="rk-fade-up rk-enter-1 mt-6 sm:mt-8"
               />
