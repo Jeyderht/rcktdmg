@@ -209,12 +209,12 @@ function IconAction({
 }
 
 /**
- * Píldora de rol: «Creador · Admin».
- * Fuera de los paneles (inicio, tienda…) queda apagada: píldora
- * gris con los textos en gris. Dentro de un panel se enciende como
- * un interruptor: la píldora pasa a negro y la sección en la que
- * estás va en blanco, como la perilla.
- * Un creador solo ve «Creador».
+ * Píldora de rol: «Admin · Studio».
+ * Fuera de los paneles (inicio, tienda…) queda apagada: el mismo
+ * vidrio claro que los botones de buscar y avisos, con texto negro.
+ * Dentro de un panel se enciende como un interruptor: la píldora
+ * pasa a negro y la sección en la que estás va en blanco, como la
+ * perilla. Un creador solo ve «Studio».
  */
 function RolSwitch({
   esAdmin,
@@ -234,14 +234,6 @@ function RolSwitch({
       className="rk-rol"
       data-encendido={encendido || undefined}
     >
-      <Link
-        href="/creadores/panel"
-        aria-current={enStudio ? "page" : undefined}
-        data-elegido={enStudio || undefined}
-        className="rk-rol-opcion"
-      >
-        Creador
-      </Link>
       {esAdmin && (
         <Link
           href="/admin"
@@ -252,6 +244,14 @@ function RolSwitch({
           Admin
         </Link>
       )}
+      <Link
+        href="/creadores/panel"
+        aria-current={enStudio ? "page" : undefined}
+        data-elegido={enStudio || undefined}
+        className="rk-rol-opcion"
+      >
+        Studio
+      </Link>
     </nav>
   );
 }
@@ -440,7 +440,7 @@ function NavbarContent() {
               ) : user ? (
                 <>
                   {/*
-                    Interruptor de rol: Creador / Admin en una sola
+                    Interruptor de rol: Admin / Studio en una sola
                     píldora, el activo en blanco. Mismo en todos los
                     tamaños.
                   */}
@@ -511,7 +511,7 @@ function NavbarContent() {
               aria-current={isActive("/creadores/panel") ? "page" : undefined}
             className="rk-topbar-link shrink-0"
             >
-              Creador
+              Studio
             </Link>
           )}
 
