@@ -15033,3 +15033,364 @@ div.rk-upload-error > * + * {
     animation: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   rk-hc · Hero «Todo lo que necesitas para crear mejor»
+
+   Texto centrado y titular en tres alturas. La «e» de «crear» es
+   un interruptor que se enciende solo; a su lado una flecha en
+   círculo y un cursor. Junto al titular, un sello circular que gira.
+   ═══════════════════════════════════════════════════════════════════ */
+.rk-hc {
+  position: relative;
+  isolation: isolate;
+  text-align: center;
+}
+
+.rk-hc .rk-kicker {
+  justify-content: center;
+}
+
+.rk-hc-titulo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-sora), system-ui, sans-serif;
+  font-weight: 600;
+  color: rgb(var(--rk-foreground));
+  letter-spacing: -0.035em;
+}
+
+.rk-hc-l1,
+.rk-hc-l3 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-size: clamp(1.6rem, 6vw, 3rem);
+  line-height: 1.1;
+}
+
+.rk-hc-l1 {
+  font-size: clamp(1.15rem, 4.4vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.rk-hc-gigante {
+  display: inline-flex;
+  align-items: center;
+  font-size: clamp(5rem, 24vw, 10.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+  margin: 0.04em 0 0.02em;
+}
+
+/* «cr» y «ar» se pintan con el degradado cuando el interruptor se enciende */
+.rk-hc-letras {
+  --hc-g1: #8e8ad8;
+  --hc-g2: #c9a2c9;
+  --hc-g3: #f0a98a;
+  /*
+    El recorte del degradado llega solo hasta la caja del texto;
+    con el tracking negativo las puntas de la «r» se salían. El
+    relleno agranda la caja y el margen negativo lo compensa.
+  */
+  padding: 0.1em 0.08em;
+  margin: -0.1em -0.08em;
+  background: linear-gradient(90deg, var(--hc-g1), var(--hc-g2) 50%, var(--hc-g3));
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: rgb(var(--rk-foreground));
+  animation: rk-hc-letras 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+[data-theme="dark"] .rk-hc-letras {
+  --hc-g1: rgb(var(--rk-marca-frio));
+  --hc-g2: rgb(var(--rk-marca-centro));
+  --hc-g3: rgb(var(--rk-marca-calido));
+}
+
+@keyframes rk-hc-letras {
+  0%, 38% { color: rgb(var(--rk-foreground)); }
+  50%, 88% { color: transparent; }
+  100% { color: rgb(var(--rk-foreground)); }
+}
+
+/* Interruptor en lugar de la «e»: gris apagado, perla encendido */
+.rk-hc-switch {
+  position: relative;
+  display: inline-block;
+  width: 1.18em;
+  height: 0.6em;
+  margin: 0.08em 0.03em 0;
+  border-radius: 999px;
+  background: #c9cad0;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .rk-hc-switch {
+  background: #3a3b43;
+}
+
+/* El degradado de marca aparece solo al encender */
+.rk-hc-switch::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    rgb(var(--rk-marca-frio)),
+    rgb(var(--rk-marca-centro)) 48%,
+    rgb(var(--rk-marca-calido))
+  );
+  opacity: 0;
+  animation: rk-hc-pista 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.rk-hc-switch i {
+  position: absolute;
+  z-index: 1;
+  top: 0.06em;
+  left: 0.06em;
+  width: 0.48em;
+  height: 0.48em;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid rgb(21 22 27 / 0.08);
+  box-sizing: border-box;
+  animation: rk-hc-perilla 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes rk-hc-perilla {
+  0%, 38% { transform: translateX(0); }
+  50%, 88% { transform: translateX(0.58em); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes rk-hc-pista {
+  0%, 38% { opacity: 0; }
+  50%, 88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Palabras clave «diseñadas» en vivo (PalabrasEscritas) */
+.rk-hc-escribe {
+  display: inline-grid;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.rk-hc-escribe > span {
+  grid-area: 1 / 1;
+}
+
+.rk-hc-escribe-fantasma {
+  visibility: hidden;
+}
+
+.rk-hc-escribe-zona {
+  display: flex;
+  justify-content: center;
+}
+
+.rk-hc-escribe-texto {
+  position: relative;
+  display: inline-block;
+  min-width: 0.1em;
+}
+
+/* La palabra se descubre a la vez que crece el marco */
+.rk-hc-palabra {
+  display: inline-block;
+  clip-path: inset(-0.2em);
+  transition:
+    opacity 0.5s cubic-bezier(0.37, 0, 0.63, 1),
+    filter 0.5s cubic-bezier(0.37, 0, 0.63, 1),
+    clip-path 1.3s cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+[data-fase="sale"] .rk-hc-palabra {
+  opacity: 0;
+  filter: blur(3px);
+  clip-path: inset(-0.2em);
+}
+
+[data-fase="inicio"] .rk-hc-palabra {
+  opacity: 1;
+  filter: none;
+  clip-path: inset(0 100% 100% 0);
+  transition: none;
+}
+
+/* Marco que el puntero arrastra desde arriba a la izquierda */
+.rk-hc-marco {
+  position: absolute;
+  top: -0.08em;
+  left: -0.14em;
+  right: -0.14em;
+  bottom: -0.06em;
+  border: 1.5px solid transparent;
+  border-radius: 2px;
+  pointer-events: none;
+  transition:
+    right 1.3s cubic-bezier(0.45, 0, 0.55, 1),
+    bottom 1.3s cubic-bezier(0.45, 0, 0.55, 1),
+    border-color 0.5s cubic-bezier(0.37, 0, 0.63, 1);
+}
+
+[data-fase="inicio"] .rk-hc-marco,
+[data-fase="arrastra"] .rk-hc-marco {
+  border-color: #8e8bd8;
+}
+
+/* Al salir, el puntero vuelve deslizándose a la esquina de inicio */
+[data-fase="sale"] .rk-hc-marco,
+[data-fase="inicio"] .rk-hc-marco {
+  right: calc(100% - 0.3em);
+  bottom: calc(100% - 0.3em);
+}
+
+[data-fase="sale"] .rk-hc-marco {
+  transition:
+    right 0.8s cubic-bezier(0.45, 0, 0.55, 1),
+    bottom 0.8s cubic-bezier(0.45, 0, 0.55, 1),
+    border-color 0.3s ease;
+}
+
+[data-fase="inicio"] .rk-hc-marco {
+  transition: border-color 0.3s ease;
+}
+
+.rk-hc-marco i {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: #ffffff;
+  border: 1.5px solid #8e8bd8;
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.37, 0, 0.63, 1);
+}
+
+[data-fase="inicio"] .rk-hc-marco i,
+[data-fase="arrastra"] .rk-hc-marco i {
+  opacity: 1;
+}
+
+.rk-hc-marco i:nth-child(1) { left: -4px; top: -4px; }
+.rk-hc-marco i:nth-child(2) { right: -4px; top: -4px; }
+.rk-hc-marco i:nth-child(3) { left: -4px; bottom: -4px; }
+.rk-hc-marco i:nth-child(4) { right: -4px; bottom: -4px; }
+
+/* Puntero pegado a la esquina que se arrastra */
+.rk-hc-cursor {
+  position: absolute;
+  right: -0.74em;
+  bottom: -0.68em;
+  width: 0.8em;
+  height: 0.8em;
+  overflow: visible;
+  transform-origin: 15% 15%;
+  opacity: 0;
+  transition:
+    transform 0.4s cubic-bezier(0.37, 0, 0.63, 1),
+    opacity 0.5s cubic-bezier(0.37, 0, 0.63, 1) 0.5s;
+}
+
+/* Aparece de 0 a 100 al empezar a arrastrar y se va al soltar */
+[data-fase="inicio"] .rk-hc-cursor,
+[data-fase="arrastra"] .rk-hc-cursor {
+  opacity: 1;
+  transition:
+    transform 0.4s cubic-bezier(0.37, 0, 0.63, 1),
+    opacity 0.45s cubic-bezier(0.37, 0, 0.63, 1);
+}
+
+[data-fase="inicio"] .rk-hc-cursor {
+  transform: scale(0.9);
+}
+
+.rk-hc-cursor path {
+  fill: rgb(var(--rk-foreground));
+  stroke: rgb(var(--rk-background));
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+/* Puntos solo detrás del titular, apagándose hacia los bordes */
+.rk-hc-puntos {
+  position: absolute;
+  top: -3rem;
+  bottom: -1.5rem;
+  left: -100vw;
+  right: -100vw;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(
+    rgb(var(--rk-foreground) / 0.18) 0.9px,
+    transparent 1.3px
+  );
+  background-size: 18px 18px;
+  background-position: center top;
+  -webkit-mask-image: radial-gradient(28% 60% at 50% 50%, #000 35%, transparent 100%);
+          mask-image: radial-gradient(28% 60% at 50% 50%, #000 35%, transparent 100%);
+}
+
+/* Sello circular que gira */
+.rk-hc-sello {
+  position: absolute;
+  right: 0;
+  top: -12px;
+  display: none;
+  width: 104px;
+  height: 104px;
+  pointer-events: none;
+  color: rgb(var(--rk-foreground));
+}
+
+.rk-hc-sello-texto {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  fill: currentColor;
+  transform-origin: 60px 60px;
+  animation: rk-hc-gira 22s linear infinite;
+}
+
+.rk-hc-sello-flecha {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes rk-hc-gira {
+  to { transform: rotate(360deg); }
+}
+
+/* El sello va junto al titular y solo desde tablet: en móvil no cabe. */
+@media (min-width: 768px) {
+  .rk-hc-sello { display: block; }
+}
+
+@media (min-width: 1024px) {
+  .rk-hc-sello {
+    width: 112px;
+    height: 112px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-hc-switch::before,
+  .rk-hc-switch i,
+  .rk-hc-letras,
+  .rk-hc-sello-texto {
+    animation: none;
+  }
+  .rk-hc-switch::before { opacity: 1; }
+  .rk-hc-letras { color: transparent; }
+  .rk-hc-marco { display: none; }
+  .rk-hc-switch i { transform: translateX(0.58em); }
+}

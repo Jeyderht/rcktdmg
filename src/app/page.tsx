@@ -15,6 +15,7 @@ import SeccionesMarketplace from "@/components/home/SeccionesMarketplace";
 import Recomendados from "@/components/home/Recomendados";
 import SelectorBusqueda from "@/components/home/SelectorBusqueda";
 import HeroFlyers from "@/components/home/HeroFlyers";
+import PalabrasEscritas from "@/components/home/PalabrasEscritas";
 import SliderPortadas from "@/components/home/SliderPortadas";
 import CarpetasCategorias, {
   aCarpetas,
@@ -313,26 +314,6 @@ export default async function Home() {
 
         {/* ══════════ HERO ══════════ */}
         <section className="relative overflow-hidden">
-          {/* Retícula fina: profundidad sin color. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10"
-          >
-            <div
-              className="absolute inset-0 opacity-[0.35]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, rgb(var(--rk-border) / 0.14) 1px, transparent 1px), linear-gradient(to bottom, rgb(var(--rk-border) / 0.14) 1px, transparent 1px)",
-                backgroundSize:
-                  "clamp(3rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem)",
-                maskImage:
-                  "radial-gradient(75% 65% at 30% 0%, #000 20%, transparent 100%)",
-                WebkitMaskImage:
-                  "radial-gradient(75% 65% at 30% 0%, #000 20%, transparent 100%)",
-              }}
-            />
-          </div>
-
           <div className="mx-auto w-full max-w-7xl px-4 pb-16 pt-12 sm:px-5 lg:px-8 lg:pb-24 lg:pt-20">
             <div
               className={`grid items-center gap-12 ${
@@ -343,16 +324,50 @@ export default async function Home() {
             >
               {/* TEXTO */}
               <div className="rk-fade-up min-w-0">
-                <p className="rk-kicker">Recursos creativos</p>
-
-                <h1 className="rk-display mt-6 max-w-[13ch]">
-                  Todo lo que necesitas para crear mejor.
+                <div className="rk-hc">
+                  {/* Puntos solo detrás del titular */}
+                  <div aria-hidden className="rk-hc-puntos" />
+                <svg aria-hidden className="rk-hc-sello" viewBox="0 0 120 120">
+                  <defs>
+                    <path id="rk-hc-circulo" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" />
+                  </defs>
+                  <text className="rk-hc-sello-texto">
+                    <textPath href="#rk-hc-circulo">PLANTILLAS PREMIUM · RCKTX · </textPath>
+                  </text>
+                  <path className="rk-hc-sello-flecha" d="M68 52 L52 68 M52 56 L52 68 L64 68" />
+                </svg>
+                {/*
+                  Titular partido en tres líneas. La «e» de «crear»
+                  es un interruptor que se enciende y se apaga; el
+                  texto accesible va completo en aria-label.
+                */}
+                <h1
+                  className="rk-hc-titulo"
+                  aria-label="Todo lo que necesitas para crear mejor, más rápido, con estilo y sin límites."
+                >
+                  <span aria-hidden className="rk-hc-l1">
+                    Todo lo que necesitas para
+                  </span>
+                  <span aria-hidden className="rk-hc-gigante">
+                    <span className="rk-hc-letras">cr</span>
+                    <span className="rk-hc-switch">
+                      <i />
+                    </span>
+                    <span className="rk-hc-letras">ar</span>
+                  </span>
+                  <span aria-hidden className="rk-hc-l3">
+                    <PalabrasEscritas
+                      palabras={[
+                        "mejor.",
+                        "más rápido.",
+                        "con estilo.",
+                        "sin límites.",
+                      ]}
+                    />
+                  </span>
                 </h1>
 
-                <p className="mt-7 max-w-md text-base leading-8 text-ink/60 sm:text-lg">
-                  Recursos digitales hechos por creadores, listos
-                  para descargar y usar en tus proyectos.
-                </p>
+                </div>
 
                 {/* BUSCADOR: navegación real a la tienda. */}
                 <form
