@@ -15516,14 +15516,14 @@ div.rk-upload-error > * + * {
     color var(--rx-t-hover, 0.2s) ease;
 }
 
-.rk-rol-opcion[aria-current="page"] {
+.rk-rol-opcion[data-elegido] {
   background: #f4f2f1;
   color: #15161b;
   border-color: #15161b;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .rk-rol-opcion:not([aria-current="page"]):hover {
+  .rk-rol-opcion:not([data-elegido]):hover {
     background: rgb(255 255 255 / 0.1);
   }
 }
@@ -15541,14 +15541,14 @@ div.rk-upload-error > * + * {
   color: #15161b;
 }
 
-[data-theme="dark"] .rk-rol-opcion[aria-current="page"] {
+[data-theme="dark"] .rk-rol-opcion[data-elegido] {
   background: #15161b;
   color: #f4f2f1;
   border-color: #f4f2f1;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  [data-theme="dark"] .rk-rol-opcion:not([aria-current="page"]):hover {
+  [data-theme="dark"] .rk-rol-opcion:not([data-elegido]):hover {
     background: rgb(21 22 27 / 0.08);
   }
 }
