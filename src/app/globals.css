@@ -15484,9 +15484,10 @@ div.rk-upload-error > * + * {
 /* ═══════════════════════════════════════════════════════════════════
    rk-rol · Interruptor de rol en la barra superior (Navbar)
 
-   «Admin · Studio» en una píldora oscura; la sección activa va
-   en una píldora blanca con borde oscuro, como un interruptor de dos
-   posiciones. En oscuro se invierte: píldora clara, activa oscura.
+   «Creador · Admin». Apagado (fuera de los paneles): píldora gris
+   y textos grises. Encendido (dentro de un panel): la píldora pasa
+   a negro y la sección activa va en blanco, como la perilla de un
+   interruptor. En oscuro se invierte: píldora clara, perilla oscura.
    ═══════════════════════════════════════════════════════════════════ */
 .rk-rol {
   display: inline-flex;
@@ -15495,36 +15496,51 @@ div.rk-upload-error > * + * {
   height: 44px;
   padding: 3px;
   border-radius: 999px;
-  background: #15161b;
+  background: rgb(21 22 27 / 0.08);
   font-family: var(--font-sora), system-ui, sans-serif;
+  transition: background-color 0.35s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .rk-rol-opcion {
   display: inline-flex;
   align-items: center;
   height: 100%;
-  padding: 0 9px 0 11px;
-  border: 2px solid transparent;
+  padding: 0 11px;
   border-radius: 999px;
-  color: #f4f2f1;
+  color: rgb(21 22 27 / 0.45);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: -0.01em;
   white-space: nowrap;
   transition:
-    background-color var(--rx-t-hover, 0.2s) ease,
-    color var(--rx-t-hover, 0.2s) ease;
+    background-color 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    color 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    box-shadow 0.35s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-.rk-rol-opcion[data-elegido] {
+/* Encendido: píldora negra, textos claros */
+.rk-rol[data-encendido] {
+  background: #15161b;
+}
+
+.rk-rol[data-encendido] .rk-rol-opcion {
+  color: rgb(244 242 241 / 0.6);
+}
+
+/* La sección activa es la perilla blanca */
+.rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
   background: #f4f2f1;
   color: #15161b;
-  border-color: #15161b;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rk-rol-opcion:not([data-elegido]):hover {
-    background: rgb(255 255 255 / 0.1);
+    color: rgb(21 22 27 / 0.75);
+  }
+
+  .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
+    color: #f4f2f1;
   }
 }
 
@@ -15533,30 +15549,42 @@ div.rk-upload-error > * + * {
   outline-offset: 2px;
 }
 
+/* Tema oscuro */
 [data-theme="dark"] .rk-rol {
-  background: #f4f2f1;
+  background: rgb(255 255 255 / 0.08);
 }
 
 [data-theme="dark"] .rk-rol-opcion {
-  color: #15161b;
+  color: rgb(255 255 255 / 0.45);
 }
 
-[data-theme="dark"] .rk-rol-opcion[data-elegido] {
+[data-theme="dark"] .rk-rol[data-encendido] {
+  background: #f4f2f1;
+}
+
+[data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion {
+  color: rgb(21 22 27 / 0.55);
+}
+
+[data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
   background: #15161b;
   color: #f4f2f1;
-  border-color: #f4f2f1;
 }
 
 @media (hover: hover) and (pointer: fine) {
   [data-theme="dark"] .rk-rol-opcion:not([data-elegido]):hover {
-    background: rgb(21 22 27 / 0.08);
+    color: rgb(255 255 255 / 0.75);
+  }
+
+  [data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
+    color: #15161b;
   }
 }
 
 /* En pantallas muy estrechas, un poco más compacto */
 @media (max-width: 380px) {
   .rk-rol-opcion {
-    padding: 0 7px 0 8px;
+    padding: 0 8px;
     font-size: 12px;
   }
 }
