@@ -15484,8 +15484,8 @@ div.rk-upload-error > * + * {
 /* ═══════════════════════════════════════════════════════════════════
    rk-rol · Interruptor de rol en la barra superior (Navbar)
 
-   «Creador · Admin». Apagado (fuera de los paneles): píldora gris
-   y textos grises. Encendido (dentro de un panel): la píldora pasa
+   «Admin · Studio». Apagado (fuera de los paneles): el mismo vidrio
+   claro que los botones de buscar y avisos, con texto negro. Encendido (dentro de un panel): la píldora pasa
    a negro y la sección activa va en blanco, como la perilla de un
    interruptor. En oscuro se invierte: píldora clara, perilla oscura.
    ═══════════════════════════════════════════════════════════════════ */
@@ -15496,9 +15496,14 @@ div.rk-upload-error > * + * {
   height: 44px;
   padding: 3px;
   border-radius: 999px;
-  background: rgb(21 22 27 / 0.08);
+  border: 1px solid rgb(21 22 27 / 0.08);
+  background: rgb(255 255 255 / 0.7);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+          backdrop-filter: blur(20px) saturate(1.5);
   font-family: var(--font-sora), system-ui, sans-serif;
-  transition: background-color 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+  transition:
+    background-color 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    border-color 0.35s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .rk-rol-opcion {
@@ -15507,7 +15512,7 @@ div.rk-upload-error > * + * {
   height: 100%;
   padding: 0 11px;
   border-radius: 999px;
-  color: rgb(21 22 27 / 0.45);
+  color: #15161b;
   font-size: 13px;
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -15520,6 +15525,7 @@ div.rk-upload-error > * + * {
 
 /* Encendido: píldora negra, textos claros */
 .rk-rol[data-encendido] {
+  border-color: #15161b;
   background: #15161b;
 }
 
@@ -15535,8 +15541,8 @@ div.rk-upload-error > * + * {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .rk-rol-opcion:not([data-elegido]):hover {
-    color: rgb(21 22 27 / 0.75);
+  .rk-rol:not([data-encendido]) .rk-rol-opcion:hover {
+    background: rgb(21 22 27 / 0.06);
   }
 
   .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
@@ -15551,14 +15557,16 @@ div.rk-upload-error > * + * {
 
 /* Tema oscuro */
 [data-theme="dark"] .rk-rol {
-  background: rgb(255 255 255 / 0.08);
+  border-color: rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.05);
 }
 
 [data-theme="dark"] .rk-rol-opcion {
-  color: rgb(255 255 255 / 0.45);
+  color: #f4f2f1;
 }
 
 [data-theme="dark"] .rk-rol[data-encendido] {
+  border-color: #f4f2f1;
   background: #f4f2f1;
 }
 
@@ -15572,8 +15580,8 @@ div.rk-upload-error > * + * {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  [data-theme="dark"] .rk-rol-opcion:not([data-elegido]):hover {
-    color: rgb(255 255 255 / 0.75);
+  [data-theme="dark"] .rk-rol:not([data-encendido]) .rk-rol-opcion:hover {
+    background: rgb(255 255 255 / 0.08);
   }
 
   [data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
