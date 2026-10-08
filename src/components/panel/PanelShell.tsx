@@ -45,19 +45,27 @@ export default async function PanelShell({
     : null;
 
   return (
-    <div className="mx-auto flex w-full max-w-[110rem] flex-col lg:flex-row">
-      <PanelNav
-        elementos={elementos}
-        titulo={titulo}
-        usuario={{
-          nombre:
-            usuario?.publicName || usuario?.name || "Mi cuenta",
-          rol: NOMBRE_ROL[usuario?.role ?? ""] ?? "Cuenta",
-          avatarUrl: usuario?.avatarUrl ?? null,
-        }}
-      />
+    <>
+      {/* Separador bajo la barra superior, igual que en el inicio:
+          sin él, la barra del panel quedaba pegada al menú. */}
+      <div aria-hidden className="rk-separador rk-separador-arriba">
+        <span className="rk-separador-linea" />
+      </div>
 
-      <div className="min-w-0 flex-1">{children}</div>
-    </div>
+      <div className="mx-auto flex w-full max-w-[110rem] flex-col lg:flex-row">
+        <PanelNav
+          elementos={elementos}
+          titulo={titulo}
+          usuario={{
+            nombre:
+              usuario?.publicName || usuario?.name || "Mi cuenta",
+            rol: NOMBRE_ROL[usuario?.role ?? ""] ?? "Cuenta",
+            avatarUrl: usuario?.avatarUrl ?? null,
+          }}
+        />
+
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
+    </>
   );
 }
