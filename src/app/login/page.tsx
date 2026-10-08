@@ -37,6 +37,14 @@ export default function LoginPage() {
         return;
       }
 
+      const role = data?.user?.role;
+
+      // El administrador entra siempre directo a su panel.
+      if (role === "ADMIN") {
+        window.location.href = "/admin";
+        return;
+      }
+
       // Si el usuario llegó desde una página protegida,
       // lo devolvemos a esa página.
       const redirectTo = new URLSearchParams(
@@ -54,14 +62,8 @@ export default function LoginPage() {
         return;
       }
 
-      const role = data?.user?.role;
-
       window.location.href =
-        role === "ADMIN"
-          ? "/admin"
-          : role === "CREATOR"
-          ? "/creadores/panel"
-          : "/mi-cuenta";
+        role === "CREATOR" ? "/creadores/panel" : "/mi-cuenta";
     } catch (error) {
       console.error("ERROR LOGIN:", error);
       setError("No se pudo conectar con el servidor.");
