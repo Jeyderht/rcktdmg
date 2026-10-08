@@ -128,7 +128,7 @@ export default function ProductCard({
           ) : (
             <div className="flex h-full items-center justify-center">
               <span className="text-[9px] uppercase tracking-[0.3em] text-ink/30">
-                RCKTDMG
+                RcktX
               </span>
             </div>
           )}

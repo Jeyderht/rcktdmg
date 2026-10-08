@@ -77,7 +77,7 @@ export async function GET(request: Request) {
         nombre:
           fila.follower.publicName ||
           fila.follower.name ||
-          "Usuario de RCKTDMG",
+          "Usuario de RcktX",
         avatarUrl: fila.follower.avatarUrl,
         // Solo enlaza si ese seguidor tiene perfil público.
         username:

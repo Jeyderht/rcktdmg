@@ -3,7 +3,7 @@
 import { FileDown } from "lucide-react";
 
 /**
- * «Guía de requisitos para creadores RCKTDMG», en PDF.
+ * «Guía de requisitos para creadores RcktX», en PDF.
  *
  * ══════════ POR QUÉ ASÍ Y NO CON UN PDF DE VERDAD ══════════
  *

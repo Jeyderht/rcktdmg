@@ -317,7 +317,7 @@ export default function RecursosPage() {
                         />
                       ) : (
                         <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
-                          RCKTDMG
+                          RcktX
                         </span>
                       )}
 

@@ -372,7 +372,7 @@ export default function ColeccionesPage() {
                               />
                             ) : (
                               <span className="flex h-full items-center justify-center text-[8px] uppercase tracking-[0.2em] text-ink/45">
-                                RCKTDMG
+                                RcktX
                               </span>
                             )}
                           </div>

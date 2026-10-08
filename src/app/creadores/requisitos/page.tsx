@@ -12,7 +12,7 @@ import { paginaPublica } from "@/lib/seo";
 export const metadata: Metadata = paginaPublica({
   titulo: "Requisitos para creadores",
   descripcion:
-    "Medidas, formatos y pesos que RCKTDMG exige a cada tipo de contenido. Las mismas reglas que comprueba el sistema al subir un archivo.",
+    "Medidas, formatos y pesos que RcktX exige a cada tipo de contenido. Las mismas reglas que comprueba el sistema al subir un archivo.",
   ruta: "/creadores/requisitos",
 });
 

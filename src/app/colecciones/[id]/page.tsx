@@ -69,7 +69,7 @@ export async function generateMetadata({
   */
   return {
     ...paginaPrivada(coleccion.name),
-    description: "Colección de recursos digitales en RCKTDMG.",
+    description: "Colección de recursos digitales en RcktX.",
   };
 }
 

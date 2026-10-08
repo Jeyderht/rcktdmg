@@ -190,7 +190,7 @@ export default async function Admin() {
     {
       label: "Comisión de plataforma",
       value: money(stats.revenue.platformFee),
-      hint: "Retenido por RCKTDMG",
+      hint: "Retenido por RcktX",
       icon: Percent,
     },
     {
@@ -238,7 +238,7 @@ export default async function Admin() {
 
             <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
               Gestiona el contenido, usuarios y operaciones de
-              RCKTDMG.
+              RcktX.
             </p>
           </div>
 

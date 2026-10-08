@@ -94,10 +94,10 @@ export async function generateMetadata({
       : "Recursos";
 
   const descripcion = categoria
-    ? `Recursos digitales de la categoría ${categoria.name} en RCKTDMG, listos para descargar.`
+    ? `Recursos digitales de la categoría ${categoria.name} en RcktX, listos para descargar.`
     : etiqueta
-      ? `Recursos digitales etiquetados como ${etiqueta} en RCKTDMG.`
-      : "Explora y compra recursos digitales en RCKTDMG.";
+      ? `Recursos digitales etiquetados como ${etiqueta} en RcktX.`
+      : "Explora y compra recursos digitales en RcktX.";
 
   return paginaPublica({
     // La página 2 en adelante lo dice en el título.
@@ -313,7 +313,7 @@ export default async function Store({ searchParams }: StoreProps) {
             className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full rk-halo-marca blur-[90px]"
           />
 
-          <p className="rk-kicker">RCKTDMG Store</p>
+          <p className="rk-kicker">RcktX Store</p>
 
           <h1 className="rk-title mt-3 text-[2rem] sm:text-4xl lg:text-5xl">
             Explora recursos digitales

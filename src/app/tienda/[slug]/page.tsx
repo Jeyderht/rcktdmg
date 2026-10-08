@@ -149,7 +149,7 @@ export default async function ProductPage({
     const creatorName =
         product.creator.publicName ||
         product.creator.name ||
-        "Creador RCKTDMG";
+        "Creador RcktX";
 
     /*
      * Precio y promoción.

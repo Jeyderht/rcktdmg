@@ -361,7 +361,7 @@ function aVista(
       nombre:
         fila.user.publicName ||
         fila.user.name ||
-        "Usuario de RCKTDMG",
+        "Usuario de RcktX",
       avatarUrl: fila.user.avatarUrl,
       username:
         fila.user.creatorStatus === "APPROVED"

@@ -3,7 +3,7 @@
 import { forwardRef, type SVGProps } from "react";
 
 /**
- * Iconos propios de RCKTDMG (trazo 1.5, esquinas redondeadas).
+ * Iconos propios de RcktX (trazo 1.5, esquinas redondeadas).
  *
  * Misma API que lucide-react para poder cambiarlos sin tocar el resto:
  *   <IconoBolsa size={18} aria-hidden className="…" />

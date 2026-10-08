@@ -1,5 +1,5 @@
 /**
- * Isotipo de RCKTDMG: solo el cohete, sin el cuadro negro.
+ * Isotipo de RcktX: solo el cohete, sin el cuadro negro.
  *
  * Es una máscara de /marketing/cohete.svg pintada con el color
  * del texto (currentColor): sale blanco en el tema oscuro y

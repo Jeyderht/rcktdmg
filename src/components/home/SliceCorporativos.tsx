@@ -116,7 +116,7 @@ export default function SliceCorporativos({
             <p className="rk-kicker">Empresa</p>
 
             <h2 className="rk-title mt-3 text-[2rem] sm:text-4xl">
-              Corporativos
+              General
             </h2>
 
             <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">

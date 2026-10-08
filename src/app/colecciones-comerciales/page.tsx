@@ -11,7 +11,7 @@ import { paginaPublica } from "@/lib/seo";
 export const metadata: Metadata = paginaPublica({
   titulo: "Colecciones",
   descripcion:
-    "Colecciones completas de recursos digitales de RCKTDMG: varios recursos de una misma temática por un precio único.",
+    "Colecciones completas de recursos digitales de RcktX: varios recursos de una misma temática por un precio único.",
   ruta: "/colecciones-comerciales",
 });
 
@@ -32,7 +32,7 @@ export default async function ColeccionesComercialesPage() {
 
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
         <section className="rk-fade-up">
-          <p className="rk-kicker">RCKTDMG Store</p>
+          <p className="rk-kicker">RcktX Store</p>
 
           <h1 className="rk-title mt-3 text-[2rem] sm:text-4xl lg:text-5xl">
             Colecciones

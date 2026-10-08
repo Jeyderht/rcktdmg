@@ -55,7 +55,7 @@ export default function CtaModelo() {
 
           <Image
             src="/marketing/modelo-cta.webp"
-            alt="Diseñadora de RCKTDMG con su tableta gráfica"
+            alt="Diseñadora de RcktX con su tableta gráfica"
             width={820}
             height={1076}
             sizes="(min-width: 1024px) 400px, 70vw"
@@ -83,7 +83,7 @@ export default function CtaModelo() {
               </b>
               <span className="mt-2 flex gap-1.5">
                 <span className="rk-chip">Eventos</span>
-                <span className="rk-chip">Corporativos</span>
+                <span className="rk-chip">General</span>
               </span>
             </span>
           </div>

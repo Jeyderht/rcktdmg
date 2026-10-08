@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 
   title: {
     default: SITIO.nombre,
-    template: "%s · RCKTDMG",
+    template: "%s · RcktX",
   },
 
   description: SITIO.descripcion,

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 /**
- * Capa SEO de RCKTDMG.
+ * Capa SEO de RcktX.
  *
  * Reúne en un solo sitio la URL base, las URLs canónicas y las
  * directivas de indexación, para que ninguna página tenga que
@@ -55,7 +55,7 @@ export function urlBase(): string {
 }
 
 export const SITIO = {
-  nombre: "RCKTDMG",
+  nombre: "RcktX",
   /*
     Descripción factual: lo que el sitio hace, sin superlativos
     ni ventajas inventadas.

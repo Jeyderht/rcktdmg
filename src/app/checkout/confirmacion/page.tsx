@@ -106,7 +106,7 @@ function ConfirmationContent() {
             {paid ? <CheckCircle2 /> : <Clock />}
           </span>
 
-          <p className="rk-done-kicker">RCKTDMG</p>
+          <p className="rk-done-kicker">RcktX</p>
 
           <h1 className="rk-done-title">
             {paid

@@ -401,7 +401,7 @@ export async function enviarSolicitud(
     return {
       ok: false,
       estado: 409,
-      error: "Ya puedes publicar recursos en RCKTDMG.",
+      error: "Ya puedes publicar recursos en RcktX.",
     };
   }
 
@@ -491,7 +491,7 @@ async function avisarAdministracion(
         userId: admin.id,
         type: "CREATOR_APPLICATION_SUBMITTED",
         title: "Nueva solicitud de creador",
-        body: `${nombre} quiere publicar en RCKTDMG.`,
+        body: `${nombre} quiere publicar en RcktX.`,
         href: `/admin/creadores?id=${solicitudId}`,
       });
     }
@@ -643,7 +643,7 @@ export async function aprobarSolicitud(
     await crearNotificacion({
       userId: solicitud.userId,
       type: "CREATOR_APPLICATION_APPROVED",
-      title: "Ya eres creador en RCKTDMG",
+      title: "Ya eres creador en RcktX",
       body: "Tu solicitud fue aprobada. Ya puedes publicar recursos.",
       href: "/creadores/panel",
     });

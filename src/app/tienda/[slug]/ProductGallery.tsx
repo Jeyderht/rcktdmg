@@ -164,7 +164,7 @@ export default function ProductGallery({
           style={{ aspectRatio: proporcion ?? "1080 / 1350" }}
         >
           <span className="text-[10px] uppercase tracking-[0.3em] text-ink/45">
-            RCKTDMG
+            RcktX
           </span>
         </div>
       </div>

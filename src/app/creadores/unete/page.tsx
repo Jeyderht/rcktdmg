@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = paginaPublica({
   titulo: "Conviértete en creador",
   descripcion:
-    "Publica y vende tus recursos digitales en RCKTDMG. Envía tu portafolio y, si encaja, abrimos tu perfil público.",
+    "Publica y vende tus recursos digitales en RcktX. Envía tu portafolio y, si encaja, abrimos tu perfil público.",
   ruta: "/creadores/unete",
 });
 
@@ -76,14 +76,14 @@ export default async function ConvierteteEnCreadorPage() {
 
       <main className="mx-auto w-full max-w-3xl px-4 pb-20 pt-8 sm:px-5 lg:pt-12">
         <section className="rk-fade-up">
-          <p className="rk-kicker">Publica en RCKTDMG</p>
+          <p className="rk-kicker">Publica en RcktX</p>
 
           <h1 className="rk-title mt-3 text-[2rem] sm:text-4xl lg:text-5xl">
             Conviértete en creador
           </h1>
 
           <p className="mt-4 max-w-xl text-[15px] leading-7 text-ink/65">
-            Convierte tus diseños en recursos y véndelos en RCKTDMG.
+            Convierte tus diseños en recursos y véndelos en RcktX.
             Tú pones el precio y conservas la autoría; nosotros
             ponemos la tienda, las descargas y las licencias.
           </p>
@@ -122,7 +122,7 @@ export default async function ConvierteteEnCreadorPage() {
         <section className="rk-fade-up rk-enter-2 mt-10">
           {yaEsCreador ? (
             <div className="rk-tile rounded-rk-lg p-8 text-center">
-              <h2 className="rk-title text-xl">Ya publicas en RCKTDMG</h2>
+              <h2 className="rk-title text-xl">Ya publicas en RcktX</h2>
 
               <p className="mx-auto mt-2 max-w-md text-[15px] leading-7 text-ink/60">
                 Tu cuenta ya tiene acceso al Creator Studio.

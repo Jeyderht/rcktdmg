@@ -97,7 +97,7 @@ export default function PreviewProtegido({
         aria-hidden
         className={`pointer-events-none absolute ${posicion} select-none rounded-full bg-black/35 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/85 backdrop-blur-[2px] sm:text-[10px]`}
       >
-        RCKTDMG
+        RcktX
       </span>
     </>
   );

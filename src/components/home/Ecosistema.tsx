@@ -1,9 +1,10 @@
 import type React from "react";
+import { LogoFigma } from "@/components/programas/LogosProgramas";
 
 /**
  * Ecosistema creativo.
  *
- * Fila simétrica de programas con el cohete de RCKTDMG en un
+ * Fila simétrica de programas con el cohete de RcktX en un
  * círculo de marca al centro. Todos los programas van en círculos
  * blancos con su logo real: más grandes cerca del centro y
  * tenues en los bordes. Detrás: retícula de puntos,
@@ -44,18 +45,6 @@ const PROGRAMAS: Programa[] = [
   { nombre: "Premiere Pro", x: 94.5, nivel: "tenue", sigla: "Pr", letra: "#9999FF" },
 ];
 
-function LogoFigma() {
-  return (
-    <svg viewBox="0 0 38 57" aria-hidden className="rk-eco-figma">
-      <path fill="#1ABCFE" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z" />
-      <path fill="#0ACF83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z" />
-      <path fill="#FF7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z" />
-      <path fill="#F24E1E" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z" />
-      <path fill="#A259FF" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z" />
-    </svg>
-  );
-}
-
 export default function Ecosistema() {
   return (
     <section className="border-t border-line/10">
@@ -64,7 +53,7 @@ export default function Ecosistema() {
           <p className="rk-kicker justify-center">El sitio</p>
 
           <h2 className="rk-title mt-3 text-[1.75rem] sm:text-4xl">
-            Ecosistema creativo RCKTDMG
+            Ecosistema creativo RcktX
           </h2>
 
           <p className="mt-3 text-[15px] leading-7 text-ink/60">
@@ -84,7 +73,7 @@ export default function Ecosistema() {
           <div className="rk-eco-hex">
             <div className="rk-eco-nucleo">
               <span className="rk-eco-isotipo-wrap">
-                <span role="img" aria-label="RCKTDMG" className="rk-eco-isotipo" />
+                <span role="img" aria-label="RcktX" className="rk-eco-isotipo" />
               </span>
             </div>
           </div>
@@ -106,7 +95,7 @@ export default function Ecosistema() {
                 title={p.nombre}
               >
                 {p.figma ? (
-                  <LogoFigma />
+                  <LogoFigma className="rk-eco-figma" />
                 ) : (
                   <span
                     className="rk-eco-adobe"

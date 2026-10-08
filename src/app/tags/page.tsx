@@ -13,7 +13,7 @@ import { esTagProtegido } from "@/lib/tags-comun";
 export const metadata: Metadata = paginaPublica({
   titulo: "Etiquetas",
   descripcion:
-    "Explora los recursos de RCKTDMG por etiqueta: temática, herramienta, formato y estilo.",
+    "Explora los recursos de RcktX por etiqueta: temática, herramienta, formato y estilo.",
   ruta: "/tags",
 });
 

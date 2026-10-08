@@ -4,7 +4,7 @@ import { ArrowUp } from "lucide-react";
 import Isotipo from "@/components/Isotipo";
 
 /**
- * Pie de página de RCKTDMG.
+ * Pie de página de RcktX.
  *
  * Todos los enlaces apuntan a rutas que existen realmente en
  * src/app. No se incluyen redes sociales porque la marca no
@@ -88,7 +88,7 @@ export default function Footer() {
             <p className="rk-footer-cta-kicker">Para creadores</p>
 
             <p className="rk-footer-cta-title">
-              Publica tus recursos y vende en RCKTDMG
+              Publica tus recursos y vende en RcktX
             </p>
 
             <div className="rk-footer-cta-actions">
@@ -103,7 +103,7 @@ export default function Footer() {
 
           {/* MARCA */}
           <div className="rk-footer-brand">
-            <Link href="/" aria-label="RCKTDMG" className="rk-footer-logo">
+            <Link href="/" aria-label="RcktX" className="rk-footer-logo">
               <Isotipo className="h-7 w-7" />
             </Link>
 
@@ -145,7 +145,7 @@ export default function Footer() {
         </div>
 
         <div className="rk-footer-bottom">
-          <p>© {year} RCKTDMG. Todos los derechos reservados.</p>
+          <p>© {year} RcktX. Todos los derechos reservados.</p>
         </div>
 
         {/* Créditos y volver arriba */}
