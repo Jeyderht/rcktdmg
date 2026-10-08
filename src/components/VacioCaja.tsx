@@ -83,13 +83,26 @@ export default function VacioCaja({
             <stop className="s1" offset="0" />
             <stop className="s2" offset="1" />
           </linearGradient>
+          <linearGradient id="rk-vacio-brillo" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#fff" stopOpacity="0" />
+            <stop offset=".5" stopColor="#fff" stopOpacity=".55" />
+            <stop offset="1" stopColor="#fff" stopOpacity="0" />
+          </linearGradient>
+          <clipPath id="rk-vacio-tapa">
+            <polygon points="92,92 348,92 384,160 56,160" />
+          </clipPath>
         </defs>
         <polygon className="c-in" points="122,62 318,62 318,92 122,92" />
         <polygon className="c-in2" points="122,62 160,92 122,92" />
         <polygon className="c-in2" points="318,62 280,92 318,92" />
-        <polygon className="c-sol" points="0,0 52,0 122,62 92,92" />
-        <polygon className="c-sol" points="440,0 388,0 318,62 348,92" />
+        <polygon className="c-sol c-sol-izq" points="0,0 52,0 122,62 92,92" />
+        <polygon className="c-sol c-sol-der" points="440,0 388,0 318,62 348,92" />
         <polygon className="c-tapa" points="92,92 348,92 384,160 56,160" />
+        <g clipPath="url(#rk-vacio-tapa)">
+          <g transform="skewX(-24)">
+            <rect className="c-brillo" x="-120" y="80" width="140" height="90" fill="url(#rk-vacio-brillo)" />
+          </g>
+        </g>
         <rect className="c-canto" x="56" y="158" width="328" height="4" rx="2" />
         <rect className="c-frente" x="92" y="162" width="256" height="88" fill="url(#rk-vacio-frente)" />
       </svg>

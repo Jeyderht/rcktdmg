@@ -14967,9 +14967,62 @@ div.rk-upload-error > * + * {
   }
 }
 
+/* ── Caja animada ──
+   Todo lento y con la misma curva: la caja flota, las solapas
+   se mecen desde su bisagra, un brillo cruza la tapa y el
+   isotipo grabado respira. Nada salta. */
+.rk-vacio-ilustra {
+  animation: rk-vacio-flota 6s ease-in-out infinite;
+}
+
+.rk-vacio-caja .c-sol {
+  transform-box: fill-box;
+  animation: rk-vacio-solapa 6s ease-in-out infinite;
+}
+.rk-vacio-caja .c-sol-izq { transform-origin: 100% 100%; }
+.rk-vacio-caja .c-sol-der {
+  transform-origin: 0% 100%;
+  animation-name: rk-vacio-solapa-der;
+}
+
+.rk-vacio-caja .c-brillo {
+  opacity: 0.5;
+  animation: rk-vacio-brillo 6s ease-in-out infinite;
+}
+[data-theme="light"] .rk-vacio-caja .c-brillo { opacity: 0.9; }
+
+.rk-vacio-grabado {
+  animation: rk-vacio-respira 6s ease-in-out infinite;
+}
+
+@keyframes rk-vacio-flota {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes rk-vacio-solapa {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-6deg); }
+}
+@keyframes rk-vacio-solapa-der {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(6deg); }
+}
+@keyframes rk-vacio-brillo {
+  0%, 35% { transform: translateX(0); }
+  75%, 100% { transform: translateX(620px); }
+}
+@keyframes rk-vacio-respira {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 1; transform: translateX(-50%) translateY(-3px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rk-vacio-perilla,
-  .rk-vacio-puntos i {
+  .rk-vacio-puntos i,
+  .rk-vacio-ilustra,
+  .rk-vacio-caja .c-sol,
+  .rk-vacio-caja .c-brillo,
+  .rk-vacio-grabado {
     animation: none;
   }
 }
