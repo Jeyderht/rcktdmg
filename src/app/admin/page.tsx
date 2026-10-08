@@ -1,15 +1,14 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import {
   ArrowRight,
-  Banknote,
+  ArrowUpRight,
+  CalendarDays,
   ClipboardCheck,
-  Percent,
-  Sparkles,
-  TrendingUp,
   Package,
+  Plus,
+  SlidersHorizontal,
   UserPlus,
   Users,
   Wallet,
@@ -19,6 +18,8 @@ import { getAdminStats } from "@/lib/admin-stats";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
 import { IconoUsuario } from "@/components/iconos";
+import BalanceAdmin from "@/components/admin/BalanceAdmin";
+import DonaAdmin from "@/components/admin/DonaAdmin";
 
 export const metadata: Metadata = {
   title: "Administración",
@@ -58,75 +59,12 @@ function timeAgo(date: Date) {
   return shortDate(date);
 }
 
-const ORDER_STATUS = {
-  PENDING: { label: "Pendientes", badge: "rk-badge-warning" },
-  PAID: { label: "Pagados", badge: "rk-badge-success" },
-  CANCELED: { label: "Cancelados", badge: "rk-badge-danger" },
-  REFUNDED: { label: "Reembolsados", badge: "rk-badge-neutral" },
-} as const;
-
 const TONE_DOT = {
   neutral: "bg-ink/25",
   success: "bg-success",
   warning: "bg-warning",
   danger: "bg-danger",
 } as const;
-
-/** Barras proporcionales, sin librerías externas. */
-function BarChart({
-  points,
-  valueOf,
-  format,
-}: {
-  points: { key: string; label: string }[];
-  valueOf: (index: number) => number;
-  format: (value: number) => string;
-}) {
-  const values = points.map((_, index) => valueOf(index));
-  const max = Math.max(...values, 0);
-
-  if (max === 0) {
-    return (
-      <p className="py-10 text-center text-sm text-ink/60">
-        Todavía no hay datos en este periodo.
-      </p>
-    );
-  }
-
-  return (
-    <div className="flex h-44 items-end gap-1.5 overflow-x-auto pb-1">
-      {points.map((point, index) => {
-        const value = values[index];
-        const height = max > 0 ? (value / max) * 100 : 0;
-
-        return (
-          <div
-            key={point.key}
-            className="flex min-w-[2.1rem] flex-1 flex-col items-center gap-1.5"
-          >
-            <span className="text-[9px] font-medium text-ink/60">
-              {value > 0 ? format(value) : ""}
-            </span>
-
-            <div
-              className="flex w-full flex-1 items-end"
-              title={`${point.label}: ${format(value)}`}
-            >
-              <div
-                className="w-full rounded-t-rk-sm bg-foreground/80 transition-[height] duration-slow ease-rk"
-                style={{ height: `${Math.max(height, value > 0 ? 4 : 0)}%` }}
-              />
-            </div>
-
-            <span className="text-[10px] capitalize text-ink/60">
-              {point.label.replace(".", "")}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 export default async function Admin() {
   const stats = await getAdminStats();
@@ -156,422 +94,217 @@ export default async function Admin() {
   const adminName =
     adminUser?.publicName || adminUser?.name || "Administrador";
 
-  const summary = [
-    {
-      label: "Ventas del día",
-      value: money(stats.sales.day.total),
-      hint: `${stats.sales.day.count} ${
-        stats.sales.day.count === 1 ? "pedido" : "pedidos"
-      }`,
-      icon: TrendingUp,
-    },
-    {
-      label: "Ventas del mes",
-      value: money(stats.sales.month.total),
-      hint: `${stats.sales.month.count} ${
-        stats.sales.month.count === 1 ? "pedido" : "pedidos"
-      }`,
-      icon: TrendingUp,
-    },
-    {
-      label: "Ventas del año",
-      value: money(stats.sales.year.total),
-      hint: `${stats.sales.year.count} ${
-        stats.sales.year.count === 1 ? "pedido" : "pedidos"
-      }`,
-      icon: TrendingUp,
-    },
-    {
-      label: "Ingresos brutos",
-      value: money(stats.revenue.gross),
-      hint: `${stats.revenue.unitsSold} unidades vendidas`,
-      icon: Banknote,
-    },
-    {
-      label: "Comisión de plataforma",
-      value: money(stats.revenue.platformFee),
-      hint: "Retenido por RcktX",
-      icon: Percent,
-    },
-    {
-      label: "Ganancias de creadores",
-      value: money(stats.revenue.creatorAmount),
-      hint: "Acumulado de creadores",
-      icon: Sparkles,
-    },
-    {
-      label: "Retiros pendientes",
-      value: money(stats.withdrawals.pendingAmount),
-      hint: `${stats.withdrawals.pendingCount} por revisar`,
-      icon: Wallet,
-      href: "/admin/retiros",
-    },
-    {
-      label: "Recursos pendientes",
-      value: String(stats.products.pending),
-      hint: "Esperando revisión",
-      icon: ClipboardCheck,
-      href: "/admin/recursos?estado=PENDING_REVIEW",
-    },
-  ];
-
   const pendingTasks =
     stats.products.pending + stats.withdrawals.pendingCount;
+
+  const ahora = new Date();
+  const mesActual = `${new Intl.DateTimeFormat("es-PE", {
+    month: "long",
+  }).format(ahora)} ${ahora.getFullYear()}`;
+  const vence = new Intl.DateTimeFormat("es-PE", {
+    month: "2-digit",
+    year: "2-digit",
+  }).format(ahora);
+
+  // Parte de lo cobrado que retiene la plataforma (0–100 %).
+  const partePlataforma =
+    stats.revenue.gross > 0
+      ? Math.min(
+          100,
+          Math.round((stats.revenue.platformFee / stats.revenue.gross) * 100)
+        )
+      : 0;
 
   return (
     <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
 
-      {/* ENCABEZADO */}
-      <section className="rk-fade-up relative overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full rk-halo-marca blur-[90px]"
-        />
-
-        <p className="rk-eyebrow">Admin Center</p>
-
-        <div className="mt-2.5 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
-          <div className="min-w-0">
-            <h1 className="rk-title text-[2rem] sm:text-4xl">
-              Panel administrativo
-            </h1>
-
-            <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
-              Gestiona el contenido, usuarios y operaciones de
-              RcktX.
-            </p>
-          </div>
-
-          {pendingTasks > 0 && (
-            <span className="rk-badge rk-badge-warning shrink-0">
-              {pendingTasks}{" "}
-              {pendingTasks === 1
-                ? "tarea pendiente"
-                : "tareas pendientes"}
-            </span>
-          )}
+      {/* ENCABEZADO: título, saludo y acciones */}
+      <section className="rk-fade-up rk-adm-cabeza">
+        <div className="min-w-0">
+          <h1 className="rk-title text-[1.9rem] sm:text-[2.2rem]">Dashboard</h1>
+          <p className="mt-1 text-[13px] text-ink/60">
+            Bienvenido, {adminName}
+          </p>
         </div>
-      </section>
 
-      {/* IDENTIDAD DEL ADMINISTRADOR */}
-      <section className="rk-fade-up rk-enter-1 mt-6">
-        <div className="rk-row-card flex flex-wrap items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-3.5">
-            <span className="rk-media relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full text-base font-semibold text-ink/70">
-              {adminUser?.avatarUrl ? (
-                <Image
-                  src={adminUser.avatarUrl}
-                  alt={adminName}
-                  fill
-                  className="object-cover"
-                  sizes="48px"
-                />
-              ) : (
-                adminName.charAt(0).toUpperCase()
-              )}
-            </span>
+        <div className="rk-adm-acciones">
+          <Link
+            href="/admin/recursos?estado=PENDING_REVIEW"
+            className="rk-adm-circulo"
+            aria-label={`${pendingTasks} tareas pendientes`}
+          >
+            <SlidersHorizontal size={16} aria-hidden />
+            {pendingTasks > 0 && (
+              <span className="rk-adm-aviso">{pendingTasks}</span>
+            )}
+          </Link>
 
-            <div className="min-w-0">
-              <p className="truncate text-[15px] font-semibold leading-tight">
-                {adminName}
-              </p>
+          <Link href="/admin/usuarios/nuevo" className="rk-adm-pildora is-negra">
+            <Plus size={14} aria-hidden />
+            Crear creador
+          </Link>
 
-              {adminUser?.email && (
-                <p className="mt-0.5 truncate text-xs text-ink/60">
-                  {adminUser.email}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <span className="rk-badge rk-badge-accent shrink-0">
-            ADMIN
+          <span className="rk-adm-pildora">
+            <CalendarDays size={14} aria-hidden />
+            <span className="capitalize">{mesActual}</span>
           </span>
         </div>
       </section>
 
-      {/* RESUMEN */}
-      <section className="rk-enter rk-enter-1 mt-4 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
-        {summary.map((item) => {
-          const Icon = item.icon;
+      {/* BENTO: ingresos · comisión y dona · cuenta */}
+      <section className="rk-enter rk-enter-1 rk-adm-bento">
+        <BalanceAdmin
+          meses={stats.months}
+          hoy={stats.sales.day.total}
+          anio={stats.sales.year.total}
+        />
 
-          const card = (
-            <>
-              <div className="flex items-start justify-between gap-3">
-                <p className="rk-eyebrow !tracking-[0.14em]">
-                  {item.label}
+        <div className="rk-adm-col">
+          {/* Comisión retenida sobre lo cobrado */}
+          <section className="rk-card rk-adm-meta">
+            <div className="rk-adm-meta-cabeza">
+              <h2 className="rk-adm-card-titulo">Comisión de plataforma</h2>
+              <Link
+                href="/admin/retiros"
+                className="rk-adm-circulo is-chico"
+                aria-label="Ver retiros"
+              >
+                <ArrowUpRight size={14} aria-hidden />
+              </Link>
+            </div>
+
+            <div className="rk-adm-meta-cifras">
+              <div>
+                <p className="rk-adm-mini-etiqueta">Retenido</p>
+                <p className="rk-adm-meta-valor">
+                  {money(stats.revenue.platformFee)}
+                  <span> / {money(stats.revenue.gross)}</span>
                 </p>
-
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink">
-                  <Icon size={15} />
-                </span>
               </div>
+              <div className="text-right">
+                <p className="rk-adm-mini-etiqueta">Creadores</p>
+                <p className="rk-adm-meta-valor">
+                  {money(stats.revenue.creatorAmount)}
+                </p>
+              </div>
+            </div>
 
-              <p className="mt-2.5 truncate text-[1.4rem] font-semibold leading-tight tracking-tight">
-                {item.value}
-              </p>
-
-              <p className="mt-1 text-[11px] text-ink/60">
-                {item.hint}
-              </p>
-            </>
-          );
-
-          return item.href ? (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="rk-card rk-card-hover rk-press p-4"
+            <div
+              className="rk-adm-progreso"
+              role="img"
+              aria-label={`${partePlataforma} % retenido por la plataforma`}
             >
-              {card}
-            </Link>
-          ) : (
-            <div key={item.label} className="rk-card p-4">
-              {card}
+              <span style={{ width: `${partePlataforma}%` }} />
             </div>
-          );
-        })}
-      </section>
+          </section>
 
-      {/* GRÁFICOS */}
-      <section className="rk-enter rk-enter-2 mt-4 grid gap-4 xl:grid-cols-2">
-        <div className="rk-card min-w-0 p-5">
-          <h2 className="text-sm font-semibold">Ventas por mes</h2>
-
-          <p className="mt-0.5 text-xs text-ink/60">
-            Pedidos pagados en los últimos 12 meses
-          </p>
-
-          <div className="mt-4">
-            <BarChart
-              points={stats.months}
-              valueOf={(index) => stats.months[index].sales}
-              format={(value) => String(value)}
-            />
-          </div>
+          <DonaAdmin
+            pedidos={[
+              { label: "Pagados", valor: stats.orders.paid.count },
+              { label: "Pendientes", valor: stats.orders.pending.count },
+              { label: "Cancelados", valor: stats.orders.canceled.count },
+              { label: "Reembolsados", valor: stats.orders.refunded.count },
+            ]}
+            recursos={[
+              { label: "Publicados", valor: stats.products.published },
+              { label: "Pendientes", valor: stats.products.pending },
+              { label: "Borradores", valor: stats.products.draft },
+              { label: "Rechazados", valor: stats.products.rejected },
+              { label: "Archivados", valor: stats.products.archived },
+            ]}
+          />
         </div>
 
-        <div className="rk-card min-w-0 p-5">
-          <h2 className="text-sm font-semibold">
-            Ingresos mensuales
-          </h2>
-
-          <p className="mt-0.5 text-xs text-ink/60">
-            Importe bruto de los pedidos pagados
-          </p>
-
-          <div className="mt-4">
-            <BarChart
-              points={stats.months}
-              valueOf={(index) => stats.months[index].gross}
-              format={(value) => value.toFixed(0)}
-            />
+        <div className="rk-adm-col">
+          <div className="rk-adm-cuenta-cabeza">
+            <h2 className="rk-adm-card-titulo">Mi plataforma</h2>
           </div>
 
-          {/* Desglose real: bruto = comisión + creadores */}
-          <div className="mt-4 grid grid-cols-3 gap-2 border-t border-line/10 pt-4 text-center">
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-ink/60">
-                Bruto
-              </p>
-              <p className="mt-1 text-sm font-semibold">
-                {money(stats.revenue.gross)}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-ink/60">
-                Comisión
-              </p>
-              <p className="mt-1 text-sm font-semibold">
-                {money(stats.revenue.platformFee)}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-ink/60">
-                Creadores
-              </p>
-              <p className="mt-1 text-sm font-semibold">
-                {money(stats.revenue.creatorAmount)}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ÚLTIMAS VENTAS */}
-      <section className="rk-enter rk-enter-3 mt-4">
-        <div className="rk-table-wrap">
-          <div className="rk-table-head">
-            <h2>Últimas ventas</h2>
-
-            <Link href="/admin/recursos">Ver recursos</Link>
-          </div>
-
-          {stats.recentSales.length === 0 ? (
-            <p className="rk-table-empty">
-              Todavía no hay ventas registradas.
-            </p>
-          ) : (
-            <>
-              {/* ESCRITORIO: tabla */}
-              <div className="rk-table-scroll hidden lg:block">
-                <table className="rk-table">
-                  <thead>
-                    <tr>
-                      <th>Producto</th>
-                      <th>Cliente</th>
-                      <th>Creador</th>
-                      <th>Fecha</th>
-                      <th className="rk-table-num">Importe</th>
-                      <th>Estado</th>
-                      <th className="rk-table-actions">Acción</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {stats.recentSales.map((sale) => (
-                      <tr key={sale.id}>
-                        <td className="max-w-[16rem] truncate font-semibold">
-                          {sale.productName}
-                        </td>
-                        <td className="rk-table-muted">{sale.buyer}</td>
-                        <td className="rk-table-muted">{sale.creator}</td>
-                        <td className="rk-table-muted">
-                          {shortDate(sale.createdAt)}
-                        </td>
-                        <td className="rk-table-num">{money(sale.amount)}</td>
-                        <td>
-                          <span className="rk-badge rk-badge-success">
-                            Pagado
-                          </span>
-                        </td>
-                        <td className="rk-table-actions">
-                          <Link
-                            href={`/tienda/${sale.productSlug}`}
-                            className="rk-table-link"
-                          >
-                            Ver
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          {/* Tarjeta de marca con los ingresos brutos */}
+          <div className="rk-adm-tarjeta-pila">
+            <span aria-hidden className="rk-adm-tarjeta-atras is-1" />
+            <span aria-hidden className="rk-adm-tarjeta-atras is-2" />
+            <div className="rk-adm-tarjeta">
+              <div className="rk-adm-tarjeta-arriba">
+                <span aria-hidden className="rk-isotipo rk-adm-tarjeta-iso" />
+                <span className="rk-adm-tarjeta-marca">RcktX</span>
               </div>
+              <div>
+                <p className="rk-adm-tarjeta-etiqueta">Ingresos brutos</p>
+                <p className="rk-adm-tarjeta-valor">
+                  {money(stats.revenue.gross)}
+                </p>
+              </div>
+              <div className="rk-adm-tarjeta-abajo">
+                <span>•••• {stats.revenue.unitsSold} vendidos</span>
+                <span>{vence}</span>
+              </div>
+            </div>
+          </div>
 
-              {/* MÓVIL: tarjetas */}
-              <ul className="rk-row-list is-inset lg:hidden">
-                {stats.recentSales.map((sale) => (
+          <Link href="/admin/retiros" className="rk-adm-pildora is-linea">
+            <Wallet size={14} aria-hidden />
+            Retiros pendientes · {money(stats.withdrawals.pendingAmount)}
+          </Link>
+
+          {/* Creadores con más ventas, en círculos */}
+          <section className="rk-card rk-adm-rapidos">
+            <h2 className="rk-adm-card-titulo">Creadores destacados</h2>
+            <div className="rk-adm-rapidos-fila">
+              <Link
+                href="/admin/usuarios/nuevo"
+                className="rk-adm-avatar is-mas"
+                aria-label="Crear creador"
+              >
+                <Plus size={16} aria-hidden />
+              </Link>
+              {stats.creators.byVolume.slice(0, 6).map((c, i) => (
+                <span
+                  key={c.id}
+                  className={`rk-adm-avatar is-tono-${i % 4}`}
+                  title={`${c.name} · ${c.sales} ventas`}
+                >
+                  {c.name.charAt(0).toUpperCase()}
+                </span>
+              ))}
+            </div>
+          </section>
+
+          {/* Últimas ventas */}
+          <section className="rk-adm-ventas">
+            <h2 className="rk-adm-card-titulo">Últimas ventas</h2>
+            {stats.recentSales.length === 0 ? (
+              <p className="rk-adm-vacio">Todavía no hay ventas registradas.</p>
+            ) : (
+              <ul>
+                {stats.recentSales.slice(0, 5).map((sale) => (
                   <li key={sale.id}>
-                    <Link
-                      href={`/tienda/${sale.productSlug}`}
-                      className="rk-row-card"
-                    >
-                      <div className="rk-row-card-head">
-                        <div className="min-w-0">
-                          <p className="rk-row-card-title">
-                            {sale.productName}
-                          </p>
-
-                          <p className="rk-row-card-sub">
-                            {sale.buyer} · {sale.creator}
-                          </p>
-                        </div>
-
-                        <div className="rk-row-card-side">
-                          <p className="rk-row-card-amount">
-                            {money(sale.amount)}
-                          </p>
-
-                          <p className="rk-row-card-meta">
-                            {shortDate(sale.createdAt)}
-                          </p>
-                        </div>
-                      </div>
+                    <Link href={`/tienda/${sale.productSlug}`}>
+                      <span aria-hidden className="rk-adm-venta-icono">
+                        {sale.productName.charAt(0).toUpperCase()}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="rk-adm-venta-nombre">
+                          {sale.productName}
+                        </span>
+                        <span className="rk-adm-venta-sub">
+                          {sale.buyer} · {shortDate(sale.createdAt)}
+                        </span>
+                      </span>
+                      <span className="rk-adm-venta-monto">
+                        +{money(sale.amount)}
+                      </span>
                     </Link>
                   </li>
                 ))}
               </ul>
-            </>
-          )}
+            )}
+          </section>
         </div>
       </section>
 
-      {/* PEDIDOS · RECURSOS · USUARIOS · CREADORES */}
-      <section className="rk-enter rk-enter-4 mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-
-        {/* PEDIDOS */}
-        <div className="rk-card p-5">
-          <h2 className="text-sm font-semibold">Pedidos</h2>
-
-          <ul className="mt-3 space-y-2">
-            {(
-              ["PAID", "PENDING", "CANCELED", "REFUNDED"] as const
-            ).map((status) => {
-              const row = stats.orders[
-                status.toLowerCase() as keyof typeof stats.orders
-              ];
-
-              return (
-                <li
-                  key={status}
-                  className="flex items-center justify-between gap-2 text-sm"
-                >
-                  <span className={`rk-badge ${ORDER_STATUS[status].badge}`}>
-                    {ORDER_STATUS[status].label}
-                  </span>
-
-                  <span className="text-right">
-                    <span className="font-semibold">{row.count}</span>
-
-                    <span className="ml-1.5 text-[11px] text-ink/60">
-                      {money(row.total)}
-                    </span>
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-
-        {/* RECURSOS */}
-        <div className="rk-card p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">Recursos</h2>
-
-            <Link
-              href="/admin/recursos"
-              aria-label="Ver todos los recursos"
-              className="rk-press text-ink/60 hover:text-ink"
-            >
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <p className="mt-2 text-2xl font-semibold tracking-tight">
-            {stats.products.total}
-          </p>
-
-          <ul className="mt-3 space-y-1.5 text-sm">
-            {[
-              ["Publicados", stats.products.published],
-              ["Pendientes", stats.products.pending],
-              ["Borradores", stats.products.draft],
-              ["Rechazados", stats.products.rejected],
-              ["Archivados", stats.products.archived],
-            ].map(([label, value]) => (
-              <li
-                key={String(label)}
-                className="flex items-center justify-between"
-              >
-                <span className="text-ink/60">{label}</span>
-                <span className="font-medium">{value}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      {/* USUARIOS · CREADORES */}
+      <section className="rk-enter rk-enter-2 mt-4 grid gap-4 md:grid-cols-2">
 
         {/* USUARIOS */}
         <div className="rk-card p-5">

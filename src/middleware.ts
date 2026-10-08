@@ -47,7 +47,9 @@ export async function middleware(request: NextRequest) {
   // Un usuario con sesión activa no necesita login ni registro.
   if (pathname === "/login" || pathname === "/registro") {
     if (session) {
-      return NextResponse.redirect(new URL("/", request.url));
+      // El admin con sesión va a su panel; el resto, al inicio.
+      const destino = session.role === "ADMIN" ? "/admin" : "/";
+      return NextResponse.redirect(new URL(destino, request.url));
     }
 
     return NextResponse.next();
