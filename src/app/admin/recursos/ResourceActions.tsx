@@ -108,11 +108,8 @@ export default function ResourceActions({
   }
 
   return (
-    <div className="flex flex-row flex-wrap gap-2 lg:w-40 lg:flex-col">
-      <Link
-        href={`/admin/recursos/${resourceId}`}
-        className="rk-btn rk-btn-line flex-1 lg:flex-none"
-      >
+    <div className="rk-rec-acc">
+      <Link href={`/admin/recursos/${resourceId}`} className="rk-btn rk-btn-line">
         Ver recurso
       </Link>
 
@@ -121,7 +118,7 @@ export default function ResourceActions({
           href={`/tienda/${resourceSlug}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="rk-btn rk-btn-line flex-1 lg:flex-none"
+          className="rk-btn rk-btn-line"
         >
           Ver publicado
         </Link>
@@ -133,7 +130,7 @@ export default function ResourceActions({
             type="button"
             disabled={loading}
             onClick={() => handleAction("publicar")}
-            className="rk-btn rk-btn-primary flex-1 lg:flex-none"
+            className="rk-btn rk-btn-primary"
           >
             {loading ? "Procesando..." : "Publicar"}
           </button>
@@ -142,7 +139,7 @@ export default function ResourceActions({
             type="button"
             disabled={loading}
             onClick={() => handleAction("rechazar")}
-            className="rk-upload-error rk-btn flex-1 hover:bg-danger/10 lg:flex-none"
+            className="rk-btn rk-us-peli"
           >
             Rechazar
           </button>

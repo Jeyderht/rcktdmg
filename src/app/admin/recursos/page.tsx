@@ -32,10 +32,11 @@ const STATUS_BADGE: Record<string, string> = {
   ARCHIVED: "rk-badge-neutral",
 };
 
-/** Borde sutil por estado: distingue sin saturar la lista. */
+/** Borde sutil por estado: distingue sin saturar la lista
+    (rk-rec-pub es el del preview para los publicados). */
 const STATUS_EDGE: Record<string, string> = {
   PENDING_REVIEW: "!border-warning/30",
-  PUBLISHED: "!border-success/25",
+  PUBLISHED: "rk-rec-pub",
   REJECTED: "!border-danger/30",
 };
 
@@ -141,17 +142,15 @@ export default async function RecursosAdminPage({
   const isReviewInbox = statusFilter === "PENDING_REVIEW";
 
   return (
-    <div>
+    <div data-vista="Recursos">
 
       {/* ========== CABECERA ========== */}
-      <header className="rk-fade-up">
-        <p className="rk-eyebrow">Admin Center</p>
-
-        <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
+      <header className="rk-us-cab">
+        <h1 className="rk-title" style={{ margin: 0, fontSize: "2rem" }}>
           {isReviewInbox ? "Revisiones" : "Recursos"}
         </h1>
 
-        <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
+        <p className="rk-us-sub">
           {isReviewInbox
             ? "Recursos pendientes de revisión, en orden de llegada."
             : "Revisa, publica o rechaza los recursos enviados por los creadores."}
@@ -159,53 +158,38 @@ export default async function RecursosAdminPage({
       </header>
 
       {/* ========== FILTROS ========== */}
-      <section className="rk-fade-up rk-enter-1 mt-7">
-        <div
-          role="group"
-          aria-label="Filtrar por estado"
-          className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
-        >
-          {filters.map((filter) => {
-            const active = statusFilter === filter.value;
+      <div className="rk-us-filtros" role="group" aria-label="Filtrar por estado">
+        {filters.map((filter) => {
+          const active = statusFilter === filter.value;
 
-            return (
-              <Link
-                key={filter.label}
-                href={
-                  filter.value
-                    ? `/admin/recursos?estado=${filter.value}`
-                    : "/admin/recursos"
-                }
-                aria-current={active ? "true" : undefined}
-                className={`rk-chip shrink-0 ${
-                  active ? "rk-chip-active" : ""
-                }`}
-              >
-                {filter.label}
-                <span className="tabular-nums opacity-50">
-                  {filter.count}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
+          return (
+            <Link
+              key={filter.label}
+              href={
+                filter.value
+                  ? `/admin/recursos?estado=${filter.value}`
+                  : "/admin/recursos"
+              }
+              aria-current={active ? "true" : undefined}
+              className={`rk-chip shrink-0${active ? " rk-chip-active" : ""}`}
+            >
+              {filter.label}
+              <span className="tabular-nums opacity-50">{filter.count}</span>
+            </Link>
+          );
+        })}
+      </div>
 
       {/* ========== CONTADOR ========== */}
-      <div className="rk-fade-up mt-6 flex items-baseline justify-between gap-4">
-        <p className="text-[15px] text-ink/60">
-          {statusFilter
-            ? STATUS_LABEL[statusFilter]
-            : "Todo el catálogo"}
-        </p>
-
-        <span className="text-sm font-medium tabular-nums text-ink/60">
+      <div className="rk-us-cont">
+        <p>{statusFilter ? STATUS_LABEL[statusFilter] : "Todo el catálogo"}</p>
+        <span>
           {visibleResources.length}{" "}
           {visibleResources.length === 1 ? "recurso" : "recursos"}
         </span>
       </div>
 
-      <div className="rk-divider mt-4" />
+      <div className="rk-divider" />
 
       {/* ========== LISTA ========== */}
       {visibleResources.length === 0 ? (
@@ -229,7 +213,7 @@ export default async function RecursosAdminPage({
           />
         </div>
       ) : (
-        <section className="rk-fade-up rk-enter-2 mt-5 space-y-3">
+        <section className="rk-us-lista" aria-label="Lista de recursos">
           {visibleResources.map((resource) => {
             const image =
               resource.coverUrl || resource.images[0]?.url || null;
@@ -237,24 +221,18 @@ export default async function RecursosAdminPage({
             return (
               <article
                 key={resource.id}
-                className={`rk-card p-4 sm:p-5 ${
-                  STATUS_EDGE[resource.status] || ""
-                }`}
+                className={`rk-card rk-rec ${STATUS_EDGE[resource.status] || ""}`}
               >
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-
+                <div className="rk-rec-col">
                   {/*
-                    El marco lo decide la pieza: 9:16 solo si
-                    es una story, 4:5 para el resto. La imagen
-                    sigue nítida y `cover` recorta, no estira.
+                    El marco lo decide la pieza: 9:16 solo si es una
+                    story, 4:5 para el resto. `cover` recorta, no estira.
                   */}
                   <div
-                    className={`rk-media ${claseProporcion(
-                      {
+                    className={`rk-rec-img rk-rec-foto ${claseProporcion({
                       categoriaSlug: resource.category.slug,
                       pieceType: resource.pieceType,
-                    }
-                    )} relative w-20 shrink-0 overflow-hidden rounded-rk-sm sm:w-24`}
+                    })} relative overflow-hidden`}
                   >
                     {image ? (
                       <Image
@@ -265,59 +243,36 @@ export default async function RecursosAdminPage({
                         sizes="96px"
                       />
                     ) : (
-                      <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
-                        RcktX
-                      </span>
+                      <span>RcktX</span>
                     )}
                   </div>
 
-                  {/* DATOS */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-[15px] font-semibold leading-snug">
-                        {resource.name}
-                      </h2>
-
+                  <div className="rk-rec-tx">
+                    <div className="rk-rec-nom">
+                      <h2>{resource.name}</h2>
                       <span
-                        className={`rk-badge ${
-                          STATUS_BADGE[resource.status] ||
-                          "rk-badge-neutral"
-                        }`}
+                        className={`rk-badge ${STATUS_BADGE[resource.status] || "rk-badge-neutral"}`}
                       >
                         {STATUS_LABEL[resource.status]}
                       </span>
                     </div>
 
-                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-ink/60">
-                      {resource.description}
-                    </p>
+                    <p className="rk-rec-desc">{resource.description}</p>
 
                     {/* Motivo real del rechazo. */}
-                    {resource.status === "REJECTED" &&
-                      resource.rejectionReason && (
-                        <p className="rk-upload-error mt-3">
-                          <span className="font-medium">
-                            Motivo del rechazo:
-                          </span>{" "}
-                          {resource.rejectionReason}
-                        </p>
-                      )}
+                    {resource.status === "REJECTED" && resource.rejectionReason && (
+                      <p className="rk-upload-error mt-3">
+                        <span className="font-medium">Motivo del rechazo:</span>{" "}
+                        {resource.rejectionReason}
+                      </p>
+                    )}
 
-                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink/60">
-                      <span className="truncate">
-                        {resource.creator.name || "Sin nombre"}
-                        <span className="text-ink/60">
-                          {" · "}
-                          {resource.creator.email}
-                        </span>
+                    <div className="rk-rec-meta2">
+                      <span>
+                        {resource.creator.name || "Sin nombre"} · {resource.creator.email}
                       </span>
-
                       <span>{resource.category.name}</span>
-
-                      <span className="font-medium tabular-nums text-ink/60">
-                        S/ {Number(resource.price).toFixed(2)}
-                      </span>
-
+                      <b>S/ {Number(resource.price).toFixed(2)}</b>
                       <span>
                         {new Intl.DateTimeFormat("es-PE", {
                           dateStyle: "medium",
@@ -325,16 +280,14 @@ export default async function RecursosAdminPage({
                       </span>
                     </div>
                   </div>
-
-                  {/* ACCIONES */}
-                  <div className="shrink-0 lg:pt-1">
-                    <ResourceActions
-                      resourceId={resource.id}
-                      resourceSlug={resource.slug}
-                      status={resource.status}
-                    />
-                  </div>
                 </div>
+
+                {/* ACCIONES */}
+                <ResourceActions
+                  resourceId={resource.id}
+                  resourceSlug={resource.slug}
+                  status={resource.status}
+                />
               </article>
             );
           })}
