@@ -9,6 +9,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { IconoUsuario } from "@/components/iconos";
+import { MINIMO_SUGERENCIA, type Sugerencia } from "@/lib/busqueda-comun";
 
 /**
  * Sugerencias de búsqueda: datos y presentación.
@@ -19,18 +20,9 @@ import { IconoUsuario } from "@/components/iconos";
  * con el tiempo y se comporten distinto.
  */
 
-export type Sugerencia = {
-  tipo: "recurso" | "categoria" | "etiqueta" | "creador";
-  etiqueta: string;
-  detalle?: string;
-  href: string;
-};
-
 export type Destacado = { etiqueta: string; href: string };
 
 export type Opcion = Sugerencia | Destacado;
-
-export const MINIMO_SUGERENCIA = 2;
 
 const ESPERA_MS = 220;
 

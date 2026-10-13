@@ -278,7 +278,6 @@ export const ETIQUETA_PIEZA: Record<TipoPieza, string> = {
   EVENT_OTHER: "Otra pieza",
 };
 
-/** Qué medidas exige cada pieza. Solo la story exige unas. */
 /**
  * Qué medida exige cada pieza.
  *
@@ -373,12 +372,6 @@ export function proporcionDeRecurso(
   if (!medida) return null;
 
   return `${medida.ancho} / ${medida.alto}`;
-}
-
-export function esTipoPieza(valor: unknown): valor is TipoPieza {
-  return (
-    typeof valor === "string" && Object.hasOwn(ETIQUETA_PIEZA, valor)
-  );
 }
 
 /**

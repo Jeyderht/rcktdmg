@@ -1,4 +1,3 @@
-import type { TipoPieza } from "@/lib/tipos-publicacion";
 import { prisma } from "@/lib/prisma";
 import {
   ALTO_CORPORATIVO,
@@ -129,48 +128,6 @@ function aTarjetaHome(fila: Fila): TarjetaHome {
       isVerified: fila.creator.isVerified,
     },
   };
-}
-
-/**
- * Recursos publicados de una categoría, los más recientes.
- *
- * `soloConImagen` lo usan las Stories: una story ES la imagen,
- * así que un recurso sin ninguna no tiene nada que enseñar.
- * En lugar de inventarle una portada, se queda fuera.
- */
-async function porCategoria(
-  slug: string,
-  tope: number,
-  soloConImagen: boolean,
-  /** Cuando se indica, solo esa pieza. */
-  pieza?: TipoPieza
-): Promise<TarjetaHome[]> {
-  const filas = await prisma.product.findMany({
-    where: {
-      status: "PUBLISHED",
-      category: { slug },
-      ...(pieza ? { pieceType: pieza } : {}),
-      ...(soloConImagen
-        ? {
-            OR: [
-              { images: { some: {} } },
-              { coverUrl: { not: null } },
-            ],
-          }
-        : {}),
-    },
-    // El id cierra el orden para que no dependa del azar.
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    take: tope,
-    select: SELECCION,
-  });
-
-  return (filas as Fila[]).map(aTarjetaHome);
-}
-
-/** Toda la categoría Eventos, para su propia sección. */
-export function flyersDeEventos(tope = 12): Promise<TarjetaHome[]> {
-  return porCategoria(CATEGORIA_EVENTOS, tope, true);
 }
 
 /**
@@ -442,40 +399,4 @@ export async function creadoresDestacados(
         ]
       : []
   );
-}
-
-/**
- * Recuentos para "Más diseños para tu negocio".
- *
- * Cuatro agregados en paralelo, sin traer ninguna fila: solo
- * hacen falta los números para decidir qué caminos se ofrecen
- * y cuántos elementos tiene cada uno.
- */
-export async function conteosDeDisenos(): Promise<{
-  colecciones: number;
-  corporativos: number;
-  socialMedia: number;
-  packs: number;
-}> {
-  const [colecciones, corporativos, socialMedia, packs] =
-    await Promise.all([
-      prisma.commercialCollection.count({
-        where: { status: "PUBLISHED" },
-      }),
-      prisma.product.count({
-        where: {
-          status: "PUBLISHED",
-          category: { slug: CATEGORIA_CORPORATIVOS },
-        },
-      }),
-      prisma.product.count({
-        where: {
-          status: "PUBLISHED",
-          category: { slug: "social-media" },
-        },
-      }),
-      prisma.pack.count({ where: { status: "PUBLISHED" } }),
-    ]);
-
-  return { colecciones, corporativos, socialMedia, packs };
 }

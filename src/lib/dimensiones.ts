@@ -22,13 +22,6 @@ export type Dimensiones = { width: number; height: number };
 export const ANCHO_CORPORATIVO = 1080;
 export const ALTO_CORPORATIVO = 1350;
 
-export function esFormatoCorporativo(
-  width: number | null | undefined,
-  height: number | null | undefined
-): boolean {
-  return width === ANCHO_CORPORATIVO && height === ALTO_CORPORATIVO;
-}
-
 /*
   Formato 1080 × 1920, el vertical 9:16.
 
@@ -42,13 +35,6 @@ const VERTICAL = medidaExigidaPara("eventos", null);
 
 export const ANCHO_VERTICAL = VERTICAL?.ancho ?? 1080;
 export const ALTO_VERTICAL = VERTICAL?.alto ?? 1920;
-
-export function esFormatoVertical(
-  width: number | null | undefined,
-  height: number | null | undefined
-): boolean {
-  return width === ANCHO_VERTICAL && height === ALTO_VERTICAL;
-}
 
 /* ══════════════ LECTURA ══════════════ */
 

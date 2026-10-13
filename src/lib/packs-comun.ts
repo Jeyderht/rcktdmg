@@ -28,13 +28,6 @@ export const ETIQUETA_ESTADO: Record<EstadoPack, string> = {
   ARCHIVED: "Archivado",
 };
 
-export function esEstadoPack(valor: unknown): valor is EstadoPack {
-  return (
-    typeof valor === "string" &&
-    (ESTADOS_PACK as readonly string[]).includes(valor)
-  );
-}
-
 export const LARGO_NOMBRE_PACK = 80;
 export const LARGO_DESCRIPCION_PACK = 2000;
 

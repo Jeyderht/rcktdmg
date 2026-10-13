@@ -38,15 +38,6 @@ export const ETIQUETA_ESTADO_COLECCION: Record<EstadoColeccion, string> = {
   ARCHIVED: "Archivada",
 };
 
-export function esEstadoColeccion(
-  valor: unknown
-): valor is EstadoColeccion {
-  return (
-    typeof valor === "string" &&
-    (ESTADOS_COLECCION as readonly string[]).includes(valor)
-  );
-}
-
 export const LARGO_NOMBRE_COLECCION = 80;
 export const LARGO_DESCRIPCION_COLECCION = 2000;
 

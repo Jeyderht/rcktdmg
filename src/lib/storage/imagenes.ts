@@ -73,13 +73,6 @@ export const REGLAS: Record<TipoImagen, ReglaImagen> = {
 
 export const TIPOS_IMAGEN = Object.keys(REGLAS) as TipoImagen[];
 
-export function esTipoImagen(valor: unknown): valor is TipoImagen {
-  return (
-    typeof valor === "string" &&
-    (TIPOS_IMAGEN as string[]).includes(valor)
-  );
-}
-
 /** Extensiones aceptadas, derivadas de los MIME permitidos. */
 export function extensionesDe(tipo: TipoImagen) {
   return Array.from(
