@@ -15,6 +15,7 @@ import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
 import { IconoUsuario } from "@/components/iconos";
 import BalanceAdmin from "@/components/admin/BalanceAdmin";
+import ComunidadAdmin from "@/components/admin/ComunidadAdmin";
 import { COLORES_ADMIN } from "@/lib/admin-colores";
 
 export const metadata: Metadata = {
@@ -296,109 +297,24 @@ export default async function Admin() {
               ))}
             </div>
           </section>
+
+          {/* COMUNIDAD · usuarios y creadores en pestañas */}
+          <ComunidadAdmin
+            usuarios={{
+              total: stats.users.total,
+              clients: stats.users.clients,
+              admins: stats.users.admins,
+              newByMonth: stats.users.newByMonth,
+            }}
+            creadores={{
+              approved: stats.creators.approved,
+              pending: stats.creators.pending,
+              suspended: stats.creators.suspended,
+              rejected: stats.creators.rejected,
+            }}
+          />
         </div>
       </div>
-
-      {/* USUARIOS · CREADORES */}
-      <section className="rk-enter rk-enter-2 mt-4 grid gap-4 md:grid-cols-2">
-
-        {/* USUARIOS */}
-        <div className="rk-card p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">Usuarios</h2>
-
-            <Link
-              href="/admin/usuarios"
-              aria-label="Ver todos los usuarios"
-              className="rk-press text-ink/60 hover:text-ink"
-            >
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <p className="mt-2 text-2xl font-semibold tracking-tight">
-            {stats.users.total}
-          </p>
-
-          <ul className="mt-3 space-y-1.5 text-sm">
-            {[
-              ["Clientes", stats.users.clients],
-              ["Creadores", stats.users.creators],
-              ["Administradores", stats.users.admins],
-            ].map(([label, value]) => (
-              <li
-                key={String(label)}
-                className="flex items-center justify-between"
-              >
-                <span className="text-ink/60">{label}</span>
-                <span className="font-medium">{value}</span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-4 border-t border-line/10 pt-3">
-            <p className="text-[10px] uppercase tracking-wider text-ink/60">
-              Nuevos por mes
-            </p>
-
-            <div className="mt-2 flex h-12 items-end gap-1">
-              {stats.users.newByMonth.map((month) => {
-                const max = Math.max(
-                  ...stats.users.newByMonth.map((m) => m.count),
-                  1
-                );
-
-                return (
-                  <div
-                    key={month.key}
-                    title={`${month.label}: ${month.count}`}
-                    className="flex-1 rounded-t-[0.25rem] bg-primary/70"
-                    style={{
-                      height: `${
-                        month.count > 0
-                          ? Math.max((month.count / max) * 100, 8)
-                          : 2
-                      }%`,
-                    }}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* CREADORES */}
-        <div className="rk-card p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">Creadores</h2>
-
-            <Link
-              href="/admin/usuarios?rol=CREATOR"
-              aria-label="Ver todos los creadores"
-              className="rk-press text-ink/60 hover:text-ink"
-            >
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <ul className="mt-3 space-y-1.5 text-sm">
-            {[
-              ["Aprobados", stats.creators.approved],
-              ["Pendientes", stats.creators.pending],
-              ["Suspendidos", stats.creators.suspended],
-              ["Rechazados", stats.creators.rejected],
-            ].map(([label, value]) => (
-              <li
-                key={String(label)}
-                className="flex items-center justify-between"
-              >
-                <span className="text-ink/60">{label}</span>
-                <span className="font-medium">{value}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
 
       {/* VOLUMEN Y ACTIVIDAD */}
       <section className="mt-4 grid gap-4 xl:grid-cols-3">
