@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
-import { getAdminStats } from "@/lib/admin-stats";
+import { getAdminStats, ingresosPorMes } from "@/lib/admin-stats";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
 import BalanceAdmin from "@/components/admin/BalanceAdmin";
@@ -51,7 +51,10 @@ function timeAgo(date: Date) {
 }
 
 export default async function Admin() {
-  const stats = await getAdminStats();
+  const [stats, ingresos] = await Promise.all([
+    getAdminStats(),
+    ingresosPorMes(),
+  ]);
 
   // Identidad real del administrador en sesión. El middleware
   // ya garantiza el rol: esto solo lee sus datos para mostrarlos.
@@ -146,13 +149,9 @@ export default async function Admin() {
           </p>
         </header>
 
-        {/* INGRESOS: el componente de siempre, sin cambios */}
+        {/* INGRESOS: vistas, calendario y gráfico (BalanceAdmin) */}
         <div className="mt-4">
-          <BalanceAdmin
-            meses={stats.months}
-            hoy={stats.sales.day.total}
-            anio={stats.sales.year.total}
-          />
+          <BalanceAdmin datos={ingresos} />
         </div>
 
         <div className="rk-db">

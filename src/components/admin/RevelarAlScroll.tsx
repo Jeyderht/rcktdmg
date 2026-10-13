@@ -20,14 +20,14 @@ import { useEffect } from "react";
  */
 
 const SELECTOR =
-  ".rk-pl,.rk-k2c,.rk-pl-tarjeta,.rk-pl-it,.rk-pl-ret,.rk-k2-dona,.rk-k2-ley li,.rk-k2,.rk-k2-tabs,.rk-k2-graf,.rk-k3,.rk-k3-nota";
+  ".rk-mn-barra,.rk-ing,.rk-pl,.rk-k2c,.rk-pl-tarjeta,.rk-pl-it,.rk-pl-ret,.rk-k2-dona,.rk-k2-ley li,.rk-k2,.rk-k2-tabs,.rk-k2-graf,.rk-k3,.rk-k3-nota";
 
 /* Las filas suben menos que las tarjetas. */
 const FILAS = ".rk-k2-ley li,.rk-k3,.rk-k2,.rk-pl-it";
 
 export default function RevelarAlScroll() {
   useEffect(() => {
-    const vista = document.querySelector<HTMLElement>('[data-vista="Dashboard"]');
+    const vista = document.querySelector<HTMLElement>(".rk-mn-pagina");
     if (!vista || !("IntersectionObserver" in window)) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
