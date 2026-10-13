@@ -563,6 +563,10 @@ export default async function Home() {
         </section>
 
         {/* ══════════ PREGUNTAS FRECUENTES ══════════ */}
+        <div aria-hidden className="rk-separador rk-separador-arriba">
+          <span className="rk-separador-linea" />
+        </div>
+
         <PreguntasFrecuentes />
 
         {/* ══════════ CTA FINAL (con la modelo) ══════════ */}

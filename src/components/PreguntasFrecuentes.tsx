@@ -236,10 +236,16 @@ export default function PreguntasFrecuentes({
       className={`mx-auto w-full max-w-3xl px-4 py-16 sm:px-5 lg:py-20 ${className}`}
     >
       <header className="rk-faq-intro">
-        <span className="rk-faq-eyebrow">FAQ</span>
+        <span className="rk-faq-eyebrow">Dudas comunes</span>
 
-        <h2 id="faq-titulo" className="rk-faq-title">
-          Preguntas frecuentes
+        {/* El «?» es un círculo de marca que flota; el nombre real va en aria-label. */}
+        <h2
+          id="faq-titulo"
+          className="rk-faq-title"
+          aria-label="Preguntas frecuentes"
+        >
+          Preguntas <span className="rk-faq-ins" aria-hidden="true">?</span>{" "}
+          frecuentes
         </h2>
 
         <p className="rk-faq-sub">

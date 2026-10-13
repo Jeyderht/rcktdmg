@@ -16634,3 +16634,139 @@ div.rk-upload-error > * + * {
     transition: none !important;
   }
 }
+
+/* ── BB3. PREGUNTAS FRECUENTES (PreguntasFrecuentes.tsx) ─────
+   Iconos ghost sin naranja (la animación de abrir y cerrar no
+   cambia), cabecera a la izquierda y el «?» de marca que flota
+   y late (rk-faq-ins). */
+.rk-faq-icon,
+.rk-faq-item[open] .rk-faq-icon,
+.rk-faq-q:hover .rk-faq-icon {
+  background: rgb(var(--rk-foreground)/.06) !important;
+  color: rgb(var(--rk-muted)/.85) !important;
+  border: 1px solid rgb(var(--rk-foreground)/.14) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.rk-faq-icon::before,
+html[data-theme] .rk-faq-icon::before {
+  background: rgb(var(--rk-muted)/.85) !important;
+}
+
+.rk-faq-intro {
+  text-align: left !important;
+  align-items: start !important;
+  justify-items: start !important;
+  justify-content: start !important;
+}
+
+.rk-faq-intro .rk-faq-eyebrow {
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  height: auto !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  font-size: .78rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase;
+  color: #7f79d6 !important;
+}
+
+[data-theme="dark"] .rk-faq-intro .rk-faq-eyebrow {
+  color: #a9a5f0 !important;
+}
+
+.rk-faq-intro .rk-faq-title {
+  text-align: left !important;
+  margin-top: 14px !important;
+  font-size: clamp(2.1rem,9vw,3.2rem) !important;
+  line-height: 1.08 !important;
+  max-width: none !important;
+}
+
+.rk-faq-intro .rk-faq-sub {
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.rk-faq-ins {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: .82em;
+  height: .82em;
+  border-radius: 50%;
+  margin: 0 .14em;
+  vertical-align: -.06em;
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: linear-gradient(135deg,#9d97ff,#c9a3d8 55%,#f0a98a);
+  box-shadow: 0 .08em .3em -.05em rgb(157 151 255/.55);
+}
+
+.rk-faq-ins {
+  font-size: 1em;
+}
+
+.rk-faq-ins {
+  display: inline-grid !important;
+  place-items: center;
+  line-height: 1 !important;
+  padding: 0;
+  text-indent: 0;
+  position: relative;
+  animation: rk-ins-flota 3.8s ease-in-out infinite;
+  transform-origin: 50% 60%;
+}
+
+.rk-faq-ins {
+  box-sizing: border-box;
+  padding: 0 0 .07em !important;
+  text-align: center;
+}
+
+.rk-faq-ins::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgb(157 151 255/.45);
+  animation: rk-ins-pulso 3.8s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes rk-ins-flota {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-.07em) rotate(5deg);
+  }
+}
+
+@keyframes rk-ins-pulso {
+  0%,
+  55% {
+    box-shadow: 0 0 0 0 rgb(157 151 255/.45);
+  }
+  100% {
+    box-shadow: 0 0 0 .32em rgb(157 151 255/0);
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .rk-faq-ins,
+  .rk-faq-ins::after {
+    animation: none !important;
+  }
+}
