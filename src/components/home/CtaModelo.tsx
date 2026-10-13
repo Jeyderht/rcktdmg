@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Download, ShieldCheck, Tag } from "lucide-react";
 
+import TituloVivo from "@/components/home/TituloVivo";
+
 /**
  * CTA final del inicio, estilo «hero con modelo».
  *
@@ -21,16 +23,13 @@ export default function CtaModelo() {
         />
 
         <div className="relative z-[2]">
-          <p className="rk-kicker justify-center">Descarga permanente</p>
-
-          <h2 className="rk-display mx-auto mt-5 max-w-3xl !text-[clamp(2.1rem,6vw,3.6rem)]">
-            Tu próximo proyecto{" "}
-            <span className="rk-cta-modelo-grad">empieza aquí.</span>
-          </h2>
+          <TituloVivo
+            texto="Tu próximo proyecto empieza aquí."
+            className="rk-display mx-auto max-w-3xl !text-[clamp(2.1rem,6vw,3.6rem)]"
+          />
 
           <p className="mx-auto mt-4 max-w-md text-[15px] leading-7 text-ink/60">
-            Plantillas premium para diseñadores y agencias. Elige, paga
-            en soles y descarga al instante.
+            Elige, paga en soles y descarga al instante.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -43,10 +42,6 @@ export default function CtaModelo() {
               Crear cuenta
             </Link>
           </div>
-
-          <p className="mt-5 text-[13px] text-ink/55">
-            Para diseñadores, agencias y freelancers
-          </p>
         </div>
 
         {/* Modelo sobre el círculo de marca, con tarjetas de vidrio. */}
