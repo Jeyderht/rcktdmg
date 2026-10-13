@@ -15,7 +15,7 @@ import TituloVivo from "@/components/home/TituloVivo";
  */
 export default function CtaModelo() {
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-4 sm:px-5 lg:px-8 lg:pb-24">
+    <section className="mx-auto w-full max-w-7xl px-4 pb-0 pt-4 sm:px-5 lg:px-8">
       <div className="rk-card rk-fade-up relative overflow-hidden rounded-rk-xl px-5 pt-14 text-center sm:px-10 lg:pt-20">
         <div
           aria-hidden

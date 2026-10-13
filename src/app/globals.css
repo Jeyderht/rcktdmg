@@ -16770,3 +16770,40 @@ html[data-theme] .rk-faq-icon::before {
     animation: none !important;
   }
 }
+
+/* ── BB4. CTA CON LA MODELO (CtaModelo.tsx) ──────────────────
+   Tarjetas de vidrio desenfocado, sin sombras; en oscuro el
+   texto va blanco y el icono conserva su color. El círculo se
+   desvanece hacia abajo. */
+.rk-cta-modelo-circle {
+  -webkit-mask-image: linear-gradient(180deg,#000 62%,transparent 94%);
+  mask-image: linear-gradient(180deg,#000 62%,transparent 94%);
+}
+
+.rk-cta-modelo-card,
+.rk-cta-modelo-card.rk-card {
+  background: rgb(255 255 255/.38) !important;
+  -webkit-backdrop-filter: blur(34px) saturate(1.8) !important;
+  backdrop-filter: blur(34px) saturate(1.8) !important;
+  border: 1px solid rgb(255 255 255/.55) !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .rk-cta-modelo-card,
+[data-theme="dark"] .rk-cta-modelo-card.rk-card {
+  background: rgb(255 255 255/.10) !important;
+  -webkit-backdrop-filter: blur(34px) saturate(1.8) !important;
+  backdrop-filter: blur(34px) saturate(1.8) !important;
+  border: 1px solid rgb(255 255 255/.14) !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .rk-cta-modelo-card,
+[data-theme="dark"] .rk-cta-modelo-card *:not(.rk-cta-modelo-ico):not(.rk-cta-modelo-ico *) {
+  color: #fff !important;
+}
+
+[data-theme="dark"] .rk-cta-modelo-card [class*="muted"],
+[data-theme="dark"] .rk-cta-modelo-card .rk-cta-modelo-txt span {
+  color: rgb(255 255 255/.8) !important;
+}
