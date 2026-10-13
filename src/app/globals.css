@@ -16562,3 +16562,32 @@ div.rk-upload-error > * + * {
     animation: none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   BB. INICIO (encargo de la home)
+   Bloques aprobados en la vista previa del inicio, uno por
+   parche. Los colores fijos son los de marca del encargo.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── BB1. BOTONES NEGROS ─────────────────────────────────────
+   rk-btn-negro: tinta con texto blanco; en oscuro, perla con
+   texto tinta. */
+.rk-btn.rk-btn-ink.rk-btn-negro {
+  background: rgb(var(--rk-marca-tinta)) !important;
+  color: #fff !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+[data-theme="dark"] .rk-btn.rk-btn-ink.rk-btn-negro {
+  background: #f4f2f1 !important;
+  color: #15161b !important;
+}
+
+/* el outline de arriba no puede apagar el foco de teclado:
+   mismo anillo que las pestañas del catálogo (BB9) */
+.rk-btn.rk-btn-ink.rk-btn-negro:focus-visible {
+  outline: 2px solid #9d97ff !important;
+  outline-offset: 2px;
+}

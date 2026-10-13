@@ -34,7 +34,7 @@ export default function CtaModelo() {
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link href="/tienda" className="rk-btn rk-btn-primary">
+            <Link href="/tienda" className="rk-btn rk-btn-ink rk-btn-negro">
               Ir a la tienda
               <ArrowRight size={16} aria-hidden />
             </Link>
