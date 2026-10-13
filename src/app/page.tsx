@@ -29,7 +29,6 @@ import MasDisenos from "@/components/home/MasDisenos";
 import CtaModelo from "@/components/home/CtaModelo";
 import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
 import {
-  conteosDeDisenos,
   creadoresDestacados,
   corporativosParaSlice,
   flyersParaStories,
@@ -103,7 +102,6 @@ export default async function Home() {
     corporativos,
     colecciones,
     creadoresHome,
-    conteosDisenos,
     promos,
   ] = await Promise.all([
     prisma.product.findMany({
@@ -189,8 +187,6 @@ export default async function Home() {
     listarColeccionesPublicas(6),
 
     creadoresDestacados(12),
-
-    conteosDeDisenos(),
 
     /* Portadas del slider de arriba (PromoSlide). Si la tabla
        falla o está vacía, la home sigue sin slider. */
@@ -522,7 +518,7 @@ export default async function Home() {
         <CarruselCreadores creadores={creadoresHome} />
 
         {/* ══════════ MÁS DISEÑOS PARA TU NEGOCIO ══════════ */}
-        <MasDisenos conteos={conteosDisenos} />
+        <MasDisenos />
 
         {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
         <Ecosistema />

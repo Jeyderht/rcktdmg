@@ -17002,3 +17002,250 @@ html[data-theme] .rk-faq-icon::before {
   outline: 2px solid #9d97ff !important;
   outline-offset: 2px;
 }
+
+/* ── BB7. MÁS DISEÑOS (MasDisenos.tsx + RielCaminos.tsx) ─────
+   Riel con una tarjeta por vista en móvil, dos desde 640px y
+   tres desde 1024px, y sus puntos. Tarjetas con el estilo del
+   CTA del pie, sin animación de borde ni brillo (colgaba el
+   visor en iPhone). */
+.rk-camino-riel {
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 2px;
+}
+
+.rk-camino-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.rk-camino-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgb(var(--rk-foreground)/.2);
+  transition: width .3s,background .3s;
+  cursor: pointer;
+}
+
+.rk-camino-dot.is-on {
+  width: 18px;
+  background: rgb(var(--rk-foreground)/.7);
+}
+
+.rk-camino-riel>li {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+@media (min-width:640px) {
+  .rk-camino-riel>li {
+    flex-basis: calc((100% - 12px)/2);
+  }
+}
+
+@media (min-width:1024px) {
+  .rk-camino-riel>li {
+    flex-basis: calc((100% - 24px)/3);
+  }
+}
+
+.rk-camino {
+  --gx: 88%;
+  --gy: 55%;
+  --lx: 0%;
+  --ly: 100%;
+  --g1: rgb(240 169 138/.85);
+  --g2: rgb(248 214 198/.55);
+  --l1: rgb(157 151 255/.22);
+  --rot: -4deg;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  isolation: isolate;
+  width: 100%;
+  height: 13.5rem;
+  border-radius: 28px;
+  padding: 22px;
+  color: #5a4651;
+  box-shadow: inset 0 1px 0 rgb(255 255 255/.7),inset 0 0 0 1px rgb(255 255 255/.35);
+  transition: transform .35s cubic-bezier(.2,.8,.2,1);
+}
+
+.rk-camino::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: inherit;
+  background:
+    radial-gradient(60% 95% at var(--gx) var(--gy),var(--g1) 0,var(--g2) 45%,transparent 75%),
+    radial-gradient(55% 80% at var(--lx) var(--ly),var(--l1) 0,transparent 70%),
+    linear-gradient(180deg,#fdf6f2 0%,#f8ece6 100%);
+}
+
+.rk-camino::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  pointer-events: none;
+  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(201 195 240/0) 262deg,#cfc9f7 318deg,#fbd9c6 350deg,rgb(251 217 198/0) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  --rk-luz: 0deg;
+}
+
+.rk-camino-2 {
+  --g1: rgb(157 151 255/.55);
+  --g2: rgb(201 195 240/.5);
+  --l1: rgb(240 169 138/.28);
+  --rot: 5deg;
+}
+
+.rk-camino-3 {
+  --gx: 85%;
+  --gy: 40%;
+  --g1: rgb(248 214 198/.95);
+  --g2: rgb(244 242 241/.6);
+  --l1: rgb(157 151 255/.3);
+  --rot: -8deg;
+}
+
+.rk-camino-4 {
+  --gx: 90%;
+  --gy: 70%;
+  --g1: rgb(201 195 240/.8);
+  --g2: rgb(248 214 198/.6);
+  --lx: 0%;
+  --ly: 0%;
+  --l1: rgb(240 169 138/.3);
+  --rot: 3deg;
+}
+
+.rk-camino-cohete {
+  position: absolute;
+  right: -34px;
+  top: 50%;
+  width: 150px;
+  height: auto;
+  transform: translateY(-50%) rotate(var(--rot));
+  opacity: .35;
+  pointer-events: none;
+  user-select: none;
+  z-index: -1;
+}
+
+.rk-camino-brillo {
+  display: none;
+}
+
+.rk-camino-txt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+}
+
+.rk-camino-t {
+  font-size: 1.3rem;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -.04em;
+  color: #5a4651;
+  margin: 0;
+}
+
+.rk-camino-x {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(90 70 81/.8);
+  max-width: 15rem;
+}
+
+.rk-camino-pill {
+  margin-top: auto;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: rgb(var(--rk-marca-tinta));
+  transition: gap .25s;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .rk-camino:hover .rk-camino-pill {
+    gap: 10px;
+  }
+
+  .rk-camino:hover {
+    transform: translateY(-3px);
+  }
+}
+
+@media (min-width:640px) {
+  .rk-camino-cohete {
+    width: 170px;
+  }
+}
+
+[data-theme="dark"] .rk-camino {
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgb(255 255 255/.14),inset 0 0 0 1px rgb(255 255 255/.1);
+}
+
+[data-theme="dark"] .rk-camino::before {
+  background:
+    radial-gradient(60% 95% at var(--gx) var(--gy),rgb(240 169 138/.38) 0,rgb(240 169 138/.1) 45%,transparent 75%),
+    radial-gradient(55% 80% at var(--lx) var(--ly),rgb(157 151 255/.3) 0,transparent 70%),
+    linear-gradient(180deg,#26232b 0%,#1d1b22 100%);
+}
+
+[data-theme="dark"] .rk-camino-2::before {
+  background:
+    radial-gradient(60% 95% at var(--gx) var(--gy),rgb(157 151 255/.4) 0,rgb(157 151 255/.1) 45%,transparent 75%),
+    radial-gradient(55% 80% at var(--lx) var(--ly),rgb(240 169 138/.22) 0,transparent 70%),
+    linear-gradient(180deg,#25232f 0%,#1d1b24 100%);
+}
+
+[data-theme="dark"] .rk-camino-t {
+  color: #fff;
+}
+
+[data-theme="dark"] .rk-camino-x {
+  color: rgb(255 255 255/.75);
+}
+
+[data-theme="dark"] .rk-camino-pill {
+  background: #f4f2f1;
+  color: #15161b;
+}
+
+[data-theme="dark"] .rk-camino-cohete {
+  opacity: .14;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .rk-camino::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  .rk-camino-brillo {
+    animation: none;
+    opacity: 0;
+  }
+}
