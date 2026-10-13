@@ -9,6 +9,8 @@ import { BarChart3, ChevronLeft, ExternalLink } from "lucide-react";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
+import { solesMoneda, fechaMesCorto } from "@/lib/formato";
+import { claseInsigniaEstado } from "@/lib/estado-recurso";
 
 type StatsData = {
     product: {
@@ -49,23 +51,6 @@ type StatsData = {
         createdAt: string;
     }[];
 };
-
-function formatMoney(value: number) {
-    return new Intl.NumberFormat("es-PE", {
-        style: "currency",
-        currency: "PEN",
-        minimumFractionDigits: 2,
-    }).format(value);
-}
-
-function formatDate(date: string) {
-    return new Intl.DateTimeFormat("es-PE", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-    }).format(new Date(date));
-}
-
 function getStatusLabel(status: string) {
     switch (status) {
         case "DRAFT":
@@ -87,23 +72,6 @@ function getStatusLabel(status: string) {
             return status;
     }
 }
-
-function getStatusBadge(status: string) {
-    switch (status) {
-        case "PUBLISHED":
-            return "rk-badge-success";
-
-        case "PENDING_REVIEW":
-            return "rk-badge-warning";
-
-        case "REJECTED":
-            return "rk-badge-danger";
-
-        default:
-            return "rk-badge-neutral";
-    }
-}
-
 export default function ProductStatisticsPage() {
     const params = useParams();
     const id = params.id as string;
@@ -263,7 +231,7 @@ export default function ProductStatisticsPage() {
                                 </h1>
 
                                 <span
-                                    className={`rk-badge mt-3 ${getStatusBadge(
+                                    className={`rk-badge mt-3 ${claseInsigniaEstado(
                                         product.status
                                     )}`}
                                 >
@@ -303,7 +271,7 @@ export default function ProductStatisticsPage() {
                         </p>
 
                         <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight text-ink">
-                            {formatMoney(stats.revenue)}
+                            {solesMoneda(stats.revenue)}
                         </p>
 
                         <p className="mt-2 text-xs text-ink/60">
@@ -410,7 +378,7 @@ export default function ProductStatisticsPage() {
                                                 className="flex min-w-0 flex-1 flex-col items-center"
                                             >
                                                 <p className="truncate text-[11px] font-semibold tabular-nums">
-                                                    {formatMoney(
+                                                    {solesMoneda(
                                                         month.revenue
                                                     )}
                                                 </p>
@@ -473,7 +441,7 @@ export default function ProductStatisticsPage() {
                             <p className="rk-eyebrow">Precio actual</p>
 
                             <p className="mt-3 text-xl font-semibold tabular-nums">
-                                {formatMoney(product.price)}
+                                {solesMoneda(product.price)}
                             </p>
                         </div>
 
@@ -486,7 +454,7 @@ export default function ProductStatisticsPage() {
                                     </p>
 
                                     <p className="mt-3 text-xl font-semibold tabular-nums">
-                                        {formatMoney(
+                                        {solesMoneda(
                                             stats.revenue / stats.sales
                                         )}
                                     </p>
@@ -539,7 +507,7 @@ export default function ProductStatisticsPage() {
                                         </p>
 
                                         <p className="mt-1 text-xs text-ink/60">
-                                            {formatDate(sale.createdAt)}
+                                            {fechaMesCorto(sale.createdAt)}
                                             {" · "}
                                             {sale.quantity}{" "}
                                             {sale.quantity === 1
@@ -549,7 +517,7 @@ export default function ProductStatisticsPage() {
                                     </div>
 
                                     <p className="shrink-0 text-sm font-semibold tabular-nums">
-                                        {formatMoney(sale.amount)}
+                                        {solesMoneda(sale.amount)}
                                     </p>
                                 </div>
                             ))}

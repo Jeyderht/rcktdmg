@@ -10,6 +10,7 @@ import BotonDescargarColeccion from "@/components/BotonDescargarColeccion";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
+import { fechaMedia } from "@/lib/formato";
 
 /**
  * Colección comprada.
@@ -54,13 +55,6 @@ type Download = {
         status: string;
     };
 };
-
-function formatDate(value: string) {
-    return new Intl.DateTimeFormat("es-PE", {
-        dateStyle: "medium",
-    }).format(new Date(value));
-}
-
 function getStatusLabel(status: string) {
     const labels: Record<string, string> = {
         ACTIVE: "Disponible",
@@ -270,7 +264,7 @@ export default function MisDescargasPage() {
 
                                         <p className="mt-1 text-[13px] tabular-nums text-ink/55">
                                             {coleccion.recursos} recursos ·{" "}
-                                            {formatDate(coleccion.compradaEl)}
+                                            {fechaMedia(coleccion.compradaEl)}
                                         </p>
 
                                         <p className="mt-0.5 flex items-center gap-1.5 text-[13px] tabular-nums text-ink/55">
@@ -425,7 +419,7 @@ export default function MisDescargasPage() {
                                                 <div className="flex gap-1.5">
                                                     <dt>Comprado:</dt>
                                                     <dd className="font-medium text-ink/60">
-                                                        {formatDate(
+                                                        {fechaMedia(
                                                             download.order
                                                                 .createdAt
                                                         )}
@@ -436,7 +430,7 @@ export default function MisDescargasPage() {
                                                     <div className="flex gap-1.5">
                                                         <dt>Disponible hasta:</dt>
                                                         <dd className="font-medium text-ink/60">
-                                                            {formatDate(
+                                                            {fechaMedia(
                                                                 download.expiresAt
                                                             )}
                                                         </dd>

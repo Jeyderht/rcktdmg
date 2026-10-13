@@ -36,6 +36,7 @@ async function pesoDe(url: string | null): Promise<string> {
   }
 }
 import { COLORES, TAG_PACK } from "@/lib/catalogo";
+import { claseInsigniaEstado } from "@/lib/estado-recurso";
 
 type Props = {
   params: Promise<{
@@ -50,15 +51,6 @@ const STATUS_LABEL: Record<string, string> = {
   REJECTED: "Rechazado",
   ARCHIVED: "Archivado",
 };
-
-const STATUS_BADGE: Record<string, string> = {
-  DRAFT: "rk-badge-neutral",
-  PENDING_REVIEW: "rk-badge-warning",
-  PUBLISHED: "rk-badge-success",
-  REJECTED: "rk-badge-danger",
-  ARCHIVED: "rk-badge-neutral",
-};
-
 export default async function AdminRecursoPage({ params }: Props) {
   const cookieStore = await cookies();
   const token = cookieStore.get("rcktdmg_session")?.value;
@@ -264,8 +256,7 @@ export default async function AdminRecursoPage({ params }: Props) {
               {/* El color del estado corresponde al estado real. */}
               <span
                 className={`rk-badge mt-3 ${
-                  STATUS_BADGE[resource.status] ||
-                  "rk-badge-neutral"
+                  claseInsigniaEstado(resource.status)
                 }`}
               >
                 {statusLabel}

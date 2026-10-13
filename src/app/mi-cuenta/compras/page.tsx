@@ -9,6 +9,7 @@ import AccountPageHeader from "@/components/AccountPageHeader";
 import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
+import { formatPrice } from "@/lib/pricing";
 
 type Product = {
     id: string;
@@ -44,11 +45,6 @@ type Order = {
     items: OrderItem[];
     payment: Payment | null;
 };
-
-function formatMoney(value: number) {
-    return `S/ ${value.toFixed(2)}`;
-}
-
 function formatDate(value: string) {
     return new Intl.DateTimeFormat("es-PE", {
         dateStyle: "medium",
@@ -194,7 +190,7 @@ export default function MisComprasPage() {
 
                                     <div className="rk-row-card-side">
                                         <p className="rk-row-card-amount">
-                                            {formatMoney(order.total)}
+                                            {formatPrice(order.total)}
                                         </p>
 
                                         <span
@@ -239,7 +235,7 @@ export default function MisComprasPage() {
                                                 </Link>
 
                                                 <p className="rk-row-card-meta">
-                                                    {formatMoney(item.price)}
+                                                    {formatPrice(item.price)}
                                                     {item.quantity > 1 &&
                                                         ` · ${item.quantity} unidades`}
                                                 </p>

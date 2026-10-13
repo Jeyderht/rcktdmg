@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Check, Lock } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
-import { claseProporcion } from "@/lib/tipos-publicacion";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,

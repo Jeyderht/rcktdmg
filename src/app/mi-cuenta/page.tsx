@@ -17,6 +17,7 @@ import RecomendadosCliente from "@/components/RecomendadosCliente";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useSessionUser } from "@/components/useSessionUser";
 import { claseProporcion } from "@/lib/tipos-publicacion";
+import { fechaMedia } from "@/lib/formato";
 
 type Download = {
   id: string;
@@ -56,13 +57,6 @@ type Order = {
     };
   }[];
 };
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-PE", {
-    dateStyle: "medium",
-  }).format(new Date(value));
-}
-
 const ROLE_LABEL: Record<string, string> = {
   ADMIN: "Administrador",
   CREATOR: "Creador",
@@ -347,7 +341,7 @@ export default function Account() {
                           </p>
 
                           <p className="rk-row-card-sub">
-                            {formatDate(order.createdAt)}
+                            {fechaMedia(order.createdAt)}
                             {order.items.length > 1 &&
                               ` · y ${order.items.length - 1} más`}
                           </p>

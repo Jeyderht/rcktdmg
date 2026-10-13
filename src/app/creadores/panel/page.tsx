@@ -26,6 +26,8 @@ import EmptyState from "@/components/EmptyState";
 import Footer from "@/components/Footer";
 import { useSessionUser } from "@/components/useSessionUser";
 import { claseProporcion } from "@/lib/tipos-publicacion";
+import { solesMoneda, fechaMesCorto } from "@/lib/formato";
+import { claseInsigniaEstado } from "@/lib/estado-recurso";
 
 type DashboardData = {
   creator: {
@@ -123,23 +125,6 @@ type EarningsData = {
     createdAt: string;
   }[];
 };
-
-function formatMoney(value: number) {
-  return new Intl.NumberFormat("es-PE", {
-    style: "currency",
-    currency: "PEN",
-    minimumFractionDigits: 2,
-  }).format(value);
-}
-
-function formatDate(date: string) {
-  return new Intl.DateTimeFormat("es-PE", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(date));
-}
-
 function getStatusLabel(status: string) {
   switch (status) {
     case "DRAFT":
@@ -161,23 +146,6 @@ function getStatusLabel(status: string) {
       return status;
   }
 }
-
-function getStatusBadge(status: string) {
-  switch (status) {
-    case "PUBLISHED":
-      return "rk-badge-success";
-
-    case "PENDING_REVIEW":
-      return "rk-badge-warning";
-
-    case "REJECTED":
-      return "rk-badge-danger";
-
-    default:
-      return "rk-badge-neutral";
-  }
-}
-
 const CREATOR_STATUS_LABEL: Record<string, string> = {
   PENDING: "Pendiente de aprobación",
   APPROVED: "Creador aprobado",
@@ -397,11 +365,6 @@ export default function CreatorDashboard() {
 
   const monthlyStats = data.monthlyStats ?? [];
 
-  const maxRevenue = Math.max(
-    ...monthlyStats.map((month) => month.revenue),
-    1
-  );
-
   // Sin ninguna venta no se dibuja un gráfico vacío.
   const hasChartData = monthlyStats.some(
     (month) => month.revenue > 0 || month.sales > 0
@@ -570,7 +533,7 @@ export default function CreatorDashboard() {
               const parte = bruto > 0 ? Math.round((tuyo / bruto) * 100) : 0;
 
               // "S/ 1,280.00" → entero y céntimos (los céntimos van atenuados).
-              const monto = formatMoney(tuyo);
+              const monto = solesMoneda(tuyo);
               const corte = monto.search(/[.,]\d{2}$/);
               const entero = corte > -1 ? monto.slice(0, corte) : monto;
               const centimos = corte > -1 ? monto.slice(corte) : "";
@@ -627,7 +590,7 @@ export default function CreatorDashboard() {
                       />
 
                       <div className="rk-dash-ring-center">
-                        <strong>{formatMoney(bruto)}</strong>
+                        <strong>{solesMoneda(bruto)}</strong>
                         <span>ventas brutas</span>
                       </div>
                     </div>
@@ -635,12 +598,12 @@ export default function CreatorDashboard() {
                     <ul className="rk-dash-legend">
                       <li>
                         <span aria-hidden className="rk-dash-dot" />
-                        Lo tuyo <b>{formatMoney(tuyo)}</b>
+                        Lo tuyo <b>{solesMoneda(tuyo)}</b>
                       </li>
 
                       <li>
                         <span aria-hidden className="rk-dash-dot is-fee" />
-                        Comisión <b>{formatMoney(comision)}</b>
+                        Comisión <b>{solesMoneda(comision)}</b>
                       </li>
                     </ul>
                   </div>
@@ -878,7 +841,7 @@ export default function CreatorDashboard() {
                         <div
                           key={m.key}
                           className="rk-dash-col"
-                          title={`${m.label}: ${formatMoney(m.total)}`}
+                          title={`${m.label}: ${solesMoneda(m.total)}`}
                         >
                           {m.total > m.tuyo && (
                             <div
@@ -1008,11 +971,11 @@ export default function CreatorDashboard() {
                       </p>
 
                       <p className="mt-1 text-xs text-ink/60">
-                        {formatDate(product.createdAt)}
+                        {fechaMesCorto(product.createdAt)}
                       </p>
 
                       <span
-                        className={`rk-badge mt-1.5 ${getStatusBadge(
+                        className={`rk-badge mt-1.5 ${claseInsigniaEstado(
                           product.status
                         )}`}
                       >
@@ -1069,13 +1032,13 @@ export default function CreatorDashboard() {
 
                       <p className="mt-1 text-xs text-ink/60">
                         {sale.buyerName} ·{" "}
-                        {formatDate(sale.createdAt)}
+                        {fechaMesCorto(sale.createdAt)}
                       </p>
                     </div>
 
                     <div className="shrink-0 text-right">
                       <p className="text-sm font-semibold tabular-nums">
-                        {formatMoney(sale.amount)}
+                        {solesMoneda(sale.amount)}
                       </p>
 
                       <p className="mt-1 text-xs text-ink/60">
@@ -1126,7 +1089,7 @@ export default function CreatorDashboard() {
                         </div>
 
                         <p className="rk-dash-value">
-                          {formatMoney(product.revenue)}
+                          {solesMoneda(product.revenue)}
                         </p>
                       </Link>
                     </li>
@@ -1164,7 +1127,7 @@ export default function CreatorDashboard() {
                         </span>
                         <span>
                           <CalendarDays aria-hidden />
-                          {formatDate(earning.createdAt)}
+                          {fechaMesCorto(earning.createdAt)}
                         </span>
                       </div>
                     </div>
@@ -1176,7 +1139,7 @@ export default function CreatorDashboard() {
                       <div className="rk-dash-chips">
                         <span className="rk-dash-chip">
                           <TrendingUp aria-hidden />
-                          +{formatMoney(earning.creatorAmount)} para ti
+                          +{solesMoneda(earning.creatorAmount)} para ti
                         </span>
 
                         <span className="rk-dash-chip">× {earning.quantity}</span>
@@ -1188,7 +1151,7 @@ export default function CreatorDashboard() {
                         </span>
 
                         <span>
-                          Comisión: <b>{formatMoney(earning.platformFee)}</b>
+                          Comisión: <b>{solesMoneda(earning.platformFee)}</b>
                         </span>
                       </div>
                     </div>
