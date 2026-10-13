@@ -51,11 +51,13 @@ export default async function AdminPacksPage() {
     new Intl.DateTimeFormat("es-PE", { dateStyle: "medium" }).format(d);
 
   return (
-    <div data-vista="otra" className="rk-fade-up">
-      <header className="rk-vh">
-        <h1 className="rk-title">Packs</h1>
+    <div className="rk-fade-up">
+      <header>
+        <p className="rk-kicker">Catálogo</p>
 
-        <p>
+        <h1 className="rk-title mt-2 text-2xl sm:text-3xl">Packs</h1>
+
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
           Agrupaciones de recursos publicadas por los creadores.
           Solo pueden contener recursos propios ya publicados.
         </p>

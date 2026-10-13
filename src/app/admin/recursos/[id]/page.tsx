@@ -240,7 +240,7 @@ export default async function AdminRecursoPage({ params }: Props) {
   }[];
 
   return (
-    <div>
+    <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
       <div className="mx-auto w-full max-w-5xl">
 
         {/* ========== CABECERA ========== */}
@@ -491,6 +491,6 @@ export default async function AdminRecursoPage({ params }: Props) {
           </div>
         </section>
       </div>
-    </div>
+    </main>
   );
 }

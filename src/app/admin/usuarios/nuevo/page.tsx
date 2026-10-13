@@ -51,7 +51,7 @@ export default function NuevoCreadorPage() {
   }
 
   return (
-    <div>
+    <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
       <div className="mx-auto w-full max-w-2xl">
 
         {/* ========== CABECERA ========== */}
@@ -229,6 +229,6 @@ export default function NuevoCreadorPage() {
           </section>
         </form>
       </div>
-    </div>
+    </main>
   );
 }

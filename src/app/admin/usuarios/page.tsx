@@ -118,58 +118,79 @@ export default async function UsuariosPage({
   const isCreatorsView = roleFilter === "CREATOR";
 
   return (
-    <div data-vista="Usuarios">
+    <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
 
       {/* ========== CABECERA ========== */}
-      <header className="rk-us-cab">
-        <h1 className="rk-title" style={{ margin: 0, fontSize: "2rem" }}>
-          {isCreatorsView ? "Creadores" : "Usuarios"}
-        </h1>
+      <header className="rk-fade-up flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+        <div className="min-w-0">
+          <p className="rk-eyebrow">Admin Center</p>
 
-        <p className="rk-us-sub">
-          {isCreatorsView
-            ? "Estados, verificación y catálogo de cada creador."
-            : "Gestiona clientes, creadores, verificación y estados."}
-        </p>
+          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
+            {isCreatorsView ? "Creadores" : "Usuarios"}
+          </h1>
 
-        <Link href="/admin/usuarios/nuevo" className="rk-btn rk-btn-primary">
-          <UserPlus size={16} aria-hidden />
+          <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
+            {isCreatorsView
+              ? "Estados, verificación y catálogo de cada creador."
+              : "Gestiona clientes, creadores, verificación y estados."}
+          </p>
+        </div>
+
+        <Link
+          href="/admin/usuarios/nuevo"
+          className="rk-btn rk-btn-primary shrink-0"
+        >
+          <UserPlus size={16} />
           Crear creador
         </Link>
       </header>
 
       {/* ========== FILTROS ========== */}
-      <div className="rk-us-filtros" role="group" aria-label="Filtrar por rol">
-        {filters.map((filter) => {
-          const active = roleFilter === filter.value;
+      <section className="rk-fade-up rk-enter-1 mt-7">
+        <div
+          role="group"
+          aria-label="Filtrar por rol"
+          className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+        >
+          {filters.map((filter) => {
+            const active = roleFilter === filter.value;
 
-          return (
-            <Link
-              key={filter.label}
-              href={
-                filter.value
-                  ? `/admin/usuarios?rol=${filter.value}`
-                  : "/admin/usuarios"
-              }
-              aria-current={active ? "true" : undefined}
-              className={`rk-chip shrink-0${active ? " rk-chip-active" : ""}`}
-            >
-              {filter.label}
-              <span className="tabular-nums opacity-50">{filter.count}</span>
-            </Link>
-          );
-        })}
-      </div>
+            return (
+              <Link
+                key={filter.label}
+                href={
+                  filter.value
+                    ? `/admin/usuarios?rol=${filter.value}`
+                    : "/admin/usuarios"
+                }
+                aria-current={active ? "true" : undefined}
+                className={`rk-chip shrink-0 ${
+                  active ? "rk-chip-active" : ""
+                }`}
+              >
+                {filter.label}
+                <span className="tabular-nums opacity-50">
+                  {filter.count}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
 
       {/* ========== CONTADOR ========== */}
-      <div className="rk-us-cont">
-        <p>{isCreatorsView ? "Creadores" : "Cuentas"}</p>
-        <span>
-          {users.length} {users.length === 1 ? "usuario" : "usuarios"}
+      <div className="rk-fade-up mt-6 flex items-baseline justify-between gap-4">
+        <p className="text-[15px] text-ink/60">
+          {isCreatorsView ? "Creadores" : "Cuentas"}
+        </p>
+
+        <span className="text-sm font-medium tabular-nums text-ink/60">
+          {users.length}{" "}
+          {users.length === 1 ? "usuario" : "usuarios"}
         </span>
       </div>
 
-      <div className="rk-divider" />
+      <div className="rk-divider mt-4" />
 
       {/* ========== LISTA ========== */}
       {users.length === 0 ? (
@@ -182,14 +203,19 @@ export default async function UsuariosPage({
           />
         </div>
       ) : (
-        <section className="rk-us-lista" aria-label="Lista de usuarios">
+        <section className="rk-fade-up rk-enter-2 mt-5 space-y-2.5">
           {users.map((user) => {
-            const displayName = user.publicName || user.name || "Sin nombre";
+            const displayName =
+              user.publicName || user.name || "Sin nombre";
 
             return (
-              <article key={user.id} className="rk-row-card rk-us">
-                <div className="rk-us-id">
-                  <span className="rk-avatar-anillo rk-us-av relative overflow-hidden">
+              <article
+                key={user.id}
+                className="rk-row-card flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
+              >
+                {/* DATOS */}
+                <div className="flex min-w-0 items-start gap-3.5">
+                  <span className="rk-avatar-anillo relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold">
                     {user.avatarUrl ? (
                       <Image
                         src={user.avatarUrl}
@@ -203,52 +229,76 @@ export default async function UsuariosPage({
                     )}
                   </span>
 
-                  <div className="rk-us-tx2">
-                    <div className="rk-us-nom">
-                      <b>{displayName}</b>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="truncate text-[15px] font-semibold">
+                        {displayName}
+                      </p>
 
                       {/* Verificación real del registro. */}
                       {user.isVerified && (
-                        <span title="Creador verificado" className="rk-badge rk-badge-accent">
-                          <BadgeCheck size={12} aria-hidden />
+                        <span
+                          title="Creador verificado"
+                          className="rk-badge rk-badge-accent"
+                        >
+                          <BadgeCheck size={12} />
                           Verificado
                         </span>
                       )}
                     </div>
 
-                    <p className="rk-us-mail">{user.email}</p>
+                    <p className="mt-0.5 truncate text-sm text-ink/60">
+                      {user.email}
+                    </p>
 
-                    <div className="rk-us-meta">
-                      <span className={`rk-badge ${ROLE_BADGE[user.role] || "rk-badge-neutral"}`}>
+                    <div className="mt-2.5 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+                      <span
+                        className={`rk-badge ${
+                          ROLE_BADGE[user.role] ||
+                          "rk-badge-neutral"
+                        }`}
+                      >
                         {user.role}
                       </span>
 
                       {user.creatorStatus && (
                         <span
                           className={`rk-badge ${
-                            CREATOR_STATUS_BADGE[user.creatorStatus] || "rk-badge-neutral"
+                            CREATOR_STATUS_BADGE[
+                              user.creatorStatus
+                            ] || "rk-badge-neutral"
                           }`}
                         >
-                          {CREATOR_STATUS_LABEL[user.creatorStatus]}
+                          {
+                            CREATOR_STATUS_LABEL[
+                              user.creatorStatus
+                            ]
+                          }
                         </span>
                       )}
 
                       {user.role === "CREATOR" && (
-                        <span>
+                        <span className="text-xs text-ink/60">
                           {user._count.products}{" "}
-                          {user._count.products === 1 ? "recurso" : "recursos"}
+                          {user._count.products === 1
+                            ? "recurso"
+                            : "recursos"}
                         </span>
                       )}
 
                       {/* El perfil público solo existe si hay
                           username y el creador está aprobado. */}
-                      {user.username && user.creatorStatus === "APPROVED" && (
-                        <Link href={`/creadores/${user.username}`} className="rk-us-user">
-                          @{user.username}
-                        </Link>
-                      )}
+                      {user.username &&
+                        user.creatorStatus === "APPROVED" && (
+                          <Link
+                            href={`/creadores/${user.username}`}
+                            className="rk-press text-xs font-medium text-ink transition-opacity hover:opacity-75"
+                          >
+                            @{user.username}
+                          </Link>
+                        )}
 
-                      <span>
+                      <span className="text-xs text-ink/60">
                         {new Intl.DateTimeFormat("es-PE", {
                           dateStyle: "medium",
                         }).format(user.createdAt)}
@@ -258,17 +308,19 @@ export default async function UsuariosPage({
                 </div>
 
                 {/* ACCIONES */}
-                <UserActions
-                  userId={user.id}
-                  role={user.role}
-                  creatorStatus={user.creatorStatus}
-                  isVerified={user.isVerified}
-                />
+                <div className="lg:shrink-0">
+                  <UserActions
+                    userId={user.id}
+                    role={user.role}
+                    creatorStatus={user.creatorStatus}
+                    isVerified={user.isVerified}
+                  />
+                </div>
               </article>
             );
           })}
         </section>
       )}
-    </div>
+    </main>
   );
 }

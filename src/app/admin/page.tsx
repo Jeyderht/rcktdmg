@@ -138,7 +138,8 @@ export default async function Admin() {
   ];
 
   return (
-    <>
+    // rk-dash: contenedor del Dashboard; todo su CSS va limitado a él.
+    <div className="rk-dash">
       <RevelarAlScroll />
 
       <div data-vista="Dashboard">
@@ -369,6 +370,6 @@ export default async function Admin() {
         </div>
       </div>
 
-    </>
+    </div>
   );
 }

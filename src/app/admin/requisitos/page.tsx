@@ -20,13 +20,15 @@ export const metadata: Metadata = {
  */
 export default function AdminRequisitosPage() {
   return (
-    <div data-vista="otra" className="rk-fade-up">
-      <header className="rk-vh">
-        <h1 className="rk-title">
+    <div className="rk-fade-up">
+      <header>
+        <p className="rk-kicker">Moderación</p>
+
+        <h1 className="rk-title mt-2 text-2xl sm:text-3xl">
           Requisitos de contenido
         </h1>
 
-        <p>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
           Las condiciones que debe cumplir lo que se publica. Son las
           mismas que ve el creador y las mismas que aplica el sistema al
           subir cada archivo.
