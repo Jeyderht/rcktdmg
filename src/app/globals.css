@@ -17199,6 +17199,12 @@ div.rk-upload-error > * + * {
   --c: #8e8ad8;
 }
 
+/* En la rejilla las tarjetas se estiran al alto de su fila; su
+   contenido se queda arriba en vez de repartir el hueco. */
+.rk-k2c {
+  align-content: start;
+}
+
 /* ── BC3. FILAS CON DATOS Y BARRAS ───────────────────────────
    Título y subtítulo reales de cada fila (las medidas del valor
    y de las etiquetas del encargo) y las barras de «Nuevos por
