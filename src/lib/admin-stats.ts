@@ -53,6 +53,41 @@ function monthKey(date: Date) {
   ).padStart(2, "0")}`;
 }
 
+/** Bruto, comisión y creadores de un mes, en soles. */
+export type IngresoMes = [gross: number, platformFee: number, creatorAmount: number];
+
+/**
+ * Ingresos de cada mes con ventas, de toda la historia, para la
+ * tarjeta Ingresos del Dashboard (su selector permite ir a
+ * cualquier mes). Solo lectura: las mismas órdenes PAGADAS y las
+ * mismas cifras que la serie de 12 meses de getAdminStats(), sin
+ * el límite de fecha. Clave "AAAA-MM".
+ */
+export async function ingresosPorMes(): Promise<Record<string, IngresoMes>> {
+  const ordenes = await prisma.order.findMany({
+    where: { status: "PAID" },
+    select: {
+      createdAt: true,
+      total: true,
+      items: { select: { platformFee: true, creatorAmount: true } },
+    },
+  });
+
+  const meses: Record<string, IngresoMes> = {};
+
+  for (const orden of ordenes) {
+    const clave = monthKey(orden.createdAt);
+    const mes = (meses[clave] ??= [0, 0, 0]);
+    mes[0] += Number(orden.total);
+    for (const item of orden.items) {
+      mes[1] += Number(item.platformFee);
+      mes[2] += Number(item.creatorAmount);
+    }
+  }
+
+  return meses;
+}
+
 export async function getAdminStats() {
   const now = new Date();
 
