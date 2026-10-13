@@ -1,38 +1,19 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { verifySessionToken } from "@/lib/auth";
+import { usuarioIdDeSesion } from "@/lib/sesion-api";
 
 type RouteContext = {
   params: Promise<{
     id: string;
   }>;
 };
-
-async function getAuthenticatedUser() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("rcktdmg_session")?.value;
-
-  if (!token) {
-    return null;
-  }
-
-  const session = await verifySessionToken(token);
-
-  if (!session || typeof session.userId !== "string") {
-    return null;
-  }
-
-  return session.userId;
-}
-
 // AGREGAR PRODUCTO A COLECCIÓN
 export async function POST(
   request: Request,
   context: RouteContext
 ) {
   try {
-    const userId = await getAuthenticatedUser();
+    const userId = await usuarioIdDeSesion();
 
     if (!userId) {
       return NextResponse.json(
@@ -145,7 +126,7 @@ export async function DELETE(
   context: RouteContext
 ) {
   try {
-    const userId = await getAuthenticatedUser();
+    const userId = await usuarioIdDeSesion();
 
     if (!userId) {
       return NextResponse.json(
