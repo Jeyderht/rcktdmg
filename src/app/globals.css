@@ -17538,3 +17538,59 @@ html[data-theme] .rk-faq-icon::before {
     transition: none;
   }
 }
+
+/* ── BB10. FONDO Y DESBORDE ──────────────────────────────────
+   Sin desborde horizontal (clip no rompe el sticky de la barra
+   superior), el fondo de la página y del pie en --rx-fondo, y
+   la banda final del pie más baja. */
+.rk-card-zoom {
+  will-change: transform;
+}
+
+html,
+body {
+  overflow-x: clip !important;
+}
+
+html,
+html[data-theme]:has(.rk-footer) {
+  background-color: var(--rx-fondo) !important;
+}
+
+@media (max-width:767px) {
+  .rk-footer-marca {
+    height: calc(26px + 52px + env(safe-area-inset-bottom,0px)) !important;
+  }
+}
+
+@media (min-width:768px) {
+  .rk-footer-marca {
+    height: clamp(64px,7vw,96px) !important;
+  }
+}
+
+.rk-footer-top-ico {
+  background: rgb(var(--rk-primary)) !important;
+  color: rgb(var(--rk-on-primary)) !important;
+}
+
+html .rk-footer-marca::before,
+html[data-theme] .rk-footer-marca::before {
+  background: var(--rx-fondo) !important;
+}
+
+.rk-footer {
+  background: var(--rx-fondo) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* en el inicio el CTA final llega casi al pie: menos aire antes
+   del separador y del pie */
+.rk-inicio ~ .rk-separador {
+  margin-top: 12px;
+}
+
+.rk-inicio ~ .rk-footer {
+  margin-top: 12px;
+}
