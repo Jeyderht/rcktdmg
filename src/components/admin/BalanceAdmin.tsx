@@ -153,7 +153,11 @@ export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoM
   /* Al abrir el calendario, el foco va al mes elegido. */
   useEffect(() => {
     if (!cal) return;
-    calEl.current?.querySelector<HTMLButtonElement>('[aria-pressed="true"]:not(:disabled), .rk-cal-mes:not(:disabled)')?.focus();
+    const dialogo = calEl.current;
+    (
+      dialogo?.querySelector<HTMLButtonElement>('.rk-cal-mes[aria-pressed="true"]') ??
+      dialogo?.querySelector<HTMLButtonElement>(".rk-cal-mes:not(:disabled)")
+    )?.focus();
   }, [cal, anoVista]);
 
   /* ── Gráfico: el puntero elige mes ────────────────────── */
