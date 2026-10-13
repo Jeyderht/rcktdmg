@@ -17329,3 +17329,212 @@ html[data-theme] .rk-faq-icon::before {
     transition: none;
   }
 }
+
+/* ── BB9. CATÁLOGO EN PESTAÑAS (CatalogoPestanas.tsx) ────────
+   Barra de pestañas en píldora de vidrio (scroll horizontal en
+   móvil): círculo de color con el icono y, en la activa, el
+   nombre. Debajo, el panel de vidrio y el botón negro montado
+   sobre su borde. */
+.rk-hub {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+.rk-hub-tabs {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 6px;
+  border-radius: 9999px;
+  background: rgb(255 255 255/.55);
+  border: 1px solid rgb(255 255 255/.85);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 0 rgb(255 255 255/.8),0 1px 2px rgb(21 22 27/.05);
+}
+
+.rk-hub-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.rk-hub-tab {
+  --h1: #9d97ff;
+  --h2: #c9a3d8;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 42px;
+  padding: 3px;
+  border-radius: 9999px;
+  color: rgb(var(--rk-foreground));
+  transition: background .3s,gap .3s,padding .3s,box-shadow .3s;
+}
+
+.rk-hub-tab+.rk-hub-tab::before {
+  content: "";
+  position: absolute;
+}
+
+.rk-hub-tab-ico {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(145deg,var(--h1),var(--h2));
+  box-shadow: inset 0 1px 0 rgb(255 255 255/.5);
+  flex: none;
+  transition: transform .3s;
+}
+
+.rk-hub-tab-txt {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  transition: max-width .35s cubic-bezier(.2,.8,.2,1),opacity .25s,margin .35s;
+}
+
+.rk-hub-tab[aria-selected="true"] {
+  background: #fff;
+  gap: 8px;
+  padding-right: 16px;
+  box-shadow: 0 4px 14px -4px rgb(21 22 27/.18),0 0 0 1px rgb(21 22 27/.05);
+}
+
+.rk-hub-tab[aria-selected="true"] .rk-hub-tab-txt {
+  max-width: 9rem;
+  opacity: 1;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .rk-hub-tab:not([aria-selected="true"]):hover .rk-hub-tab-ico {
+    transform: scale(1.08);
+  }
+}
+
+.rk-hub-tab:focus-visible {
+  outline: 2px solid #9d97ff;
+  outline-offset: 2px;
+}
+
+.rk-hub-panel {
+  margin-top: 14px;
+  padding: 24px 16px 56px;
+  border-radius: 28px;
+  background: rgb(255 255 255/.5);
+  border: 1px solid rgb(255 255 255/.85);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 0 rgb(255 255 255/.8);
+  overflow: hidden;
+}
+
+.rk-hub-pane {
+  animation: rk-hub-in .45s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes rk-hub-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rk-hub-desc {
+  max-width: 32rem;
+  margin: 2px auto 20px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgb(var(--rk-foreground)/.6);
+}
+
+.rk-hub-body .rk-rejilla {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 12px;
+}
+
+.rk-hub-body .rk-empty {
+  margin: 0;
+}
+
+.rk-hub-cta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  margin: -28px auto 0;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 22px;
+  border-radius: 16px;
+  background: rgb(var(--rk-marca-tinta));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 14px 28px -12px rgb(21 22 27/.5);
+  transition: transform .25s,gap .25s;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .rk-hub-cta:hover {
+    transform: translateY(-2px);
+    gap: 14px;
+  }
+}
+
+[data-theme="dark"] .rk-hub-tabs,
+[data-theme="dark"] .rk-hub-panel {
+  background: rgb(255 255 255/.06);
+  border-color: rgb(255 255 255/.12);
+  box-shadow: inset 0 1px 0 rgb(255 255 255/.08);
+}
+
+[data-theme="dark"] .rk-hub-tab {
+  color: #fff;
+}
+
+[data-theme="dark"] .rk-hub-tab[aria-selected="true"] {
+  background: rgb(255 255 255/.14);
+  box-shadow: 0 0 0 1px rgb(255 255 255/.18);
+}
+
+[data-theme="dark"] .rk-hub-cta {
+  background: #f4f2f1;
+  color: #15161b;
+}
+
+@media (min-width:640px) {
+  .rk-hub-panel {
+    padding: 32px 28px 64px;
+  }
+
+  .rk-hub-body .rk-rejilla {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .rk-hub-pane {
+    animation: none;
+  }
+
+  .rk-hub-tab,
+  .rk-hub-tab-txt {
+    transition: none;
+  }
+}
