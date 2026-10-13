@@ -47,7 +47,7 @@ const PROGRAMAS: Programa[] = [
 
 export default function Ecosistema() {
   return (
-    <section className="border-t border-line/10">
+    <section>
       <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
         <div className="rk-fade-up mx-auto max-w-2xl text-center">
           <h2 className="rk-title text-[1.75rem] sm:text-4xl">

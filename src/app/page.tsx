@@ -27,6 +27,7 @@ import CarruselCreadores from "@/components/home/CarruselCreadores";
 import Ecosistema from "@/components/home/Ecosistema";
 import MasDisenos from "@/components/home/MasDisenos";
 import CtaModelo from "@/components/home/CtaModelo";
+import SeparadorSeccion from "@/components/home/SeparadorSeccion";
 import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
 import {
   creadoresDestacados,
@@ -250,7 +251,7 @@ export default async function Home() {
         }}
       />
 
-      <main>
+      <main className="rk-inicio">
 
         {/*
           Separador entre la barra superior y el slider: la línea
@@ -446,8 +447,12 @@ export default async function Home() {
           </section>
         )}
 
+        <SeparadorSeccion />
+
         {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */}
         <SelectorBusqueda />
+
+        <SeparadorSeccion />
 
         {/* ══════════ STORIES DE EVENTOS ══════════ */}
         <StoriesEventos flyers={flyers.flyers} />
@@ -507,6 +512,8 @@ export default async function Home() {
         {/* Recomendaciones: contextual o personal, según haya datos. */}
         <Recomendados />
 
+        <SeparadorSeccion />
+
         {/*
           ══════════ CREADORES ══════════
 
@@ -517,14 +524,20 @@ export default async function Home() {
         */}
         <CarruselCreadores creadores={creadoresHome} />
 
+        <SeparadorSeccion />
+
         {/* ══════════ MÁS DISEÑOS PARA TU NEGOCIO ══════════ */}
         <MasDisenos />
+
+        <SeparadorSeccion />
 
         {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
         <Ecosistema />
 
+        <SeparadorSeccion />
+
         {/* ══════════ CÓMO FUNCIONA ══════════ */}
-        <section className="border-t border-line/10">
+        <section>
           <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
             <div className="rk-fade-up max-w-2xl">
               <p className="rk-kicker">Cómo funciona</p>
@@ -559,7 +572,7 @@ export default async function Home() {
         </section>
 
         {/* ══════════ PREGUNTAS FRECUENTES ══════════ */}
-        <div aria-hidden className="rk-separador rk-separador-arriba">
+        <div aria-hidden className="rk-separador rk-separador-arriba rk-sep-faq">
           <span className="rk-separador-linea" />
         </div>
 

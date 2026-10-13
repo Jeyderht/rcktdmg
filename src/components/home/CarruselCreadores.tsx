@@ -61,7 +61,7 @@ export default function CarruselCreadores({
   }
 
   return (
-    <section className="border-t border-line/10">
+    <section>
       <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
         <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
           <div>

@@ -43,7 +43,7 @@ const CAMINOS = [
 
 export default function MasDisenos() {
   return (
-    <section className="border-t border-line/10">
+    <section>
       <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
         <div className="rk-fade-up max-w-2xl">
           <p className="rk-kicker">Para tu negocio</p>
