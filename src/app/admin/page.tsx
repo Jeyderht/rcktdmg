@@ -3,12 +3,8 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import {
   ArrowRight,
-  ArrowUpRight,
-  CalendarDays,
   ClipboardCheck,
   Package,
-  Plus,
-  SlidersHorizontal,
   UserPlus,
   Users,
   Wallet,
@@ -19,7 +15,7 @@ import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
 import { IconoUsuario } from "@/components/iconos";
 import BalanceAdmin from "@/components/admin/BalanceAdmin";
-import DonaAdmin from "@/components/admin/DonaAdmin";
+import { COLORES_ADMIN } from "@/lib/admin-colores";
 
 export const metadata: Metadata = {
   title: "Administración",
@@ -94,214 +90,214 @@ export default async function Admin() {
   const adminName =
     adminUser?.publicName || adminUser?.name || "Administrador";
 
-  const pendingTasks =
-    stats.products.pending + stats.withdrawals.pendingCount;
-
   const ahora = new Date();
-  const mesActual = `${new Intl.DateTimeFormat("es-PE", {
-    month: "long",
-  }).format(ahora)} ${ahora.getFullYear()}`;
-  const vence = new Intl.DateTimeFormat("es-PE", {
-    month: "2-digit",
-    year: "2-digit",
-  }).format(ahora);
+  const mes = new Intl.DateTimeFormat("es-PE", { month: "long" }).format(ahora);
+  const mesActual = `${mes.charAt(0).toUpperCase()}${mes.slice(1)} ${ahora.getFullYear()}`;
 
-  // Parte de lo cobrado que retiene la plataforma (0–100 %).
-  const partePlataforma =
-    stats.revenue.gross > 0
-      ? Math.min(
-          100,
-          Math.round((stats.revenue.platformFee / stats.revenue.gross) * 100)
-        )
-      : 0;
+  // Reparto de lo cobrado (0–100 %). Sin ventas no hay porcentaje.
+  const { gross, platformFee, creatorAmount } = stats.revenue;
+  const pct = (parte: number) =>
+    gross > 0 ? `${Math.round((parte / gross) * 100)}%` : "";
+
+  /* Pedidos por estado: serie 1–4 de COLORES_ADMIN. */
+  const pedidos = [
+    { label: "Pagados", valor: stats.orders.paid.count },
+    { label: "Pendientes", valor: stats.orders.pending.count },
+    { label: "Cancelados", valor: stats.orders.canceled.count },
+    { label: "Reembolsados", valor: stats.orders.refunded.count },
+  ];
+  const totalPedidos = pedidos.reduce((s, p) => s + p.valor, 0);
+
+  /*
+    Anillo de Pedidos: un círculo de circunferencia 100, así cada
+    arco mide lo que su parte del total. Con más de un tramo se
+    deja un hueco entre arcos para que las puntas redondas no se
+    pisen.
+  */
+  const conValor = pedidos.filter((p) => p.valor > 0).length;
+  const hueco = conValor > 1 ? 3 : 0;
+  let acumulado = 0;
+  const arcos = pedidos.flatMap((p, i) => {
+    if (p.valor === 0 || totalPedidos === 0) return [];
+    const parte = (p.valor / totalPedidos) * 100;
+    const arco = {
+      color: COLORES_ADMIN[i],
+      largo: Math.max(parte - hueco, 0.01),
+      desde: acumulado + (acumulado > 0 ? hueco : 0),
+    };
+    acumulado += parte;
+    return [arco];
+  });
+  const resumenPedidos =
+    totalPedidos === 0
+      ? "Sin pedidos"
+      : pedidos
+          .filter((p) => p.valor > 0)
+          .map((p) => `${p.valor} ${p.label.toLowerCase()}`)
+          .join(", ")
+          .replace(/, ([^,]*)$/, " y $1");
+
+  /* Recursos por estado: serie 1–5. */
+  const recursos = [
+    { label: "Publicados", valor: stats.products.published },
+    { label: "Pendientes", valor: stats.products.pending },
+    { label: "Borradores", valor: stats.products.draft },
+    { label: "Rechazados", valor: stats.products.rejected },
+    { label: "Archivados", valor: stats.products.archived },
+  ];
 
   return (
-    <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
-
-      {/* ENCABEZADO: título, saludo y acciones */}
-      <section className="rk-fade-up rk-adm-cabeza">
-        <div className="min-w-0">
-          <h1 className="rk-title text-[1.9rem] sm:text-[2.2rem]">Dashboard</h1>
-          <p className="mt-1 text-[13px] text-ink/60">
-            Bienvenido, {adminName}
+    <main className="rk-mn-pagina">
+      <div data-vista="Dashboard">
+        <header className="rk-vh">
+          <h1 className="rk-title">Dashboard</h1>
+          <p>
+            Bienvenido, {adminName} · {mesActual}
           </p>
-        </div>
+        </header>
 
-        <div className="rk-adm-acciones">
-          <Link
-            href="/admin/recursos?estado=PENDING_REVIEW"
-            className="rk-adm-circulo"
-            aria-label={`${pendingTasks} tareas pendientes`}
-          >
-            <SlidersHorizontal size={16} aria-hidden />
-            {pendingTasks > 0 && (
-              <span className="rk-adm-aviso">{pendingTasks}</span>
-            )}
-          </Link>
-
-          <Link href="/admin/usuarios/nuevo" className="rk-adm-pildora is-negra">
-            <Plus size={14} aria-hidden />
-            Crear creador
-          </Link>
-
-          <span className="rk-adm-pildora">
-            <CalendarDays size={14} aria-hidden />
-            <span className="capitalize">{mesActual}</span>
-          </span>
-        </div>
-      </section>
-
-      {/* BENTO: ingresos · comisión y dona · cuenta */}
-      <section className="rk-enter rk-enter-1 rk-adm-bento">
-        <BalanceAdmin
-          meses={stats.months}
-          hoy={stats.sales.day.total}
-          anio={stats.sales.year.total}
-        />
-
-        <div className="rk-adm-col">
-          {/* Comisión retenida sobre lo cobrado */}
-          <section className="rk-card rk-adm-meta">
-            <div className="rk-adm-meta-cabeza">
-              <h2 className="rk-adm-card-titulo">Comisión de plataforma</h2>
-              <Link
-                href="/admin/retiros"
-                className="rk-adm-circulo is-chico"
-                aria-label="Ver retiros"
-              >
-                <ArrowUpRight size={14} aria-hidden />
-              </Link>
-            </div>
-
-            <div className="rk-adm-meta-cifras">
-              <div>
-                <p className="rk-adm-mini-etiqueta">Retenido</p>
-                <p className="rk-adm-meta-valor">
-                  {money(stats.revenue.platformFee)}
-                  <span> / {money(stats.revenue.gross)}</span>
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="rk-adm-mini-etiqueta">Creadores</p>
-                <p className="rk-adm-meta-valor">
-                  {money(stats.revenue.creatorAmount)}
-                </p>
-              </div>
-            </div>
-
-            <div
-              className="rk-adm-progreso"
-              role="img"
-              aria-label={`${partePlataforma} % retenido por la plataforma`}
-            >
-              <span style={{ width: `${partePlataforma}%` }} />
-            </div>
-          </section>
-
-          <DonaAdmin
-            pedidos={[
-              { label: "Pagados", valor: stats.orders.paid.count },
-              { label: "Pendientes", valor: stats.orders.pending.count },
-              { label: "Cancelados", valor: stats.orders.canceled.count },
-              { label: "Reembolsados", valor: stats.orders.refunded.count },
-            ]}
-            recursos={[
-              { label: "Publicados", valor: stats.products.published },
-              { label: "Pendientes", valor: stats.products.pending },
-              { label: "Borradores", valor: stats.products.draft },
-              { label: "Rechazados", valor: stats.products.rejected },
-              { label: "Archivados", valor: stats.products.archived },
-            ]}
+        {/* INGRESOS: el componente de siempre, sin cambios */}
+        <div className="mt-4">
+          <BalanceAdmin
+            meses={stats.months}
+            hoy={stats.sales.day.total}
+            anio={stats.sales.year.total}
           />
         </div>
 
-        <div className="rk-adm-col">
-          <div className="rk-adm-cuenta-cabeza">
-            <h2 className="rk-adm-card-titulo">Mi plataforma</h2>
-          </div>
-
-          {/* Tarjeta de marca con los ingresos brutos */}
-          <div className="rk-adm-tarjeta-pila">
-            <span aria-hidden className="rk-adm-tarjeta-atras is-1" />
-            <span aria-hidden className="rk-adm-tarjeta-atras is-2" />
-            <div className="rk-adm-tarjeta">
-              <div className="rk-adm-tarjeta-arriba">
-                <span aria-hidden className="rk-isotipo rk-adm-tarjeta-iso" />
-                <span className="rk-adm-tarjeta-marca">RcktX</span>
+        <div className="rk-db">
+          {/* MI PLATAFORMA · ingresos brutos, reparto y retiros */}
+          <section className="rk-card rk-pl" aria-label="Mi plataforma">
+            <div className="rk-pl-top">
+              <div className="rk-pl-h">
+                <h3>Mi plataforma</h3>
               </div>
-              <div>
-                <p className="rk-adm-tarjeta-etiqueta">Ingresos brutos</p>
-                <p className="rk-adm-tarjeta-valor">
-                  {money(stats.revenue.gross)}
-                </p>
-              </div>
-              <div className="rk-adm-tarjeta-abajo">
-                <span>•••• {stats.revenue.unitsSold} vendidos</span>
-                <span>{vence}</span>
+              <p className="rk-db-mut" style={{ margin: "14px 0 0" }}>
+                Ingresos brutos
+              </p>
+              <p className="rk-pl-monto">{money(gross)}</p>
+              <div className="rk-pl-tarjeta" aria-hidden="true">
+                <span className="rk-isotipo rk-pl-iso" />
+                <span className="rk-pl-num">
+                  •••• {stats.revenue.unitsSold} vendidos
+                </span>
               </div>
             </div>
-          </div>
 
-          <Link href="/admin/retiros" className="rk-adm-pildora is-linea">
-            <Wallet size={14} aria-hidden />
-            Retiros pendientes · {money(stats.withdrawals.pendingAmount)}
-          </Link>
+            <div className="rk-pl-hoja">
+              <div className="rk-pl-acc">
+                <div className="rk-pl-it">
+                  <span className="rk-pl-ic">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6" />
+                    </svg>
+                  </span>
+                  <span className="rk-pl-et">
+                    Plataforma {pct(platformFee)}
+                  </span>
+                  <b>{money(platformFee)}</b>
+                </div>
 
-          {/* Creadores con más ventas, en círculos */}
-          <section className="rk-card rk-adm-rapidos">
-            <h2 className="rk-adm-card-titulo">Creadores destacados</h2>
-            <div className="rk-adm-rapidos-fila">
-              <Link
-                href="/admin/usuarios/nuevo"
-                className="rk-adm-avatar is-mas"
-                aria-label="Crear creador"
-              >
-                <Plus size={16} aria-hidden />
-              </Link>
-              {stats.creators.byVolume.slice(0, 6).map((c, i) => (
-                <span
-                  key={c.id}
-                  className={`rk-adm-avatar is-tono-${i % 4}`}
-                  title={`${c.name} · ${c.sales} ventas`}
+                <div className="rk-pl-it">
+                  <span className="rk-pl-ic">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </span>
+                  <span className="rk-pl-et">
+                    Creadores {pct(creatorAmount)}
+                  </span>
+                  <b>{money(creatorAmount)}</b>
+                </div>
+              </div>
+
+              <div className="rk-pl-ret">
+                <div>
+                  <span className="rk-db-mut">Retiros pendientes</span>
+                  <b>{money(stats.withdrawals.pendingAmount)}</b>
+                </div>
+                <Link
+                  className="rk-btn rk-btn-ink rk-btn-compact"
+                  href="/admin/retiros"
                 >
-                  {c.name.charAt(0).toUpperCase()}
-                </span>
-              ))}
+                  Ver
+                </Link>
+              </div>
             </div>
           </section>
 
-          {/* Últimas ventas */}
-          <section className="rk-adm-ventas">
-            <h2 className="rk-adm-card-titulo">Últimas ventas</h2>
-            {stats.recentSales.length === 0 ? (
-              <p className="rk-adm-vacio">Todavía no hay ventas registradas.</p>
-            ) : (
-              <ul>
-                {stats.recentSales.slice(0, 5).map((sale) => (
-                  <li key={sale.id}>
-                    <Link href={`/tienda/${sale.productSlug}`}>
-                      <span aria-hidden className="rk-adm-venta-icono">
-                        {sale.productName.charAt(0).toUpperCase()}
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="rk-adm-venta-nombre">
-                          {sale.productName}
-                        </span>
-                        <span className="rk-adm-venta-sub">
-                          {sale.buyer} · {shortDate(sale.createdAt)}
-                        </span>
-                      </span>
-                      <span className="rk-adm-venta-monto">
-                        +{money(sale.amount)}
-                      </span>
-                    </Link>
+          {/* PEDIDOS · anillo por estado */}
+          <section className="rk-card rk-k2c" aria-label="Pedidos">
+            <div className="rk-k2-h">
+              <h3>Pedidos</h3>
+            </div>
+            <div className="rk-k2-dona">
+              <div className="rk-k2-anillo">
+                <svg viewBox="0 0 36 36" width="124" height="124" role="img" aria-label={resumenPedidos}>
+                  <circle cx="18" cy="18" r="15.9155" fill="none" stroke="rgb(var(--rk-foreground)/.07)" strokeWidth="3.2" />
+                  {arcos.map((a) => (
+                    <circle
+                      key={a.color}
+                      cx="18"
+                      cy="18"
+                      r="15.9155"
+                      fill="none"
+                      stroke={a.color}
+                      strokeWidth="3.2"
+                      strokeLinecap="round"
+                      strokeDasharray={`${a.largo.toFixed(1)} ${(100 - a.largo).toFixed(1)}`}
+                      strokeDashoffset={a.desde ? (-a.desde).toFixed(1) : undefined}
+                      transform="rotate(-90 18 18)"
+                    />
+                  ))}
+                </svg>
+                <div>
+                  <b>{totalPedidos}</b>
+                  <span>pedidos</span>
+                </div>
+              </div>
+              <ul className="rk-k2-ley">
+                {pedidos.map((p, i) => (
+                  <li key={p.label}>
+                    <i data-c={i + 1} />
+                    {p.label}
+                    <b>{p.valor}</b>
                   </li>
                 ))}
               </ul>
-            )}
+            </div>
+          </section>
+
+          {/* RECURSOS · por estado */}
+          <section className="rk-card rk-k2c" aria-label="Recursos">
+            <div className="rk-k2-h">
+              <h3>Recursos</h3>
+              <Link
+                className="rk-k2-a"
+                href="/admin/recursos?estado=PENDING_REVIEW"
+              >
+                Revisar pendientes
+              </Link>
+            </div>
+            <div className="rk-k2-g">
+              {recursos.map((r, i) => (
+                <div
+                  key={r.label}
+                  className={`rk-k2${i === recursos.length - 1 ? " rk-k2-ancho" : ""}`}
+                >
+                  <span className="rk-k2-e">
+                    <i data-c={i + 1} />
+                    {r.label}
+                  </span>
+                  <b>{r.valor}</b>
+                </div>
+              ))}
+            </div>
           </section>
         </div>
-      </section>
+      </div>
 
       {/* USUARIOS · CREADORES */}
       <section className="rk-enter rk-enter-2 mt-4 grid gap-4 md:grid-cols-2">
