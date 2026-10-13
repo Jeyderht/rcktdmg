@@ -16807,3 +16807,24 @@ html[data-theme] .rk-faq-icon::before {
 [data-theme="dark"] .rk-cta-modelo-card .rk-cta-modelo-txt span {
   color: rgb(255 255 255/.8) !important;
 }
+
+/* ── BB5. ECOSISTEMA (Ecosistema.tsx) ────────────────────────
+   Núcleo con degradado cónico de marca (lavanda, perla,
+   durazno), sin sombras, e isotipo central blanco. */
+.rk-eco-nucleo,
+[data-theme="dark"] .rk-eco-nucleo {
+  background:
+    radial-gradient(closest-side,rgb(255 255 255/.55) 0,rgb(255 255 255/0) 62%),
+    conic-gradient(from 210deg at 50% 50%,#d2cef8,#e6e3fa,#f7f5f4,#fbe6da,#f9d3c0,#f1dbe8,#d2cef8) !important;
+  box-shadow: none !important;
+  border: 1px solid rgb(255 255 255/.55) !important;
+}
+
+.rk-eco-isotipo-wrap {
+  filter: none !important;
+}
+
+.rk-eco-nucleo {
+  --rk-eco-cohete: #fff;
+  --rk-eco-cohete-sombra: transparent;
+}

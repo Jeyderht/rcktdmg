@@ -50,14 +50,12 @@ export default function Ecosistema() {
     <section className="border-t border-line/10">
       <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
         <div className="rk-fade-up mx-auto max-w-2xl text-center">
-          <p className="rk-kicker justify-center">El sitio</p>
-
-          <h2 className="rk-title mt-3 text-[1.75rem] sm:text-4xl">
+          <h2 className="rk-title text-[1.75rem] sm:text-4xl">
             Ecosistema creativo RcktX
           </h2>
 
           <p className="mt-3 text-[15px] leading-7 text-ink/60">
-            Archivos listos para abrir y editar en los programas que ya usas.
+            Archivos listos para editar.
           </p>
         </div>
 
