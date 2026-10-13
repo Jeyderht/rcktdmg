@@ -343,27 +343,19 @@ export default function AdminRetirosPage() {
   }
 
   return (
-    <div>
+    <div data-vista="otra">
 
       {/* ========== CABECERA ========== */}
-      <header className="rk-fade-up flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
-        <div className="min-w-0">
-          <p className="rk-eyebrow">Admin Center</p>
+      <header className="rk-vh">
+        <h1 className="rk-title">Retiros</h1>
 
-          <h1 className="rk-title mt-2.5 text-[2rem] sm:text-4xl">
-            Retiros
-          </h1>
-
-          <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
-            Gestiona las solicitudes de retiro de los creadores.
-          </p>
-        </div>
+        <p>Gestiona las solicitudes de retiro de los creadores.</p>
 
         <button
           type="button"
           onClick={loadWithdrawals}
           disabled={loading}
-          className="rk-btn rk-btn-line shrink-0"
+          className="rk-btn rk-btn-line mt-3 justify-self-start"
         >
           <RefreshCw size={15} />
           {loading ? "Actualizando..." : "Actualizar"}

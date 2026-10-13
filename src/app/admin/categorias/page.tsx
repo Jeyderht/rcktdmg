@@ -16,15 +16,13 @@ export const metadata: Metadata = {
  */
 export default function AdminCategoriasPage() {
   return (
-    <div className="rk-fade-up">
-      <header>
-        <p className="rk-kicker">Catálogo</p>
-
-        <h1 className="rk-title mt-2 text-2xl sm:text-3xl">
+    <div data-vista="otra" className="rk-fade-up">
+      <header className="rk-vh">
+        <h1 className="rk-title">
           Categorías
         </h1>
 
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
+        <p>
           Las secciones comerciales de la tienda. Los creadores eligen
           entre estas al publicar y no pueden añadir ninguna. Una
           categoría con recursos se retira, no se borra.

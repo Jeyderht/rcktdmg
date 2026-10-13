@@ -15,15 +15,13 @@ export const metadata: Metadata = {
  */
 export default function AdminResenasPage() {
   return (
-    <div className="rk-fade-up">
-      <header>
-        <p className="rk-kicker">Comunidad</p>
-
-        <h1 className="rk-title mt-2 text-2xl sm:text-3xl">
+    <div data-vista="otra" className="rk-fade-up">
+      <header className="rk-vh">
+        <h1 className="rk-title">
           Valoraciones
         </h1>
 
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
+        <p>
           Ocultar una valoración la retira de la ficha y deja de
           contar para la media, y avisa a quien la escribió.
           Eliminar es definitivo.

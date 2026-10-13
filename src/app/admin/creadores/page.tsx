@@ -15,15 +15,13 @@ export const metadata: Metadata = {
  */
 export default function AdminSolicitudesPage() {
   return (
-    <div className="rk-fade-up">
-      <header>
-        <p className="rk-kicker">Comunidad</p>
-
-        <h1 className="rk-title mt-2 text-2xl sm:text-3xl">
+    <div data-vista="otra" className="rk-fade-up">
+      <header className="rk-vh">
+        <h1 className="rk-title">
           Solicitudes de creadores
         </h1>
 
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/60">
+        <p>
           Quién ha pedido publicar en RcktX, con su portafolio.
           Aprobar abre su perfil público y le da acceso al Creator
           Studio; rechazar exige un motivo, que él verá.
