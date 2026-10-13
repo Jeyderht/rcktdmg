@@ -8,6 +8,8 @@ import { verifySessionToken } from "@/lib/auth";
 import BalanceAdmin from "@/components/admin/BalanceAdmin";
 import ComunidadAdmin from "@/components/admin/ComunidadAdmin";
 import ListaAdmin from "@/components/admin/ListaAdmin";
+import CifraAnimada from "@/components/admin/CifraAnimada";
+import RevelarAlScroll from "@/components/admin/RevelarAlScroll";
 import { COLORES_ADMIN } from "@/lib/admin-colores";
 
 export const metadata: Metadata = {
@@ -134,6 +136,8 @@ export default async function Admin() {
 
   return (
     <main className="rk-mn-pagina">
+      <RevelarAlScroll />
+
       <div data-vista="Dashboard">
         <header className="rk-vh">
           <h1 className="rk-title">Dashboard</h1>
@@ -161,7 +165,9 @@ export default async function Admin() {
               <p className="rk-db-mut" style={{ margin: "14px 0 0" }}>
                 Ingresos brutos
               </p>
-              <p className="rk-pl-monto">{money(gross)}</p>
+              <p className="rk-pl-monto">
+                <CifraAnimada texto={money(gross)} />
+              </p>
               <div className="rk-pl-tarjeta" aria-hidden="true">
                 <span className="rk-isotipo rk-pl-iso" />
                 <span className="rk-pl-num">
@@ -181,7 +187,9 @@ export default async function Admin() {
                   <span className="rk-pl-et">
                     Plataforma {pct(platformFee)}
                   </span>
-                  <b>{money(platformFee)}</b>
+                  <b>
+                    <CifraAnimada texto={money(platformFee)} />
+                  </b>
                 </div>
 
                 <div className="rk-pl-it">
@@ -195,14 +203,20 @@ export default async function Admin() {
                   <span className="rk-pl-et">
                     Creadores {pct(creatorAmount)}
                   </span>
-                  <b>{money(creatorAmount)}</b>
+                  <b>
+                    <CifraAnimada texto={money(creatorAmount)} />
+                  </b>
                 </div>
               </div>
 
               <div className="rk-pl-ret">
                 <div>
                   <span className="rk-db-mut">Retiros pendientes</span>
-                  <b>{money(stats.withdrawals.pendingAmount)}</b>
+                  <b>
+                    <CifraAnimada
+                      texto={money(stats.withdrawals.pendingAmount)}
+                    />
+                  </b>
                 </div>
                 <Link
                   className="rk-btn rk-btn-ink rk-btn-compact"
@@ -240,7 +254,9 @@ export default async function Admin() {
                   ))}
                 </svg>
                 <div>
-                  <b>{totalPedidos}</b>
+                  <b>
+                    <CifraAnimada texto={String(totalPedidos)} />
+                  </b>
                   <span>pedidos</span>
                 </div>
               </div>
@@ -249,7 +265,9 @@ export default async function Admin() {
                   <li key={p.label}>
                     <i data-c={i + 1} />
                     {p.label}
-                    <b>{p.valor}</b>
+                    <b>
+                      <CifraAnimada texto={String(p.valor)} />
+                    </b>
                   </li>
                 ))}
               </ul>
