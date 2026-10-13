@@ -6,8 +6,8 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { FolderOpen, Globe, Lock } from "lucide-react";
 
-import AccountPageHeader from "@/components/AccountPageHeader";
-import EmptyState from "@/components/EmptyState";
+import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
+import EmptyState from "@/components/ui/EmptyState";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { IconoBasura } from "@/components/iconos";
 

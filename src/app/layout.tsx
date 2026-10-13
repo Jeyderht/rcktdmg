@@ -5,8 +5,8 @@ import "./globals.css";
 import {
   ThemeProvider,
   themeInitScript,
-} from "@/components/ThemeProvider";
-import RevelarAlEntrar from "@/components/RevelarAlEntrar";
+} from "@/components/layout/ThemeProvider";
+import RevelarAlEntrar from "@/components/ui/RevelarAlEntrar";
 import { SITIO, absoluta, urlBase } from "@/lib/seo";
 
 /*

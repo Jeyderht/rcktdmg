@@ -9,21 +9,21 @@ import {
     ShieldCheck,
 } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { prisma } from "@/lib/prisma";
 import AddToCartButton from "./AddToCartButton";
-import FavoriteButton from "@/components/FavoriteButton";
-import AddToCollectionButton from "@/components/AddToCollectionButton";
+import FavoriteButton from "@/components/tienda/FavoriteButton";
+import AddToCollectionButton from "@/components/tienda/AddToCollectionButton";
 import ProductGallery from "./ProductGallery";
 import SugerenciasFlyers from "./SugerenciasFlyers";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/components/tienda/ProductCard";
 import { getPriceDisplay, formatPrice } from "@/lib/pricing";
 import { getProductFileInfo } from "@/lib/product-file";
 import { COLORES, TAG_PACK } from "@/lib/catalogo";
 import { tagsVisibles } from "@/lib/tags-comun";
-import Valoraciones from "@/components/Valoraciones";
-import Estrellas from "@/components/Estrellas";
+import Valoraciones from "@/components/tienda/Valoraciones";
+import Estrellas from "@/components/tienda/Estrellas";
 import { LICENCIAS } from "@/lib/licencias-comun";
 import {
     MINIMO_RESENAS_SCHEMA,
@@ -39,11 +39,11 @@ import {
     sugerenciasDeFicha,
     packsQueIncluyen,
 } from "@/lib/recomendaciones";
-import PackCard from "@/components/PackCard";
+import PackCard from "@/components/tienda/PackCard";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 import { getSession } from "@/lib/session";
 import { tieneProducto } from "@/lib/adquisiciones";
-import YaAdquirido from "@/components/YaAdquirido";
+import YaAdquirido from "@/components/tienda/YaAdquirido";
 
 export const dynamic = "force-dynamic";
 

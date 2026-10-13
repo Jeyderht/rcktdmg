@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react";
 
-import Footer from "@/components/Footer";
+import Footer from "@/components/layout/Footer";
 import VersionesManager from "./VersionesManager";
 
 /**

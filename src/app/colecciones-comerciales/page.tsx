@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Library } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import EmptyState from "@/components/EmptyState";
-import ColeccionCard from "@/components/ColeccionCard";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import EmptyState from "@/components/ui/EmptyState";
+import ColeccionCard from "@/components/tienda/ColeccionCard";
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
 import { paginaPublica } from "@/lib/seo";
 

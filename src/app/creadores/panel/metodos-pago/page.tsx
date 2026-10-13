@@ -3,8 +3,8 @@
 import { FormEvent, useEffect, useState } from "react";
 import { CreditCard, RefreshCw, Smartphone } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
 
 type PaymentMethodType = "BANK" | "YAPE" | "PLIN";
 

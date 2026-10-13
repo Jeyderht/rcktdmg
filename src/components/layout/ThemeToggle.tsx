@@ -5,7 +5,7 @@ import { Monitor, Moon, Sun } from "lucide-react";
 import {
   ThemePreference,
   useTheme,
-} from "@/components/ThemeProvider";
+} from "@/components/layout/ThemeProvider";
 
 const OPTIONS: {
   value: ThemePreference;

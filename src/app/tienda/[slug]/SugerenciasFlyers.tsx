@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import ProductCard, {
   type ProductCardData,
-} from "@/components/ProductCard";
+} from "@/components/tienda/ProductCard";
 
 /**
  * Tira de sugerencias de la ficha.

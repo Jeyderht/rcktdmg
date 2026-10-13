@@ -12,9 +12,9 @@ import {
   X,
 } from "lucide-react";
 
-import AccountPageHeader from "@/components/AccountPageHeader";
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
+import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { IconoBasura } from "@/components/iconos";
 import { fechaMedia } from "@/lib/formato";

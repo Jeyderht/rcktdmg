@@ -10,7 +10,7 @@ import {
   X,
 } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
+import EmptyState from "@/components/ui/EmptyState";
 import {
   ETIQUETA_ESTADO_SOLICITUD,
   LARGO_MOTIVO_RECHAZO,

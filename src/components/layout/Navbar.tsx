@@ -8,20 +8,20 @@ import {
   X,
 } from "lucide-react";
 
-import MobileBottomNav from "@/components/MobileBottomNav";
-import { useCartCount } from "@/components/useCartCount";
+import MobileBottomNav from "@/components/layout/MobileBottomNav";
+import { useCartCount } from "@/components/hooks/useCartCount";
 import { ID_BUSCADOR_TIENDA } from "@/lib/busqueda-ui";
-import { useSessionUser } from "@/components/useSessionUser";
-import ThemeToggle from "@/components/ThemeToggle";
-import NotificationsBell from "@/components/NotificationsBell";
-import AccountMenu from "@/components/AccountMenu";
+import { useSessionUser } from "@/components/hooks/useSessionUser";
+import ThemeToggle from "@/components/layout/ThemeToggle";
+import NotificationsBell from "@/components/layout/NotificationsBell";
+import AccountMenu from "@/components/layout/AccountMenu";
 import {
   ListaSugerencias,
   useSugerencias,
   useTecladoSugerencias,
-} from "@/components/sugerencias";
+} from "@/components/layout/sugerencias";
 import { IconoBolsa, IconoBuscar } from "@/components/iconos";
-import Isotipo from "@/components/Isotipo";
+import Isotipo from "@/components/layout/Isotipo";
 
 function SearchField({
   className,

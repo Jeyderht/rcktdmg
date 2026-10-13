@@ -10,20 +10,16 @@ import {
   ChevronLeft,
   Check,
   ChevronRight,
-  Heart,
   X,
 } from "lucide-react";
 
 import { formatPrice } from "@/lib/pricing";
-import PreviewProtegido from "@/components/PreviewProtegido";
+import PreviewProtegido from "@/components/tienda/PreviewProtegido";
 import { ASPECTO_STORY, type TarjetaHome } from "@/lib/home";
-import { anadirAlCarrito } from "@/components/useCartCount";
-import { useSwipe } from "@/components/useSwipe";
-import {
-  alternarFavorito,
-  useEsFavorito,
-} from "@/components/favoritos-store";
+import { anadirAlCarrito } from "@/components/hooks/useCartCount";
+import { useSwipe } from "@/components/hooks/useSwipe";
 import { IconoBolsaCompra } from "@/components/iconos";
+import { BotonFavoritoStory } from "@/components/tienda/BotonFavoritoStory";
 
 /**
  * Stories de eventos.
@@ -434,7 +430,7 @@ function VisorStories({
       */}
       <div className="shrink-0 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
         <div className="mx-auto flex w-full max-w-md items-center justify-center gap-3">
-          <BotonFavorito productId={flyer.id} />
+          <BotonFavoritoStory productId={flyer.id} />
 
           {/*
             La `key` es la del flyer que se está viendo: al
@@ -512,52 +508,3 @@ function BotonCarrito({ flyer }: { flyer: TarjetaHome }) {
     </button>
   );
 }
-
-/**
- * Favorito.
- *
- * Llama a la API de favoritos que ya existe. Sin sesión, la
- * respuesta es 401 y se manda al login: no se guarda nada en
- * el navegador que después no exista en la cuenta.
- */
-function BotonFavorito({ productId }: { productId: string }) {
-  /*
-    El mismo almacén que los corazones de las tarjetas: el
-    estado se comparte y el cambio se pinta ANTES de preguntar
-    al servidor, no después de que conteste.
-  */
-  const { esFavorito } = useEsFavorito(productId);
-
-  const [enCurso, setEnCurso] = useState(false);
-
-  async function alternar() {
-    if (enCurso) return;
-
-    setEnCurso(true);
-
-    const resultado = await alternarFavorito(productId, esFavorito);
-
-    if (!resultado.ok && resultado.mensaje.includes("Inicia sesión")) {
-      window.location.href = "/login";
-    }
-
-    setEnCurso(false);
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={alternar}
-      aria-pressed={esFavorito}
-      aria-label={esFavorito ? "Quitar de guardados" : "Guardar"}
-      className="rk-story-btn rk-press h-12 w-12 shrink-0"
-    >
-      <Heart
-        size={18}
-        aria-hidden
-        className={esFavorito ? "fill-current" : ""}
-      />
-    </button>
-  );
-}
-

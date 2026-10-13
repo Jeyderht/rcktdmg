@@ -4,8 +4,8 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { CreditCard, Wallet } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
 import { formatPrice } from "@/lib/pricing";
 import { fechaNumerica } from "@/lib/formato";
 

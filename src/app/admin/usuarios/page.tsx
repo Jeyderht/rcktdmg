@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { BadgeCheck, UserPlus, Users } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
+import EmptyState from "@/components/ui/EmptyState";
 import { prisma } from "@/lib/prisma";
 import UserActions from "./UserActions";
 

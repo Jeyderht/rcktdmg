@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { IconoUsuario } from "@/components/iconos";
-import Isotipo from "@/components/Isotipo";
+import Isotipo from "@/components/layout/Isotipo";
 
 export default function RegistroPage() {
   const router = useRouter();

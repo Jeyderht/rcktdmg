@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/components/tienda/ProductCard";
 import type { BloqueRecomendaciones } from "@/lib/recomendaciones-tipos";
 
 /**

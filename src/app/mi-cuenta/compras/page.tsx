@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Download as DownloadIcon, Receipt } from "lucide-react";
 
-import AccountPageHeader from "@/components/AccountPageHeader";
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
+import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { formatPrice } from "@/lib/pricing";
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { RefreshCw, Wallet } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
+import EmptyState from "@/components/ui/EmptyState";
 import { formatPrice } from "@/lib/pricing";
 import { fechaNumerica } from "@/lib/formato";
 

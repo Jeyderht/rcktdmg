@@ -8,7 +8,7 @@ import {
   ListaSugerencias,
   useSugerencias,
   useTecladoSugerencias,
-} from "@/components/sugerencias";
+} from "@/components/layout/sugerencias";
 import { IconoBuscar } from "@/components/iconos";
 
 /**

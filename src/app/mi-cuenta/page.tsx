@@ -10,12 +10,12 @@ import {
   Receipt,
 } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
-import QuickAccess from "@/components/QuickAccess";
-import RecomendadosCliente from "@/components/RecomendadosCliente";
-import ThemeToggle from "@/components/ThemeToggle";
-import { useSessionUser } from "@/components/useSessionUser";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
+import QuickAccess from "@/components/cuenta/QuickAccess";
+import RecomendadosCliente from "@/components/cuenta/RecomendadosCliente";
+import ThemeToggle from "@/components/layout/ThemeToggle";
+import { useSessionUser } from "@/components/hooks/useSessionUser";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { fechaMedia } from "@/lib/formato";
 

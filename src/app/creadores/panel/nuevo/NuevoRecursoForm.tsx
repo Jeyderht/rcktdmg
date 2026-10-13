@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 
-import TagsInput from "@/components/TagsInput";
-import SubidorImagen, { type EstadoImagen } from "@/components/SubidorImagen";
+import TagsInput from "@/components/creador/TagsInput";
+import SubidorImagen, { type EstadoImagen } from "@/components/creador/SubidorImagen";
 import {
   STORY,
   TIPOS_PUBLICACION,

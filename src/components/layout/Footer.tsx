@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
-import Isotipo from "@/components/Isotipo";
+import Isotipo from "@/components/layout/Isotipo";
 
 /**
  * Pie de página de RcktX.

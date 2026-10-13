@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Check, Lock } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
-} from "@/components/useCartCount";
+} from "@/components/hooks/useCartCount";
 import { IconoBolsaCompra } from "@/components/iconos";
 
 type CartItem = {

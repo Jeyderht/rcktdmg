@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import PreviewProtegido from "@/components/PreviewProtegido";
+import PreviewProtegido from "@/components/tienda/PreviewProtegido";
 import { ASPECTO_CORPORATIVO, type TarjetaHome } from "@/lib/home";
 import { formatPrice } from "@/lib/pricing";
 

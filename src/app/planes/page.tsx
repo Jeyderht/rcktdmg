@@ -4,11 +4,11 @@ import type { Metadata } from "next";
 import { paginaPublica } from "@/lib/seo";
 import { ArrowRight, Sparkles } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
 import PlanesLista from "./PlanesLista";
-import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
+import PreguntasFrecuentes from "@/components/ui/PreguntasFrecuentes";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = paginaPublica({

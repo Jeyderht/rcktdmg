@@ -24,7 +24,7 @@ import {
   Wallet,
 } from "lucide-react";
 
-import type { SessionUser } from "@/components/useSessionUser";
+import type { SessionUser } from "@/components/hooks/useSessionUser";
 import { IconoBolsa, IconoCampana, IconoTicket, IconoUsuario } from "@/components/iconos";
 
 type QuickLink = {

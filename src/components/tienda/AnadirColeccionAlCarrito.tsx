@@ -6,7 +6,7 @@ import { Check } from "lucide-react";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
-} from "@/components/useCartCount";
+} from "@/components/hooks/useCartCount";
 import { IconoBolsaCompra } from "@/components/iconos";
 
 /**

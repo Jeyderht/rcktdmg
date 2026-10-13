@@ -6,7 +6,7 @@ import {
 } from "@/lib/tipos-publicacion";
 import Link from "next/link";
 
-import FavoriteButton from "@/components/FavoriteButton";
+import FavoriteButton from "@/components/tienda/FavoriteButton";
 import { getPriceDisplay, formatPrice } from "@/lib/pricing";
 import { ArrowUpRight } from "lucide-react";
 

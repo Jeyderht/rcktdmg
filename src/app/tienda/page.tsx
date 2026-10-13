@@ -5,9 +5,9 @@ import { paginaPrivada, paginaPublica } from "@/lib/seo";
 import { Suspense } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import BuscadorSugerencias from "@/components/BuscadorSugerencias";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import BuscadorSugerencias from "@/components/layout/BuscadorSugerencias";
 import { ID_BUSCADOR_TIENDA } from "@/lib/busqueda-ui";
 import FiltrosMoviles from "./FiltrosMoviles";
 import FiltrosSidebar from "./FiltrosSidebar";

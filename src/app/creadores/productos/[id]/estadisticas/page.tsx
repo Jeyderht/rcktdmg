@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { BarChart3, ChevronLeft, ExternalLink } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { solesMoneda, fechaMesCorto } from "@/lib/formato";
 import { claseInsigniaEstado } from "@/lib/estado-recurso";

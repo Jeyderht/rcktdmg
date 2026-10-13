@@ -8,9 +8,9 @@ import {
   Download,
 } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import ProductCard from "@/components/tienda/ProductCard";
 import {
   CuerpoSelecciones,
   RielTarjetas,
@@ -35,7 +35,7 @@ import Ecosistema from "@/components/home/Ecosistema";
 import MasDisenos from "@/components/home/MasDisenos";
 import CtaModelo from "@/components/home/CtaModelo";
 import SeparadorSeccion from "@/components/home/SeparadorSeccion";
-import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
+import PreguntasFrecuentes from "@/components/ui/PreguntasFrecuentes";
 import {
   creadoresDestacados,
   corporativosParaSlice,

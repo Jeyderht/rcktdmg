@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 import { paginaPrivada } from "@/lib/seo";
 
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
 import PanelShell from "@/components/panel/PanelShell";
 import type { ElementoPanel } from "@/components/panel/PanelNav";
 

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { paginaPrivada } from "@/lib/seo";
 import { IconoBuscar, IconoExplorar, IconoInicio } from "@/components/iconos";
 

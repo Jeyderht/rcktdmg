@@ -6,9 +6,9 @@ import { LayoutGrid } from "lucide-react";
 import CarpetasCategorias, {
   aCarpetas,
 } from "@/components/categorias/CarpetasCategorias";
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
 import { prisma } from "@/lib/prisma";
 import { programasPorCategoria } from "@/lib/programas-categoria";
 

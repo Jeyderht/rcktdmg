@@ -14581,7 +14581,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ══════════════════════════════════════════════════════════
-   AY. ISOTIPO (components/Isotipo.tsx)
+   AY. ISOTIPO (components/layout/Isotipo.tsx)
    Solo el cohete, sin el cuadro negro: máscara del SVG pintada
    con el color del texto (blanco en oscuro, negro en claro).
    ══════════════════════════════════════════════════════════ */

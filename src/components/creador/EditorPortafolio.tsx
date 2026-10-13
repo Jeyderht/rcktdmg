@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { ChevronDown, ChevronUp, GripVertical, Plus, X } from "lucide-react";
 
-import SubidorImagen, { type EstadoImagen } from "@/components/SubidorImagen";
+import SubidorImagen, { type EstadoImagen } from "@/components/creador/SubidorImagen";
 import {
   LARGO_DESCRIPCION_TRABAJO,
   LARGO_TITULO_TRABAJO,

@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { CheckCircle2, ImageIcon, RefreshCw, X, Upload } from "lucide-react";
 
 import { subirImagen } from "@/lib/storage/client-upload";
-import AvisoRequisitos from "@/components/AvisoRequisitos";
+import AvisoRequisitos from "@/components/creador/AvisoRequisitos";
 import {
   revisarMedidas,
   type MedidaExigida,

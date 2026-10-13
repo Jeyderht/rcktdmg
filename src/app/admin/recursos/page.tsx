@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ClipboardCheck, Inbox } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
+import EmptyState from "@/components/ui/EmptyState";
 import { prisma } from "@/lib/prisma";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { requireRole } from "@/lib/session";

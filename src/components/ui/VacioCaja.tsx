@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import Isotipo from "@/components/Isotipo";
+import Isotipo from "@/components/layout/Isotipo";
 
 type VacioCajaProps = {
   /** Antetítulo de la tarjeta, arriba a la izquierda (p. ej. "Carrito"). */

@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import { paginaPublica } from "@/lib/seo";
 import { Layers } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import EmptyState from "@/components/EmptyState";
-import PackCard from "@/components/PackCard";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import EmptyState from "@/components/ui/EmptyState";
+import PackCard from "@/components/tienda/PackCard";
 import { listarPacksPublicos } from "@/lib/packs";
 
 export const metadata: Metadata = paginaPublica({

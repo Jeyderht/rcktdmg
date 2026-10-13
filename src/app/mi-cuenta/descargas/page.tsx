@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Download as DownloadIcon, Inbox } from "lucide-react";
 
-import AccountPageHeader from "@/components/AccountPageHeader";
-import BotonDescargarColeccion from "@/components/BotonDescargarColeccion";
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
+import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
+import BotonDescargarColeccion from "@/components/cuenta/BotonDescargarColeccion";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { fechaMedia } from "@/lib/formato";
 

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 import { paginaPrivada } from "@/lib/seo";
 
-import CreatorNav from "@/components/CreatorNav";
-import Navbar from "@/components/Navbar";
+import CreatorNav from "@/components/creador/CreatorNav";
+import Navbar from "@/components/layout/Navbar";
 
 /*
   La gestión de un recurso (edición, versiones, imágenes,

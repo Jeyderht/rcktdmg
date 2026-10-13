@@ -3,7 +3,7 @@
 import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { alternarFavorito, useEsFavorito } from "./favoritos-store";
+import { alternarFavorito, useEsFavorito } from "@/components/hooks/favoritos-store";
 
 type FavoriteButtonProps = {
   productId: string;

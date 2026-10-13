@@ -15,9 +15,9 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import EmptyState from "@/components/EmptyState";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import EmptyState from "@/components/ui/EmptyState";
 import {
   haceCuanto,
   tonoDe,

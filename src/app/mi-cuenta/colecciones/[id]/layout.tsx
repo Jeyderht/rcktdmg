@@ -1,4 +1,4 @@
-import Footer from "@/components/Footer";
+import Footer from "@/components/layout/Footer";
 
 /**
  * La navegación y el pie viven en el layout para que también

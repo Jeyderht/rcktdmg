@@ -1,7 +1,7 @@
 import { Library } from "lucide-react";
 
-import ColeccionCard from "@/components/ColeccionCard";
-import EmptyState from "@/components/EmptyState";
+import ColeccionCard from "@/components/tienda/ColeccionCard";
+import EmptyState from "@/components/ui/EmptyState";
 import type { ColeccionVista } from "@/lib/colecciones-comerciales-comun";
 
 /**

@@ -15,8 +15,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { useTheme } from "@/components/ThemeProvider";
-import type { SessionUser } from "@/components/useSessionUser";
+import { useTheme } from "@/components/layout/ThemeProvider";
+import type { SessionUser } from "@/components/hooks/useSessionUser";
 import { IconoBolsa, IconoUsuario } from "@/components/iconos";
 
 /**
