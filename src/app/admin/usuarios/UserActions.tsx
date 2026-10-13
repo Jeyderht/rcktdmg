@@ -35,9 +35,9 @@ export default function UserActions({
 
   if (role === "ADMIN") {
     return (
-      <span className="text-xs text-ink/60">
-        Sin acciones
-      </span>
+      <div className="rk-us-btns">
+        <span className="text-xs text-ink/60">Sin acciones</span>
+      </div>
     );
   }
 
@@ -138,27 +138,25 @@ export default function UserActions({
   }
 
   return (
-    <div className="flex flex-col items-start gap-2">
-      <div className="flex flex-wrap gap-2">
-        {actions.map((item) => (
-          <button
-            key={item.action}
-            type="button"
-            disabled={pending !== null}
-            onClick={() => runAction(item)}
-            className={`rk-btn rk-btn-compact ${
-              item.tone === "danger"
-                ? "border border-danger/25 text-danger hover:bg-danger/10"
-                : "rk-btn-glass"
-            }`}
-          >
-            {pending === item.action ? "Guardando..." : item.label}
-          </button>
-        ))}
-      </div>
+    <div className="rk-us-btns">
+      {actions.map((item) => (
+        <button
+          key={item.action}
+          type="button"
+          disabled={pending !== null}
+          onClick={() => runAction(item)}
+          className={`rk-btn rk-btn-compact ${
+            item.tone === "danger" ? "rk-us-peli" : "rk-btn-glass"
+          }`}
+        >
+          {pending === item.action ? "Guardando..." : item.label}
+        </button>
+      ))}
 
       {error && (
-        <p className="text-xs text-danger">{error}</p>
+        <p role="alert" className="w-full text-xs text-danger">
+          {error}
+        </p>
       )}
     </div>
   );
