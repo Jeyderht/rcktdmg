@@ -84,16 +84,17 @@ export default function Footer() {
             className="rk-footer-cta-cohete"
           />
 
-          <div className="rk-footer-cta-body">
-            <p className="rk-footer-cta-kicker">Para creadores</p>
+          {/* Reflejo que recorre el cohete (máscara del mismo SVG). */}
+          <span aria-hidden className="rk-cohete-brillo" />
 
+          <div className="rk-footer-cta-body">
             <p className="rk-footer-cta-title">
               Publica tus recursos y vende en RcktX
             </p>
 
             <div className="rk-footer-cta-actions">
               <Link href="/creadores/unete" className="rk-btn rk-btn-ink">
-                Únete como creador
+                Únete
               </Link>
             </div>
           </div>

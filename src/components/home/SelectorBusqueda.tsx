@@ -49,7 +49,7 @@ const OPCIONES = [
 
 export default function SelectorBusqueda() {
   return (
-    <section className="border-t border-line/10">
+    <section>
       <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-16">
         <h2 className="rk-title text-center text-[1.75rem] sm:text-4xl">
           ¿Qué estás buscando?

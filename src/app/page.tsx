@@ -1,8 +1,8 @@
 import Link from "next/link";
+import { Fragment, type ReactNode } from "react";
 import type { Metadata } from "next";
 import {
   ArrowRight,
-  ArrowUpRight,
   Compass,
   ShoppingBag,
   Download,
@@ -11,8 +11,12 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
-import SeccionesMarketplace from "@/components/home/SeccionesMarketplace";
-import Recomendados from "@/components/home/Recomendados";
+import {
+  CuerpoSelecciones,
+  RielTarjetas,
+  datosMarketplace,
+} from "@/components/home/SeccionesMarketplace";
+import { datosRecomendados } from "@/components/home/Recomendados";
 import SelectorBusqueda from "@/components/home/SelectorBusqueda";
 import HeroFlyers from "@/components/home/HeroFlyers";
 import PalabrasEscritas from "@/components/home/PalabrasEscritas";
@@ -21,15 +25,18 @@ import CarpetasCategorias, {
   aCarpetas,
 } from "@/components/categorias/CarpetasCategorias";
 import StoriesEventos from "@/components/home/StoriesEventos";
-import SliceCorporativos from "@/components/home/SliceCorporativos";
+import TiraGeneral from "@/components/home/TiraGeneral";
+import CatalogoPestanas, {
+  type PestanaCatalogo,
+} from "@/components/home/CatalogoPestanas";
 import SeccionColecciones from "@/components/home/SeccionColecciones";
 import CarruselCreadores from "@/components/home/CarruselCreadores";
 import Ecosistema from "@/components/home/Ecosistema";
 import MasDisenos from "@/components/home/MasDisenos";
 import CtaModelo from "@/components/home/CtaModelo";
+import SeparadorSeccion from "@/components/home/SeparadorSeccion";
 import PreguntasFrecuentes from "@/components/PreguntasFrecuentes";
 import {
-  conteosDeDisenos,
   creadoresDestacados,
   corporativosParaSlice,
   flyersParaStories,
@@ -103,8 +110,9 @@ export default async function Home() {
     corporativos,
     colecciones,
     creadoresHome,
-    conteosDisenos,
     promos,
+    marketplace,
+    recomendados,
   ] = await Promise.all([
     prisma.product.findMany({
       where: { status: "PUBLISHED" },
@@ -190,11 +198,16 @@ export default async function Home() {
 
     creadoresDestacados(12),
 
-    conteosDeDisenos(),
-
     /* Portadas del slider de arriba (PromoSlide). Si la tabla
        falla o está vacía, la home sigue sin slider. */
     portadasActivas().catch(() => []),
+
+    /* Pestañas Selecciones, Packs, Guardados y Para ti del
+       catálogo: se piden aquí para saber cuáles tienen datos
+       antes de pintar la barra. */
+    datosMarketplace(),
+
+    datosRecomendados(),
   ]);
 
   /* Solo 3 carpetas en el inicio; sus programas en una consulta. */
@@ -202,6 +215,93 @@ export default async function Home() {
   const programasInicio = await programasPorCategoria(
     categoriasInicio.map((c) => c.id)
   );
+
+  /*
+    Pestañas del catálogo, en el orden del encargo. Cada una
+    lleva su panel ya renderizado y el botón de abajo (texto y
+    destino). Destacados y Colecciones se enseñan siempre, con su
+    estado vacío; las demás solo si tienen datos reales.
+  */
+  const pestanas: (PestanaCatalogo & { panel: ReactNode })[] = [
+    {
+      clave: "destacados" as const,
+      nombre: "Destacados",
+      descripcion: "Los recursos más nuevos, listos para editar y publicar.",
+      cta:
+        productCount > 0
+          ? { texto: `Ver los ${productCount}`, href: "/tienda" }
+          : null,
+      panel:
+        products.length === 0 ? (
+          <div className="rk-tile px-6 py-16 text-center">
+            <p className="text-sm text-ink/60">
+              Todavía no hay recursos publicados.
+            </p>
+          </div>
+        ) : (
+          <div className="rk-rejilla">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={aTarjeta(product)} />
+            ))}
+          </div>
+        ),
+    },
+    flyers.flyers.length > 0 && {
+      clave: "stories" as const,
+      nombre: "Stories",
+      descripcion:
+        "Piezas verticales 1080 × 1920, listas para publicar. Pulsa una para verla a pantalla completa.",
+      cta: { texto: "Ver stories", href: "/tienda" },
+      panel: <StoriesEventos flyers={flyers.flyers} />,
+    },
+    corporativos.recursos.length > 0 && {
+      clave: "general" as const,
+      nombre: "General",
+      descripcion: "Piezas para comunicar con una marca detrás.",
+      cta: { texto: "Ver todo", href: "/tienda?categoria=corporativos" },
+      panel: <TiraGeneral recursos={corporativos.recursos} />,
+    },
+    {
+      clave: "colecciones" as const,
+      nombre: "Colecciones",
+      descripcion:
+        "Varios recursos de una misma temática, con su licencia cada uno, por un precio único.",
+      cta: { texto: "Ver todas", href: "/colecciones-comerciales" },
+      panel: <SeccionColecciones colecciones={colecciones} />,
+    },
+    marketplace.coleccionesPublicas.length > 0 && {
+      clave: "selecciones" as const,
+      nombre: "Selecciones",
+      descripcion: "Colecciones destacadas por la comunidad.",
+      // No hay una página que liste las colecciones de la comunidad.
+      cta: null,
+      panel: (
+        <CuerpoSelecciones colecciones={marketplace.coleccionesPublicas} />
+      ),
+    },
+    marketplace.packs.length > 0 && {
+      clave: "packs" as const,
+      nombre: "Packs",
+      descripcion: "Varios recursos agrupados, más baratos que por separado.",
+      cta: { texto: "Ver los packs", href: "/tienda?pack=true" },
+      panel: <RielTarjetas productos={marketplace.packs} />,
+    },
+    marketplace.masGuardados.length > 0 && {
+      clave: "guardados" as const,
+      nombre: "Guardados",
+      descripcion: "Lo que más guarda la comunidad.",
+      cta: { texto: "Ver más", href: "/tienda" },
+      panel: <RielTarjetas productos={marketplace.masGuardados} />,
+    },
+    recomendados && {
+      clave: "parati" as const,
+      nombre: "Para ti",
+      // El texto real: personal solo si hay historial.
+      descripcion: recomendados.subtitulo ?? recomendados.titulo,
+      cta: { texto: "Ver recomendados", href: "/tienda" },
+      panel: <RielTarjetas productos={recomendados.productos} />,
+    },
+  ].filter((p) => p !== false && p !== null);
 
   /*
     Datos estructurados de la home.
@@ -254,7 +354,7 @@ export default async function Home() {
         }}
       />
 
-      <main>
+      <main className="rk-inicio">
 
         {/*
           Separador entre la barra superior y el slider: la línea
@@ -450,66 +550,53 @@ export default async function Home() {
           </section>
         )}
 
+        <SeparadorSeccion />
+
         {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */}
         <SelectorBusqueda />
 
-        {/* ══════════ STORIES DE EVENTOS ══════════ */}
-        <StoriesEventos flyers={flyers.flyers} />
+        <SeparadorSeccion />
 
-        {/* ══════════ COLECCIONES ══════════ */}
-        <SeccionColecciones colecciones={colecciones} />
+        {/*
+          ══════════ CATÁLOGO EN PESTAÑAS ══════════
 
-        {/* ══════════ CORPORATIVOS ══════════ */}
-        <SliceCorporativos recursos={corporativos.recursos} />
-
-        {/* ══════════ RECURSOS DESTACADOS ══════════ */}
-        <section className="border-t border-line/10">
+          Antes eran ocho secciones seguidas (Stories, Colecciones,
+          General, Recursos destacados, Selecciones de la
+          comunidad, Packs, Los más guardados y Recomendados).
+          Ahora son pestañas de una sola: cada panel se renderiza
+          aquí, en el servidor, y CatalogoPestanas solo decide cuál
+          se ve. Una pestaña sin datos reales no se pinta.
+        */}
+        <section>
           <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
-            <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="rk-kicker">Novedades</p>
+            <div className="rk-fade-up mx-auto max-w-2xl text-center">
+              <p className="rk-kicker">Explora RcktX</p>
 
-                <h2 className="rk-title mt-3 text-[2rem] sm:text-5xl">
-                  Recursos destacados
-                </h2>
-              </div>
+              <h2 className="rk-title mt-3 text-[1.75rem] sm:text-4xl">
+                Todo el catálogo en un solo lugar
+              </h2>
 
-              <Link
-                href="/tienda"
-                className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
-              >
-                Ver los {productCount}
-                <ArrowUpRight
-                  size={15}
-                  className="transition-transform duration-fast group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                />
-              </Link>
+              <p className="mt-3 text-[15px] leading-7 text-ink/60">
+                Cambia de pestaña para ver novedades, stories, packs y más.
+              </p>
             </div>
 
-            {products.length === 0 ? (
-              <div className="rk-tile mt-10 px-6 py-16 text-center">
-                <p className="text-sm text-ink/60">
-                  Todavía no hay recursos publicados.
-                </p>
-              </div>
-            ) : (
-              <div className="rk-fade-up rk-enter-1 mt-10 rk-rejilla">
-                {products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={aTarjeta(product)}
-                  />
-                ))}
-              </div>
-            )}
+            <CatalogoPestanas
+              pestanas={pestanas.map(({ clave, nombre, descripcion, cta }) => ({
+                clave,
+                nombre,
+                descripcion,
+                cta,
+              }))}
+            >
+              {pestanas.map((p) => (
+                <Fragment key={p.clave}>{p.panel}</Fragment>
+              ))}
+            </CatalogoPestanas>
           </div>
         </section>
 
-        {/* ══════════ COLECCIONES, PACKS Y MÁS GUARDADOS ══════════ */}
-        <SeccionesMarketplace />
-
-        {/* Recomendaciones: contextual o personal, según haya datos. */}
-        <Recomendados />
+        <SeparadorSeccion />
 
         {/*
           ══════════ CREADORES ══════════
@@ -521,14 +608,20 @@ export default async function Home() {
         */}
         <CarruselCreadores creadores={creadoresHome} />
 
+        <SeparadorSeccion />
+
         {/* ══════════ MÁS DISEÑOS PARA TU NEGOCIO ══════════ */}
-        <MasDisenos conteos={conteosDisenos} />
+        <MasDisenos />
+
+        <SeparadorSeccion />
 
         {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
         <Ecosistema />
 
+        <SeparadorSeccion />
+
         {/* ══════════ CÓMO FUNCIONA ══════════ */}
-        <section className="border-t border-line/10">
+        <section>
           <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
             <div className="rk-fade-up max-w-2xl">
               <p className="rk-kicker">Cómo funciona</p>
@@ -563,6 +656,10 @@ export default async function Home() {
         </section>
 
         {/* ══════════ PREGUNTAS FRECUENTES ══════════ */}
+        <div aria-hidden className="rk-separador rk-separador-arriba rk-sep-faq">
+          <span className="rk-separador-linea" />
+        </div>
+
         <PreguntasFrecuentes />
 
         {/* ══════════ CTA FINAL (con la modelo) ══════════ */}

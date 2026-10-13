@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Download, ShieldCheck, Tag } from "lucide-react";
 
+import TituloVivo from "@/components/home/TituloVivo";
+
 /**
  * CTA final del inicio, estilo «hero con modelo».
  *
@@ -13,7 +15,7 @@ import { ArrowRight, Download, ShieldCheck, Tag } from "lucide-react";
  */
 export default function CtaModelo() {
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-4 sm:px-5 lg:px-8 lg:pb-24">
+    <section className="mx-auto w-full max-w-7xl px-4 pb-0 pt-4 sm:px-5 lg:px-8">
       <div className="rk-card rk-fade-up relative overflow-hidden rounded-rk-xl px-5 pt-14 text-center sm:px-10 lg:pt-20">
         <div
           aria-hidden
@@ -21,20 +23,17 @@ export default function CtaModelo() {
         />
 
         <div className="relative z-[2]">
-          <p className="rk-kicker justify-center">Descarga permanente</p>
-
-          <h2 className="rk-display mx-auto mt-5 max-w-3xl !text-[clamp(2.1rem,6vw,3.6rem)]">
-            Tu próximo proyecto{" "}
-            <span className="rk-cta-modelo-grad">empieza aquí.</span>
-          </h2>
+          <TituloVivo
+            texto="Tu próximo proyecto empieza aquí."
+            className="rk-display mx-auto max-w-3xl !text-[clamp(2.1rem,6vw,3.6rem)]"
+          />
 
           <p className="mx-auto mt-4 max-w-md text-[15px] leading-7 text-ink/60">
-            Plantillas premium para diseñadores y agencias. Elige, paga
-            en soles y descarga al instante.
+            Elige, paga en soles y descarga al instante.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link href="/tienda" className="rk-btn rk-btn-primary">
+            <Link href="/tienda" className="rk-btn rk-btn-ink rk-btn-negro">
               Ir a la tienda
               <ArrowRight size={16} aria-hidden />
             </Link>
@@ -43,10 +42,6 @@ export default function CtaModelo() {
               Crear cuenta
             </Link>
           </div>
-
-          <p className="mt-5 text-[13px] text-ink/55">
-            Para diseñadores, agencias y freelancers
-          </p>
         </div>
 
         {/* Modelo sobre el círculo de marca, con tarjetas de vidrio. */}

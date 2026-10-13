@@ -34,7 +34,10 @@ import { IconoBolsaCompra } from "@/components/iconos";
  * recurso del catálogo, con su creador, su precio y su ficha.
  *
  * Dos capas: una tira horizontal siempre visible, y el modo
- * story a pantalla completa al pulsar una.
+ * story a pantalla completa al pulsar una. La tira es el
+ * contenido de la pestaña «Stories» del catálogo del inicio
+ * (CatalogoPestanas): el título, la descripción y el enlace
+ * los pone la pestaña.
  *
  * Reutiliza el carrito de siempre (`rcktdmg_cart`) y la API de
  * favoritos existente. No se crea un segundo de ninguno.
@@ -63,82 +66,53 @@ export default function StoriesEventos({
   if (flyers.length === 0) return null;
 
   return (
-    <section className="border-t border-line/10">
-      <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
-        <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="rk-kicker">Formato vertical</p>
-
-            <h2 className="rk-title mt-3 text-[2rem] sm:text-4xl">
-              Stories
-            </h2>
-
-            <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">
-              Piezas verticales 1080 × 1920, listas para publicar.
-              Pulsa una para verla a pantalla completa.
-            </p>
-          </div>
-
-          <Link
-            href="/tienda"
-            className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
-          >
-            Ver todos
-            <ArrowUpRight
-              size={15}
-              aria-hidden
-              className="transition-transform duration-fast group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            />
-          </Link>
-        </div>
-
-        {/* ══════════ TIRA ══════════ */}
-        <ul className="rk-fade-up rk-enter-1 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {flyers.map((flyer, indice) => (
-            <li key={flyer.id} className="snap-start">
-              <button
-                type="button"
-                onClick={() => setAbierta(indice)}
-                aria-label={`Ver ${flyer.name} a pantalla completa`}
-                className="rk-press group block w-[8.5rem] text-left sm:w-[10rem]"
+    <>
+      {/* ══════════ TIRA ══════════ */}
+      <ul className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {flyers.map((flyer, indice) => (
+          <li key={flyer.id} className="snap-start">
+            <button
+              type="button"
+              onClick={() => setAbierta(indice)}
+              aria-label={`Ver ${flyer.name} a pantalla completa`}
+              className="rk-press group block w-[8.5rem] text-left sm:w-[10rem]"
+            >
+              {/*
+                9:16, el formato de una story (1080 × 1920).
+                Antes era 4:5, que es el de Corporativos, y
+                las dos secciones se veían con la misma forma
+                pese a ser formatos distintos.
+              */}
+              <span
+                className="rk-frame relative block w-full overflow-hidden rounded-rk-md"
+                style={{ aspectRatio: ASPECTO_STORY }}
               >
-                {/*
-                  9:16, el formato de una story (1080 × 1920).
-                  Antes era 4:5, que es el de Corporativos, y
-                  las dos secciones se veían con la misma forma
-                  pese a ser formatos distintos.
-                */}
-                <span
-                  className="rk-frame relative block w-full overflow-hidden rounded-rk-md"
-                  style={{ aspectRatio: ASPECTO_STORY }}
-                >
-                  {flyer.imagen && (
-                    <PreviewProtegido
-                      src={flyer.imagen}
-                      alt={flyer.name}
-                      sizes="(max-width: 640px) 40vw, 11rem"
-                      className="transition-transform duration-normal ease-rk group-hover:scale-[1.03]"
-                      esquina="arriba-derecha"
-                    />
-                  )}
+                {flyer.imagen && (
+                  <PreviewProtegido
+                    src={flyer.imagen}
+                    alt={flyer.name}
+                    sizes="(max-width: 640px) 40vw, 11rem"
+                    className="transition-transform duration-normal ease-rk group-hover:scale-[1.03]"
+                    esquina="arriba-derecha"
+                  />
+                )}
 
-                  <span className="rk-glass-on-image absolute bottom-2 left-2 right-2 truncate rounded-full px-2.5 py-1 text-[11px] font-semibold tabular-nums">
-                    {formatPrice(flyer.price)}
-                  </span>
+                <span className="rk-glass-on-image absolute bottom-2 left-2 right-2 truncate rounded-full px-2.5 py-1 text-[11px] font-semibold tabular-nums">
+                  {formatPrice(flyer.price)}
                 </span>
+              </span>
 
-                <span className="mt-2 block truncate px-0.5 text-[13px] font-medium">
-                  {flyer.name}
-                </span>
+              <span className="mt-2 block truncate px-0.5 text-[13px] font-medium">
+                {flyer.name}
+              </span>
 
-                <span className="block truncate px-0.5 text-[12px] text-ink/55">
-                  {flyer.creador.nombre}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+              <span className="block truncate px-0.5 text-[12px] text-ink/55">
+                {flyer.creador.nombre}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
 
       {abierta !== null && (
         <VisorStories
@@ -147,7 +121,7 @@ export default function StoriesEventos({
           alCerrar={() => setAbierta(null)}
         />
       )}
-    </section>
+    </>
   );
 }
 
