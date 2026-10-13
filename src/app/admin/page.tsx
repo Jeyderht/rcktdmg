@@ -1,21 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import {
-  ArrowRight,
-  ClipboardCheck,
-  Package,
-  UserPlus,
-  Users,
-  Wallet,
-} from "lucide-react";
 
 import { getAdminStats } from "@/lib/admin-stats";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
-import { IconoUsuario } from "@/components/iconos";
 import BalanceAdmin from "@/components/admin/BalanceAdmin";
 import ComunidadAdmin from "@/components/admin/ComunidadAdmin";
+import ListaAdmin from "@/components/admin/ListaAdmin";
 import { COLORES_ADMIN } from "@/lib/admin-colores";
 
 export const metadata: Metadata = {
@@ -55,13 +47,6 @@ function timeAgo(date: Date) {
 
   return shortDate(date);
 }
-
-const TONE_DOT = {
-  neutral: "bg-ink/25",
-  success: "bg-success",
-  warning: "bg-warning",
-  danger: "bg-danger",
-} as const;
 
 export default async function Admin() {
   const stats = await getAdminStats();
@@ -313,226 +298,60 @@ export default async function Admin() {
               rejected: stats.creators.rejected,
             }}
           />
+
+          {/* LISTAS · datos reales; vacías, el estado del encargo */}
+          <ListaAdmin
+            titulo="Recursos más vendidos"
+            icono="recurso"
+            filas={stats.products.bestSellers.slice(0, 5).map((p) => ({
+              id: p.id,
+              titulo: p.name,
+              subtitulo: money(p.revenue),
+              valor: String(p.sales),
+              href: `/tienda/${p.slug}`,
+            }))}
+          />
+
+          <ListaAdmin
+            titulo="Creadores con mayor volumen"
+            icono="creador"
+            filas={stats.creators.byVolume.slice(0, 5).map((c) => ({
+              id: c.id,
+              titulo: c.name,
+              subtitulo: money(c.revenue),
+              valor: String(c.sales),
+            }))}
+          />
+
+          <ListaAdmin
+            titulo="Últimas ventas"
+            icono="venta"
+            filas={stats.recentSales.slice(0, 5).map((v) => ({
+              id: v.id,
+              titulo: v.productName,
+              subtitulo: `${v.buyer} · ${shortDate(v.createdAt)}`,
+              valor: `+${money(v.amount)}`,
+              href: `/tienda/${v.productSlug}`,
+            }))}
+          />
+
+          {/* Las ventas ya tienen su lista: aquí no se repiten. */}
+          <ListaAdmin
+            titulo="Actividad reciente"
+            icono="actividad"
+            filas={stats.activity
+              .filter((a) => a.title !== "Nueva venta")
+              .slice(0, 10)
+              .map((a) => ({
+                id: a.id,
+                titulo: a.title,
+                subtitulo: a.description,
+                valor: timeAgo(a.createdAt),
+              }))}
+          />
         </div>
       </div>
 
-      {/* VOLUMEN Y ACTIVIDAD */}
-      <section className="mt-4 grid gap-4 xl:grid-cols-3">
-
-        {/* RECURSOS CON MAYOR NÚMERO DE VENTAS */}
-        <div className="rk-card p-5">
-          <h2 className="text-sm font-semibold">
-            Recursos con mayor número de ventas
-          </h2>
-
-          {stats.products.bestSellers.length === 0 ? (
-            <p className="py-8 text-center text-sm text-ink/60">
-              Todavía no hay ventas.
-            </p>
-          ) : (
-            <ul className="mt-3 divide-y divide-line/10">
-              {stats.products.bestSellers.map((product) => (
-                <li
-                  key={product.id}
-                  className="flex items-center justify-between gap-3 py-2.5"
-                >
-                  <Link
-                    href={`/tienda/${product.slug}`}
-                    className="min-w-0 flex-1 truncate text-[13px] font-medium hover:underline"
-                  >
-                    {product.name}
-                  </Link>
-
-                  <span className="shrink-0 text-right">
-                    <span className="block text-[13px] font-semibold">
-                      {product.sales}
-                    </span>
-
-                    <span className="block text-[10px] text-ink/60">
-                      {money(product.revenue)}
-                    </span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        {/* CREADORES CON MAYOR VOLUMEN DE VENTAS */}
-        <div className="rk-card p-5">
-          <h2 className="text-sm font-semibold">
-            Creadores con mayor volumen de ventas
-          </h2>
-
-          {stats.creators.byVolume.length === 0 ? (
-            <p className="py-8 text-center text-sm text-ink/60">
-              Todavía no hay ventas.
-            </p>
-          ) : (
-            <ul className="mt-3 divide-y divide-line/10">
-              {stats.creators.byVolume.map((creator) => (
-                <li
-                  key={creator.id}
-                  className="flex items-center justify-between gap-3 py-2.5"
-                >
-                  <span className="flex min-w-0 flex-1 items-center gap-2">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-ink/60">
-                      <IconoUsuario size={13} />
-                    </span>
-
-                    <span className="truncate text-[13px] font-medium">
-                      {creator.name}
-                    </span>
-                  </span>
-
-                  <span className="shrink-0 text-right">
-                    <span className="block text-[13px] font-semibold">
-                      {creator.sales}
-                    </span>
-
-                    <span className="block text-[10px] text-ink/60">
-                      {money(creator.revenue)}
-                    </span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        {/* ACTIVIDAD RECIENTE */}
-        <div className="rk-card p-5">
-          <h2 className="text-sm font-semibold">
-            Actividad reciente
-          </h2>
-
-          {stats.activity.length === 0 ? (
-            <p className="py-8 text-center text-sm text-ink/60">
-              Sin actividad todavía.
-            </p>
-          ) : (
-            <ul className="mt-3 divide-y divide-line/10">
-              {stats.activity.map((item) => (
-                <li key={item.id} className="flex gap-2.5 py-2.5">
-                  <span
-                    aria-hidden
-                    className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
-                      TONE_DOT[item.tone]
-                    }`}
-                  />
-
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-baseline justify-between gap-2">
-                      <span className="truncate text-[13px] font-medium">
-                        {item.title}
-                      </span>
-
-                      <span className="shrink-0 text-[10px] text-ink/60">
-                        {timeAgo(item.createdAt)}
-                      </span>
-                    </span>
-
-                    <span className="mt-0.5 block truncate text-[11px] text-ink/60">
-                      {item.description}
-                    </span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </section>
-
-      {/* ACCIONES RÁPIDAS */}
-      <section className="rk-fade-up mt-10">
-        <p className="rk-eyebrow">Acciones rápidas</p>
-
-        <h2 className="rk-title mt-2 text-2xl">
-          Operaciones del día
-        </h2>
-
-        <div className="rk-divider mt-4" />
-
-        <div className="mt-5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              href: "/admin/recursos?estado=PENDING_REVIEW",
-              label: "Revisiones",
-              description: `${stats.products.pending} ${
-                stats.products.pending === 1
-                  ? "recurso esperando"
-                  : "recursos esperando"
-              }`,
-              icon: ClipboardCheck,
-            },
-            {
-              href: "/admin/retiros",
-              label: "Retiros",
-              description: `${stats.withdrawals.pendingCount} ${
-                stats.withdrawals.pendingCount === 1
-                  ? "solicitud por revisar"
-                  : "solicitudes por revisar"
-              }`,
-              icon: Wallet,
-            },
-            {
-              href: "/admin/recursos",
-              label: "Recursos",
-              description: "Todo el catálogo de la plataforma",
-              icon: Package,
-            },
-            {
-              href: "/admin/usuarios",
-              label: "Usuarios",
-              description: "Clientes, creadores y administradores",
-              icon: Users,
-            },
-            {
-              href: "/admin/usuarios?rol=CREATOR",
-              label: "Creadores",
-              description: "Estados, verificación y catálogo",
-              icon: IconoUsuario,
-            },
-            {
-              href: "/admin/usuarios/nuevo",
-              label: "Crear creador",
-              description: "Alta manual de una cuenta",
-              icon: UserPlus,
-            },
-          ].map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="rk-card rk-card-hover rk-press group flex items-center gap-3.5 p-3.5 sm:p-4"
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-rk-sm bg-ink/[0.06] text-ink transition-transform duration-normal ease-rk group-hover:scale-105">
-                  <Icon size={18} />
-                </span>
-
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold">
-                    {item.label}
-                  </span>
-
-                  {/* Cifras reales, no estimaciones. */}
-                  <span className="mt-0.5 block truncate text-xs text-ink/60">
-                    {item.description}
-                  </span>
-                </span>
-
-                <ArrowRight
-                  size={16}
-                  aria-hidden
-                  className="shrink-0 text-ink/45 transition-all duration-normal ease-rk group-hover:translate-x-0.5 group-hover:text-ink"
-                />
-              </Link>
-            );
-          })}
-        </div>
-      </section>
     </main>
   );
 }
