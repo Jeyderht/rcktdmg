@@ -18770,3 +18770,11 @@ div.rk-upload-error > * + * {
   opacity: 1;
   transform: translate(-50%,0);
 }
+
+/* botón cuadrado solo con icono (tema y cerrar del menú del admin) */
+.rk-btn-icono {
+  min-height: 2.75rem;
+  width: 2.75rem;
+  padding: 0;
+  aspect-ratio: 1;
+}

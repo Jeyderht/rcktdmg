@@ -141,7 +141,7 @@ export default async function RecursosAdminPage({
   const isReviewInbox = statusFilter === "PENDING_REVIEW";
 
   return (
-    <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
+    <div>
 
       {/* ========== CABECERA ========== */}
       <header className="rk-fade-up">
@@ -340,6 +340,6 @@ export default async function RecursosAdminPage({
           })}
         </section>
       )}
-    </main>
+    </div>
   );
 }

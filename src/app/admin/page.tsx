@@ -135,7 +135,7 @@ export default async function Admin() {
   ];
 
   return (
-    <main className="rk-mn-pagina">
+    <>
       <RevelarAlScroll />
 
       <div data-vista="Dashboard">
@@ -370,6 +370,6 @@ export default async function Admin() {
         </div>
       </div>
 
-    </main>
+    </>
   );
 }

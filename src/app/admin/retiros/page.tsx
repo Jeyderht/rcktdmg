@@ -343,7 +343,7 @@ export default function AdminRetirosPage() {
   }
 
   return (
-    <main className="w-full px-4 pb-16 pt-6 sm:px-5 lg:px-0 lg:pb-20">
+    <div>
 
       {/* ========== CABECERA ========== */}
       <header className="rk-fade-up flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
@@ -586,6 +586,6 @@ export default function AdminRetirosPage() {
           </>
         )}
       </section>
-    </main>
+    </div>
   );
 }
