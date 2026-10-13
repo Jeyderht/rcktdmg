@@ -16562,3 +16562,726 @@ div.rk-upload-error > * + * {
     animation: none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)
+   Encargo del dashboard: tarjetas Mi plataforma (rk-pl),
+   Pedidos, Recursos y Comunidad (rk-k2c) y listas (rk-k3).
+   Las tarjetas usan rk-card; aquí no se redefine su vidrio.
+   Los colores de serie son los de lib/admin-colores.ts
+   (data-c="1..5").
+   ══════════════════════════════════════════════════════════ */
+
+/* ── BC1. CONTENEDOR Y CABECERA ──────────────────────────────
+   430 → 760 → 1160 px. Desde 768 la vista es una rejilla de dos
+   columnas (las tarjetas de .rk-db entran en ella) y desde 1100
+   de tres, con Ingresos ocupando dos. */
+.rk-mn-pagina {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.rk-vh {
+  display: grid;
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.rk-vh h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.rk-vh p {
+  margin: 0;
+  font-size: 15px;
+  color: rgb(var(--rk-foreground)/.6);
+}
+
+@media (min-width:768px) {
+  .rk-mn-pagina {
+    max-width: 760px;
+    padding: 32px 24px;
+  }
+
+  [data-vista="Dashboard"]:not([hidden]) {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 14px;
+    align-items: stretch;
+  }
+
+  [data-vista="Dashboard"]>.rk-vh {
+    grid-column: 1/-1;
+  }
+
+  [data-vista="Dashboard"]>div:not(.rk-db) {
+    grid-column: 1/-1;
+    margin-top: 0 !important;
+  }
+
+  [data-vista="Dashboard"] .rk-db {
+    display: contents;
+  }
+}
+
+@media (min-width:1100px) {
+  .rk-mn-pagina {
+    max-width: 1160px;
+    padding: 36px 32px;
+  }
+
+  [data-vista="Dashboard"]:not([hidden]) {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+  }
+
+  [data-vista="Dashboard"]>div:not(.rk-db) {
+    grid-column: span 2;
+  }
+}
+
+/* ── BC2. TARJETAS ───────────────────────────────────────────── */
+.rk-db {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.rk-db-mut {
+  font-size: .8125rem;
+  color: rgb(var(--rk-muted)/var(--rk-muted-alpha));
+}
+
+.rk-pl,
+.rk-k2c {
+  color: var(--rx-texto);
+  font-family: var(--font-sora),system-ui,sans-serif;
+}
+
+.rk-pl {
+  position: relative;
+  overflow: hidden;
+  border-radius: 34px;
+}
+
+.rk-pl-top {
+  position: relative;
+  padding: 16px 16px 0;
+}
+
+.rk-pl-h {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.rk-pl-h h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+.rk-pl-monto {
+  margin: 2px 0 0;
+  font-size: 1.875rem;
+  font-weight: 500;
+  letter-spacing: -.03em;
+  line-height: 1.15;
+}
+
+.rk-pl-tarjeta {
+  position: relative;
+  margin: 18px 4px 0;
+  height: 96px;
+  padding: 14px 16px;
+  border-radius: 22px 22px 0 0;
+  border: 1px solid rgb(255 255 255/.6);
+  border-bottom: 0;
+  background:
+    radial-gradient(70% 90% at 100% 0%,rgb(255 255 255/.55),transparent 60%),
+    linear-gradient(135deg,#f8d6c6 0%,#e9c9dc 35%,#c9c3f0 70%,#b7b3f0 100%);
+  color: #15161b;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.rk-pl-iso {
+  width: 26px;
+  height: 26px;
+  display: block;
+  color: #15161b;
+}
+
+.rk-pl-num {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #15161b;
+}
+
+.rk-pl-hoja {
+  position: relative;
+  margin-top: -34px;
+  padding: 30px 14px 14px;
+  display: grid;
+  gap: 12px;
+  border-radius: 28px 28px 0 0;
+  background: rgb(var(--rk-surface-elevated));
+  -webkit-mask: radial-gradient(64px 13px at 50% 0,transparent 97%,#000 100%);
+  mask: radial-gradient(64px 13px at 50% 0,transparent 97%,#000 100%);
+}
+
+.rk-pl-acc {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.rk-pl-it {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.rk-pl-ic {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  box-shadow: 0 1px 6px rgb(var(--rk-foreground)/.06);
+}
+
+.rk-pl-et {
+  font-size: .8125rem;
+  color: rgb(var(--rk-muted)/var(--rk-muted-alpha));
+}
+
+.rk-pl-it b {
+  font-size: .9375rem;
+  font-weight: 500;
+}
+
+.rk-pl-ret {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 16px;
+  border-radius: 20px;
+  background: rgb(var(--rk-foreground)/.04);
+  border: 1px solid var(--rx-b-card);
+}
+
+.rk-pl-ret div {
+  display: grid;
+  gap: 2px;
+}
+
+.rk-pl-ret .rk-btn {
+  text-decoration: none;
+}
+
+.rk-pl-ret b {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.rk-k2c {
+  display: grid;
+  gap: 14px;
+  padding: 16px 14px;
+  border-radius: 30px;
+}
+
+.rk-k2-h {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.rk-k2-h h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+.rk-k2-chip {
+  font-size: 11px;
+  color: rgb(var(--rk-foreground)/.55);
+}
+
+.rk-k2-a {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(var(--rk-accent));
+  text-decoration: none;
+}
+
+.rk-k2-a:focus-visible {
+  outline: 2px solid rgb(var(--rk-accent));
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.rk-k2-dona {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 22px;
+}
+
+.rk-k2-anillo {
+  position: relative;
+  width: 124px;
+  height: 124px;
+}
+
+.rk-k2-anillo div {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.rk-k2-anillo b {
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: -.03em;
+  line-height: 1;
+}
+
+.rk-k2-anillo div>span {
+  font-size: .6875rem;
+  color: rgb(var(--rk-muted)/var(--rk-muted-alpha));
+}
+
+.rk-k2-ley {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.rk-k2-ley li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .8125rem;
+}
+
+.rk-k2-ley i,
+.rk-k2-e i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--c);
+}
+
+.rk-k2-ley b {
+  margin-left: auto;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-k2-g {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.rk-k2 {
+  display: grid;
+  gap: 6px;
+  padding: 13px 14px;
+  border-radius: 20px;
+}
+
+.rk-k2-ancho {
+  grid-column: 1/-1;
+}
+
+.rk-k2-e {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: .8125rem;
+  color: rgb(var(--rk-muted)/var(--rk-muted-alpha));
+}
+
+.rk-k2 b {
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+}
+
+.rk-k2-tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgb(var(--rk-foreground)/.05);
+  border: 1px solid var(--rx-b-card);
+}
+
+.rk-k2-tabs button {
+  position: relative;
+  z-index: 1;
+  min-height: 34px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 500;
+  border-radius: 999px;
+  color: rgb(var(--rk-muted)/var(--rk-muted-alpha));
+  cursor: pointer;
+  transition: color 200ms;
+}
+
+.rk-k2-tabs button[aria-selected="true"] {
+  color: #111;
+}
+
+.rk-k2-tabs button:focus-visible {
+  outline: 2px solid rgb(var(--rk-accent));
+  outline-offset: 1px;
+}
+
+.rk-k2-ind {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  border-radius: 999px;
+  background: linear-gradient(135deg,#fff 0%,#e9e9ec 48%,#fff 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255/.95),0 2px 8px rgb(0 0 0/.12);
+  transition: transform 320ms cubic-bezier(.34,1.32,.64,1);
+}
+
+.rk-k2-tabs[data-t="c"] .rk-k2-ind {
+  transform: translateX(100%);
+}
+
+.rk-k2-s {
+  margin: 14px 0 8px;
+  font-size: .8125rem;
+  color: rgb(var(--rk-muted)/var(--rk-muted-alpha));
+}
+
+.rk-k2-graf {
+  padding: 12px 12px 10px;
+  border-radius: 20px;
+}
+
+.rk-k2-lin {
+  display: grid;
+  gap: 26px;
+  height: 80px;
+  align-content: space-between;
+}
+
+.rk-k2-lin i {
+  display: block;
+  border-top: 1px dashed rgb(var(--rk-foreground)/.16);
+}
+
+.rk-k2-mes {
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  margin-top: 8px;
+  font-size: .6875rem;
+  text-align: center;
+  color: rgb(var(--rk-muted)/var(--rk-muted-alpha));
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .rk-k2-ind,
+  .rk-k2-tabs button {
+    transition: none;
+  }
+}
+
+.rk-k3-l {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  display: grid;
+  gap: 2px;
+  border-radius: 22px;
+}
+
+.rk-k3 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border-radius: 16px;
+}
+
+.rk-k3+.rk-k3 {
+  border-top: 1px solid var(--rx-b-card);
+  border-radius: 0 0 16px 16px;
+}
+
+.rk-k3-av {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex: none;
+  background: rgb(var(--rk-foreground)/.06);
+  color: rgb(var(--rk-foreground)/.7);
+}
+
+.rk-k3-t {
+  display: grid;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.rk-k3-sk {
+  display: block;
+  height: 9px;
+  border-radius: 999px;
+  background: rgb(var(--rk-foreground)/.08);
+}
+
+.rk-k3-sk2 {
+  height: 7px;
+  background: rgb(var(--rk-foreground)/.05);
+}
+
+.rk-k3 b {
+  font-weight: 500;
+  font-size: .9375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-k3-nota {
+  margin: 0;
+  font-size: .75rem;
+  text-align: center;
+  color: rgb(var(--rk-muted)/var(--rk-muted-alpha));
+}
+
+.rk-js .rk-rv {
+  opacity: 0;
+  transform: translateY(26px) scale(.975);
+  transition:
+    opacity 620ms cubic-bezier(.22,1,.36,1),
+    transform 760ms cubic-bezier(.22,1,.36,1);
+  transition-delay: var(--d,0ms);
+  will-change: opacity,transform;
+}
+
+.rk-js .rk-rv.on {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+.rk-js .rk-rv.rk-rv-h {
+  transform: translateY(14px);
+}
+
+.rk-js .rk-rv.rk-rv-h.on {
+  transform: none;
+}
+
+.rk-k2-anillo circle:not(:first-child) {
+  transition: stroke-dasharray 1300ms cubic-bezier(.22,1,.36,1) 180ms;
+}
+
+.rk-k2-lin i {
+  transform-origin: left;
+  transition: transform 900ms cubic-bezier(.22,1,.36,1);
+}
+
+.rk-js .rk-k2-lin:not(.on) i {
+  transform: scaleX(0);
+}
+
+.rk-pl-monto,
+.rk-pl-it b,
+.rk-pl-ret b,
+.rk-k2-anillo b,
+.rk-k2-ley b {
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-k3-sk {
+  background: linear-gradient(90deg,rgb(var(--rk-foreground)/.06) 0%,rgb(var(--rk-foreground)/.13) 50%,rgb(var(--rk-foreground)/.06) 100%);
+  background-size: 220% 100%;
+  animation: rk-sk 2.2s ease-in-out infinite;
+}
+
+.rk-k3-sk2 {
+  opacity: .6;
+}
+
+.rk-pl-monto,
+.rk-pl-it b,
+.rk-pl-ret b,
+.rk-k2-anillo b,
+.rk-k2-ley b {
+  line-height: 1.15;
+}
+
+.rk-k2-anillo b {
+  display: block;
+  text-align: center;
+}
+
+@keyframes rk-sk {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -120% 0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .rk-k3-sk {
+    animation: none;
+  }
+
+  .rk-k2-anillo circle,
+  .rk-k2-lin i {
+    transition: none;
+  }
+}
+
+.rk-k2-dona,
+.rk-k2,
+.rk-k2-graf,
+.rk-k3-l,
+.rk-pl-ic {
+  background: rgb(var(--rk-surface-elevated));
+  border: 1px solid var(--rx-b-card);
+}
+
+[data-c="1"] {
+  --c: #9d97ff;
+}
+
+[data-c="2"] {
+  --c: #c9a2c9;
+}
+
+[data-c="3"] {
+  --c: #f0a98a;
+}
+
+[data-c="4"] {
+  --c: #c8c9d6;
+}
+
+[data-c="5"] {
+  --c: #8e8ad8;
+}
+
+/* ── BC3. FILAS CON DATOS Y BARRAS ───────────────────────────
+   Título y subtítulo reales de cada fila (las medidas del valor
+   y de las etiquetas del encargo) y las barras de «Nuevos por
+   mes» en el color de serie 1 sobre el marco punteado. */
+.rk-k3-tit,
+.rk-k3-sub {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rk-k3-tit {
+  font-size: .9375rem;
+  font-weight: 500;
+}
+
+.rk-k3-sub {
+  font-size: 11px;
+  color: rgb(var(--rk-foreground)/.55);
+}
+
+.rk-k3-t:has(> .rk-k3-tit) {
+  gap: 2px;
+}
+
+.rk-k2-zona {
+  position: relative;
+}
+
+.rk-k2-barras {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  align-items: end;
+  justify-items: center;
+}
+
+.rk-k2-barras i {
+  display: block;
+  width: 55%;
+  max-width: 14px;
+  border-radius: 4px 4px 0 0;
+  background: #9d97ff;
+}
+
+/* ── BC4. CIFRAS (CifraAnimada.tsx) ──────────────────────────
+   Odómetro: cada dígito es una tira 0–9 que sube hasta el suyo. */
+.rk-num {
+  display: inline-flex;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  vertical-align: top;
+}
+
+.rk-num-c {
+  display: block;
+  height: 1.15em;
+  white-space: pre;
+}
+
+.rk-dig {
+  display: block;
+  height: 1.15em;
+  overflow: hidden;
+}
+
+.rk-dig-tira {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--d) * -10%));
+  transition: transform 900ms cubic-bezier(.22,.61,.36,1);
+  will-change: transform;
+}
+
+.rk-dig-tira span {
+  display: block;
+  height: 1.15em;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .rk-dig-tira {
+    transition: none !important;
+  }
+}
