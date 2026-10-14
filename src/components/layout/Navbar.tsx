@@ -133,7 +133,8 @@ function SearchField({
             className="rk-buscador-campo"
           />
 
-          <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
+          {/* Centrado sin transform: ningún estado del botón lo mueve. */}
+          <div className="absolute inset-y-0 right-1.5 flex items-center gap-1">
             {term && (
               <button
                 type="button"

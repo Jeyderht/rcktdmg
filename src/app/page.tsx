@@ -452,12 +452,19 @@ export default async function Home() {
                       className="rk-buscador-campo"
                     />
 
-                    <button
-                      type="submit"
-                      className="rk-buscador-accion absolute right-1.5 top-1/2 -translate-y-1/2"
-                    >
-                      Buscar
-                    </button>
+                    {/*
+                      Centrado sin transform: el :hover y el :active
+                      del botón ponían su propio transform, pisaban el
+                      -translate-y-1/2 y el botón bajaba media altura.
+                    */}
+                    <div className="absolute inset-y-0 right-1.5 flex items-center">
+                      <button
+                        type="submit"
+                        className="rk-buscador-accion"
+                      >
+                        Buscar
+                      </button>
+                    </div>
                   </div>
                 </form>
 
