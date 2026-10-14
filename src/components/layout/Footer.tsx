@@ -107,11 +107,6 @@ export default function Footer() {
             <Link href="/" aria-label="RcktX" className="rk-footer-logo">
               <Isotipo className="h-7 w-7" />
             </Link>
-
-            <p className="rk-footer-text">
-              Marketplace de recursos digitales. Compra, descarga
-              y crea sin empezar desde cero.
-            </p>
           </div>
 
           {/* NAVEGACIÓN */}

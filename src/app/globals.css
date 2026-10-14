@@ -11134,14 +11134,6 @@ table .rk-btn:hover:not(:disabled) {
   object-fit: contain;
 }
 
-.rk-footer-text {
-  max-width: 34ch;
-  margin: 0;
-  color: rgb(var(--rk-muted));
-  font-size: 0.77rem;
-  line-height: 1.6;
-}
-
 /* ── AH4. ENLACES ───────────────────────────────────────────────────── */
 .rk-footer-nav {
   display: grid;
