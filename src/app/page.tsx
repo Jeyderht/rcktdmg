@@ -18,6 +18,7 @@ import {
 } from "@/components/home/SeccionesMarketplace";
 import { datosRecomendados } from "@/components/home/Recomendados";
 import SelectorBusqueda from "@/components/home/SelectorBusqueda";
+import CatalogoInicio from "@/components/home/CatalogoInicio";
 import PalabrasEscritas from "@/components/home/PalabrasEscritas";
 import SliderPortadas from "@/components/home/SliderPortadas";
 import StoriesEventos from "@/components/home/StoriesEventos";
@@ -34,6 +35,7 @@ import SeparadorSeccion from "@/components/home/SeparadorSeccion";
 import PreguntasFrecuentes from "@/components/ui/PreguntasFrecuentes";
 import {
   creadoresDestacados,
+  datosCatalogoInicio,
   datosQueBuscas,
   corporativosParaSlice,
   flyersParaStories,
@@ -111,6 +113,7 @@ export default async function Home() {
     recomendados,
     destacadosBusqueda,
     queBuscas,
+    catalogo,
   ] = await Promise.all([
     prisma.product.findMany({
       where: { status: "PUBLISHED" },
@@ -152,6 +155,9 @@ export default async function Home() {
 
     /* «¿Qué estás buscando?»: portadas y cifras de cada opción. */
     datosQueBuscas(),
+
+    /* Catálogo por categoría: 4 categorías, hasta 8 por pestaña. */
+    datosCatalogoInicio(),
   ]);
 
   /*
@@ -431,6 +437,17 @@ export default async function Home() {
 
         {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */}
         <SelectorBusqueda datos={queBuscas} />
+
+        <SeparadorSeccion />
+
+        {/*
+          ══════════ CATÁLOGO POR CATEGORÍA ══════════
+
+          Eventos, General, Colecciones y Packs, cada una con sus
+          pestañas Recientes / Populares / Packs. Eventos sale
+          elegida en cada carga.
+        */}
+        <CatalogoInicio datos={catalogo} />
 
         <SeparadorSeccion />
 

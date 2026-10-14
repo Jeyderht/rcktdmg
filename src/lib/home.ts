@@ -1,6 +1,12 @@
 import type { Prisma } from "@prisma/client";
 
-import { construirWhere } from "@/lib/catalogo";
+import {
+  SELECCION_TARJETA,
+  construirWhere,
+  ordenPrisma,
+  type FiltrosCatalogo,
+} from "@/lib/catalogo";
+import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
 import { prisma } from "@/lib/prisma";
 import {
   ALTO_CORPORATIVO,
@@ -24,6 +30,7 @@ import {
 /** Slugs de las categorías que tienen sección propia en la portada. */
 export const CATEGORIA_EVENTOS = "eventos";
 export const CATEGORIA_CORPORATIVOS = "corporativos";
+export const CATEGORIA_GENERAL = "general";
 
 /** Recurso tal y como lo pintan las secciones nuevas. */
 export type TarjetaHome = {
@@ -483,4 +490,61 @@ export async function datosQueBuscas(): Promise<{
   ]);
 
   return { eventos, generales };
+}
+
+/* ══════════ CATÁLOGO POR CATEGORÍA ══════════ */
+
+const TOPE_CATALOGO = 8;
+
+/**
+ * Datos del catálogo por categoría del inicio (Fix 9).
+ *
+ * Cuatro categorías: Eventos, General, Colecciones y Packs
+ * (Corporativos no: es lo mismo que General). Cada una con sus
+ * pestañas Recientes, Populares y Packs, con los MISMOS
+ * criterios de la tienda (construirWhere + ordenPrisma): el
+ * «Ver todo» lleva al listado que contiene exactamente esto.
+ * Las colecciones solo tienen orden por fecha. Solo lectura;
+ * hasta 8 por pestaña.
+ */
+export async function datosCatalogoInicio() {
+  const recursos = (filtros: FiltrosCatalogo, orden: "recientes" | "populares") =>
+    prisma.product.findMany({
+      where: construirWhere(filtros),
+      orderBy: ordenPrisma(orden),
+      take: TOPE_CATALOGO,
+      select: SELECCION_TARJETA,
+    });
+
+  const eventos = { categoria: CATEGORIA_EVENTOS };
+  const general = { categoria: CATEGORIA_GENERAL };
+
+  const [
+    eventosRecientes,
+    eventosPopulares,
+    eventosPacks,
+    generalRecientes,
+    generalPopulares,
+    generalPacks,
+    packsRecientes,
+    packsPopulares,
+    colecciones,
+  ] = await Promise.all([
+    recursos(eventos, "recientes"),
+    recursos(eventos, "populares"),
+    recursos({ ...eventos, soloPacks: true }, "recientes"),
+    recursos(general, "recientes"),
+    recursos(general, "populares"),
+    recursos({ ...general, soloPacks: true }, "recientes"),
+    recursos({ soloPacks: true }, "recientes"),
+    recursos({ soloPacks: true }, "populares"),
+    listarColeccionesPublicas(TOPE_CATALOGO),
+  ]);
+
+  return {
+    eventos: { recientes: eventosRecientes, populares: eventosPopulares, packs: eventosPacks },
+    general: { recientes: generalRecientes, populares: generalPopulares, packs: generalPacks },
+    packs: { recientes: packsRecientes, populares: packsPopulares },
+    colecciones,
+  };
 }
