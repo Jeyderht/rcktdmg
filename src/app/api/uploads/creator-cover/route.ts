@@ -8,17 +8,9 @@ import {
   confirmarImagenSubida,
   esErrorDeConfirmacion,
 } from "@/lib/storage/confirmar-imagen";
+import { MAX_IMAGEN_PERFIL, TIPOS_IMAGEN_PERFIL } from "@/lib/subidas";
 
 export const runtime = "nodejs";
-
-const MAX_FILE_SIZE = 8 * 1024 * 1024;
-
-const ALLOWED_TYPES: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-};
-
 export async function POST(request: Request) {
   try {
     const session = await getSession();
@@ -118,7 +110,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const extension = ALLOWED_TYPES[file.type];
+    const extension = TIPOS_IMAGEN_PERFIL[file.type];
 
     if (!extension) {
       return NextResponse.json(
@@ -129,7 +121,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (file.size > MAX_FILE_SIZE) {
+    if (file.size > MAX_IMAGEN_PERFIL) {
       return NextResponse.json(
         {
           error: "La portada no puede superar los 8 MB.",

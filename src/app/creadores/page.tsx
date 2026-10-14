@@ -5,8 +5,8 @@ import type { Metadata } from "next";
 import { paginaPublica } from "@/lib/seo";
 import { ArrowRight, BadgeCheck } from "lucide-react";
 
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 

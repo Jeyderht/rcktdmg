@@ -4,9 +4,9 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import PreviewProtegido from "@/components/PreviewProtegido";
+import PreviewProtegido from "@/components/tienda/PreviewProtegido";
 import VisorStory, { type ImagenStory } from "./VisorStory";
-import { useSwipe } from "@/components/useSwipe";
+import { useSwipe } from "@/components/hooks/useSwipe";
 
 type ProductImage = {
   id: string;

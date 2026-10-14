@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import { paginaPublica } from "@/lib/seo";
 import { Tag as TagIcon } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import EmptyState from "@/components/EmptyState";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import EmptyState from "@/components/ui/EmptyState";
 import { prisma } from "@/lib/prisma";
 import { esTagProtegido } from "@/lib/tags-comun";
 

@@ -1,29 +1,11 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { verifySessionToken } from "@/lib/auth";
 import { crearNotificacion } from "@/lib/notificaciones";
-
-async function getAuthenticatedUser() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("rcktdmg_session")?.value;
-
-  if (!token) {
-    return null;
-  }
-
-  const session = await verifySessionToken(token);
-
-  if (!session || typeof session.userId !== "string") {
-    return null;
-  }
-
-  return session.userId;
-}
+import { usuarioIdDeSesion } from "@/lib/sesion-api";
 // LISTAR FAVORITOS
 export async function GET() {
   try {
-   const userId = await getAuthenticatedUser();
+   const userId = await usuarioIdDeSesion();
 
     if (!userId) {
       return NextResponse.json(
@@ -76,7 +58,7 @@ export async function GET() {
 // AGREGAR FAVORITO
 export async function POST(request: Request) {
   try {
-   const userId = await getAuthenticatedUser();
+   const userId = await usuarioIdDeSesion();
 
   if (!userId) {
       return NextResponse.json(
@@ -179,7 +161,7 @@ export async function POST(request: Request) {
 // ELIMINAR FAVORITO
 export async function DELETE(request: Request) {
   try {
-   const userId = await getAuthenticatedUser();
+   const userId = await usuarioIdDeSesion();
 
     if (!userId) {
       return NextResponse.json(

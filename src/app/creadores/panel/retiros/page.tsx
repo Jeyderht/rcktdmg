@@ -4,8 +4,10 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { CreditCard, Wallet } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
+import { formatPrice } from "@/lib/pricing";
+import { fechaNumerica } from "@/lib/formato";
 
 type WithdrawalStatus = "REQUESTED" | "APPROVED" | "REJECTED" | "PAID";
 type PaymentMethodType = "BANK" | "YAPE" | "PLIN";
@@ -43,19 +45,6 @@ type FinancialData = {
 
 /** Mínimo real que valida el formulario. */
 const MINIMUM_WITHDRAWAL = 50;
-
-function formatMoney(value: number) {
-  return `S/ ${value.toFixed(2)}`;
-}
-
-function formatDate(value: string) {
-  return new Date(value).toLocaleDateString("es-PE", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-}
-
 function getStatusLabel(status: WithdrawalStatus) {
   switch (status) {
     case "REQUESTED":
@@ -307,7 +296,7 @@ export default function RetirosPage() {
             </p>
 
             <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight text-ink">
-              {formatMoney(summary.availableBalance)}
+              {formatPrice(summary.availableBalance)}
             </p>
 
             <p className="mt-2 text-xs text-ink/60">
@@ -319,7 +308,7 @@ export default function RetirosPage() {
             <p className="rk-eyebrow">Ganancias totales</p>
 
             <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight">
-              {formatMoney(summary.totalEarnings)}
+              {formatPrice(summary.totalEarnings)}
             </p>
 
             <p className="mt-2 text-xs text-ink/60">
@@ -331,7 +320,7 @@ export default function RetirosPage() {
             <p className="rk-eyebrow">Pendiente</p>
 
             <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight text-warning">
-              {formatMoney(summary.pendingAmount)}
+              {formatPrice(summary.pendingAmount)}
             </p>
 
             <p className="mt-2 text-xs text-ink/60">
@@ -343,7 +332,7 @@ export default function RetirosPage() {
             <p className="rk-eyebrow">Retirado</p>
 
             <p className="mt-3 text-[1.75rem] font-semibold tabular-nums leading-tight tracking-tight">
-              {formatMoney(summary.withdrawnAmount)}
+              {formatPrice(summary.withdrawnAmount)}
             </p>
 
             <p className="mt-2 text-xs text-ink/60">
@@ -364,7 +353,7 @@ export default function RetirosPage() {
             </div>
 
             <p className="text-sm text-ink/60">
-              Mínimo {formatMoney(MINIMUM_WITHDRAWAL)}
+              Mínimo {formatPrice(MINIMUM_WITHDRAWAL)}
             </p>
           </div>
 
@@ -541,7 +530,7 @@ export default function RetirosPage() {
               {summary.availableBalance < MINIMUM_WITHDRAWAL && (
                 <p className="text-sm text-ink/60">
                   Necesitas al menos{" "}
-                  {formatMoney(MINIMUM_WITHDRAWAL)} disponibles
+                  {formatPrice(MINIMUM_WITHDRAWAL)} disponibles
                   para solicitar un retiro.
                 </p>
               )}
@@ -577,7 +566,7 @@ export default function RetirosPage() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-base font-semibold tabular-nums">
-                        {formatMoney(withdrawal.amount)}
+                        {formatPrice(withdrawal.amount)}
                       </p>
 
                       <span
@@ -591,13 +580,13 @@ export default function RetirosPage() {
 
                     <p className="mt-1 text-xs text-ink/60">
                       Solicitado el{" "}
-                      {formatDate(withdrawal.createdAt)}
+                      {fechaNumerica(withdrawal.createdAt)}
 
                       {/* Solo si el registro tiene fecha real. */}
                       {withdrawal.processedAt && (
                         <>
                           {" · Procesado el "}
-                          {formatDate(withdrawal.processedAt)}
+                          {fechaNumerica(withdrawal.processedAt)}
                         </>
                       )}
                     </p>

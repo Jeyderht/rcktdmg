@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { Check, Loader2, Plus, Power, X } from "lucide-react";
 
-import SubirPortada from "@/components/SubirPortada";
+import SubirPortada from "@/components/creador/SubirPortada";
 import { esSlugDelSistema } from "@/lib/tipos-publicacion";
 import {
   LARGO_DESCRIPCION_CATEGORIA,

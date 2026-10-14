@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Library } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
+import EmptyState from "@/components/ui/EmptyState";
 import AccionesColeccion from "./AccionesColeccion";
 import { formatPrice } from "@/lib/pricing";
 import { listarTodasLasColecciones } from "@/lib/colecciones-comerciales";

@@ -1586,127 +1586,6 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 /* ══════════════════════════════════════════════════════════
-   ESCENA DEL HERO — FLYERS EN RELEVO
-
-   La posición, el tamaño y la opacidad de cada flyer los
-   calcula el componente y llegan como estilo en línea: son
-   valores que dependen de la distancia al flyer activo y
-   cambian en cada relevo, así que no pueden vivir en una clase.
-
-   Aquí vive lo que sí es fijo: cómo se mueve de un sitio a
-   otro, y el punto que lo elige.
-
-   No hay color propio. El marco, el resplandor azul y morado y
-   la elevación salen de `rk-frame` y `rk-card-glow`, que son los
-   del sistema.
-   ══════════════════════════════════════════════════════════ */
-@layer components {
-  .rk-escena {
-    /*
-      La perspectiva no la usa ninguna transformación de hoy,
-      pero establece el contexto 3D: si mañana un flyer entra
-      girando, lo hará dentro de esta escena y no plano.
-    */
-    perspective: 1600px;
-    transform-style: preserve-3d;
-  }
-
-  /*
-    EL RELEVO
-
-    Una curva larga y con freno al final: arranca decidido y se
-    posa, que es lo que hace que el cambio se lea como un
-    movimiento de cámara y no como un salto.
-
-    `transform` y `opacity` son las dos únicas propiedades que
-    se animan, y las dos las resuelve el compositor sin volver a
-    maquetar: la composición entera se mueve sin costar una
-    pasada de diseño.
-  */
-  .rk-escena-flyer {
-    transition:
-      transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 700ms var(--rk-ease-soft);
-    will-change: transform, opacity;
-  }
-
-  /*
-    LOS PUNTOS
-
-    Doce píxeles de mancha visible sobre un objetivo de 44, que
-    es el mínimo que un dedo acierta. El área la da el relleno;
-    lo que se ve, el fondo del pseudoelemento.
-  */
-  .rk-escena-punto {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.5rem;
-    height: 2.75rem;
-    border: 0;
-    background: none;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .rk-escena-punto::before {
-    content: "";
-    display: block;
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: var(--rk-radius-full);
-    background: rgb(var(--rk-foreground) / 0.22);
-    transition:
-      width var(--rk-transition-normal) var(--rk-ease),
-      background-color var(--rk-transition-normal) var(--rk-ease-soft);
-  }
-
-  .rk-escena-punto:hover::before {
-    background: rgb(var(--rk-foreground) / 0.45);
-  }
-
-  /*
-    El punto del flyer activo se alarga en lugar de cambiar de
-    color: se distingue igual en una pantalla en blanco y negro
-    y para quien no separa bien dos azules.
-  */
-  .rk-escena-punto-activo::before {
-    width: 1.1rem;
-    background: rgb(var(--rk-accent));
-  }
-
-  .rk-escena-punto:focus-visible {
-    outline: none;
-  }
-
-  .rk-escena-punto:focus-visible::before {
-    box-shadow:
-      0 0 0 2px rgb(var(--rk-background)),
-      0 0 0 4px rgb(var(--rk-accent) / 0.7);
-  }
-}
-
-/*
-  Con el movimiento reducido no hay relevo automático —lo decide
-  el componente— y aquí se retira la transición: al pulsar un
-  punto, la composición aparece ya colocada en lugar de
-  desplazarse.
-
-  Los flyers siguen visibles, siguen siendo enlaces y los puntos
-  siguen funcionando.
-*/
-@media (prefers-reduced-motion: reduce) {
-  .rk-escena-flyer {
-    transition: none;
-  }
-
-  .rk-escena-punto::before {
-    transition: none;
-  }
-}
-
-/* ══════════════════════════════════════════════════════════
    LA TARJETA DE RECURSO
 
    Antes era una imagen suelta con el texto debajo, sin nada
@@ -3271,8 +3150,12 @@ table .rk-btn:hover:not(:disabled) {
 
   Más bajo que la superficie —40 px dentro de 52— para que se
   lea como algo que va DENTRO y no como una segunda caja pegada
-  al borde. Claro sobre oscuro, que es la jerarquía del sistema,
-  pero sin el tamaño de un botón principal.
+  al borde. Mismo estilo que rk-btn-ink: en oscuro, blanco con
+  degradado y texto oscuro; en claro, tinta sólida.
+
+  Su contenedor lo centra con inset-y-0 + flex, sin transform:
+  el leve achique al pulsar es solo del botón y no puede
+  sacarlo del centro.
 */
 .rk-buscador-accion {
   display: inline-flex;
@@ -3281,15 +3164,17 @@ table .rk-btn:hover:not(:disabled) {
   height: 2.5rem;
   padding: 0 1.125rem;
   border-radius: var(--rk-radius-full);
-  border: 1px solid transparent;
+  border: 1px solid rgb(255 255 255 / 0.95);
   font-size: 0.77rem;
   font-weight: 500;
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
-  background: rgb(255 255 255 / 0.92);
-  color: #101114;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.16);
+  background: linear-gradient(135deg, #ffffff 0%, #e9e9ec 48%, #ffffff 100%);
+  color: #111;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    inset 0 -1px 0 rgb(125 125 125 / 0.12);
   transition:
     transform var(--rx-t-hover) var(--rx-curva),
     box-shadow var(--rx-t-hover) var(--rx-curva),
@@ -3298,28 +3183,29 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-buscador-accion {
+  border-color: transparent;
   background: #15161b;
-  color: #ffffff;
-  box-shadow: 0 1px 2px rgb(21 22 27 / 0.12);
+  color: #fff;
+  box-shadow: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rk-buscador-accion:hover {
-    transform: translateY(-1px);
-    background: rgb(255 255 255 / 0.98);
-    border-color: rgb(255 255 255 / 0.5);
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.22);
+    border-color: #fff;
+    filter: brightness(1.04);
+    box-shadow: inset 0 1px 0 #fff;
   }
 
   [data-theme="light"] .rk-buscador-accion:hover {
+    border-color: transparent;
     background: #22242b;
-    border-color: rgb(21 22 27 / 0.3);
-    box-shadow: 0 4px 12px rgb(21 22 27 / 0.16);
+    filter: none;
+    box-shadow: none;
   }
 }
 
 .rk-buscador-accion:active {
-  transform: translateY(0) scale(0.98);
+  transform: scale(0.98);
 }
 
 .rk-buscador-accion:focus-visible {
@@ -5889,40 +5775,69 @@ table .rk-btn:hover:not(:disabled) {
   color: rgb(var(--rk-muted) / 0.8);
 }
 
-/* botón "Buscar": mismo estilo que rk-btn-ink
-   (oscuro: blanco con degradado y texto oscuro · claro: negro sólido) */
-.rk-buscador-accion {
-  border: 1px solid rgb(255 255 255 / 0.95);
-  background: linear-gradient(135deg, #ffffff 0%, #e9e9ec 48%, #ffffff 100%);
-  color: #111;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.95),
-    inset 0 -1px 0 rgb(125 125 125 / 0.12);
+/* sugerencias que se escriben solas (PlaceholderAnimado.tsx): capa
+   decorativa sobre el campo vacío; left, right y tamaño de letra
+   los copia del campo. Mientras se ve, el placeholder real se
+   vuelve transparente (sigue ahí para los lectores de pantalla). */
+.rk-ph-animado {
+  position: absolute;
+  inset-block: 0;
+  left: 2.875rem;
+  right: 7rem;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+  color: rgb(var(--rk-muted) / 0.8);
 }
 
-[data-theme="light"] .rk-buscador-accion {
-  border-color: transparent;
-  background: #15161b;
-  color: #fff;
-  box-shadow: none;
+.rk-ph-animado[hidden] {
+  display: none;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .rk-buscador-accion:hover {
-    transform: none;
-    border-color: #fff;
-    background: linear-gradient(135deg, #ffffff 0%, #e9e9ec 48%, #ffffff 100%);
-    filter: brightness(1.04);
-    box-shadow: inset 0 1px 0 #fff;
+.rk-ph-animado-texto {
+  overflow: hidden;
+}
+
+.rk-ph-animado-cursor {
+  flex: none;
+  width: 1.5px;
+  height: 1.05em;
+  margin-left: 2px;
+  background: rgb(var(--rk-marca-lavanda));
+  animation: rk-ph-parpadeo 1s steps(1) infinite;
+}
+
+@keyframes rk-ph-parpadeo {
+  50% {
+    opacity: 0;
   }
+}
 
-  [data-theme="light"] .rk-buscador-accion:hover {
-    border-color: transparent;
-    background: #22242b;
-    filter: none;
-    box-shadow: none;
+.rk-buscador[data-placeholder-animado] .rk-buscador-campo::placeholder {
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-ph-animado-cursor {
+    animation: none;
   }
 }
+
+/* lista de sugerencias: fondo opaco. Sobre chips y botones el
+   vidrio dejaba leer lo de debajo a través de las opciones. */
+.rk-sugerencias {
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(var(--rk-surface-elevated));
+}
+
+[data-theme="light"] .rk-sugerencias {
+  border-color: rgb(21 22 27 / 0.1);
+}
+
+/* botón "Buscar": una sola definición, en el bloque del buscador
+   (rk-buscador-accion, más arriba). */
 
 @media (prefers-reduced-motion: reduce) {
   .rk-topbar-btn,
@@ -5937,16 +5852,16 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   K. INTERRUPTOR DE TEMA  ·  rk-theme-toggle
+   K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)
    ═══════════════════════════════════════════════════════════════════════
+   El único control de tema del sitio (barra, hoja de cuenta, ajustes).
    Cápsula con sol y luna; un círculo de vidrio se desliza al lado del
    tema activo (claro → sol · oscuro → luna). Solo CSS: lee data-theme.
-   <button class="rk-theme-toggle" role="switch" aria-checked="true"
-           aria-label="Modo oscuro">
+   <div class="rk-theme-toggle" role="radiogroup" aria-label="Tema">
      <span class="rk-theme-toggle-knob" aria-hidden="true"></span>
-     <svg class="rk-theme-toggle-sun">…</svg>
-     <svg class="rk-theme-toggle-moon">…</svg>
-   </button>
+     <button class="rk-theme-toggle-opcion" role="radio">svg sol</button>
+     <button class="rk-theme-toggle-opcion" role="radio">svg luna</button>
+   </div>
    ═══════════════════════════════════════════════════════════════════════ */
 .rk-theme-toggle {
   --rk-tt-alto: 44px;
@@ -5967,8 +5882,20 @@ table .rk-btn:hover:not(:disabled) {
   -webkit-backdrop-filter: blur(18px) saturate(1.5);
   backdrop-filter: blur(18px) saturate(1.5);
   color: rgb(var(--rk-muted));
-  cursor: pointer;
   isolation: isolate;
+}
+
+.rk-theme-toggle-opcion {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
 }
 
 [data-theme="light"] .rk-theme-toggle {
@@ -6028,14 +5955,33 @@ table .rk-btn:hover:not(:disabled) {
   }
 }
 
-.rk-theme-toggle:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
+.rk-theme-toggle-opcion:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-lavanda));
+  outline-offset: 1px;
 }
 
-/* compacto: para la barra en móvil */
+/* compacto: para las barras */
 .rk-theme-toggle-sm {
   --rk-tt-alto: 36px;
+}
+
+/* «Usar el del dispositivo» (solo en ajustes) */
+.rk-theme-sistema {
+  min-height: 32px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: rgb(var(--rk-muted));
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.rk-theme-sistema[aria-pressed="true"] {
+  color: var(--rx-texto);
+  text-decoration: none;
+  cursor: default;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -7526,16 +7472,24 @@ table .rk-btn:hover:not(:disabled) {
   background: rgb(255 255 255 / 0.45);
 }
 
+/* Pegada justo bajo el Navbar (Navbar.tsx mide su alto real en
+   --rk-navbar-alto; 56 px es el de móvil, por si aún no hay medida).
+   Vidrio fuerte: el contenido que pasa por debajo no debe
+   competir con el título. */
+.rk-panel-barra {
+  top: var(--rk-navbar-alto, 56px);
+}
+
 .rk-panel-barra,
 [data-theme="light"] .rk-panel-barra {
   border-bottom: 1px solid var(--rk-linea);
-  background: rgb(14 15 19 / 0.6);
+  background: rgb(14 15 19 / 0.88);
   -webkit-backdrop-filter: blur(22px) saturate(1.4);
   backdrop-filter: blur(22px) saturate(1.4);
 }
 
 [data-theme="light"] .rk-panel-barra {
-  background: rgb(255 255 255 / 0.7);
+  background: rgb(255 255 255 / 0.9);
 }
 
 .rk-panel-cajon,
@@ -8726,8 +8680,8 @@ table .rk-btn:hover:not(:disabled) {
          <nav class="rk-menu-list">
            <div class="rk-menu-group"><a class="rk-menu-item">svg Ver perfil</a> …</div>
            <div class="rk-menu-group">
-             <button class="rk-menu-item" role="switch" aria-checked="true">
-               svg Modo oscuro <span class="rk-menu-switch"></span></button>
+             <div class="rk-menu-item rk-menu-item-tema">
+               svg Modo oscuro <ThemeToggle (rk-theme-toggle)></div>
            </div>
            <hr class="rk-menu-sep">
            <button class="rk-menu-item">svg Salir</button>
@@ -9035,36 +8989,13 @@ table .rk-btn:hover:not(:disabled) {
   outline-offset: -2px;
 }
 
-/* interruptor (modo oscuro) */
-.rk-menu-switch {
-  position: relative;
-  flex: none;
-  width: 46px;
-  height: 26px;
-  margin-left: auto;
-  border-radius: 999px;
-  background: rgb(127 127 127 / 0.28);
-  transition: background-color var(--rx-t-micro) var(--rx-curva);
-}
-
-.rk-menu-switch::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  background: #fff;
-  transition: transform var(--rx-t-micro) var(--rx-curva);
-}
-
-[aria-checked="true"] > .rk-menu-switch {
-  background: linear-gradient(90deg, rgb(var(--rk-iris-1)), rgb(var(--rk-iris-2)));
-}
-
-[aria-checked="true"] > .rk-menu-switch::after {
-  transform: translateX(20px);
+/* fila del tema: no es un botón; el control es el sol / luna (K) */
+.rk-menu-item-tema,
+.rk-menu-item-tema:hover,
+[data-theme="light"] .rk-menu-item-tema:hover {
+  border-color: transparent;
+  background: transparent;
+  cursor: default;
 }
 
 /* salir: bloque rojo suave */
@@ -9098,9 +9029,7 @@ table .rk-btn:hover:not(:disabled) {
 @media (prefers-reduced-motion: reduce) {
   .rk-avatar-btn::before,
   .rk-avatar-btn::after,
-  .rk-menu-item,
-  .rk-menu-switch,
-  .rk-menu-switch::after {
+  .rk-menu-item {
     transition: none;
   }
 }
@@ -11205,14 +11134,6 @@ table .rk-btn:hover:not(:disabled) {
   object-fit: contain;
 }
 
-.rk-footer-text {
-  max-width: 34ch;
-  margin: 0;
-  color: rgb(var(--rk-muted));
-  font-size: 0.77rem;
-  line-height: 1.6;
-}
-
 /* ── AH4. ENLACES ───────────────────────────────────────────────────── */
 .rk-footer-nav {
   display: grid;
@@ -12790,6 +12711,10 @@ div.rk-upload-error > * + * {
   --rk-marca-calido: 248 214 198;
   --rk-marca-tinta: 21 22 27;
 
+  /* acentos de marca: los mismos lavanda y durazno del Dashboard */
+  --rk-marca-lavanda: 157 151 255;
+  --rk-marca-durazno: 240 169 138;
+
   /* acentos: en oscuro, la marca tal cual */
   --rk-iris-1: 200 201 214;
   --rk-iris-2: 244 242 241;
@@ -12865,17 +12790,74 @@ div.rk-upload-error > * + * {
   color: #fff;
 }
 
-/* ── aros de avatar ──────────────────────────────────────────────────── */
-.rk-menu-head .rk-avatar-btn-img {
+/* ── aros de avatar ──────────────────────────────────────────────────────
+   El de la hoja de cuenta y el del botón de la barra son el mismo aro:
+   un hueco del color de lo que hay detrás (--rk-aro-hueco) y el aro
+   durazno. En la barra el hueco es el fondo de la página. */
+.rk-menu-head .rk-avatar-btn-img,
+.rk-avatar-btn > .rk-avatar-btn-img {
   box-shadow:
-    0 0 0 2px rgb(22 23 28),
+    0 0 0 2px var(--rk-aro-hueco, rgb(22 23 28)),
     0 0 0 4px rgb(var(--rk-marca-calido) / 0.8);
 }
 
-[data-theme="light"] .rk-menu-head .rk-avatar-btn-img {
+[data-theme="light"] .rk-menu-head .rk-avatar-btn-img,
+[data-theme="light"] .rk-avatar-btn > .rk-avatar-btn-img {
   box-shadow:
-    0 0 0 2px #fff,
+    0 0 0 2px var(--rk-aro-hueco, #fff),
     0 0 0 4px rgb(var(--rk-iris-3) / 0.8);
+}
+
+.rk-avatar-btn {
+  --rk-aro-hueco: var(--rx-fondo);
+}
+
+.rk-avatar-btn > .rk-avatar-btn-img {
+  transition: box-shadow var(--rx-t-micro) var(--rx-curva);
+}
+
+/* Señalado, con foco o abierto: un halo durazno suave alrededor del
+   aro. El círculo de vidrio del ::before sobraría: serían dos aros. */
+.rk-avatar-btn:has(> .rk-avatar-btn-img)::before {
+  content: none;
+}
+
+.rk-avatar-btn:focus-visible > .rk-avatar-btn-img,
+.rk-avatar-btn[aria-expanded="true"] > .rk-avatar-btn-img {
+  box-shadow:
+    0 0 0 2px var(--rk-aro-hueco),
+    0 0 0 4px rgb(var(--rk-marca-calido) / 0.8),
+    0 0 0 8px rgb(var(--rk-marca-durazno) / 0.25);
+}
+
+[data-theme="light"] .rk-avatar-btn:focus-visible > .rk-avatar-btn-img,
+[data-theme="light"] .rk-avatar-btn[aria-expanded="true"] > .rk-avatar-btn-img {
+  box-shadow:
+    0 0 0 2px var(--rk-aro-hueco),
+    0 0 0 4px rgb(var(--rk-iris-3) / 0.8),
+    0 0 0 8px rgb(var(--rk-marca-durazno) / 0.25);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-avatar-btn:hover > .rk-avatar-btn-img {
+    box-shadow:
+      0 0 0 2px var(--rk-aro-hueco),
+      0 0 0 4px rgb(var(--rk-marca-calido) / 0.8),
+      0 0 0 8px rgb(var(--rk-marca-durazno) / 0.25);
+  }
+
+  [data-theme="light"] .rk-avatar-btn:hover > .rk-avatar-btn-img {
+    box-shadow:
+      0 0 0 2px var(--rk-aro-hueco),
+      0 0 0 4px rgb(var(--rk-iris-3) / 0.8),
+      0 0 0 8px rgb(var(--rk-marca-durazno) / 0.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-avatar-btn > .rk-avatar-btn-img {
+    transition: none;
+  }
 }
 
 .rk-creator-avatar {
@@ -14152,44 +14134,6 @@ div.rk-upload-error > * + * {
   }
 }
 
-/* ═══════════ AU · Categorías del inicio (debajo del slider) ═══════════ */
-.rk-home-categorias {
-  padding: 28px 0 44px;
-}
-
-/* Sin slider, la sección no queda pegada a la barra superior. */
-.rk-home-categorias:first-child {
-  padding-top: 44px;
-}
-
-@media (min-width: 1024px) {
-  .rk-home-categorias {
-    padding: 40px 0 64px;
-  }
-
-  .rk-home-categorias:first-child {
-    padding-top: 72px;
-  }
-}
-
-/* En el inicio solo van 3 carpetas, en una fila; el diseño de la
-   carpeta es el mismo de /categorias. */
-.rk-home-categorias .rk-folder-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-@media (min-width: 640px) {
-  .rk-home-categorias .rk-folder-grid { gap: 18px; }
-}
-
-/* En escritorio cada carpeta mide lo mismo que en la rejilla de 4 */
-@media (min-width: 1024px) {
-  .rk-home-categorias .rk-folder-grid {
-    grid-template-columns: repeat(3, calc((100% - 54px) / 4));
-  }
-}
-
 /* ═══════════ AV · CTA final con la modelo (estilo hero) ═══════════
    La sección usa rk-card, rk-display, rk-btn, rk-card-glass y
    rk-chip. Aquí solo va lo propio: el círculo de marca, la foto
@@ -14581,7 +14525,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ══════════════════════════════════════════════════════════
-   AY. ISOTIPO (components/Isotipo.tsx)
+   AY. ISOTIPO (components/layout/Isotipo.tsx)
    Solo el cohete, sin el cuadro negro: máscara del SVG pintada
    con el color del texto (blanco en oscuro, negro en claro).
    ══════════════════════════════════════════════════════════ */
@@ -15470,116 +15414,224 @@ div.rk-upload-error > * + * {
 /* ═══════════════════════════════════════════════════════════════════
    rk-rol · Interruptor de rol en la barra superior (Navbar)
 
-   «Admin · Studio». Apagado (fuera de los paneles): el mismo vidrio
-   claro que los botones de buscar y avisos, con texto negro. Encendido (dentro de un panel): la píldora pasa
-   a negro y la sección activa va en blanco, como la perilla de un
-   interruptor. En oscuro se invierte: píldora clara, perilla oscura.
+   «Admin · Studio» en dos estados:
+   A) Fuera de los paneles: dos botones sueltos, cada uno con el
+      vidrio de los botones de la barra (rk-topbar-btn), icono +
+      texto, 6 px entre ellos. Hover y foco con un acento lavanda.
+   B) Dentro de un panel (data-encendido): una sola píldora de
+      tinta y la sección activa en perla. En oscuro se invierte.
+   De A a B los botones se acercan y la tinta aparece detrás:
+   solo transform y opacidad, 300 ms. La tinta va en ::before
+   para animar solo su opacidad.
+   Por debajo de 360 px los botones quedan en solo icono.
    ═══════════════════════════════════════════════════════════════════ */
 .rk-rol {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   flex: none;
+  gap: 6px;
   height: 44px;
-  padding: 3px;
-  border-radius: 999px;
-  border: 1px solid rgb(21 22 27 / 0.08);
-  background: rgb(255 255 255 / 0.7);
-  -webkit-backdrop-filter: blur(20px) saturate(1.5);
-          backdrop-filter: blur(20px) saturate(1.5);
   font-family: var(--font-sora), system-ui, sans-serif;
-  transition:
-    background-color 0.35s cubic-bezier(0.65, 0, 0.35, 1),
-    border-color 0.35s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .rk-rol-opcion {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   height: 100%;
-  padding: 0 11px;
+  padding: 0 12px;
   border-radius: 999px;
-  color: #15161b;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: rgb(22 23 28 / 0.42);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  color: var(--rx-texto);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: -0.01em;
   white-space: nowrap;
   transition:
-    background-color 0.35s cubic-bezier(0.65, 0, 0.35, 1),
-    color 0.35s cubic-bezier(0.65, 0, 0.35, 1),
-    box-shadow 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+    background-color var(--rx-t-micro) var(--rx-curva),
+    border-color var(--rx-t-micro) var(--rx-curva),
+    color var(--rx-t-micro) var(--rx-curva),
+    transform 0.15s var(--rx-curva);
 }
 
-/* Encendido: píldora negra, textos claros */
-.rk-rol[data-encendido] {
-  border-color: #15161b;
-  background: #15161b;
+.rk-rol-opcion svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
 }
 
-.rk-rol[data-encendido] .rk-rol-opcion {
-  color: rgb(244 242 241 / 0.6);
-}
-
-/* La sección activa es la perilla blanca */
-.rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
-  background: #f4f2f1;
-  color: #15161b;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+[data-theme="light"] .rk-rol-opcion {
+  border-color: rgb(21 22 27 / 0.08);
+  background: rgb(255 255 255 / 0.7);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rk-rol:not([data-encendido]) .rk-rol-opcion:hover {
-    background: rgb(21 22 27 / 0.06);
+    border-color: rgb(var(--rk-marca-lavanda) / 0.6);
   }
+}
 
-  .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
-    color: #f4f2f1;
-  }
+.rk-rol:not([data-encendido]) .rk-rol-opcion:active {
+  transform: scale(0.97);
 }
 
 .rk-rol-opcion:focus-visible {
-  outline: 2px solid rgb(var(--rk-marca-frio));
+  outline: 2px solid rgb(var(--rk-marca-lavanda));
   outline-offset: 2px;
 }
 
-/* Tema oscuro */
-[data-theme="dark"] .rk-rol {
-  border-color: rgb(255 255 255 / 0.12);
-  background: rgb(255 255 255 / 0.05);
+/* B · Encendido: una píldora de tinta con la sección activa en perla */
+.rk-rol[data-encendido] {
+  gap: 0;
+  padding: 3px;
+  animation: rk-rol-unir 0.3s var(--rx-curva) both;
 }
 
-[data-theme="dark"] .rk-rol-opcion {
-  color: #f4f2f1;
+.rk-rol[data-encendido]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 999px;
+  background: rgb(var(--rk-marca-tinta));
+  animation: rk-rol-tinta 0.3s var(--rx-curva) both;
 }
 
-[data-theme="dark"] .rk-rol[data-encendido] {
-  border-color: #f4f2f1;
-  background: #f4f2f1;
+.rk-rol[data-encendido] .rk-rol-opcion {
+  border-color: transparent;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  color: rgb(var(--rk-marca-centro) / 0.6);
 }
 
-[data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion {
-  color: rgb(21 22 27 / 0.55);
+.rk-rol[data-encendido] .rk-rol-opcion:first-child {
+  animation: rk-rol-desde-izquierda 0.3s var(--rx-curva) both;
 }
 
-[data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
-  background: #15161b;
-  color: #f4f2f1;
+.rk-rol[data-encendido] .rk-rol-opcion:last-child {
+  animation: rk-rol-desde-derecha 0.3s var(--rx-curva) both;
+}
+
+/* La sección activa es la perilla perla */
+.rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
+  background: rgb(var(--rk-marca-centro));
+  color: rgb(var(--rk-marca-tinta));
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  [data-theme="dark"] .rk-rol:not([data-encendido]) .rk-rol-opcion:hover {
-    background: rgb(255 255 255 / 0.08);
-  }
-
-  [data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
-    color: #15161b;
+  .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
+    color: rgb(var(--rk-marca-centro));
   }
 }
 
-/* En pantallas muy estrechas, un poco más compacto */
-@media (max-width: 380px) {
+/* Oscuro: píldora perla y perilla de tinta */
+[data-theme="dark"] .rk-rol[data-encendido]::before {
+  background: rgb(var(--rk-marca-centro));
+}
+
+[data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion {
+  color: rgb(var(--rk-marca-tinta) / 0.55);
+}
+
+[data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
+  background: rgb(var(--rk-marca-tinta));
+  color: rgb(var(--rk-marca-centro));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
+    color: rgb(var(--rk-marca-tinta));
+  }
+}
+
+@keyframes rk-rol-unir {
+  from {
+    transform: scaleX(1.04);
+  }
+}
+
+@keyframes rk-rol-tinta {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes rk-rol-desde-izquierda {
+  from {
+    transform: translateX(-4px);
+  }
+}
+
+@keyframes rk-rol-desde-derecha {
+  from {
+    transform: translateX(4px);
+  }
+}
+
+/* Un creador solo tiene «Studio»: el padding de la píldora sale
+   del suyo para que A y B midan lo mismo y nada se mueva. */
+.rk-rol[data-encendido] .rk-rol-opcion:only-child {
+  padding: 0 9px;
+}
+
+/* Móvil: con buscar, avisos y cuenta (44 px cada uno) no caben
+   icono y texto. Hasta 429 px, solo texto; hasta 374 px, solo
+   icono (el nombre va en aria-label). */
+@media (max-width: 429px) {
   .rk-rol-opcion {
-    padding: 0 8px;
-    font-size: 12px;
+    padding: 0 10px;
+  }
+
+  .rk-rol[data-encendido] .rk-rol-opcion:only-child {
+    padding: 0 7px;
+  }
+
+  .rk-rol-opcion svg {
+    display: none;
+  }
+}
+
+@media (max-width: 374px) {
+  .rk-rol-opcion svg {
+    display: block;
+  }
+
+  .rk-rol-opcion {
+    justify-content: center;
+    width: 44px;
+    padding: 0;
+  }
+
+  /* mismo ancho total en A y B: 44 + 6 + 44 = 3 + 44 + 44 + 3 */
+  .rk-rol[data-encendido] .rk-rol-opcion {
+    width: 44px;
+  }
+
+  .rk-rol[data-encendido] .rk-rol-opcion:only-child {
+    width: 38px;
+  }
+
+  .rk-rol-texto {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-rol-opcion {
+    transition: none;
+  }
+
+  .rk-rol[data-encendido],
+  .rk-rol[data-encendido]::before,
+  .rk-rol[data-encendido] .rk-rol-opcion {
+    animation: none;
   }
 }
 
@@ -15620,7 +15672,10 @@ div.rk-upload-error > * + * {
   aspect-ratio: 16 / 9;
   max-height: 440px;
   border-radius: 20px;
-  background: #0d0e12;
+  /* El fondo de la página, no negro: el alto sale fraccionario
+     (16:9 de 366 px = 205,875) y en el último píxel el negro
+     asomaba bajo la imagen como una línea, sobre todo en claro. */
+  background: var(--rx-fondo);
   touch-action: pan-y;
   user-select: none;
 }
@@ -15804,6 +15859,662 @@ div.rk-upload-error > * + * {
     transition: none;
   }
   .rk-sp-slide { transform: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)
+
+   Tira a todo el ancho (borde a borde, sin tarjeta) con la línea de
+   progreso, un marco con las portadas reales de la opción y sus
+   cifras. Casi monocromo: tinta y perla, que se invierten en oscuro;
+   la lavanda solo en el progreso y en el foco.
+   ═══════════════════════════════════════════════════════════════════ */
+.rk-qb {
+  --rk-qb-fondo: rgb(var(--rk-marca-tinta));
+  --rk-qb-sobre: rgb(var(--rk-marca-centro));
+  --rk-qb-suave: rgb(var(--rk-foreground) / 0.6);
+  --rk-qb-punteado: rgb(var(--rk-foreground) / 0.16);
+  padding: 40px 0 48px;
+}
+
+[data-theme="dark"] .rk-qb {
+  --rk-qb-fondo: rgb(var(--rk-marca-centro));
+  --rk-qb-sobre: rgb(var(--rk-marca-tinta));
+}
+
+.rk-qb-titulo {
+  margin: 0 16px 20px;
+  color: var(--rx-texto);
+  font-size: clamp(1.55rem, 7vw, 2.2rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.18;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* Tira: pista gris de 2 px arriba, con el progreso lavanda encima */
+.rk-qb-tira {
+  position: relative;
+  border-bottom: 1px solid var(--rk-linea);
+}
+
+.rk-qb-tira::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: var(--rk-linea);
+}
+
+.rk-qb-progreso {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 2px;
+  background: rgb(var(--rk-marca-lavanda));
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: rk-qb-progreso 6s linear forwards;
+}
+
+.rk-qb-tira[data-pausa] .rk-qb-progreso {
+  animation-play-state: paused;
+}
+
+@keyframes rk-qb-progreso {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.rk-qb-tira-dentro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 20px 16px 16px;
+}
+
+.rk-qb-icono {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--rk-qb-fondo);
+  color: var(--rk-qb-sobre);
+}
+
+.rk-qb-icono svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.8;
+}
+
+.rk-qb-texto {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rk-qb-texto b {
+  color: var(--rx-texto);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.rk-qb-texto span {
+  color: var(--rk-qb-suave);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.rk-qb-flechas {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  flex: none;
+  gap: 6px;
+  padding-left: 14px;
+  border-left: 1px solid var(--rk-linea);
+}
+
+.rk-qb-flechas button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--rx-borde);
+  border-radius: 50%;
+  background: var(--rx-vidrio);
+  color: var(--rx-texto);
+  box-shadow: var(--rx-sombra-base);
+  cursor: pointer;
+  transition: border-color var(--rx-t-micro) var(--rx-curva);
+}
+
+/* área táctil de 44 px sin cambiar el tamaño visible */
+.rk-qb-flechas button::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+
+.rk-qb-flechas svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-qb-flechas button:hover {
+    border-color: rgb(var(--rk-marca-lavanda));
+  }
+}
+
+.rk-qb-flechas button:focus-visible,
+.rk-qb-marco:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-lavanda));
+  outline-offset: 2px;
+}
+
+/* Cuerpo: marco con las portadas y lista de cifras */
+.rk-qb-cuerpo {
+  display: grid;
+  gap: 8px;
+  max-width: 80rem;
+  margin: 18px auto 0;
+  padding: 0 16px;
+}
+
+@media (min-width: 1024px) {
+  .rk-qb-cuerpo {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 48px;
+    padding: 0 32px;
+  }
+}
+
+.rk-qb-marco {
+  display: block;
+  padding: 10px;
+  border: 1px solid var(--rx-borde);
+  border-radius: 28px;
+  background: var(--rx-vidrio);
+  box-shadow: var(--rx-sombra-base);
+}
+
+.rk-qb-interior {
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--rk-qb-fondo);
+  color: var(--rk-qb-sobre);
+}
+
+.rk-qb-barra {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+.rk-qb-barra i {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+.rk-qb-barra span {
+  min-width: 0;
+  margin-left: auto;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rk-qb-portadas {
+  display: grid;
+  gap: 8px;
+  padding: 0 10px 10px;
+}
+
+.rk-qb-portadas[data-forma="vertical"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rk-qb-portadas[data-forma="general"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rk-qb-portada {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.rk-qb-portadas[data-forma="vertical"] .rk-qb-portada {
+  aspect-ratio: 9 / 16;
+}
+
+.rk-qb-portadas[data-forma="general"] .rk-qb-portada {
+  aspect-ratio: 4 / 5;
+}
+
+.rk-qb-cifras {
+  margin: 6px 0 0;
+  padding: 0 6px;
+}
+
+.rk-qb-cifra {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 4px;
+  border-bottom: 1px dashed var(--rk-qb-punteado);
+}
+
+.rk-qb-cifra:last-child {
+  border-bottom: 0;
+}
+
+.rk-qb-cifra-icono {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--rx-borde);
+  border-radius: 14px;
+  background: var(--rx-vidrio);
+  color: var(--rx-texto);
+}
+
+.rk-qb-cifra-icono svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.6;
+}
+
+.rk-qb-cifra dt {
+  margin-bottom: 2px;
+  color: var(--rk-qb-suave);
+  font-size: 1rem;
+}
+
+.rk-qb-cifra dd {
+  margin: 0;
+  color: var(--rx-texto);
+  font-size: 2.1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.rk-qb-ir {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* Relevo: salida 200 ms (opacidad y desenfoque), entrada 300 ms */
+.rk-qb-cambia {
+  transition:
+    opacity 0.3s var(--rx-curva),
+    filter 0.3s var(--rx-curva);
+}
+
+.rk-qb[data-fuera] .rk-qb-cambia {
+  opacity: 0;
+  filter: blur(6px);
+  transition-duration: 0.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-qb-progreso {
+    display: none;
+  }
+
+  .rk-qb-cambia,
+  .rk-qb-flechas button {
+    transition: none;
+  }
+
+  .rk-qb[data-fuera] .rk-qb-cambia {
+    filter: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.tsx)
+
+   Riel de categorías con el estilo del interruptor Admin / Studio
+   unido (rk-rol): tinta con la elegida en perla, invertido en
+   oscuro. Panel de vidrio con pestañas (subrayado lavanda),
+   descripción y tarjetas (ProductCard / ColeccionCard). Casi
+   monocromo: la lavanda solo en el subrayado y el foco.
+   ═══════════════════════════════════════════════════════════════════ */
+.rk-cc {
+  --rk-cc-fondo: rgb(var(--rk-marca-tinta));
+  --rk-cc-sobre: rgb(var(--rk-marca-centro));
+  --rk-cc-suave: rgb(var(--rk-foreground) / 0.6);
+  --rk-cc-curva: cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 32px 16px 40px;
+}
+
+[data-theme="dark"] .rk-cc {
+  --rk-cc-fondo: rgb(var(--rk-marca-centro));
+  --rk-cc-sobre: rgb(var(--rk-marca-tinta));
+}
+
+@media (min-width: 1024px) {
+  .rk-cc {
+    padding: 56px 32px;
+  }
+}
+
+/* Riel */
+.rk-cc-riel {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid var(--rk-cc-fondo);
+  border-radius: 999px;
+  background: var(--rk-cc-fondo);
+}
+
+@media (min-width: 760px) {
+  .rk-cc-riel {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+}
+
+.rk-cc-riel-boton {
+  position: relative;
+  flex: none;
+  width: 44px;
+  min-width: 0;
+  height: 40px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--rk-cc-sobre);
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.rk-cc-riel[data-listo] .rk-cc-riel-boton {
+  transition:
+    width 0.32s var(--rk-cc-curva),
+    background-color 0.32s var(--rk-cc-curva),
+    opacity 0.32s var(--rk-cc-curva);
+}
+
+/* separador fino entre las no elegidas, nunca junto a la elegida */
+.rk-cc-riel-boton + .rk-cc-riel-boton::before {
+  content: "";
+  position: absolute;
+  top: 28%;
+  bottom: 28%;
+  left: 0;
+  width: 1px;
+  background: currentColor;
+  opacity: 0.28;
+}
+
+.rk-cc-riel-boton[aria-selected="true"]::before,
+.rk-cc-riel-boton[aria-selected="true"] + .rk-cc-riel-boton::before {
+  display: none;
+}
+
+.rk-cc-riel-icono {
+  position: absolute;
+  top: 50%;
+  left: calc(50% - 8px);
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+}
+
+.rk-cc-riel[data-listo] .rk-cc-riel-icono {
+  transition: left 0.32s var(--rk-cc-curva);
+}
+
+.rk-cc-riel-icono svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.9;
+}
+
+.rk-cc-riel-texto {
+  position: absolute;
+  top: 50%;
+  left: 34px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity 0.1s;
+}
+
+.rk-cc-riel-boton[aria-selected="true"] {
+  background: var(--rk-cc-sobre);
+  color: var(--rk-cc-fondo);
+  opacity: 1;
+}
+
+.rk-cc-riel-boton[aria-selected="true"] .rk-cc-riel-icono {
+  left: 12px;
+}
+
+.rk-cc-riel-boton[aria-selected="true"] .rk-cc-riel-texto {
+  opacity: 1;
+  transition: opacity 0.2s 0.16s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-cc-riel-boton:not([aria-selected="true"]):hover {
+    opacity: 1;
+  }
+}
+
+.rk-cc-riel-boton:focus-visible,
+.rk-cc-pestana:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-lavanda));
+  outline-offset: 2px;
+}
+
+/* Panel */
+.rk-cc-panel {
+  margin-top: 14px;
+  padding: 2px 16px 18px;
+  border: 1px solid var(--rx-borde);
+  border-radius: 24px;
+  background: var(--rx-vidrio);
+}
+
+@media (min-width: 760px) {
+  .rk-cc-panel {
+    padding: 8px 28px 32px;
+  }
+}
+
+.rk-cc-pestanas {
+  position: relative;
+  display: flex;
+  margin: 0 4px;
+  border-bottom: 1px solid var(--rk-linea);
+}
+
+.rk-cc-pestana {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 46px;
+  padding: 14px 2px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--rk-cc-suave);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.rk-cc-pestana + .rk-cc-pestana::before {
+  content: "";
+  position: absolute;
+  top: 30%;
+  bottom: 30%;
+  left: 0;
+  width: 1px;
+  background: var(--rk-linea);
+}
+
+.rk-cc-pestana svg {
+  flex: none;
+  width: 15px;
+  height: 15px;
+}
+
+.rk-cc-pestana[aria-selected="true"] {
+  color: var(--rx-texto);
+}
+
+.rk-cc-subrayado {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: calc(100% / var(--rk-cc-n));
+  height: 2px;
+  border-radius: 2px;
+  background: rgb(var(--rk-marca-lavanda));
+  transform: translateX(calc(var(--rk-cc-i) * 100%));
+  transition: transform 0.3s var(--rk-cc-curva);
+}
+
+/* Una sola pestaña (Colecciones): solo el nombre */
+.rk-cc-solo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 46px;
+  margin: 0 4px;
+  padding: 14px 2px 12px;
+  border-bottom: 1px solid var(--rk-linea);
+  color: var(--rx-texto);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.rk-cc-solo svg {
+  width: 15px;
+  height: 15px;
+}
+
+.rk-cc-descripcion {
+  max-width: 34ch;
+  min-height: 2.8em;
+  margin: 16px auto 14px;
+  color: var(--rk-cc-suave);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* Tarjetas: carrusel en móvil, rejilla de 4 desde 760 px */
+.rk-cc-tarjetas {
+  display: flex;
+  gap: 14px;
+  margin: 0;
+  padding: 4px 2px 12px;
+  overflow-x: auto;
+  list-style: none;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.rk-cc-tarjetas::-webkit-scrollbar {
+  display: none;
+}
+
+.rk-cc-tarjeta {
+  flex: 0 0 68%;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 760px) {
+  .rk-cc-tarjetas {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    overflow: visible;
+  }
+}
+
+.rk-cc-mas {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+/* Relevo: salida 200 ms, hueco 200 ms, entrada 300 ms */
+.rk-cc-todo,
+.rk-cc-tarjetas-zona {
+  transition:
+    opacity 0.3s var(--rk-cc-curva),
+    filter 0.3s var(--rk-cc-curva);
+}
+
+.rk-cc[data-fase="fuera-todo"] .rk-cc-todo,
+.rk-cc[data-fase="fuera-tarjetas"] .rk-cc-tarjetas-zona {
+  opacity: 0;
+  filter: blur(6px);
+  transition-duration: 0.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-cc-riel[data-listo] .rk-cc-riel-boton,
+  .rk-cc-riel[data-listo] .rk-cc-riel-icono,
+  .rk-cc-riel-texto,
+  .rk-cc-subrayado,
+  .rk-cc-todo,
+  .rk-cc-tarjetas-zona {
+    transition: none;
+  }
+
+  .rk-cc[data-fase] .rk-cc-todo,
+  .rk-cc[data-fase] .rk-cc-tarjetas-zona {
+    filter: none;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -19423,215 +20134,6 @@ html[data-theme] .rk-faq-icon::before {
 
   .rk-sec-js .rk-sec-sep .rk-separador-linea {
     clip-path: none;
-    transition: none;
-  }
-}
-
-/* ── BB9. CATÁLOGO EN PESTAÑAS (CatalogoPestanas.tsx) ────────
-   Barra de pestañas en píldora de vidrio (scroll horizontal en
-   móvil): círculo de color con el icono y, en la activa, el
-   nombre. Debajo, el panel de vidrio y el botón negro montado
-   sobre su borde. */
-.rk-hub {
-  max-width: 46rem;
-  margin-inline: auto;
-}
-
-.rk-hub-tabs {
-  display: flex;
-  gap: 2px;
-  align-items: center;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding: 6px;
-  border-radius: 9999px;
-  background: rgb(255 255 255/.55);
-  border: 1px solid rgb(255 255 255/.85);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  box-shadow: inset 0 1px 0 rgb(255 255 255/.8),0 1px 2px rgb(21 22 27/.05);
-}
-
-.rk-hub-tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.rk-hub-tab {
-  --h1: #9d97ff;
-  --h2: #c9a3d8;
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 0;
-  height: 42px;
-  padding: 3px;
-  border-radius: 9999px;
-  color: rgb(var(--rk-foreground));
-  transition: background .3s,gap .3s,padding .3s,box-shadow .3s;
-}
-
-.rk-hub-tab+.rk-hub-tab::before {
-  content: "";
-  position: absolute;
-}
-
-.rk-hub-tab-ico {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  background: linear-gradient(145deg,var(--h1),var(--h2));
-  box-shadow: inset 0 1px 0 rgb(255 255 255/.5);
-  flex: none;
-  transition: transform .3s;
-}
-
-.rk-hub-tab-txt {
-  max-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  opacity: 0;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -.01em;
-  transition: max-width .35s cubic-bezier(.2,.8,.2,1),opacity .25s,margin .35s;
-}
-
-.rk-hub-tab[aria-selected="true"] {
-  background: #fff;
-  gap: 8px;
-  padding-right: 16px;
-  box-shadow: 0 4px 14px -4px rgb(21 22 27/.18),0 0 0 1px rgb(21 22 27/.05);
-}
-
-.rk-hub-tab[aria-selected="true"] .rk-hub-tab-txt {
-  max-width: 9rem;
-  opacity: 1;
-}
-
-@media (hover:hover) and (pointer:fine) {
-  .rk-hub-tab:not([aria-selected="true"]):hover .rk-hub-tab-ico {
-    transform: scale(1.08);
-  }
-}
-
-.rk-hub-tab:focus-visible {
-  outline: 2px solid #9d97ff;
-  outline-offset: 2px;
-}
-
-.rk-hub-panel {
-  margin-top: 14px;
-  padding: 24px 16px 56px;
-  border-radius: 28px;
-  background: rgb(255 255 255/.5);
-  border: 1px solid rgb(255 255 255/.85);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  box-shadow: inset 0 1px 0 rgb(255 255 255/.8);
-  overflow: hidden;
-}
-
-.rk-hub-pane {
-  animation: rk-hub-in .45s cubic-bezier(.2,.8,.2,1);
-}
-
-@keyframes rk-hub-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.rk-hub-desc {
-  max-width: 32rem;
-  margin: 2px auto 20px;
-  text-align: center;
-  font-size: 15px;
-  line-height: 1.6;
-  color: rgb(var(--rk-foreground)/.6);
-}
-
-.rk-hub-body .rk-rejilla {
-  display: grid;
-  grid-template-columns: repeat(2,minmax(0,1fr));
-  gap: 12px;
-}
-
-.rk-hub-body .rk-empty {
-  margin: 0;
-}
-
-.rk-hub-cta {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  width: max-content;
-  max-width: calc(100% - 32px);
-  margin: -28px auto 0;
-  align-items: center;
-  gap: 10px;
-  padding: 15px 22px;
-  border-radius: 16px;
-  background: rgb(var(--rk-marca-tinta));
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  box-shadow: 0 14px 28px -12px rgb(21 22 27/.5);
-  transition: transform .25s,gap .25s;
-}
-
-@media (hover:hover) and (pointer:fine) {
-  .rk-hub-cta:hover {
-    transform: translateY(-2px);
-    gap: 14px;
-  }
-}
-
-[data-theme="dark"] .rk-hub-tabs,
-[data-theme="dark"] .rk-hub-panel {
-  background: rgb(255 255 255/.06);
-  border-color: rgb(255 255 255/.12);
-  box-shadow: inset 0 1px 0 rgb(255 255 255/.08);
-}
-
-[data-theme="dark"] .rk-hub-tab {
-  color: #fff;
-}
-
-[data-theme="dark"] .rk-hub-tab[aria-selected="true"] {
-  background: rgb(255 255 255/.14);
-  box-shadow: 0 0 0 1px rgb(255 255 255/.18);
-}
-
-[data-theme="dark"] .rk-hub-cta {
-  background: #f4f2f1;
-  color: #15161b;
-}
-
-@media (min-width:640px) {
-  .rk-hub-panel {
-    padding: 32px 28px 64px;
-  }
-
-  .rk-hub-body .rk-rejilla {
-    grid-template-columns: repeat(3,minmax(0,1fr));
-  }
-}
-
-@media (prefers-reduced-motion:reduce) {
-  .rk-hub-pane {
-    animation: none;
-  }
-
-  .rk-hub-tab,
-  .rk-hub-tab-txt {
     transition: none;
   }
 }

@@ -10,8 +10,9 @@ import {
   type TipoPieza,
 } from "@/lib/tipos-publicacion";
 
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
+import { fechaMedia } from "@/lib/formato";
 
 type Product = {
   id: string;
@@ -81,13 +82,6 @@ const accessLabels: Record<Product["accessType"], string> = {
   PLAN: "Solo planes",
   BOTH: "Compra + planes",
 };
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-PE", {
-    dateStyle: "medium",
-  }).format(new Date(value));
-}
-
 export default function RecursosPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -349,7 +343,7 @@ export default function RecursosPage() {
                             <span aria-hidden>·</span>
 
                             <span>
-                              {formatDate(product.createdAt)}
+                              {fechaMedia(product.createdAt)}
                             </span>
                           </p>
                         </div>

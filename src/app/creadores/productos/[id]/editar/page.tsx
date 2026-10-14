@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 
-import TagsInput from "@/components/TagsInput";
+import TagsInput from "@/components/creador/TagsInput";
 import {
   LICENCIAS,
   TIPOS_LICENCIA,

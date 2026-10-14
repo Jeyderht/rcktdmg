@@ -4,11 +4,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BadgeCheck, ChevronRight, Library } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
-import AnadirColeccionAlCarrito from "@/components/AnadirColeccionAlCarrito";
-import YaAdquirido from "@/components/YaAdquirido";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import ProductCard from "@/components/tienda/ProductCard";
+import AnadirColeccionAlCarrito from "@/components/tienda/AnadirColeccionAlCarrito";
+import YaAdquirido from "@/components/tienda/YaAdquirido";
 import { getSession } from "@/lib/session";
 import { tieneColeccion } from "@/lib/adquisiciones";
 import { obtenerColeccionPublica } from "@/lib/colecciones-comerciales";

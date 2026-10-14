@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
-import Isotipo from "@/components/Isotipo";
+import Isotipo from "@/components/layout/Isotipo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");

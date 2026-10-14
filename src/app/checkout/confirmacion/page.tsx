@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Suspense, useState } from "react";
 import { Check, CheckCircle2, Clock } from "lucide-react";
 
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
 
 function ConfirmationContent() {
   const searchParams = useSearchParams();

@@ -1,27 +1,8 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { crearNotificacion } from "@/lib/notificaciones";
-import { verifySessionToken } from "@/lib/auth";
 import { WithdrawalStatus } from "@prisma/client";
-
-async function getAuthenticatedAdmin() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("rcktdmg_session")?.value;
-
-  if (!token) {
-    return null;
-  }
-
- const session = await verifySessionToken(token);
-
-if (!session || session.role !== "ADMIN") {
-  return null;
-}
-
-  return session;
-}
-
+import { adminDeSesion } from "@/lib/sesion-api";
 export async function PATCH(
   request: Request,
   context: {
@@ -29,7 +10,7 @@ export async function PATCH(
   }
 ) {
   try {
-    const session = await getAuthenticatedAdmin();
+    const session = await adminDeSesion();
 
     if (!session) {
       return NextResponse.json(

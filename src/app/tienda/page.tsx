@@ -5,10 +5,11 @@ import { paginaPrivada, paginaPublica } from "@/lib/seo";
 import { Suspense } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import BuscadorSugerencias from "@/components/BuscadorSugerencias";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import BuscadorSugerencias from "@/components/layout/BuscadorSugerencias";
 import { ID_BUSCADOR_TIENDA } from "@/lib/busqueda-ui";
+import { terminosDestacados } from "@/lib/busqueda";
 import FiltrosMoviles from "./FiltrosMoviles";
 import FiltrosSidebar from "./FiltrosSidebar";
 import StoreResults, {
@@ -125,6 +126,7 @@ export default async function Store({ searchParams }: StoreProps) {
     coloresCrudos,
     etiquetasCrudas,
     totalPacks,
+    destacadosBusqueda,
   ] = await Promise.all([
       prisma.category.findMany({
         where: {
@@ -188,6 +190,10 @@ export default async function Store({ searchParams }: StoreProps) {
           tags: { some: { tag: { slug: TAG_PACK } } },
         },
       }),
+
+      /* Frases del buscador que se escribe solo: los mismos
+         términos de «Populares ahora». Sin ellos, no se anima. */
+      terminosDestacados(6).catch(() => []),
     ]);
 
   const formatos = formatosCrudos
@@ -306,7 +312,13 @@ export default async function Store({ searchParams }: StoreProps) {
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
 
         {/* ══════════ CABECERA ══════════ */}
-        <section className="rk-fade-up relative overflow-hidden">
+        {/*
+          isolate: el halo va con z-index negativo y blur. Sin un
+          contexto de apilamiento propio, Safari en iPhone lo
+          pinta fuera del overflow-hidden y la página se puede
+          arrastrar a la derecha, cortando el título y el buscador.
+        */}
+        <section className="rk-fade-up relative isolate overflow-hidden">
           {/* Decoración CSS sutil: un halo y nada más. */}
           <div
             aria-hidden
@@ -326,7 +338,14 @@ export default async function Store({ searchParams }: StoreProps) {
         </section>
 
         {/* ══════════ BUSCADOR ══════════ */}
-        <section className="rk-fade-up rk-enter-1 mt-7">
+        {/*
+          relative z-20: la animación de entrada deja un transform
+          en la sección y la convierte en contexto de apilamiento,
+          así que el z-50 de las sugerencias no salía de ella y los
+          chips y botones de abajo se pintaban encima. Por debajo
+          del Navbar (40) y del menú inferior (50).
+        */}
+        <section className="rk-fade-up rk-enter-1 relative z-20 mt-7">
           {/*
             Una búsqueda nueva no debe tirar los filtros que ya
             estaban puestos: viajan como campos ocultos dentro
@@ -335,6 +354,7 @@ export default async function Store({ searchParams }: StoreProps) {
           <BuscadorSugerencias
             valorInicial={query}
             idInput={ID_BUSCADOR_TIENDA}
+            frasesAnimadas={destacadosBusqueda.map((d) => d.etiqueta)}
             className="max-w-2xl"
             ocultos={{
               categoria: parametros.categoria,

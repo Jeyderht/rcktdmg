@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CheckCircle2, Loader2, Upload } from "lucide-react";
 
-import EditorPortafolio from "@/components/EditorPortafolio";
-import SubidorImagen, { type EstadoImagen } from "@/components/SubidorImagen";
+import EditorPortafolio from "@/components/creador/EditorPortafolio";
+import SubidorImagen, { type EstadoImagen } from "@/components/creador/SubidorImagen";
 import {
   LARGO_BIO_MAXIMO,
   LARGO_BIO_MINIMO,

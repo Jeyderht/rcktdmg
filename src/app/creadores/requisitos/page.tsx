@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import TablaRequisitos from "@/components/TablaRequisitos";
-import BotonGuia from "@/components/BotonGuia";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import TablaRequisitos from "@/components/creador/TablaRequisitos";
+import BotonGuia from "@/components/creador/BotonGuia";
 import { TIPOS_PUBLICACION } from "@/lib/tipos-publicacion";
 import { paginaPublica } from "@/lib/seo";
 

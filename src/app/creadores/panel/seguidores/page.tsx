@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { BadgeCheck, ChevronLeft, ChevronRight, Users } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
 
 type Seguidor = {
   id: string;

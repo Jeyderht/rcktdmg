@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
-import ProductCard from "@/components/ProductCard";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
+import ProductCard from "@/components/tienda/ProductCard";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { noEncontrado, paginaPrivada } from "@/lib/seo";

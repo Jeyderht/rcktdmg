@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
-import TablaRequisitos from "@/components/TablaRequisitos";
+import TablaRequisitos from "@/components/creador/TablaRequisitos";
 import { TIPOS_PUBLICACION } from "@/lib/tipos-publicacion";
 
 export const metadata: Metadata = {

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
-import SubirPortada from "@/components/SubirPortada";
+import SubirPortada from "@/components/creador/SubirPortada";
 
 /**
  * Portada horizontal del slider del inicio, para un recurso.

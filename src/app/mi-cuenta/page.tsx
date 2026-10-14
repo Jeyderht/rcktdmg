@@ -10,13 +10,14 @@ import {
   Receipt,
 } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
-import QuickAccess from "@/components/QuickAccess";
-import RecomendadosCliente from "@/components/RecomendadosCliente";
-import ThemeToggle from "@/components/ThemeToggle";
-import { useSessionUser } from "@/components/useSessionUser";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
+import QuickAccess from "@/components/cuenta/QuickAccess";
+import RecomendadosCliente from "@/components/cuenta/RecomendadosCliente";
+import ThemeToggle from "@/components/layout/ThemeToggle";
+import { useSessionUser } from "@/components/hooks/useSessionUser";
 import { claseProporcion } from "@/lib/tipos-publicacion";
+import { fechaMedia } from "@/lib/formato";
 
 type Download = {
   id: string;
@@ -56,13 +57,6 @@ type Order = {
     };
   }[];
 };
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-PE", {
-    dateStyle: "medium",
-  }).format(new Date(value));
-}
-
 const ROLE_LABEL: Record<string, string> = {
   ADMIN: "Administrador",
   CREATOR: "Creador",
@@ -347,7 +341,7 @@ export default function Account() {
                           </p>
 
                           <p className="rk-row-card-sub">
-                            {formatDate(order.createdAt)}
+                            {fechaMedia(order.createdAt)}
                             {order.items.length > 1 &&
                               ` · y ${order.items.length - 1} más`}
                           </p>
@@ -383,9 +377,7 @@ export default function Account() {
                 </p>
               </div>
 
-              <div className="w-full sm:w-auto sm:min-w-[19rem]">
-                <ThemeToggle variant="full" />
-              </div>
+              <ThemeToggle conSistema />
             </div>
           </div>
         </section>

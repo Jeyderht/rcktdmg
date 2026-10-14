@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { Heart, X } from "lucide-react";
 
-import AccountPageHeader from "@/components/AccountPageHeader";
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
+import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
+import ProductCard from "@/components/tienda/ProductCard";
 
 type Favorite = {
   userId: string;

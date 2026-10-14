@@ -4,11 +4,12 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ClipboardCheck, Inbox } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
+import EmptyState from "@/components/ui/EmptyState";
 import { prisma } from "@/lib/prisma";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { requireRole } from "@/lib/session";
 import ResourceActions from "./ResourceActions";
+import { claseInsigniaEstado } from "@/lib/estado-recurso";
 
 export const metadata: Metadata = {
   title: "Recursos",
@@ -23,15 +24,6 @@ const STATUS_LABEL: Record<string, string> = {
   REJECTED: "Rechazado",
   ARCHIVED: "Archivado",
 };
-
-const STATUS_BADGE: Record<string, string> = {
-  DRAFT: "rk-badge-neutral",
-  PENDING_REVIEW: "rk-badge-warning",
-  PUBLISHED: "rk-badge-success",
-  REJECTED: "rk-badge-danger",
-  ARCHIVED: "rk-badge-neutral",
-};
-
 /** Borde sutil por estado: distingue sin saturar la lista. */
 const STATUS_EDGE: Record<string, string> = {
   PENDING_REVIEW: "!border-warning/30",
@@ -280,8 +272,7 @@ export default async function RecursosAdminPage({
 
                       <span
                         className={`rk-badge ${
-                          STATUS_BADGE[resource.status] ||
-                          "rk-badge-neutral"
+                          claseInsigniaEstado(resource.status)
                         }`}
                       >
                         {STATUS_LABEL[resource.status]}

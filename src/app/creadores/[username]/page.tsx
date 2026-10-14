@@ -14,13 +14,13 @@ import {
 } from "lucide-react";
 
 import { prisma } from "@/lib/prisma";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
-import EmptyState from "@/components/EmptyState";
-import ProductCard from "@/components/ProductCard";
-import Paginacion from "@/components/Paginacion";
-import CompartirPerfil from "@/components/CompartirPerfil";
-import SeguirButton from "@/components/SeguirButton";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
+import EmptyState from "@/components/ui/EmptyState";
+import ProductCard from "@/components/tienda/ProductCard";
+import Paginacion from "@/components/ui/Paginacion";
+import CompartirPerfil from "@/components/perfil/CompartirPerfil";
+import SeguirButton from "@/components/perfil/SeguirButton";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { estadoSeguimiento } from "@/lib/seguidores";
 import { getSession } from "@/lib/session";

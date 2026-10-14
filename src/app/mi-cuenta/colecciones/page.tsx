@@ -12,11 +12,12 @@ import {
   X,
 } from "lucide-react";
 
-import AccountPageHeader from "@/components/AccountPageHeader";
-import EmptyState from "@/components/EmptyState";
-import Footer from "@/components/Footer";
+import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
+import EmptyState from "@/components/ui/EmptyState";
+import Footer from "@/components/layout/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { IconoBasura } from "@/components/iconos";
+import { fechaMedia } from "@/lib/formato";
 
 type Product = {
   id: string;
@@ -43,13 +44,6 @@ type Collection = {
   isPublic: boolean;
   items: CollectionItem[];
 };
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-PE", {
-    dateStyle: "medium",
-  }).format(new Date(value));
-}
-
 export default function ColeccionesPage() {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [name, setName] = useState("");
@@ -417,7 +411,7 @@ export default function ColeccionesPage() {
                             ? "recurso"
                             : "recursos"}
                           {" · "}
-                          {formatDate(collection.updatedAt)}
+                          {fechaMedia(collection.updatedAt)}
                         </p>
                       </div>
 

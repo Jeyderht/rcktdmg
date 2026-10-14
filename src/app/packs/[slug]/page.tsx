@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BadgeCheck, ChevronRight, Layers } from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import ProductCard from "@/components/tienda/ProductCard";
 import AddPackToCartButton from "./AddPackToCartButton";
 import { obtenerPackPublico } from "@/lib/packs";
 import { formatPrice } from "@/lib/pricing";

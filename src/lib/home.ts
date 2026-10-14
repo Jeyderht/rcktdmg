@@ -1,11 +1,14 @@
-import type { TipoPieza } from "@/lib/tipos-publicacion";
-import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
+
 import {
-  ALTO_CORPORATIVO,
-  ALTO_VERTICAL,
-  ANCHO_CORPORATIVO,
-  ANCHO_VERTICAL,
-} from "@/lib/dimensiones";
+  SELECCION_TARJETA,
+  construirWhere,
+  ordenPrisma,
+  type FiltrosCatalogo,
+} from "@/lib/catalogo";
+import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
+import { prisma } from "@/lib/prisma";
+import { ALTO_VERTICAL, ANCHO_VERTICAL } from "@/lib/dimensiones";
 
 /**
  * Datos de las secciones nuevas de la portada.
@@ -21,206 +24,13 @@ import {
 
 /** Slugs de las categorías que tienen sección propia en la portada. */
 export const CATEGORIA_EVENTOS = "eventos";
-export const CATEGORIA_CORPORATIVOS = "corporativos";
-
-/** Recurso tal y como lo pintan las secciones nuevas. */
-export type TarjetaHome = {
-  id: string;
-  name: string;
-  slug: string;
-  price: number;
-  /** Imagen pública. Nunca una referencia del almacén privado. */
-  imagen: string | null;
-  /** Tamaño real de esa imagen. Null si no se conoce. */
-  ancho: number | null;
-  alto: number | null;
-  categoria: { name: string; slug: string } | null;
-  creador: {
-    nombre: string;
-    /** Solo si tiene perfil público real; si no, null y no se enlaza. */
-    username: string | null;
-    avatarUrl: string | null;
-    isVerified: boolean;
-  };
-};
-
-const SELECCION = {
-  id: true,
-  name: true,
-  slug: true,
-  price: true,
-  coverUrl: true,
-  coverWidth: true,
-  coverHeight: true,
-  category: { select: { name: true, slug: true } },
-  creator: {
-    select: {
-      name: true,
-      publicName: true,
-      username: true,
-      avatarUrl: true,
-      isVerified: true,
-      creatorStatus: true,
-    },
-  },
-  images: {
-    orderBy: { sortOrder: "asc" as const },
-    take: 1,
-    select: { url: true, imageWidth: true, imageHeight: true },
-  },
-};
-
-type Fila = {
-  id: string;
-  name: string;
-  slug: string;
-  price: unknown;
-  coverUrl: string | null;
-  coverWidth: number | null;
-  coverHeight: number | null;
-  category: { name: string; slug: string } | null;
-  creator: {
-    name: string | null;
-    publicName: string | null;
-    username: string | null;
-    avatarUrl: string | null;
-    isVerified: boolean;
-    creatorStatus: string | null;
-  };
-  images: {
-    url: string;
-    imageWidth: number | null;
-    imageHeight: number | null;
-  }[];
-};
-
-function aTarjetaHome(fila: Fila): TarjetaHome {
-  return {
-    id: fila.id,
-    name: fila.name,
-    slug: fila.slug,
-    price: Number(fila.price),
-    /*
-      La imagen sale de ProductImage o de la portada, que son
-      las dos públicas. `fileUrl` —el archivo que se vende—
-      vive en el almacén privado y no se toca aquí.
-    */
-    imagen: fila.images[0]?.url ?? fila.coverUrl ?? null,
-    /*
-      Las dimensiones acompañan SIEMPRE a la imagen elegida.
-      Si se pinta la de galería, van las suyas; si se pinta la
-      portada, las de la portada. Mezclarlas daría una
-      proporción falsa.
-    */
-    ancho: fila.images[0]
-      ? fila.images[0].imageWidth
-      : fila.coverWidth,
-    alto: fila.images[0]
-      ? fila.images[0].imageHeight
-      : fila.coverHeight,
-    categoria: fila.category,
-    creador: {
-      nombre: fila.creator.publicName || fila.creator.name || "Creador",
-      username:
-        fila.creator.creatorStatus === "APPROVED"
-          ? fila.creator.username
-          : null,
-      avatarUrl: fila.creator.avatarUrl,
-      isVerified: fila.creator.isVerified,
-    },
-  };
-}
+export const CATEGORIA_GENERAL = "general";
 
 /**
- * Recursos publicados de una categoría, los más recientes.
+ * Proporción de las stories: 1080 × 1920 · 9:16 (la usa el
+ * visor de stories de la ficha del recurso).
  *
- * `soloConImagen` lo usan las Stories: una story ES la imagen,
- * así que un recurso sin ninguna no tiene nada que enseñar.
- * En lugar de inventarle una portada, se queda fuera.
- */
-async function porCategoria(
-  slug: string,
-  tope: number,
-  soloConImagen: boolean,
-  /** Cuando se indica, solo esa pieza. */
-  pieza?: TipoPieza
-): Promise<TarjetaHome[]> {
-  const filas = await prisma.product.findMany({
-    where: {
-      status: "PUBLISHED",
-      category: { slug },
-      ...(pieza ? { pieceType: pieza } : {}),
-      ...(soloConImagen
-        ? {
-            OR: [
-              { images: { some: {} } },
-              { coverUrl: { not: null } },
-            ],
-          }
-        : {}),
-    },
-    // El id cierra el orden para que no dependa del azar.
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    take: tope,
-    select: SELECCION,
-  });
-
-  return (filas as Fila[]).map(aTarjetaHome);
-}
-
-/** Toda la categoría Eventos, para su propia sección. */
-export function flyersDeEventos(tope = 12): Promise<TarjetaHome[]> {
-  return porCategoria(CATEGORIA_EVENTOS, tope, true);
-}
-
-/**
- * Recursos VERTICALES, para el visor de stories.
- *
- * «Story» no es una categoría, es una forma: 1080 × 1920, que
- * es lo que el visor a pantalla completa sabe enseñar sin
- * recortar ni deformar. Por eso el filtro va contra las
- * dimensiones REALES guardadas al subir la imagen, no contra
- * la categoría ni contra el `pieceType`.
- *
- * Eso mantiene separadas dos ideas que no son la misma:
- *
- *   · Eventos  es una CATEGORÍA, y toda ella mide 1080 × 1920,
- *     así que entra entera aquí.
- *   · Story    es un FORMATO, y lo cumple cualquier recurso
- *     vertical, sea de la categoría que sea.
- *
- * Antes esta sección pedía `pieceType: "EVENT_STORY"` y dejaba
- * fuera recursos que encajan perfectamente en el visor. Y un
- * recurso sin dimensiones leídas queda fuera a propósito: sin
- * el dato no se puede afirmar que sea vertical.
- */
-export function recursosVerticales(tope = 12): Promise<TarjetaHome[]> {
-  return prisma.product
-    .findMany({
-      where: {
-        status: "PUBLISHED",
-        coverWidth: ANCHO_VERTICAL,
-        coverHeight: ALTO_VERTICAL,
-        OR: [{ images: { some: {} } }, { coverUrl: { not: null } }],
-      },
-      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      take: tope,
-      select: SELECCION,
-    })
-    .then((filas) => (filas as Fila[]).map(aTarjetaHome));
-}
-
-/**
- * Proporción de cada sección. NO se mezclan.
- *
- *   Stories      1080 × 1920 · 9:16 · vertical de historia
- *   Corporativos 1080 × 1350 · 4:5  · vertical de publicación
- *
- * Están aquí, en un solo sitio, porque antes la tira de
- * Stories usaba 4:5 —la de Corporativos— y las dos secciones
- * se veían con la misma forma pese a ser formatos distintos.
- *
- * Y ahora SE CALCULAN a partir de las medidas reales, en vez
+ * SE CALCULA a partir de las medidas reales, en vez
  * de escribirse a mano. Antes ponía "9/16" y "4/5" como texto:
  * coincidían con la regla por costumbre, no porque nada lo
  * garantizara. Si un día cambiara la medida exigida, aquellos
@@ -236,98 +46,6 @@ function proporcion(ancho: number, alto: number): string {
 }
 
 export const ASPECTO_STORY = proporcion(ANCHO_VERTICAL, ALTO_VERTICAL);
-export const ASPECTO_CORPORATIVO = proporcion(
-  ANCHO_CORPORATIVO,
-  ALTO_CORPORATIVO
-);
-
-/**
- * Recursos para el carrusel de Corporativos.
- *
- * Solo categoría Corporativos con formato 1080 × 1350 exacto.
- * Si no hay ninguno se devuelve la lista vacía y la sección se
- * oculta entera: una sección de Corporativos que enseña
- * recursos de otra categoría no dice la verdad, por mucho que
- * lo aclare un rótulo.
- */
-export async function corporativosParaSlice(
-  tope = 9
-): Promise<{ recursos: TarjetaHome[] }> {
-  return { recursos: await recursosCorporativos(tope) };
-}
-
-/**
- * Recursos para el visor de stories de la portada.
- *
- * La sección va por FORMATO, no por categoría: entra todo lo
- * publicado que mida 1080 × 1920, venga de donde venga. La
- * categoría Eventos entra entera —toda ella mide eso— y
- * también cualquier vertical de otra categoría, porque el
- * visor solo necesita que la pieza sea 9:16.
- *
- * Si no hay ningún recurso vertical publicado se devuelve
- * vacío y la sección desaparece. No se rellena con recursos de
- * otro formato.
- */
-export async function flyersParaStories(
-  tope = 12
-): Promise<{ flyers: TarjetaHome[] }> {
-  return { flyers: await recursosVerticales(tope) };
-}
-
-/**
- * Recursos corporativos para el carrusel en perspectiva.
- *
- * Solo los que miden REALMENTE 1080 × 1350. El filtro va
- * contra las dimensiones guardadas al subir la imagen, no
- * contra el nombre del archivo ni contra "es más alto que
- * ancho": un 1080 × 1080 y un 1080 × 1920 quedan fuera, que es
- * justo lo que se pide.
- *
- * Un recurso cuyas dimensiones no se pudieron leer queda
- * fuera también. Es deliberado: sin el dato no se puede
- * afirmar que cumple el formato.
- */
-export async function recursosCorporativos(
-  tope = 9
-): Promise<TarjetaHome[]> {
-  const filas = await prisma.product.findMany({
-    where: {
-      status: "PUBLISHED",
-      category: { slug: CATEGORIA_CORPORATIVOS },
-      OR: [
-        {
-          images: {
-            some: {
-              imageWidth: ANCHO_CORPORATIVO,
-              imageHeight: ALTO_CORPORATIVO,
-            },
-          },
-        },
-        {
-          coverWidth: ANCHO_CORPORATIVO,
-          coverHeight: ALTO_CORPORATIVO,
-        },
-      ],
-    },
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    take: tope,
-    select: SELECCION,
-  });
-
-  /*
-    Segundo filtro en memoria: la consulta admite un recurso
-    cuya GALERÍA tenga una imagen del formato, pero la tarjeta
-    podría acabar pintando la portada, que quizá no lo sea. Se
-    comprueba la imagen que de verdad se va a enseñar.
-  */
-  return (filas as Fila[])
-    .map(aTarjetaHome)
-    .filter(
-      (t) =>
-        t.ancho === ANCHO_CORPORATIVO && t.alto === ALTO_CORPORATIVO
-    );
-}
 
 /* ══════════════ CREADORES ══════════════ */
 
@@ -444,38 +162,140 @@ export async function creadoresDestacados(
   );
 }
 
+/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */
+
+/** Una de las dos opciones de «¿Qué estás buscando?». */
+export type OpcionQueBuscas = {
+  /** Portadas reales más recientes (solo imagen pública). */
+  portadas: { id: string; nombre: string; imagen: string }[];
+  recursos: number;
+  /** Creadores con al menos un recurso publicado en la opción. */
+  creadores: number;
+  /** Formatos de archivo distintos, en mayúsculas. */
+  formatos: string[];
+};
+
 /**
- * Recuentos para "Más diseños para tu negocio".
+ * Datos de «¿Qué estás buscando?».
  *
- * Cuatro agregados en paralelo, sin traer ninguna fila: solo
- * hacen falta los números para decidir qué caminos se ofrecen
- * y cuántos elementos tiene cada uno.
+ * Mismo filtro que los listados a los que lleva cada opción
+ * (construirWhere de la tienda): Eventos es
+ * /tienda?categoria=eventos y Diseños generales es
+ * /tienda?sin=eventos, así que las cifras son las del listado.
+ * Solo lectura; con cifra 0 la fila no se pinta.
  */
-export async function conteosDeDisenos(): Promise<{
-  colecciones: number;
-  corporativos: number;
-  socialMedia: number;
-  packs: number;
+export async function datosQueBuscas(): Promise<{
+  eventos: OpcionQueBuscas;
+  generales: OpcionQueBuscas;
 }> {
-  const [colecciones, corporativos, socialMedia, packs] =
-    await Promise.all([
-      prisma.commercialCollection.count({
-        where: { status: "PUBLISHED" },
-      }),
-      prisma.product.count({
+  async function opcion(
+    where: Prisma.ProductWhereInput,
+    portadas: number
+  ): Promise<OpcionQueBuscas> {
+    const [recientes, recursos, creadores, formatos] = await Promise.all([
+      prisma.product.findMany({
         where: {
-          status: "PUBLISHED",
-          category: { slug: CATEGORIA_CORPORATIVOS },
+          AND: [
+            where,
+            { OR: [{ coverUrl: { not: null } }, { images: { some: {} } }] },
+          ],
+        },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        take: portadas,
+        select: {
+          id: true,
+          name: true,
+          coverUrl: true,
+          images: {
+            orderBy: { sortOrder: "asc" },
+            take: 1,
+            select: { url: true },
+          },
         },
       }),
-      prisma.product.count({
-        where: {
-          status: "PUBLISHED",
-          category: { slug: "social-media" },
-        },
+      prisma.product.count({ where }),
+      prisma.product.groupBy({ by: ["creatorId"], where }),
+      prisma.product.groupBy({
+        by: ["fileFormat"],
+        where: { AND: [where, { fileFormat: { not: null } }] },
       }),
-      prisma.pack.count({ where: { status: "PUBLISHED" } }),
     ]);
 
-  return { colecciones, corporativos, socialMedia, packs };
+    return {
+      portadas: recientes.flatMap((p) => {
+        const imagen = p.coverUrl || p.images[0]?.url;
+        return imagen ? [{ id: p.id, nombre: p.name, imagen }] : [];
+      }),
+      recursos,
+      creadores: creadores.length,
+      formatos: formatos
+        .map((f) => (f.fileFormat ?? "").toUpperCase())
+        .filter(Boolean)
+        .sort(),
+    };
+  }
+
+  const [eventos, generales] = await Promise.all([
+    opcion(construirWhere({ categoria: CATEGORIA_EVENTOS }), 3),
+    opcion(construirWhere({ sinCategoria: CATEGORIA_EVENTOS }), 2),
+  ]);
+
+  return { eventos, generales };
+}
+
+/* ══════════ CATÁLOGO POR CATEGORÍA ══════════ */
+
+const TOPE_CATALOGO = 8;
+
+/**
+ * Datos del catálogo por categoría del inicio (Fix 9).
+ *
+ * Cuatro categorías: Eventos, General, Colecciones y Packs
+ * (Corporativos no: es lo mismo que General). Cada una con sus
+ * pestañas Recientes, Populares y Packs, con los MISMOS
+ * criterios de la tienda (construirWhere + ordenPrisma): el
+ * «Ver todo» lleva al listado que contiene exactamente esto.
+ * Las colecciones solo tienen orden por fecha. Solo lectura;
+ * hasta 8 por pestaña.
+ */
+export async function datosCatalogoInicio() {
+  const recursos = (filtros: FiltrosCatalogo, orden: "recientes" | "populares") =>
+    prisma.product.findMany({
+      where: construirWhere(filtros),
+      orderBy: ordenPrisma(orden),
+      take: TOPE_CATALOGO,
+      select: SELECCION_TARJETA,
+    });
+
+  const eventos = { categoria: CATEGORIA_EVENTOS };
+  const general = { categoria: CATEGORIA_GENERAL };
+
+  const [
+    eventosRecientes,
+    eventosPopulares,
+    eventosPacks,
+    generalRecientes,
+    generalPopulares,
+    generalPacks,
+    packsRecientes,
+    packsPopulares,
+    colecciones,
+  ] = await Promise.all([
+    recursos(eventos, "recientes"),
+    recursos(eventos, "populares"),
+    recursos({ ...eventos, soloPacks: true }, "recientes"),
+    recursos(general, "recientes"),
+    recursos(general, "populares"),
+    recursos({ ...general, soloPacks: true }, "recientes"),
+    recursos({ soloPacks: true }, "recientes"),
+    recursos({ soloPacks: true }, "populares"),
+    listarColeccionesPublicas(TOPE_CATALOGO),
+  ]);
+
+  return {
+    eventos: { recientes: eventosRecientes, populares: eventosPopulares, packs: eventosPacks },
+    general: { recientes: generalRecientes, populares: generalPopulares, packs: generalPacks },
+    packs: { recientes: packsRecientes, populares: packsPopulares },
+    colecciones,
+  };
 }

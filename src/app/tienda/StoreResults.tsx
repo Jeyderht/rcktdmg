@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SearchX, X } from "lucide-react";
 
 import GaleriaTienda from "./GaleriaTienda";
-import Paginacion from "@/components/Paginacion";
+import Paginacion from "@/components/ui/Paginacion";
 import { consultarCatalogo } from "@/lib/catalogo-consulta";
 import {
   hayFiltros,

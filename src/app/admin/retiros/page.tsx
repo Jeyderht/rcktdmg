@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { RefreshCw, Wallet } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
+import EmptyState from "@/components/ui/EmptyState";
+import { formatPrice } from "@/lib/pricing";
+import { fechaNumerica } from "@/lib/formato";
 
 type PaymentMethod = {
   id: string;
@@ -56,19 +58,6 @@ function getPaymentMethodLabel(type: PaymentMethod["type"]) {
 
   return labels[type];
 }
-
-function formatMoney(value: number) {
-  return `S/ ${value.toFixed(2)}`;
-}
-
-function formatDate(value: string) {
-  return new Date(value).toLocaleDateString("es-PE", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-}
-
 /** Datos del método de pago, tal como los entrega la API. */
 function PaymentMethodDetails({
   method,
@@ -264,7 +253,7 @@ export default function AdminRetirosPage() {
     },
     {
       label: "Pendiente",
-      value: formatMoney(sumOf(pending)),
+      value: formatPrice(sumOf(pending)),
       hint: `${pending.length} ${
         pending.length === 1 ? "solicitud" : "solicitudes"
       }`,
@@ -272,7 +261,7 @@ export default function AdminRetirosPage() {
     },
     {
       label: "Aprobado",
-      value: formatMoney(sumOf(approved)),
+      value: formatPrice(sumOf(approved)),
       hint: `${approved.length} ${
         approved.length === 1 ? "solicitud" : "solicitudes"
       }`,
@@ -280,7 +269,7 @@ export default function AdminRetirosPage() {
     },
     {
       label: "Pagado",
-      value: formatMoney(sumOf(paid)),
+      value: formatPrice(sumOf(paid)),
       hint: `${paid.length} ${
         paid.length === 1 ? "solicitud" : "solicitudes"
       }`,
@@ -476,7 +465,7 @@ export default function AdminRetirosPage() {
                         </td>
 
                         <td className="rk-table-num rk-table-top">
-                          {formatMoney(Number(withdrawal.amount))}
+                          {formatPrice(Number(withdrawal.amount))}
                         </td>
 
                         <td className="rk-table-top">
@@ -496,13 +485,13 @@ export default function AdminRetirosPage() {
                         </td>
 
                         <td className="rk-table-muted rk-table-top">
-                          {formatDate(withdrawal.createdAt)}
+                          {fechaNumerica(withdrawal.createdAt)}
 
                           {/* Solo si el registro tiene fecha real. */}
                           {withdrawal.processedAt && (
                             <span className="mt-1 block">
                               Procesado{" "}
-                              {formatDate(withdrawal.processedAt)}
+                              {fechaNumerica(withdrawal.processedAt)}
                             </span>
                           )}
                         </td>
@@ -543,7 +532,7 @@ export default function AdminRetirosPage() {
 
                     <div className="rk-row-card-side">
                       <p className="rk-row-card-amount">
-                        {formatMoney(Number(withdrawal.amount))}
+                        {formatPrice(Number(withdrawal.amount))}
                       </p>
 
                       <span
@@ -563,12 +552,12 @@ export default function AdminRetirosPage() {
                   </div>
 
                   <p className="rk-row-card-meta">
-                    Solicitado el {formatDate(withdrawal.createdAt)}
+                    Solicitado el {fechaNumerica(withdrawal.createdAt)}
 
                     {withdrawal.processedAt && (
                       <>
                         {" · Procesado el "}
-                        {formatDate(withdrawal.processedAt)}
+                        {fechaNumerica(withdrawal.processedAt)}
                       </>
                     )}
                   </p>

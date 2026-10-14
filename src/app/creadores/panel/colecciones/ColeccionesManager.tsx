@@ -18,12 +18,12 @@ import {
   X,
 } from "lucide-react";
 
-import EmptyState from "@/components/EmptyState";
-import SubirPortada from "@/components/SubirPortada";
-import SubidorImagen from "@/components/SubidorImagen";
+import EmptyState from "@/components/ui/EmptyState";
+import SubirPortada from "@/components/creador/SubirPortada";
+import SubidorImagen from "@/components/creador/SubidorImagen";
 import SubidorArchivo, {
   type ArchivoGuardado,
-} from "@/components/SubidorArchivo";
+} from "@/components/creador/SubidorArchivo";
 import { formatPrice } from "@/lib/pricing";
 import {
   ETIQUETA_ESTADO_COLECCION,

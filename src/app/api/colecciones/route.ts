@@ -1,29 +1,10 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { verifySessionToken } from "@/lib/auth";
-
-async function getAuthenticatedUser() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("rcktdmg_session")?.value;
-
-  if (!token) {
-    return null;
-  }
-
-  const session = await verifySessionToken(token);
-
-  if (!session || typeof session.userId !== "string") {
-    return null;
-  }
-
-  return session.userId;
-}
-
+import { usuarioIdDeSesion } from "@/lib/sesion-api";
 // LISTAR COLECCIONES
 export async function GET() {
   try {
-    const userId = await getAuthenticatedUser();
+    const userId = await usuarioIdDeSesion();
 
     if (!userId) {
       return NextResponse.json(
@@ -79,7 +60,7 @@ export async function GET() {
 // CREAR COLECCIÓN
 export async function POST(request: Request) {
   try {
-    const userId = await getAuthenticatedUser();
+    const userId = await usuarioIdDeSesion();
 
     if (!userId) {
       return NextResponse.json(
@@ -149,7 +130,7 @@ export async function POST(request: Request) {
 // ELIMINAR COLECCIÓN
 export async function DELETE(request: Request) {
   try {
-    const userId = await getAuthenticatedUser();
+    const userId = await usuarioIdDeSesion();
 
     if (!userId) {
       return NextResponse.json(
@@ -205,7 +186,7 @@ export async function DELETE(request: Request) {
 // EDITAR COLECCIÓN
 export async function PATCH(request: Request) {
   try {
-    const userId = await getAuthenticatedUser();
+    const userId = await usuarioIdDeSesion();
 
     if (!userId) {
       return NextResponse.json(

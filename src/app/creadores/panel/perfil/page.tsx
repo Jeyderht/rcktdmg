@@ -11,7 +11,7 @@ import {
   useState,
 } from "react";
 
-import Footer from "@/components/Footer";
+import Footer from "@/components/layout/Footer";
 import { subirImagen } from "@/lib/storage/client-upload";
 
 type Profile = {

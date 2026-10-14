@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { paginaPrivada } from "@/lib/seo";
 
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import PanelShell from "@/components/panel/PanelShell";
 import type { ElementoPanel } from "@/components/panel/PanelNav";
 

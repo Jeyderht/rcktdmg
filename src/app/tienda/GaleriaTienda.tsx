@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react";
 
-import ProductCard, { type ProductCardData } from "@/components/ProductCard";
+import ProductCard, { type ProductCardData } from "@/components/tienda/ProductCard";
 
 /**
  * Resultados de la tienda en modo galería.

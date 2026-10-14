@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { TAGS_PROTEGIDOS } from "@/lib/tags-comun";
+import { MINIMO_SUGERENCIA, type Sugerencia } from "@/lib/busqueda-comun";
 
 /**
  * Ordenación por relevancia con pg_trgm.
@@ -96,17 +97,6 @@ export async function ordenarPorRelevancia(
 }
 
 /* ══════════════════ SUGERENCIAS ══════════════════ */
-
-export type Sugerencia = {
-  tipo: "recurso" | "categoria" | "etiqueta" | "creador";
-  etiqueta: string;
-  /** Texto secundario, solo si aporta algo. */
-  detalle?: string;
-  href: string;
-};
-
-/** Mínimo de caracteres antes de consultar nada. */
-export const MINIMO_SUGERENCIA = 2;
 
 /**
  * Sugerencias del buscador.

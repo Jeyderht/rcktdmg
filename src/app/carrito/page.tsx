@@ -5,13 +5,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 
-import VacioCaja from "@/components/VacioCaja";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+import VacioCaja from "@/components/ui/VacioCaja";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
 import {
     CART_STORAGE_KEY,
     CART_UPDATED_EVENT,
-} from "@/components/useCartCount";
+} from "@/components/hooks/useCartCount";
 import { IconoBasura, IconoBolsa } from "@/components/iconos";
 
 type CartItem = {

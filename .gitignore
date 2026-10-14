@@ -1,16 +1,23 @@
 node_modules
 .next
-.env
-.env.local
-*.log
-
-pswrd.txt
-reset-admin.js
-/storage/
-
-rcktdmg-backup.dump
 .vercel
-.env*
+*.log
 
 # Caché incremental de TypeScript: se regenera en cada `tsc`.
 tsconfig.tsbuildinfo
+
+# Entorno: ningún .env* se sube, salvo la plantilla sin valores.
+.env*
+!.env.example
+
+# Archivos locales de desarrollo
+/storage/
+
+# Credenciales y copias de la base de datos: nunca al repo.
+# (backup-productos.sql ya estaba subido antes de esta regla;
+# ignorarlo no lo saca del historial.)
+pswrd.txt
+recovery-codes.txt
+reset-admin.js
+*.dump
+/*.sql
