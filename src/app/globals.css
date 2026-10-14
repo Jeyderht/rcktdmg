@@ -15869,6 +15869,346 @@ div.rk-upload-error > * + * {
   .rk-sp-slide { transform: none; }
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)
+
+   Tira a todo el ancho (borde a borde, sin tarjeta) con la línea de
+   progreso, un marco con las portadas reales de la opción y sus
+   cifras. Casi monocromo: tinta y perla, que se invierten en oscuro;
+   la lavanda solo en el progreso y en el foco.
+   ═══════════════════════════════════════════════════════════════════ */
+.rk-qb {
+  --rk-qb-fondo: rgb(var(--rk-marca-tinta));
+  --rk-qb-sobre: rgb(var(--rk-marca-centro));
+  --rk-qb-suave: rgb(var(--rk-foreground) / 0.6);
+  --rk-qb-punteado: rgb(var(--rk-foreground) / 0.16);
+  padding: 40px 0 48px;
+}
+
+[data-theme="dark"] .rk-qb {
+  --rk-qb-fondo: rgb(var(--rk-marca-centro));
+  --rk-qb-sobre: rgb(var(--rk-marca-tinta));
+}
+
+.rk-qb-titulo {
+  margin: 0 16px 20px;
+  color: var(--rx-texto);
+  font-size: clamp(1.55rem, 7vw, 2.2rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.18;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* Tira: pista gris de 2 px arriba, con el progreso lavanda encima */
+.rk-qb-tira {
+  position: relative;
+  border-bottom: 1px solid var(--rk-linea);
+}
+
+.rk-qb-tira::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: var(--rk-linea);
+}
+
+.rk-qb-progreso {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 2px;
+  background: rgb(var(--rk-marca-lavanda));
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: rk-qb-progreso 6s linear forwards;
+}
+
+.rk-qb-tira[data-pausa] .rk-qb-progreso {
+  animation-play-state: paused;
+}
+
+@keyframes rk-qb-progreso {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.rk-qb-tira-dentro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 20px 16px 16px;
+}
+
+.rk-qb-icono {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--rk-qb-fondo);
+  color: var(--rk-qb-sobre);
+}
+
+.rk-qb-icono svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.8;
+}
+
+.rk-qb-texto {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rk-qb-texto b {
+  color: var(--rx-texto);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.rk-qb-texto span {
+  color: var(--rk-qb-suave);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.rk-qb-flechas {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  flex: none;
+  gap: 6px;
+  padding-left: 14px;
+  border-left: 1px solid var(--rk-linea);
+}
+
+.rk-qb-flechas button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--rx-borde);
+  border-radius: 50%;
+  background: var(--rx-vidrio);
+  color: var(--rx-texto);
+  box-shadow: var(--rx-sombra-base);
+  cursor: pointer;
+  transition: border-color var(--rx-t-micro) var(--rx-curva);
+}
+
+/* área táctil de 44 px sin cambiar el tamaño visible */
+.rk-qb-flechas button::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+
+.rk-qb-flechas svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-qb-flechas button:hover {
+    border-color: rgb(var(--rk-marca-lavanda));
+  }
+}
+
+.rk-qb-flechas button:focus-visible,
+.rk-qb-marco:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-lavanda));
+  outline-offset: 2px;
+}
+
+/* Cuerpo: marco con las portadas y lista de cifras */
+.rk-qb-cuerpo {
+  display: grid;
+  gap: 8px;
+  max-width: 80rem;
+  margin: 18px auto 0;
+  padding: 0 16px;
+}
+
+@media (min-width: 1024px) {
+  .rk-qb-cuerpo {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 48px;
+    padding: 0 32px;
+  }
+}
+
+.rk-qb-marco {
+  display: block;
+  padding: 10px;
+  border: 1px solid var(--rx-borde);
+  border-radius: 28px;
+  background: var(--rx-vidrio);
+  box-shadow: var(--rx-sombra-base);
+}
+
+.rk-qb-interior {
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--rk-qb-fondo);
+  color: var(--rk-qb-sobre);
+}
+
+.rk-qb-barra {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+.rk-qb-barra i {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+.rk-qb-barra span {
+  min-width: 0;
+  margin-left: auto;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rk-qb-portadas {
+  display: grid;
+  gap: 8px;
+  padding: 0 10px 10px;
+}
+
+.rk-qb-portadas[data-forma="vertical"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rk-qb-portadas[data-forma="general"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rk-qb-portada {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.rk-qb-portadas[data-forma="vertical"] .rk-qb-portada {
+  aspect-ratio: 9 / 16;
+}
+
+.rk-qb-portadas[data-forma="general"] .rk-qb-portada {
+  aspect-ratio: 4 / 5;
+}
+
+.rk-qb-cifras {
+  margin: 6px 0 0;
+  padding: 0 6px;
+}
+
+.rk-qb-cifra {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 4px;
+  border-bottom: 1px dashed var(--rk-qb-punteado);
+}
+
+.rk-qb-cifra:last-child {
+  border-bottom: 0;
+}
+
+.rk-qb-cifra-icono {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--rx-borde);
+  border-radius: 14px;
+  background: var(--rx-vidrio);
+  color: var(--rx-texto);
+}
+
+.rk-qb-cifra-icono svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.6;
+}
+
+.rk-qb-cifra dt {
+  margin-bottom: 2px;
+  color: var(--rk-qb-suave);
+  font-size: 1rem;
+}
+
+.rk-qb-cifra dd {
+  margin: 0;
+  color: var(--rx-texto);
+  font-size: 2.1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.rk-qb-ir {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* Relevo: salida 200 ms (opacidad y desenfoque), entrada 300 ms */
+.rk-qb-cambia {
+  transition:
+    opacity 0.3s var(--rx-curva),
+    filter 0.3s var(--rx-curva);
+}
+
+.rk-qb[data-fuera] .rk-qb-cambia {
+  opacity: 0;
+  filter: blur(6px);
+  transition-duration: 0.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-qb-progreso {
+    display: none;
+  }
+
+  .rk-qb-cambia,
+  .rk-qb-flechas button {
+    transition: none;
+  }
+
+  .rk-qb[data-fuera] .rk-qb-cambia {
+    filter: none;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════
    BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)
    Todo limitado al contenedor .rk-dash (430 → 760 → 1160 px):

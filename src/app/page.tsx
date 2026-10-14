@@ -34,6 +34,7 @@ import SeparadorSeccion from "@/components/home/SeparadorSeccion";
 import PreguntasFrecuentes from "@/components/ui/PreguntasFrecuentes";
 import {
   creadoresDestacados,
+  datosQueBuscas,
   corporativosParaSlice,
   flyersParaStories,
 } from "@/lib/home";
@@ -109,6 +110,7 @@ export default async function Home() {
     marketplace,
     recomendados,
     destacadosBusqueda,
+    queBuscas,
   ] = await Promise.all([
     prisma.product.findMany({
       where: { status: "PUBLISHED" },
@@ -147,6 +149,9 @@ export default async function Home() {
     /* Frases del buscador que se escribe solo: los mismos
        términos de «Populares ahora». Sin ellos, no se anima. */
     terminosDestacados(6).catch(() => []),
+
+    /* «¿Qué estás buscando?»: portadas y cifras de cada opción. */
+    datosQueBuscas(),
   ]);
 
   /*
@@ -425,7 +430,7 @@ export default async function Home() {
         <SeparadorSeccion />
 
         {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */}
-        <SelectorBusqueda />
+        <SelectorBusqueda datos={queBuscas} />
 
         <SeparadorSeccion />
 

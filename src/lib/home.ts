@@ -1,3 +1,6 @@
+import type { Prisma } from "@prisma/client";
+
+import { construirWhere } from "@/lib/catalogo";
 import { prisma } from "@/lib/prisma";
 import {
   ALTO_CORPORATIVO,
@@ -399,4 +402,85 @@ export async function creadoresDestacados(
         ]
       : []
   );
+}
+
+/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */
+
+/** Una de las dos opciones de «¿Qué estás buscando?». */
+export type OpcionQueBuscas = {
+  /** Portadas reales más recientes (solo imagen pública). */
+  portadas: { id: string; nombre: string; imagen: string }[];
+  recursos: number;
+  /** Creadores con al menos un recurso publicado en la opción. */
+  creadores: number;
+  /** Formatos de archivo distintos, en mayúsculas. */
+  formatos: string[];
+};
+
+/**
+ * Datos de «¿Qué estás buscando?».
+ *
+ * Mismo filtro que los listados a los que lleva cada opción
+ * (construirWhere de la tienda): Eventos es
+ * /tienda?categoria=eventos y Diseños generales es
+ * /tienda?sin=eventos, así que las cifras son las del listado.
+ * Solo lectura; con cifra 0 la fila no se pinta.
+ */
+export async function datosQueBuscas(): Promise<{
+  eventos: OpcionQueBuscas;
+  generales: OpcionQueBuscas;
+}> {
+  async function opcion(
+    where: Prisma.ProductWhereInput,
+    portadas: number
+  ): Promise<OpcionQueBuscas> {
+    const [recientes, recursos, creadores, formatos] = await Promise.all([
+      prisma.product.findMany({
+        where: {
+          AND: [
+            where,
+            { OR: [{ coverUrl: { not: null } }, { images: { some: {} } }] },
+          ],
+        },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        take: portadas,
+        select: {
+          id: true,
+          name: true,
+          coverUrl: true,
+          images: {
+            orderBy: { sortOrder: "asc" },
+            take: 1,
+            select: { url: true },
+          },
+        },
+      }),
+      prisma.product.count({ where }),
+      prisma.product.groupBy({ by: ["creatorId"], where }),
+      prisma.product.groupBy({
+        by: ["fileFormat"],
+        where: { AND: [where, { fileFormat: { not: null } }] },
+      }),
+    ]);
+
+    return {
+      portadas: recientes.flatMap((p) => {
+        const imagen = p.coverUrl || p.images[0]?.url;
+        return imagen ? [{ id: p.id, nombre: p.name, imagen }] : [];
+      }),
+      recursos,
+      creadores: creadores.length,
+      formatos: formatos
+        .map((f) => (f.fileFormat ?? "").toUpperCase())
+        .filter(Boolean)
+        .sort(),
+    };
+  }
+
+  const [eventos, generales] = await Promise.all([
+    opcion(construirWhere({ categoria: CATEGORIA_EVENTOS }), 3),
+    opcion(construirWhere({ sinCategoria: CATEGORIA_EVENTOS }), 2),
+  ]);
+
+  return { eventos, generales };
 }
