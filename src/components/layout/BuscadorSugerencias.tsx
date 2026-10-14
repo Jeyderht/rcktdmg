@@ -10,6 +10,7 @@ import {
   useTecladoSugerencias,
 } from "@/components/layout/sugerencias";
 import { IconoBuscar } from "@/components/iconos";
+import PlaceholderAnimado from "@/components/layout/PlaceholderAnimado";
 
 /**
  * Buscador de la tienda, con sugerencias.
@@ -25,6 +26,7 @@ export default function BuscadorSugerencias({
   placeholder = "Buscar recursos...",
   className = "",
   idInput,
+  frasesAnimadas = [],
 }: {
   valorInicial?: string;
   /** Id del campo, para que la cabecera pueda enfocarlo. */
@@ -33,6 +35,8 @@ export default function BuscadorSugerencias({
   ocultos?: Record<string, string | undefined>;
   placeholder?: string;
   className?: string;
+  /** Sugerencias que se escriben solas con el campo vacío. */
+  frasesAnimadas?: string[];
 }) {
   const router = useRouter();
   const listaId = useId();
@@ -123,6 +127,8 @@ export default function BuscadorSugerencias({
           spellCheck={false}
           className="rk-buscador-campo"
         />
+
+        <PlaceholderAnimado frases={frasesAnimadas} />
 
         {/* Centrado sin transform: ningún estado del botón lo mueve. */}
         <div className="absolute inset-y-0 right-1.5 flex items-center gap-1">

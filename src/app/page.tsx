@@ -48,6 +48,8 @@ import { programasPorCategoria } from "@/lib/programas-categoria";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { SITIO, absoluta, paginaPublica } from "@/lib/seo";
 import { IconoBuscar } from "@/components/iconos";
+import PlaceholderAnimado from "@/components/layout/PlaceholderAnimado";
+import { terminosDestacados } from "@/lib/busqueda";
 
 export const dynamic = "force-dynamic";
 
@@ -113,6 +115,7 @@ export default async function Home() {
     promos,
     marketplace,
     recomendados,
+    destacadosBusqueda,
   ] = await Promise.all([
     prisma.product.findMany({
       where: { status: "PUBLISHED" },
@@ -208,6 +211,10 @@ export default async function Home() {
     datosMarketplace(),
 
     datosRecomendados(),
+
+    /* Frases del buscador que se escribe solo: los mismos
+       términos de «Populares ahora». Sin ellos, no se anima. */
+    terminosDestacados(6).catch(() => []),
   ]);
 
   /* Solo 3 carpetas en el inicio; sus programas en una consulta. */
@@ -450,6 +457,10 @@ export default async function Home() {
                       autoComplete="off"
                       spellCheck={false}
                       className="rk-buscador-campo"
+                    />
+
+                    <PlaceholderAnimado
+                      frases={destacadosBusqueda.map((d) => d.etiqueta)}
                     />
 
                     {/*

@@ -5896,6 +5896,56 @@ table .rk-btn:hover:not(:disabled) {
   color: rgb(var(--rk-muted) / 0.8);
 }
 
+/* sugerencias que se escriben solas (PlaceholderAnimado.tsx): capa
+   decorativa sobre el campo vacío; left, right y tamaño de letra
+   los copia del campo. Mientras se ve, el placeholder real se
+   vuelve transparente (sigue ahí para los lectores de pantalla). */
+.rk-ph-animado {
+  position: absolute;
+  inset-block: 0;
+  left: 2.875rem;
+  right: 7rem;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+  color: rgb(var(--rk-muted) / 0.8);
+}
+
+.rk-ph-animado[hidden] {
+  display: none;
+}
+
+.rk-ph-animado-texto {
+  overflow: hidden;
+}
+
+.rk-ph-animado-cursor {
+  flex: none;
+  width: 1.5px;
+  height: 1.05em;
+  margin-left: 2px;
+  background: rgb(var(--rk-marca-lavanda));
+  animation: rk-ph-parpadeo 1s steps(1) infinite;
+}
+
+@keyframes rk-ph-parpadeo {
+  50% {
+    opacity: 0;
+  }
+}
+
+.rk-buscador[data-placeholder-animado] .rk-buscador-campo::placeholder {
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-ph-animado-cursor {
+    animation: none;
+  }
+}
+
 /* lista de sugerencias: fondo opaco. Sobre chips y botones el
    vidrio dejaba leer lo de debajo a través de las opciones. */
 .rk-sugerencias {

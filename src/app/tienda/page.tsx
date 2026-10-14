@@ -9,6 +9,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import BuscadorSugerencias from "@/components/layout/BuscadorSugerencias";
 import { ID_BUSCADOR_TIENDA } from "@/lib/busqueda-ui";
+import { terminosDestacados } from "@/lib/busqueda";
 import FiltrosMoviles from "./FiltrosMoviles";
 import FiltrosSidebar from "./FiltrosSidebar";
 import StoreResults, {
@@ -125,6 +126,7 @@ export default async function Store({ searchParams }: StoreProps) {
     coloresCrudos,
     etiquetasCrudas,
     totalPacks,
+    destacadosBusqueda,
   ] = await Promise.all([
       prisma.category.findMany({
         where: {
@@ -188,6 +190,10 @@ export default async function Store({ searchParams }: StoreProps) {
           tags: { some: { tag: { slug: TAG_PACK } } },
         },
       }),
+
+      /* Frases del buscador que se escribe solo: los mismos
+         términos de «Populares ahora». Sin ellos, no se anima. */
+      terminosDestacados(6).catch(() => []),
     ]);
 
   const formatos = formatosCrudos
@@ -348,6 +354,7 @@ export default async function Store({ searchParams }: StoreProps) {
           <BuscadorSugerencias
             valorInicial={query}
             idInput={ID_BUSCADOR_TIENDA}
+            frasesAnimadas={destacadosBusqueda.map((d) => d.etiqueta)}
             className="max-w-2xl"
             ocultos={{
               categoria: parametros.categoria,
