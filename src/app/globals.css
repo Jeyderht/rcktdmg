@@ -7537,16 +7537,24 @@ table .rk-btn:hover:not(:disabled) {
   background: rgb(255 255 255 / 0.45);
 }
 
+/* Pegada justo bajo el Navbar (Navbar.tsx mide su alto real en
+   --rk-navbar-alto; 56 px es el de móvil, por si aún no hay medida).
+   Vidrio fuerte: el contenido que pasa por debajo no debe
+   competir con el título. */
+.rk-panel-barra {
+  top: var(--rk-navbar-alto, 56px);
+}
+
 .rk-panel-barra,
 [data-theme="light"] .rk-panel-barra {
   border-bottom: 1px solid var(--rk-linea);
-  background: rgb(14 15 19 / 0.6);
+  background: rgb(14 15 19 / 0.88);
   -webkit-backdrop-filter: blur(22px) saturate(1.4);
   backdrop-filter: blur(22px) saturate(1.4);
 }
 
 [data-theme="light"] .rk-panel-barra {
-  background: rgb(255 255 255 / 0.7);
+  background: rgb(255 255 255 / 0.9);
 }
 
 .rk-panel-cajon,

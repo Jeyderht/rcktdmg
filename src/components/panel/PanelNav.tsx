@@ -193,7 +193,9 @@ function PanelNavInterno({
   return (
     <>
       {/* ══════════ CABECERA MÓVIL ══════════ */}
-      <div className="rk-panel-barra sticky top-0 z-30 flex items-center gap-3 px-4 py-3 lg:hidden">
+      {/* Se pega bajo el Navbar, no en top-0: allí quedaba detrás
+          de sus botones (top en .rk-panel-barra, globals.css). */}
+      <div className="rk-panel-barra sticky z-30 flex items-center gap-3 px-4 py-3 lg:hidden">
         <button
           type="button"
           onClick={() => setAbierto(true)}

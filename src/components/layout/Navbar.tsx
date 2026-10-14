@@ -308,6 +308,33 @@ function NavbarContent() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  /*
+    Alto real de la barra, en --rk-navbar-alto. La barra del
+    panel se pega justo debajo al hacer scroll; el alto cambia
+    con la fila de tablet y con el buscador móvil abierto, así
+    que se mide en vez de fijarlo.
+  */
+  const cabecera = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = cabecera.current;
+
+    if (!el) return;
+
+    const raiz = document.documentElement;
+    const medir = () =>
+      raiz.style.setProperty("--rk-navbar-alto", `${el.offsetHeight}px`);
+
+    medir();
+    const observador = new ResizeObserver(medir);
+    observador.observe(el);
+
+    return () => {
+      observador.disconnect();
+      raiz.style.removeProperty("--rk-navbar-alto");
+    };
+  }, []);
+
   const isActive = (href: string) =>
     href === "/"
       ? pathname === "/"
@@ -327,7 +354,11 @@ function NavbarContent() {
         Barra sin caja: logo, buscador y botones flotan sueltos,
         cada uno con su propio vidrio (rk-topbar en globals.css).
       */}
-      <header className="rk-topbar sm:px-4 sm:pt-4" data-scrolled={scrolled}>
+      <header
+        ref={cabecera}
+        className="rk-topbar sm:px-4 sm:pt-4"
+        data-scrolled={scrolled}
+      >
         <div className="mx-auto w-full max-w-7xl">
           <div className="rk-topbar-bar">
 
