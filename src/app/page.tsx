@@ -18,7 +18,6 @@ import {
 } from "@/components/home/SeccionesMarketplace";
 import { datosRecomendados } from "@/components/home/Recomendados";
 import SelectorBusqueda from "@/components/home/SelectorBusqueda";
-import HeroFlyers from "@/components/home/HeroFlyers";
 import PalabrasEscritas from "@/components/home/PalabrasEscritas";
 import SliderPortadas from "@/components/home/SliderPortadas";
 import CarpetasCategorias, {
@@ -107,7 +106,6 @@ export default async function Home() {
     products,
     categories,
     productCount,
-    portadas,
     flyers,
     corporativos,
     colecciones,
@@ -156,36 +154,6 @@ export default async function Home() {
     }),
 
     prisma.product.count({ where: { status: "PUBLISHED" } }),
-
-    /*
-      Imágenes de la portada del inicio.
-
-      Son recursos reales con imagen real. Hoy no todos los
-      recursos publicados tienen portada, así que la
-      composición se construye con las que existan: si no hay
-      ninguna, el bloque visual no se pinta y el texto ocupa
-      todo el ancho.
-    */
-    prisma.product.findMany({
-      where: { status: "PUBLISHED", coverUrl: { not: null } },
-      orderBy: { createdAt: "desc" },
-      /*
-        Siete flyers: los que la escena del hero puede relevar sin
-        que la rueda se note corta, y ni una imagen más de las que
-        alguien va a ver.
-      */
-      take: 7,
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        coverUrl: true,
-        price: true,
-        /* Deciden el marco de cada flyer del hero. */
-        pieceType: true,
-        category: { select: { slug: true, name: true } },
-      },
-    }),
 
     /*
       Las tres secciones nuevas entran en el MISMO Promise.all
@@ -377,13 +345,7 @@ export default async function Home() {
         {/* ══════════ HERO ══════════ */}
         <section className="relative overflow-hidden">
           <div className="mx-auto w-full max-w-7xl px-4 pb-16 pt-12 sm:px-5 lg:px-8 lg:pb-24 lg:pt-20">
-            <div
-              className={`grid items-center gap-12 ${
-                portadas.length > 0
-                  ? "lg:grid-cols-[1.05fr_0.95fr] lg:gap-16"
-                  : ""
-              }`}
-            >
+            <div className="grid items-center gap-12">
               {/* TEXTO */}
               <div className="rk-fade-up min-w-0">
                 <div className="rk-hc">
@@ -435,7 +397,7 @@ export default async function Home() {
                 <form
                   action="/tienda"
                   method="GET"
-                  className="mt-9 max-w-md"
+                  className="mx-auto mt-9 max-w-md"
                 >
                   {/*
                     La superficie es esta caja, no el campo. El
@@ -479,7 +441,8 @@ export default async function Home() {
                   </div>
                 </form>
 
-                <div className="mt-6 flex flex-wrap items-center gap-3">
+                {/* Hero a una columna: buscador y botones centrados bajo el titular. */}
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href="/tienda"
                     className="rk-btn rk-btn-line"
@@ -497,39 +460,6 @@ export default async function Home() {
                 </div>
               </div>
 
-              {/*
-                ── ESCENA DE FLYERS ──
-
-                Los recursos reales del catálogo, relevándose.
-                Antes eran tres portadas quietas y escalonadas;
-                ahora el destacado manda en el centro, los demás
-                lo acompañan a los lados —más pequeños y más
-                apagados cuanto más lejos— y el turno va pasando.
-
-                El título, el precio y el botón de debajo hablan
-                siempre del flyer activo, así que la composición
-                no es un adorno: es por donde se entra al
-                recurso.
-
-                Los precios se convierten a número aquí. Un
-                `Decimal` de Prisma no cruza la frontera al
-                cliente, y es en este punto donde se sabe que va
-                a cruzarla.
-              */}
-              {portadas.length > 0 && (
-                <HeroFlyers
-                  flyers={portadas.map((recurso) => ({
-                    id: recurso.id,
-                    name: recurso.name,
-                    slug: recurso.slug,
-                    coverUrl: recurso.coverUrl as string,
-                    price: Number(recurso.price),
-                    categoriaNombre: recurso.category?.name ?? null,
-                    categoriaSlug: recurso.category?.slug ?? null,
-                    pieceType: recurso.pieceType,
-                  }))}
-                />
-              )}
             </div>
           </div>
         </section>
