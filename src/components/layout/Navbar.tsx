@@ -5,6 +5,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useId, useRef, useState } from "react";
 import {
   Heart,
+  ShieldCheck,
+  Sparkles,
   X,
 } from "lucide-react";
 
@@ -209,12 +211,15 @@ function IconAction({
 }
 
 /**
- * Píldora de rol: «Admin · Studio».
- * Fuera de los paneles (inicio, tienda…) queda apagada: el mismo
- * vidrio claro que los botones de buscar y avisos, con texto negro.
- * Dentro de un panel se enciende como un interruptor: la píldora
- * pasa a negro y la sección en la que estás va en blanco, como la
- * perilla. Un creador solo ve «Studio».
+ * Interruptor de rol: «Admin · Studio».
+ *
+ * Fuera de los paneles (inicio, tienda…) son DOS botones sueltos,
+ * cada uno con su vidrio, como los de buscar y avisos. Dentro de
+ * un panel se unen en una sola píldora de tinta y la sección en
+ * la que estás va en perla. Al entrar en un panel los botones se
+ * acercan y se funden (rk-rol en globals.css). Un creador solo ve
+ * «Studio». En pantallas muy estrechas quedan solo los iconos,
+ * así que cada enlace lleva su nombre en aria-label.
  */
 function RolSwitch({
   esAdmin,
@@ -237,20 +242,24 @@ function RolSwitch({
       {esAdmin && (
         <Link
           href="/admin"
+          aria-label="Admin"
           aria-current={adminElegido ? "page" : undefined}
           data-elegido={adminElegido || undefined}
           className="rk-rol-opcion"
         >
-          Admin
+          <ShieldCheck aria-hidden />
+          <span className="rk-rol-texto">Admin</span>
         </Link>
       )}
       <Link
         href="/creadores/panel"
+        aria-label="Studio"
         aria-current={enStudio ? "page" : undefined}
         data-elegido={enStudio || undefined}
         className="rk-rol-opcion"
       >
-        Studio
+        <Sparkles aria-hidden />
+        <span className="rk-rol-texto">Studio</span>
       </Link>
     </nav>
   );

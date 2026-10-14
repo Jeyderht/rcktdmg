@@ -12809,6 +12809,10 @@ div.rk-upload-error > * + * {
   --rk-marca-calido: 248 214 198;
   --rk-marca-tinta: 21 22 27;
 
+  /* acentos de marca: los mismos lavanda y durazno del Dashboard */
+  --rk-marca-lavanda: 157 151 255;
+  --rk-marca-durazno: 240 169 138;
+
   /* acentos: en oscuro, la marca tal cual */
   --rk-iris-1: 200 201 214;
   --rk-iris-2: 244 242 241;
@@ -15489,116 +15493,224 @@ div.rk-upload-error > * + * {
 /* ═══════════════════════════════════════════════════════════════════
    rk-rol · Interruptor de rol en la barra superior (Navbar)
 
-   «Admin · Studio». Apagado (fuera de los paneles): el mismo vidrio
-   claro que los botones de buscar y avisos, con texto negro. Encendido (dentro de un panel): la píldora pasa
-   a negro y la sección activa va en blanco, como la perilla de un
-   interruptor. En oscuro se invierte: píldora clara, perilla oscura.
+   «Admin · Studio» en dos estados:
+   A) Fuera de los paneles: dos botones sueltos, cada uno con el
+      vidrio de los botones de la barra (rk-topbar-btn), icono +
+      texto, 6 px entre ellos. Hover y foco con un acento lavanda.
+   B) Dentro de un panel (data-encendido): una sola píldora de
+      tinta y la sección activa en perla. En oscuro se invierte.
+   De A a B los botones se acercan y la tinta aparece detrás:
+   solo transform y opacidad, 300 ms. La tinta va en ::before
+   para animar solo su opacidad.
+   Por debajo de 360 px los botones quedan en solo icono.
    ═══════════════════════════════════════════════════════════════════ */
 .rk-rol {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   flex: none;
+  gap: 6px;
   height: 44px;
-  padding: 3px;
-  border-radius: 999px;
-  border: 1px solid rgb(21 22 27 / 0.08);
-  background: rgb(255 255 255 / 0.7);
-  -webkit-backdrop-filter: blur(20px) saturate(1.5);
-          backdrop-filter: blur(20px) saturate(1.5);
   font-family: var(--font-sora), system-ui, sans-serif;
-  transition:
-    background-color 0.35s cubic-bezier(0.65, 0, 0.35, 1),
-    border-color 0.35s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .rk-rol-opcion {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   height: 100%;
-  padding: 0 11px;
+  padding: 0 12px;
   border-radius: 999px;
-  color: #15161b;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: rgb(22 23 28 / 0.42);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  color: var(--rx-texto);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: -0.01em;
   white-space: nowrap;
   transition:
-    background-color 0.35s cubic-bezier(0.65, 0, 0.35, 1),
-    color 0.35s cubic-bezier(0.65, 0, 0.35, 1),
-    box-shadow 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+    background-color var(--rx-t-micro) var(--rx-curva),
+    border-color var(--rx-t-micro) var(--rx-curva),
+    color var(--rx-t-micro) var(--rx-curva),
+    transform 0.15s var(--rx-curva);
 }
 
-/* Encendido: píldora negra, textos claros */
-.rk-rol[data-encendido] {
-  border-color: #15161b;
-  background: #15161b;
+.rk-rol-opcion svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
 }
 
-.rk-rol[data-encendido] .rk-rol-opcion {
-  color: rgb(244 242 241 / 0.6);
-}
-
-/* La sección activa es la perilla blanca */
-.rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
-  background: #f4f2f1;
-  color: #15161b;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+[data-theme="light"] .rk-rol-opcion {
+  border-color: rgb(21 22 27 / 0.08);
+  background: rgb(255 255 255 / 0.7);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rk-rol:not([data-encendido]) .rk-rol-opcion:hover {
-    background: rgb(21 22 27 / 0.06);
+    border-color: rgb(var(--rk-marca-lavanda) / 0.6);
   }
+}
 
-  .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
-    color: #f4f2f1;
-  }
+.rk-rol:not([data-encendido]) .rk-rol-opcion:active {
+  transform: scale(0.97);
 }
 
 .rk-rol-opcion:focus-visible {
-  outline: 2px solid rgb(var(--rk-marca-frio));
+  outline: 2px solid rgb(var(--rk-marca-lavanda));
   outline-offset: 2px;
 }
 
-/* Tema oscuro */
-[data-theme="dark"] .rk-rol {
-  border-color: rgb(255 255 255 / 0.12);
-  background: rgb(255 255 255 / 0.05);
+/* B · Encendido: una píldora de tinta con la sección activa en perla */
+.rk-rol[data-encendido] {
+  gap: 0;
+  padding: 3px;
+  animation: rk-rol-unir 0.3s var(--rx-curva) both;
 }
 
-[data-theme="dark"] .rk-rol-opcion {
-  color: #f4f2f1;
+.rk-rol[data-encendido]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 999px;
+  background: rgb(var(--rk-marca-tinta));
+  animation: rk-rol-tinta 0.3s var(--rx-curva) both;
 }
 
-[data-theme="dark"] .rk-rol[data-encendido] {
-  border-color: #f4f2f1;
-  background: #f4f2f1;
+.rk-rol[data-encendido] .rk-rol-opcion {
+  border-color: transparent;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  color: rgb(var(--rk-marca-centro) / 0.6);
 }
 
-[data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion {
-  color: rgb(21 22 27 / 0.55);
+.rk-rol[data-encendido] .rk-rol-opcion:first-child {
+  animation: rk-rol-desde-izquierda 0.3s var(--rx-curva) both;
 }
 
-[data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
-  background: #15161b;
-  color: #f4f2f1;
+.rk-rol[data-encendido] .rk-rol-opcion:last-child {
+  animation: rk-rol-desde-derecha 0.3s var(--rx-curva) both;
+}
+
+/* La sección activa es la perilla perla */
+.rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
+  background: rgb(var(--rk-marca-centro));
+  color: rgb(var(--rk-marca-tinta));
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  [data-theme="dark"] .rk-rol:not([data-encendido]) .rk-rol-opcion:hover {
-    background: rgb(255 255 255 / 0.08);
-  }
-
-  [data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
-    color: #15161b;
+  .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
+    color: rgb(var(--rk-marca-centro));
   }
 }
 
-/* En pantallas muy estrechas, un poco más compacto */
-@media (max-width: 380px) {
+/* Oscuro: píldora perla y perilla de tinta */
+[data-theme="dark"] .rk-rol[data-encendido]::before {
+  background: rgb(var(--rk-marca-centro));
+}
+
+[data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion {
+  color: rgb(var(--rk-marca-tinta) / 0.55);
+}
+
+[data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
+  background: rgb(var(--rk-marca-tinta));
+  color: rgb(var(--rk-marca-centro));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dark"] .rk-rol[data-encendido] .rk-rol-opcion:not([data-elegido]):hover {
+    color: rgb(var(--rk-marca-tinta));
+  }
+}
+
+@keyframes rk-rol-unir {
+  from {
+    transform: scaleX(1.04);
+  }
+}
+
+@keyframes rk-rol-tinta {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes rk-rol-desde-izquierda {
+  from {
+    transform: translateX(-4px);
+  }
+}
+
+@keyframes rk-rol-desde-derecha {
+  from {
+    transform: translateX(4px);
+  }
+}
+
+/* Un creador solo tiene «Studio»: el padding de la píldora sale
+   del suyo para que A y B midan lo mismo y nada se mueva. */
+.rk-rol[data-encendido] .rk-rol-opcion:only-child {
+  padding: 0 9px;
+}
+
+/* Móvil: con buscar, avisos y cuenta (44 px cada uno) no caben
+   icono y texto. Hasta 429 px, solo texto; hasta 374 px, solo
+   icono (el nombre va en aria-label). */
+@media (max-width: 429px) {
   .rk-rol-opcion {
-    padding: 0 8px;
-    font-size: 12px;
+    padding: 0 10px;
+  }
+
+  .rk-rol[data-encendido] .rk-rol-opcion:only-child {
+    padding: 0 7px;
+  }
+
+  .rk-rol-opcion svg {
+    display: none;
+  }
+}
+
+@media (max-width: 374px) {
+  .rk-rol-opcion svg {
+    display: block;
+  }
+
+  .rk-rol-opcion {
+    justify-content: center;
+    width: 44px;
+    padding: 0;
+  }
+
+  /* mismo ancho total en A y B: 44 + 6 + 44 = 3 + 44 + 44 + 3 */
+  .rk-rol[data-encendido] .rk-rol-opcion {
+    width: 44px;
+  }
+
+  .rk-rol[data-encendido] .rk-rol-opcion:only-child {
+    width: 38px;
+  }
+
+  .rk-rol-texto {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-rol-opcion {
+    transition: none;
+  }
+
+  .rk-rol[data-encendido],
+  .rk-rol[data-encendido]::before,
+  .rk-rol[data-encendido] .rk-rol-opcion {
+    animation: none;
   }
 }
 
