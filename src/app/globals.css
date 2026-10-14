@@ -5889,6 +5889,17 @@ table .rk-btn:hover:not(:disabled) {
   color: rgb(var(--rk-muted) / 0.8);
 }
 
+/* lista de sugerencias: fondo opaco. Sobre chips y botones el
+   vidrio dejaba leer lo de debajo a través de las opciones. */
+.rk-sugerencias {
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(var(--rk-surface-elevated));
+}
+
+[data-theme="light"] .rk-sugerencias {
+  border-color: rgb(21 22 27 / 0.1);
+}
+
 /* botón "Buscar": mismo estilo que rk-btn-ink
    (oscuro: blanco con degradado y texto oscuro · claro: negro sólido) */
 .rk-buscador-accion {

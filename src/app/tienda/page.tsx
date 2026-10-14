@@ -326,7 +326,14 @@ export default async function Store({ searchParams }: StoreProps) {
         </section>
 
         {/* ══════════ BUSCADOR ══════════ */}
-        <section className="rk-fade-up rk-enter-1 mt-7">
+        {/*
+          relative z-20: la animación de entrada deja un transform
+          en la sección y la convierte en contexto de apilamiento,
+          así que el z-50 de las sugerencias no salía de ella y los
+          chips y botones de abajo se pintaban encima. Por debajo
+          del Navbar (40) y del menú inferior (50).
+        */}
+        <section className="rk-fade-up rk-enter-1 relative z-20 mt-7">
           {/*
             Una búsqueda nueva no debe tirar los filtros que ya
             estaban puestos: viajan como campos ocultos dentro
