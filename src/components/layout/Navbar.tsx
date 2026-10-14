@@ -463,7 +463,7 @@ function NavbarContent() {
 
               {/* TEMA: claro / oscuro / sistema */}
               <div className="hidden md:block">
-                <ThemeToggle />
+                <ThemeToggle compacto />
               </div>
 
               {/*
@@ -567,7 +567,7 @@ function NavbarContent() {
 
           {/* TEMA en tablet */}
           <div className="ml-auto shrink-0 pl-2 md:hidden">
-            <ThemeToggle />
+            <ThemeToggle compacto />
           </div>
         </nav>
       </header>

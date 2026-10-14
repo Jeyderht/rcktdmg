@@ -5948,16 +5948,16 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   K. INTERRUPTOR DE TEMA  ·  rk-theme-toggle
+   K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)
    ═══════════════════════════════════════════════════════════════════════
+   El único control de tema del sitio (barra, hoja de cuenta, ajustes).
    Cápsula con sol y luna; un círculo de vidrio se desliza al lado del
    tema activo (claro → sol · oscuro → luna). Solo CSS: lee data-theme.
-   <button class="rk-theme-toggle" role="switch" aria-checked="true"
-           aria-label="Modo oscuro">
+   <div class="rk-theme-toggle" role="radiogroup" aria-label="Tema">
      <span class="rk-theme-toggle-knob" aria-hidden="true"></span>
-     <svg class="rk-theme-toggle-sun">…</svg>
-     <svg class="rk-theme-toggle-moon">…</svg>
-   </button>
+     <button class="rk-theme-toggle-opcion" role="radio">svg sol</button>
+     <button class="rk-theme-toggle-opcion" role="radio">svg luna</button>
+   </div>
    ═══════════════════════════════════════════════════════════════════════ */
 .rk-theme-toggle {
   --rk-tt-alto: 44px;
@@ -5978,8 +5978,20 @@ table .rk-btn:hover:not(:disabled) {
   -webkit-backdrop-filter: blur(18px) saturate(1.5);
   backdrop-filter: blur(18px) saturate(1.5);
   color: rgb(var(--rk-muted));
-  cursor: pointer;
   isolation: isolate;
+}
+
+.rk-theme-toggle-opcion {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
 }
 
 [data-theme="light"] .rk-theme-toggle {
@@ -6039,14 +6051,33 @@ table .rk-btn:hover:not(:disabled) {
   }
 }
 
-.rk-theme-toggle:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
+.rk-theme-toggle-opcion:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-lavanda));
+  outline-offset: 1px;
 }
 
-/* compacto: para la barra en móvil */
+/* compacto: para las barras */
 .rk-theme-toggle-sm {
   --rk-tt-alto: 36px;
+}
+
+/* «Usar el del dispositivo» (solo en ajustes) */
+.rk-theme-sistema {
+  min-height: 32px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: rgb(var(--rk-muted));
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.rk-theme-sistema[aria-pressed="true"] {
+  color: var(--rx-texto);
+  text-decoration: none;
+  cursor: default;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -8745,8 +8776,8 @@ table .rk-btn:hover:not(:disabled) {
          <nav class="rk-menu-list">
            <div class="rk-menu-group"><a class="rk-menu-item">svg Ver perfil</a> …</div>
            <div class="rk-menu-group">
-             <button class="rk-menu-item" role="switch" aria-checked="true">
-               svg Modo oscuro <span class="rk-menu-switch"></span></button>
+             <div class="rk-menu-item rk-menu-item-tema">
+               svg Modo oscuro <ThemeToggle (rk-theme-toggle)></div>
            </div>
            <hr class="rk-menu-sep">
            <button class="rk-menu-item">svg Salir</button>
@@ -9054,36 +9085,13 @@ table .rk-btn:hover:not(:disabled) {
   outline-offset: -2px;
 }
 
-/* interruptor (modo oscuro) */
-.rk-menu-switch {
-  position: relative;
-  flex: none;
-  width: 46px;
-  height: 26px;
-  margin-left: auto;
-  border-radius: 999px;
-  background: rgb(127 127 127 / 0.28);
-  transition: background-color var(--rx-t-micro) var(--rx-curva);
-}
-
-.rk-menu-switch::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  background: #fff;
-  transition: transform var(--rx-t-micro) var(--rx-curva);
-}
-
-[aria-checked="true"] > .rk-menu-switch {
-  background: linear-gradient(90deg, rgb(var(--rk-iris-1)), rgb(var(--rk-iris-2)));
-}
-
-[aria-checked="true"] > .rk-menu-switch::after {
-  transform: translateX(20px);
+/* fila del tema: no es un botón; el control es el sol / luna (K) */
+.rk-menu-item-tema,
+.rk-menu-item-tema:hover,
+[data-theme="light"] .rk-menu-item-tema:hover {
+  border-color: transparent;
+  background: transparent;
+  cursor: default;
 }
 
 /* salir: bloque rojo suave */
@@ -9117,9 +9125,7 @@ table .rk-btn:hover:not(:disabled) {
 @media (prefers-reduced-motion: reduce) {
   .rk-avatar-btn::before,
   .rk-avatar-btn::after,
-  .rk-menu-item,
-  .rk-menu-switch,
-  .rk-menu-switch::after {
+  .rk-menu-item {
     transition: none;
   }
 }

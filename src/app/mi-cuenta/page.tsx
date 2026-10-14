@@ -377,9 +377,7 @@ export default function Account() {
                 </p>
               </div>
 
-              <div className="w-full sm:w-auto sm:min-w-[19rem]">
-                <ThemeToggle variant="full" />
-              </div>
+              <ThemeToggle conSistema />
             </div>
           </div>
         </section>

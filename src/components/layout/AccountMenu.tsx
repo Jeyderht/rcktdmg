@@ -15,7 +15,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { useTheme } from "@/components/layout/ThemeProvider";
+import ThemeToggle from "@/components/layout/ThemeToggle";
 import type { SessionUser } from "@/components/hooks/useSessionUser";
 import { IconoBolsa, IconoUsuario } from "@/components/iconos";
 
@@ -39,8 +39,6 @@ export default function AccountMenu({
   loading: boolean;
 }) {
   const router = useRouter();
-  const { resolved, setPreference } = useTheme();
-  const isDark = resolved === "dark";
 
   const [open, setOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -124,20 +122,17 @@ export default function AccountMenu({
     .charAt(0)
     .toUpperCase();
 
-  /* Interruptor de tema: lo comparten las dos variantes del menú. */
+  /* Tema: el mismo sol / luna de la barra, a la derecha de la fila.
+     Lo comparten las dos variantes del menú. */
   const themeRow = (
     <div className="rk-menu-group">
-      <button
-        type="button"
-        role="switch"
-        aria-checked={isDark}
-        onClick={() => setPreference(isDark ? "light" : "dark")}
-        className="rk-menu-item"
-      >
+      <div className="rk-menu-item rk-menu-item-tema">
         <Moon aria-hidden />
         Modo oscuro
-        <span aria-hidden className="rk-menu-switch" />
-      </button>
+        <span className="ml-auto">
+          <ThemeToggle />
+        </span>
+      </div>
     </div>
   );
 

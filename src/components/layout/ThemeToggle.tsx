@@ -1,88 +1,97 @@
 "use client";
 
-import { Monitor, Moon, Sun } from "lucide-react";
+import { KeyboardEvent } from "react";
+import { Moon, Sun } from "lucide-react";
 
-import {
-  ThemePreference,
-  useTheme,
-} from "@/components/layout/ThemeProvider";
-
-const OPTIONS: {
-  value: ThemePreference;
-  label: string;
-  icon: typeof Sun;
-}[] = [
-  { value: "light", label: "Claro", icon: Sun },
-  { value: "dark", label: "Oscuro", icon: Moon },
-  { value: "system", label: "Sistema", icon: Monitor },
-];
+import { useTheme } from "@/components/layout/ThemeProvider";
 
 /**
- * Selector de tema: claro, oscuro y sistema.
+ * Selector de tema: el mismo sol / luna en todo el sitio.
  *
- * `variant="compact"` muestra un grupo segmentado de iconos
- * para el Navbar; `variant="full"` añade las etiquetas y se
- * usa en menús y páginas de cuenta.
+ * Un círculo se desliza bajo el tema activo; su posición sale de
+ * data-theme en el CSS (rk-theme-toggle), así que no parpadea al
+ * cargar. Es un grupo de radios: Tab entra en el activo y las
+ * flechas cambian de tema.
+ *
+ * - `compacto`: 36 px de alto, para las barras.
+ * - `conSistema`: añade debajo «Usar el del dispositivo», que
+ *   vuelve a seguir el tema del sistema. Solo en ajustes: es la
+ *   tercera opción que tenía el selector de la cuenta.
  */
 export default function ThemeToggle({
-  variant = "compact",
+  compacto = false,
+  conSistema = false,
 }: {
-  variant?: "compact" | "full";
+  compacto?: boolean;
+  conSistema?: boolean;
 }) {
-  const { preference, resolved, setPreference, ready } = useTheme();
+  const { preference, resolved, setPreference } = useTheme();
 
-  if (variant === "full") {
-    return (
-      <div
-        role="radiogroup"
-        aria-label="Tema de la interfaz"
-        className="grid grid-cols-3 gap-1.5 rounded-rk-md border border-line/10 bg-ink/[0.04] p-1.5"
-      >
-        {OPTIONS.map((option) => {
-          const Icon = option.icon;
-          const active = ready && preference === option.value;
-
-          return (
-            <button
-              key={option.value}
-              type="button"
-              role="radio"
-              aria-checked={active}
-              onClick={() => setPreference(option.value)}
-              className={`rk-press flex flex-col items-center gap-1.5 rounded-rk-sm px-2 py-3 text-xs font-medium transition-colors ${
-                active
-                  ? "bg-surface text-foreground shadow-rk-sm"
-                  : "text-muted/55 hover:text-foreground"
-              }`}
-            >
-              <Icon size={17} />
-              {option.label}
-            </button>
-          );
-        })}
-      </div>
-    );
-  }
-
-  /*
-    Compacto: interruptor sol / luna (rk-theme-toggle). El círculo
-    se coloca solo según data-theme; aquí solo se cambia el tema.
-    La opción "sistema" sigue en la variante completa.
-  */
   const oscuro = resolved === "dark";
 
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={oscuro}
-      aria-label="Modo oscuro"
-      onClick={() => setPreference(oscuro ? "light" : "dark")}
-      className="rk-theme-toggle rk-theme-toggle-sm"
+  function alTeclear(evento: KeyboardEvent<HTMLDivElement>) {
+    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(evento.key)) return;
+
+    evento.preventDefault();
+    setPreference(oscuro ? "light" : "dark");
+
+    const otro = evento.currentTarget.querySelector<HTMLButtonElement>(
+      `[data-tema="${oscuro ? "light" : "dark"}"]`
+    );
+    otro?.focus();
+  }
+
+  const selector = (
+    <div
+      role="radiogroup"
+      aria-label="Tema"
+      onKeyDown={alTeclear}
+      className={`rk-theme-toggle ${compacto ? "rk-theme-toggle-sm" : ""}`}
     >
       <span className="rk-theme-toggle-knob" aria-hidden="true" />
-      <Sun className="rk-theme-toggle-sun" aria-hidden="true" />
-      <Moon className="rk-theme-toggle-moon" aria-hidden="true" />
-    </button>
+
+      <button
+        type="button"
+        role="radio"
+        aria-checked={!oscuro}
+        aria-label="Claro"
+        tabIndex={oscuro ? -1 : 0}
+        data-tema="light"
+        onClick={() => setPreference("light")}
+        className="rk-theme-toggle-opcion"
+      >
+        <Sun className="rk-theme-toggle-sun" aria-hidden="true" />
+      </button>
+
+      <button
+        type="button"
+        role="radio"
+        aria-checked={oscuro}
+        aria-label="Oscuro"
+        tabIndex={oscuro ? 0 : -1}
+        data-tema="dark"
+        onClick={() => setPreference("dark")}
+        className="rk-theme-toggle-opcion"
+      >
+        <Moon className="rk-theme-toggle-moon" aria-hidden="true" />
+      </button>
+    </div>
+  );
+
+  if (!conSistema) return selector;
+
+  return (
+    <div className="flex flex-col items-end gap-2">
+      {selector}
+
+      <button
+        type="button"
+        aria-pressed={preference === "system"}
+        onClick={() => setPreference("system")}
+        className="rk-theme-sistema"
+      >
+        Usar el del dispositivo
+      </button>
+    </div>
   );
 }
