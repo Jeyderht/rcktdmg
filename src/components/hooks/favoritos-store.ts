@@ -22,6 +22,9 @@ import { useEffect, useState } from "react";
 /** Ids de los recursos marcados. `null` = todavía no se sabe. */
 let favoritos: Set<string> | null = null;
 
+/** true si ya se sabe que no hay sesión: no se llama a la API. */
+let sinSesion = false;
+
 /** La petición en vuelo, para que dos corazones no la dupliquen. */
 let enVuelo: Promise<Set<string>> | null = null;
 
@@ -31,6 +34,14 @@ function avisar() {
   for (const fn of suscriptores) fn();
 }
 
+/** ¿Hay sesión? /api/auth/me contesta { user: null } sin error si no la hay. */
+async function haySesion(): Promise<boolean> {
+  const respuesta = await fetch("/api/auth/me", { cache: "no-store" });
+  const { user } = respuesta.ok ? await respuesta.json() : { user: null };
+
+  return Boolean(user);
+}
+
 async function cargar(): Promise<Set<string>> {
   if (favoritos) return favoritos;
 
@@ -38,6 +49,14 @@ async function cargar(): Promise<Set<string>> {
 
   enVuelo = (async () => {
     try {
+      // Sin sesión no hay favoritos, y no se pide /api/favoritos (sería un 401).
+      if (!(await haySesion())) {
+        sinSesion = true;
+        favoritos = new Set<string>();
+
+        return favoritos;
+      }
+
       const respuesta = await fetch("/api/favoritos", { cache: "no-store" });
 
       if (!respuesta.ok) {
@@ -93,6 +112,19 @@ export async function alternarFavorito(
   marcadoAhora: boolean
 ): Promise<{ ok: true } | { ok: false; mensaje: string }> {
   const deseado = !marcadoAhora;
+
+  /*
+    Sin sesión, la misma respuesta que daría la API, sin el 401.
+    Se vuelve a mirar por si se inició sesión sin recargar la
+    página (el login navega en el cliente).
+  */
+  if (sinSesion) {
+    if (!(await haySesion())) {
+      return { ok: false, mensaje: "Inicia sesión para guardar" };
+    }
+
+    sinSesion = false;
+  }
 
   fijarLocal(productId, deseado);
 
