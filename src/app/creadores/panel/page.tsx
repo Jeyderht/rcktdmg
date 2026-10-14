@@ -375,7 +375,7 @@ export default function CreatorDashboard() {
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
 
         {/* ========== CABECERA ========== */}
-        <section className="rk-fade-up relative overflow-hidden">
+        <section className="rk-fade-up relative isolate overflow-hidden">
           <div
             aria-hidden
             className="pointer-events-none absolute -right-24 -top-28 -z-10 h-72 w-72 rounded-full rk-halo-marca blur-[90px]"
