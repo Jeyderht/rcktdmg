@@ -12888,17 +12888,74 @@ div.rk-upload-error > * + * {
   color: #fff;
 }
 
-/* ── aros de avatar ──────────────────────────────────────────────────── */
-.rk-menu-head .rk-avatar-btn-img {
+/* ── aros de avatar ──────────────────────────────────────────────────────
+   El de la hoja de cuenta y el del botón de la barra son el mismo aro:
+   un hueco del color de lo que hay detrás (--rk-aro-hueco) y el aro
+   durazno. En la barra el hueco es el fondo de la página. */
+.rk-menu-head .rk-avatar-btn-img,
+.rk-avatar-btn > .rk-avatar-btn-img {
   box-shadow:
-    0 0 0 2px rgb(22 23 28),
+    0 0 0 2px var(--rk-aro-hueco, rgb(22 23 28)),
     0 0 0 4px rgb(var(--rk-marca-calido) / 0.8);
 }
 
-[data-theme="light"] .rk-menu-head .rk-avatar-btn-img {
+[data-theme="light"] .rk-menu-head .rk-avatar-btn-img,
+[data-theme="light"] .rk-avatar-btn > .rk-avatar-btn-img {
   box-shadow:
-    0 0 0 2px #fff,
+    0 0 0 2px var(--rk-aro-hueco, #fff),
     0 0 0 4px rgb(var(--rk-iris-3) / 0.8);
+}
+
+.rk-avatar-btn {
+  --rk-aro-hueco: var(--rx-fondo);
+}
+
+.rk-avatar-btn > .rk-avatar-btn-img {
+  transition: box-shadow var(--rx-t-micro) var(--rx-curva);
+}
+
+/* Señalado, con foco o abierto: un halo durazno suave alrededor del
+   aro. El círculo de vidrio del ::before sobraría: serían dos aros. */
+.rk-avatar-btn:has(> .rk-avatar-btn-img)::before {
+  content: none;
+}
+
+.rk-avatar-btn:focus-visible > .rk-avatar-btn-img,
+.rk-avatar-btn[aria-expanded="true"] > .rk-avatar-btn-img {
+  box-shadow:
+    0 0 0 2px var(--rk-aro-hueco),
+    0 0 0 4px rgb(var(--rk-marca-calido) / 0.8),
+    0 0 0 8px rgb(var(--rk-marca-durazno) / 0.25);
+}
+
+[data-theme="light"] .rk-avatar-btn:focus-visible > .rk-avatar-btn-img,
+[data-theme="light"] .rk-avatar-btn[aria-expanded="true"] > .rk-avatar-btn-img {
+  box-shadow:
+    0 0 0 2px var(--rk-aro-hueco),
+    0 0 0 4px rgb(var(--rk-iris-3) / 0.8),
+    0 0 0 8px rgb(var(--rk-marca-durazno) / 0.25);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-avatar-btn:hover > .rk-avatar-btn-img {
+    box-shadow:
+      0 0 0 2px var(--rk-aro-hueco),
+      0 0 0 4px rgb(var(--rk-marca-calido) / 0.8),
+      0 0 0 8px rgb(var(--rk-marca-durazno) / 0.25);
+  }
+
+  [data-theme="light"] .rk-avatar-btn:hover > .rk-avatar-btn-img {
+    box-shadow:
+      0 0 0 2px var(--rk-aro-hueco),
+      0 0 0 4px rgb(var(--rk-iris-3) / 0.8),
+      0 0 0 8px rgb(var(--rk-marca-durazno) / 0.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-avatar-btn > .rk-avatar-btn-img {
+    transition: none;
+  }
 }
 
 .rk-creator-avatar {

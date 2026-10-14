@@ -321,6 +321,10 @@ export default function AccountMenu({
         title="Mi cuenta"
         className="rk-avatar-btn"
       >
+        {/*
+          Con sesión, el mismo avatar que la hoja de cuenta (foto o
+          iniciales) con su anillo. Sin sesión, el icono de usuario.
+        */}
         {user?.avatarUrl ? (
           <span className="rk-avatar-btn-img">
             <Image
@@ -330,6 +334,10 @@ export default function AccountMenu({
               className="object-cover"
               sizes="32px"
             />
+          </span>
+        ) : user ? (
+          <span aria-hidden className="rk-avatar-btn-img">
+            {initials}
           </span>
         ) : (
           <IconoUsuario aria-hidden />
