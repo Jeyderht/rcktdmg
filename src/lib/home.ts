@@ -8,12 +8,7 @@ import {
 } from "@/lib/catalogo";
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
 import { prisma } from "@/lib/prisma";
-import {
-  ALTO_CORPORATIVO,
-  ALTO_VERTICAL,
-  ANCHO_CORPORATIVO,
-  ANCHO_VERTICAL,
-} from "@/lib/dimensiones";
+import { ALTO_VERTICAL, ANCHO_VERTICAL } from "@/lib/dimensiones";
 
 /**
  * Datos de las secciones nuevas de la portada.
@@ -29,165 +24,13 @@ import {
 
 /** Slugs de las categorías que tienen sección propia en la portada. */
 export const CATEGORIA_EVENTOS = "eventos";
-export const CATEGORIA_CORPORATIVOS = "corporativos";
 export const CATEGORIA_GENERAL = "general";
 
-/** Recurso tal y como lo pintan las secciones nuevas. */
-export type TarjetaHome = {
-  id: string;
-  name: string;
-  slug: string;
-  price: number;
-  /** Imagen pública. Nunca una referencia del almacén privado. */
-  imagen: string | null;
-  /** Tamaño real de esa imagen. Null si no se conoce. */
-  ancho: number | null;
-  alto: number | null;
-  categoria: { name: string; slug: string } | null;
-  creador: {
-    nombre: string;
-    /** Solo si tiene perfil público real; si no, null y no se enlaza. */
-    username: string | null;
-    avatarUrl: string | null;
-    isVerified: boolean;
-  };
-};
-
-const SELECCION = {
-  id: true,
-  name: true,
-  slug: true,
-  price: true,
-  coverUrl: true,
-  coverWidth: true,
-  coverHeight: true,
-  category: { select: { name: true, slug: true } },
-  creator: {
-    select: {
-      name: true,
-      publicName: true,
-      username: true,
-      avatarUrl: true,
-      isVerified: true,
-      creatorStatus: true,
-    },
-  },
-  images: {
-    orderBy: { sortOrder: "asc" as const },
-    take: 1,
-    select: { url: true, imageWidth: true, imageHeight: true },
-  },
-};
-
-type Fila = {
-  id: string;
-  name: string;
-  slug: string;
-  price: unknown;
-  coverUrl: string | null;
-  coverWidth: number | null;
-  coverHeight: number | null;
-  category: { name: string; slug: string } | null;
-  creator: {
-    name: string | null;
-    publicName: string | null;
-    username: string | null;
-    avatarUrl: string | null;
-    isVerified: boolean;
-    creatorStatus: string | null;
-  };
-  images: {
-    url: string;
-    imageWidth: number | null;
-    imageHeight: number | null;
-  }[];
-};
-
-function aTarjetaHome(fila: Fila): TarjetaHome {
-  return {
-    id: fila.id,
-    name: fila.name,
-    slug: fila.slug,
-    price: Number(fila.price),
-    /*
-      La imagen sale de ProductImage o de la portada, que son
-      las dos públicas. `fileUrl` —el archivo que se vende—
-      vive en el almacén privado y no se toca aquí.
-    */
-    imagen: fila.images[0]?.url ?? fila.coverUrl ?? null,
-    /*
-      Las dimensiones acompañan SIEMPRE a la imagen elegida.
-      Si se pinta la de galería, van las suyas; si se pinta la
-      portada, las de la portada. Mezclarlas daría una
-      proporción falsa.
-    */
-    ancho: fila.images[0]
-      ? fila.images[0].imageWidth
-      : fila.coverWidth,
-    alto: fila.images[0]
-      ? fila.images[0].imageHeight
-      : fila.coverHeight,
-    categoria: fila.category,
-    creador: {
-      nombre: fila.creator.publicName || fila.creator.name || "Creador",
-      username:
-        fila.creator.creatorStatus === "APPROVED"
-          ? fila.creator.username
-          : null,
-      avatarUrl: fila.creator.avatarUrl,
-      isVerified: fila.creator.isVerified,
-    },
-  };
-}
-
 /**
- * Recursos VERTICALES, para el visor de stories.
+ * Proporción de las stories: 1080 × 1920 · 9:16 (la usa el
+ * visor de stories de la ficha del recurso).
  *
- * «Story» no es una categoría, es una forma: 1080 × 1920, que
- * es lo que el visor a pantalla completa sabe enseñar sin
- * recortar ni deformar. Por eso el filtro va contra las
- * dimensiones REALES guardadas al subir la imagen, no contra
- * la categoría ni contra el `pieceType`.
- *
- * Eso mantiene separadas dos ideas que no son la misma:
- *
- *   · Eventos  es una CATEGORÍA, y toda ella mide 1080 × 1920,
- *     así que entra entera aquí.
- *   · Story    es un FORMATO, y lo cumple cualquier recurso
- *     vertical, sea de la categoría que sea.
- *
- * Antes esta sección pedía `pieceType: "EVENT_STORY"` y dejaba
- * fuera recursos que encajan perfectamente en el visor. Y un
- * recurso sin dimensiones leídas queda fuera a propósito: sin
- * el dato no se puede afirmar que sea vertical.
- */
-export function recursosVerticales(tope = 12): Promise<TarjetaHome[]> {
-  return prisma.product
-    .findMany({
-      where: {
-        status: "PUBLISHED",
-        coverWidth: ANCHO_VERTICAL,
-        coverHeight: ALTO_VERTICAL,
-        OR: [{ images: { some: {} } }, { coverUrl: { not: null } }],
-      },
-      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      take: tope,
-      select: SELECCION,
-    })
-    .then((filas) => (filas as Fila[]).map(aTarjetaHome));
-}
-
-/**
- * Proporción de cada sección. NO se mezclan.
- *
- *   Stories      1080 × 1920 · 9:16 · vertical de historia
- *   Corporativos 1080 × 1350 · 4:5  · vertical de publicación
- *
- * Están aquí, en un solo sitio, porque antes la tira de
- * Stories usaba 4:5 —la de Corporativos— y las dos secciones
- * se veían con la misma forma pese a ser formatos distintos.
- *
- * Y ahora SE CALCULAN a partir de las medidas reales, en vez
+ * SE CALCULA a partir de las medidas reales, en vez
  * de escribirse a mano. Antes ponía "9/16" y "4/5" como texto:
  * coincidían con la regla por costumbre, no porque nada lo
  * garantizara. Si un día cambiara la medida exigida, aquellos
@@ -203,98 +46,6 @@ function proporcion(ancho: number, alto: number): string {
 }
 
 export const ASPECTO_STORY = proporcion(ANCHO_VERTICAL, ALTO_VERTICAL);
-export const ASPECTO_CORPORATIVO = proporcion(
-  ANCHO_CORPORATIVO,
-  ALTO_CORPORATIVO
-);
-
-/**
- * Recursos para el carrusel de Corporativos.
- *
- * Solo categoría Corporativos con formato 1080 × 1350 exacto.
- * Si no hay ninguno se devuelve la lista vacía y la sección se
- * oculta entera: una sección de Corporativos que enseña
- * recursos de otra categoría no dice la verdad, por mucho que
- * lo aclare un rótulo.
- */
-export async function corporativosParaSlice(
-  tope = 9
-): Promise<{ recursos: TarjetaHome[] }> {
-  return { recursos: await recursosCorporativos(tope) };
-}
-
-/**
- * Recursos para el visor de stories de la portada.
- *
- * La sección va por FORMATO, no por categoría: entra todo lo
- * publicado que mida 1080 × 1920, venga de donde venga. La
- * categoría Eventos entra entera —toda ella mide eso— y
- * también cualquier vertical de otra categoría, porque el
- * visor solo necesita que la pieza sea 9:16.
- *
- * Si no hay ningún recurso vertical publicado se devuelve
- * vacío y la sección desaparece. No se rellena con recursos de
- * otro formato.
- */
-export async function flyersParaStories(
-  tope = 12
-): Promise<{ flyers: TarjetaHome[] }> {
-  return { flyers: await recursosVerticales(tope) };
-}
-
-/**
- * Recursos corporativos para el carrusel en perspectiva.
- *
- * Solo los que miden REALMENTE 1080 × 1350. El filtro va
- * contra las dimensiones guardadas al subir la imagen, no
- * contra el nombre del archivo ni contra "es más alto que
- * ancho": un 1080 × 1080 y un 1080 × 1920 quedan fuera, que es
- * justo lo que se pide.
- *
- * Un recurso cuyas dimensiones no se pudieron leer queda
- * fuera también. Es deliberado: sin el dato no se puede
- * afirmar que cumple el formato.
- */
-export async function recursosCorporativos(
-  tope = 9
-): Promise<TarjetaHome[]> {
-  const filas = await prisma.product.findMany({
-    where: {
-      status: "PUBLISHED",
-      category: { slug: CATEGORIA_CORPORATIVOS },
-      OR: [
-        {
-          images: {
-            some: {
-              imageWidth: ANCHO_CORPORATIVO,
-              imageHeight: ALTO_CORPORATIVO,
-            },
-          },
-        },
-        {
-          coverWidth: ANCHO_CORPORATIVO,
-          coverHeight: ALTO_CORPORATIVO,
-        },
-      ],
-    },
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    take: tope,
-    select: SELECCION,
-  });
-
-  /*
-    Segundo filtro en memoria: la consulta admite un recurso
-    cuya GALERÍA tenga una imagen del formato, pero la tarjeta
-    podría acabar pintando la portada, que quizá no lo sea. Se
-    comprueba la imagen que de verdad se va a enseñar.
-  */
-  return (filas as Fila[])
-    .map(aTarjetaHome)
-    .filter(
-      (t) =>
-        t.ancho === ANCHO_CORPORATIVO && t.alto === ALTO_CORPORATIVO
-    );
-}
 
 /* ══════════════ CREADORES ══════════════ */
 
