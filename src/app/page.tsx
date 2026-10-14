@@ -327,11 +327,6 @@ export default async function Home() {
 
         <SeparadorSeccion />
 
-        {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
-        <Ecosistema />
-
-        <SeparadorSeccion />
-
         {/* ══════════ CÓMO FUNCIONA ══════════ */}
         <section>
           <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
@@ -366,6 +361,11 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
+        <SeparadorSeccion />
+
+        {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
+        <Ecosistema />
 
         {/* ══════════ PREGUNTAS FRECUENTES ══════════ */}
         <div aria-hidden className="rk-separador rk-separador-arriba rk-sep-faq">
