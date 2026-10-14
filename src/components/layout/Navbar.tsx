@@ -490,7 +490,12 @@ function NavbarContent() {
                     <RolSwitch
                       esAdmin={user.role === "ADMIN"}
                       enAdmin={isActive("/admin")}
-                      enStudio={isActive("/creadores")}
+                      /* Solo el panel del creador: /creadores y los
+                         perfiles públicos no son Studio. */
+                      enStudio={
+                        isActive("/creadores/panel") ||
+                        isActive("/creadores/productos")
+                      }
                     />
                   )}
 
