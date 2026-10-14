@@ -20,9 +20,6 @@ import { datosRecomendados } from "@/components/home/Recomendados";
 import SelectorBusqueda from "@/components/home/SelectorBusqueda";
 import PalabrasEscritas from "@/components/home/PalabrasEscritas";
 import SliderPortadas from "@/components/home/SliderPortadas";
-import CarpetasCategorias, {
-  aCarpetas,
-} from "@/components/categorias/CarpetasCategorias";
 import StoriesEventos from "@/components/home/StoriesEventos";
 import TiraGeneral from "@/components/home/TiraGeneral";
 import CatalogoPestanas, {
@@ -43,7 +40,6 @@ import {
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
 import { portadasActivas } from "@/lib/portadas";
 import { prisma } from "@/lib/prisma";
-import { programasPorCategoria } from "@/lib/programas-categoria";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { SITIO, absoluta, paginaPublica } from "@/lib/seo";
 import { IconoBuscar } from "@/components/iconos";
@@ -104,7 +100,6 @@ export default async function Home() {
    */
   const [
     products,
-    categories,
     productCount,
     flyers,
     corporativos,
@@ -120,37 +115,6 @@ export default async function Home() {
       orderBy: { createdAt: "desc" },
       take: 6,
       select: SELECCION_TARJETA,
-    }),
-
-    prisma.category.findMany({
-      where: { products: { some: { status: "PUBLISHED" } } },
-      orderBy: { name: "asc" },
-      take: 8,
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        description: true,
-        _count: {
-          select: {
-            products: { where: { status: "PUBLISHED" } },
-          },
-        },
-        // Hasta tres portadas reales: asoman de la carpeta.
-        products: {
-          where: { status: "PUBLISHED" },
-          orderBy: { createdAt: "desc" },
-          take: 3,
-          select: {
-            coverUrl: true,
-            images: {
-              orderBy: { sortOrder: "asc" },
-              take: 1,
-              select: { url: true },
-            },
-          },
-        },
-      },
     }),
 
     prisma.product.count({ where: { status: "PUBLISHED" } }),
@@ -184,12 +148,6 @@ export default async function Home() {
        términos de «Populares ahora». Sin ellos, no se anima. */
     terminosDestacados(6).catch(() => []),
   ]);
-
-  /* Solo 3 carpetas en el inicio; sus programas en una consulta. */
-  const categoriasInicio = categories.slice(0, 3);
-  const programasInicio = await programasPorCategoria(
-    categoriasInicio.map((c) => c.id)
-  );
 
   /*
     Pestañas del catálogo, en el orden del encargo. Cada una
@@ -463,40 +421,6 @@ export default async function Home() {
             </div>
           </div>
         </section>
-
-        {/* ══════════ CATEGORÍAS (debajo del hero) ══════════ */}
-        {categories.length > 0 && (
-          <section className="rk-home-categorias">
-            <div className="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-8">
-              <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
-                <div>
-                  <p className="rk-kicker">Explora</p>
-
-                  <h2 className="rk-title mt-2 text-2xl sm:text-3xl">
-                    Categorías
-                  </h2>
-                </div>
-
-                <Link
-                  href="/categorias"
-                  className="rk-press rk-link-seccion group gap-2 text-sm font-semibold"
-                >
-                  Ver todas
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform duration-normal ease-rk group-hover:translate-x-0.5"
-                  />
-                </Link>
-              </div>
-
-              <CarpetasCategorias
-                categorias={aCarpetas(categoriasInicio, programasInicio)}
-                nivelTitulo="h3"
-                className="rk-fade-up rk-enter-1 mt-6 sm:mt-8"
-              />
-            </div>
-          </section>
-        )}
 
         <SeparadorSeccion />
 

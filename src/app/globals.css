@@ -14142,44 +14142,6 @@ div.rk-upload-error > * + * {
   }
 }
 
-/* ═══════════ AU · Categorías del inicio (debajo del slider) ═══════════ */
-.rk-home-categorias {
-  padding: 28px 0 44px;
-}
-
-/* Sin slider, la sección no queda pegada a la barra superior. */
-.rk-home-categorias:first-child {
-  padding-top: 44px;
-}
-
-@media (min-width: 1024px) {
-  .rk-home-categorias {
-    padding: 40px 0 64px;
-  }
-
-  .rk-home-categorias:first-child {
-    padding-top: 72px;
-  }
-}
-
-/* En el inicio solo van 3 carpetas, en una fila; el diseño de la
-   carpeta es el mismo de /categorias. */
-.rk-home-categorias .rk-folder-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-@media (min-width: 640px) {
-  .rk-home-categorias .rk-folder-grid { gap: 18px; }
-}
-
-/* En escritorio cada carpeta mide lo mismo que en la rejilla de 4 */
-@media (min-width: 1024px) {
-  .rk-home-categorias .rk-folder-grid {
-    grid-template-columns: repeat(3, calc((100% - 54px) / 4));
-  }
-}
-
 /* ═══════════ AV · CTA final con la modelo (estilo hero) ═══════════
    La sección usa rk-card, rk-display, rk-btn, rk-card-glass y
    rk-chip. Aquí solo va lo propio: el círculo de marca, la foto
