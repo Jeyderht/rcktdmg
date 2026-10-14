@@ -306,7 +306,13 @@ export default async function Store({ searchParams }: StoreProps) {
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
 
         {/* ══════════ CABECERA ══════════ */}
-        <section className="rk-fade-up relative overflow-hidden">
+        {/*
+          isolate: el halo va con z-index negativo y blur. Sin un
+          contexto de apilamiento propio, Safari en iPhone lo
+          pinta fuera del overflow-hidden y la página se puede
+          arrastrar a la derecha, cortando el título y el buscador.
+        */}
+        <section className="rk-fade-up relative isolate overflow-hidden">
           {/* Decoración CSS sutil: un halo y nada más. */}
           <div
             aria-hidden
