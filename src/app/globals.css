@@ -15639,7 +15639,10 @@ div.rk-upload-error > * + * {
   aspect-ratio: 16 / 9;
   max-height: 440px;
   border-radius: 20px;
-  background: #0d0e12;
+  /* El fondo de la página, no negro: el alto sale fraccionario
+     (16:9 de 366 px = 205,875) y en el último píxel el negro
+     asomaba bajo la imagen como una línea, sobre todo en claro. */
+  background: var(--rx-fondo);
   touch-action: pan-y;
   user-select: none;
 }
