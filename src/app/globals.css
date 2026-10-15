@@ -5277,7 +5277,7 @@ table .rk-btn:hover:not(:disabled) {
   padding: 5px;
   border-radius: 26px;
   border: 1px solid rgb(255 255 255 / 0.12);
-  background: rgb(22 23 28 / 0.42);
+  background: rgb(24 24 24 / 0.42);
   -webkit-backdrop-filter: blur(24px) saturate(1.6);
   backdrop-filter: blur(24px) saturate(1.6);
   pointer-events: auto;
@@ -5331,7 +5331,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-dock-item[aria-current="page"] {
-  border-color: rgb(21 22 27 / 0.08);
+  border-color: rgb(var(--rk-border));
   background: rgb(255 255 255 / 0.85);
 }
 
@@ -5373,8 +5373,8 @@ table .rk-btn:hover:not(:disabled) {
   padding: 0 4px;
   border-radius: 999px;
   border: 1px solid rgb(255 255 255 / 0.6);
-  background: linear-gradient(90deg, rgb(200 201 214), rgb(244 242 241) 48%, rgb(248 214 198));
-  color: #15161b;
+  background: linear-gradient(90deg, #dde5ed, #fafafb 48%, rgb(248 214 198));
+  color: #181818;
   font-size: 10px;
   font-weight: 600;
   line-height: 1;
@@ -5438,7 +5438,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(255 255 255 / 0.24),
     rgb(255 255 255 / 0.12)
   );
-  color: #fff;
+  color: #f5f5f5;
 }
 
 .rk-dock .rk-dock-label {
@@ -5524,7 +5524,7 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-dock .rk-dock-bar::before {
   border-color: rgb(255 255 255 / 0.3);
-  background: rgb(40 42 50 / 0.18);
+  background: rgb(48 48 48 / 0.18);
   -webkit-backdrop-filter: blur(28px) saturate(1.4) brightness(0.92);
   backdrop-filter: blur(28px) saturate(1.4) brightness(0.92);
 }
@@ -5535,14 +5535,14 @@ table .rk-btn:hover:not(:disabled) {
 
 @media (hover: hover) and (pointer: fine) {
   [data-theme="light"] .rk-dock .rk-dock-item:hover:not([aria-current="page"]) {
-    color: #fff;
+    color: #f5f5f5;
   }
 }
 
 [data-theme="light"] .rk-dock .rk-dock-item[aria-current="page"] {
   border-color: rgb(255 255 255 / 0.22);
   background: linear-gradient(180deg, rgb(255 255 255 / 0.3), rgb(255 255 255 / 0.14));
-  color: #fff;
+  color: #f5f5f5;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -5672,7 +5672,7 @@ table .rk-btn:hover:not(:disabled) {
   padding: 0;
   border-radius: 16px;
   border: 1px solid rgb(255 255 255 / 0.1);
-  background: rgb(22 23 28 / 0.42);
+  background: rgb(24 24 24 / 0.42);
   -webkit-backdrop-filter: blur(20px) saturate(1.5);
   backdrop-filter: blur(20px) saturate(1.5);
   color: var(--rx-texto);
@@ -5694,7 +5694,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-topbar-btn {
-  border-color: rgb(21 22 27 / 0.08);
+  border-color: rgb(var(--rk-border));
   background: rgb(255 255 255 / 0.7);
 }
 
@@ -5705,8 +5705,8 @@ table .rk-btn:hover:not(:disabled) {
   }
 
   [data-theme="light"] .rk-topbar-btn:hover {
-    border-color: rgb(21 22 27 / 0.16);
-    background: #fff;
+    border-color: rgb(24 24 24 / 0.16);
+    background: rgb(var(--rk-surface));
   }
 }
 
@@ -5767,8 +5767,8 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-topbar-link[aria-current="page"] {
-  border-color: rgb(21 22 27 / 0.08);
-  background: #fff;
+  border-color: rgb(var(--rk-border));
+  background: rgb(var(--rk-surface));
 }
 
 .rk-topbar-link:focus-visible {
@@ -8790,7 +8790,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(var(--rk-iris-2) / 0.5) 60%,
     rgb(var(--rk-iris-3) / 0.6)
   );
-  color: #fff;
+  color: #f5f5f5;
   font-size: 0.715rem;
   font-weight: 700;
 }
@@ -8870,7 +8870,7 @@ table .rk-btn:hover:not(:disabled) {
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: 26px;
-  background: rgb(22 23 28 / 0.8);
+  background: rgb(24 24 24 / 0.8);
   color: var(--rx-texto);
   -webkit-backdrop-filter: blur(28px) saturate(1.5);
   backdrop-filter: blur(28px) saturate(1.5);
@@ -8952,7 +8952,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(var(--rk-iris-2)) 55%,
     rgb(var(--rk-iris-3))
   );
-  color: #fff;
+  color: #f5f5f5;
   font-size: 0.77rem;
   font-weight: 600;
   text-decoration: none;
@@ -8970,7 +8970,7 @@ table .rk-btn:hover:not(:disabled) {
   padding: 6px 12px;
   border-radius: 999px;
   background: rgb(255 255 255 / 0.92);
-  color: #15161b;
+  color: #181818;
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -8997,7 +8997,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-menu-group {
-  background: rgb(21 22 27 / 0.035);
+  background: rgb(24 24 24 / 0.035);
 }
 
 .rk-menu-item {
@@ -9035,8 +9035,8 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-menu-item[aria-current="page"] {
-  border-color: rgb(21 22 27 / 0.05);
-  background: #fff;
+  border-color: rgb(var(--rk-border));
+  background: rgb(var(--rk-surface));
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -9046,8 +9046,8 @@ table .rk-btn:hover:not(:disabled) {
   }
 
   [data-theme="light"] .rk-menu-item:hover {
-    border-color: rgb(21 22 27 / 0.05);
-    background: #fff;
+    border-color: rgb(var(--rk-border));
+    background: rgb(var(--rk-surface));
   }
 
   .rk-menu-item:hover svg {
@@ -9090,7 +9090,7 @@ table .rk-btn:hover:not(:disabled) {
   height: 4px;
   margin: 0 auto;
   border-radius: 999px;
-  background: rgb(127 127 127 / 0.35);
+  background: rgb(71 84 103 / 0.35);
 }
 
 .rk-menu-sheet .rk-menu-item {
@@ -12925,7 +12925,7 @@ div.rk-upload-error > * + * {
 
 .rk-menu-promo-pill {
   background: rgb(var(--rk-marca-tinta));
-  color: #fff;
+  color: #f5f5f5;
 }
 
 /* ── aros de avatar ──────────────────────────────────────────────────────
