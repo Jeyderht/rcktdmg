@@ -369,7 +369,15 @@ export default async function Home() {
         <PreguntasFrecuentes sinEtiquetas />
 
         {/* ══════════ CTA FINAL (con la modelo) ══════════ */}
-        <CtaModelo />
+        {/* Precio más bajo publicado: eventos + diseños generales
+            cubren todo el catálogo publicado. */}
+        <CtaModelo
+          precioDesde={
+            [queBuscas.eventos.precioMinimo, queBuscas.generales.precioMinimo]
+              .filter((p): p is number => p !== null)
+              .reduce<number | null>((min, p) => (min === null || p < min ? p : min), null)
+          }
+        />
       </main>
 
       <Footer />
