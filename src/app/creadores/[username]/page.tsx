@@ -328,27 +328,29 @@ export default async function CreatorPublicProfile({
                 </div>
               )}
 
-              {/* ACCIONES: seguir (ancho) + compartir (redondo) */}
-              <div className="rk-hero-actions">
-                <SeguirButton
-                  creatorId={creator.id}
-                  perfilUrl={perfilUrl}
-                  seguidoresIniciales={seguimiento.seguidores}
-                  siguiendoInicial={seguimiento.siguiendo}
-                  esUnoMismo={seguimiento.esUnoMismo}
-                />
-
+              {/*
+                SEGUIDORES: línea simple «N seguidores» y debajo la
+                fila de botones (Seguir + cuadrícula). Compartir sigue
+                en la barra de la portada.
+              */}
+              <SeguirButton
+                creatorId={creator.id}
+                perfilUrl={perfilUrl}
+                seguidoresIniciales={seguimiento.seguidores}
+                siguiendoInicial={seguimiento.siguiendo}
+                esUnoMismo={seguimiento.esUnoMismo}
+              >
                 {totalRecursos > 0 && (
                   <a
                     href="#recursos"
                     aria-label="Ver sus recursos"
                     title="Ver sus recursos"
-                    className="rk-hero-round"
+                    className="rk-seguir-redondo"
                   >
                     <LayoutGrid aria-hidden />
                   </a>
                 )}
-              </div>
+              </SeguirButton>
 
               {/* CIFRAS: datos reales (los seguidores los muestra Seguir) */}
               <dl className="rk-hero-stats">

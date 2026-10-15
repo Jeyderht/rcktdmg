@@ -11980,7 +11980,7 @@ div.rk-upload-error > * + * {
      .rk-hero-bar        → barra flotante sobre la portada
      .rk-hero-round      → botón redondo de vidrio (volver / compartir)
      .rk-hero-avatar     → foto o iniciales
-     .rk-hero-actions    → botón ancho + botones redondos
+     .rk-seguir          → «N seguidores» + fila de botones (SeguirButton)
      .rk-hero-stats      → franja de cifras con línea al medio
      .rk-hero-tabs       → pestañas de categorías (rk-tabs-track)
    ═══════════════════════════════════════════════════════════════════════ */
@@ -12072,23 +12072,6 @@ div.rk-upload-error > * + * {
 .rk-hero-round:focus-visible {
   outline: 2px solid rgb(var(--rk-marca-tinta));
   outline-offset: 2px;
-}
-
-/* botón redondo fuera de la portada (en la fila de acciones) */
-.rk-hero-actions .rk-hero-round {
-  border-color: var(--rk-linea);
-  background: rgb(255 255 255 / 0.04);
-  color: var(--rx-texto);
-}
-
-[data-theme="light"] .rk-hero-actions .rk-hero-round {
-  background: #fff;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rk-hero-actions .rk-hero-round:hover {
-    background: rgb(127 127 127 / 0.1);
-  }
 }
 
 /* ── cuerpo centrado ────────────────────────────────────────────────── */
@@ -12195,25 +12178,109 @@ div.rk-upload-error > * + * {
   flex: none;
 }
 
-/* ── acciones: botón ancho + redondos ───────────────────────────────── */
-.rk-hero-actions {
+/* ── seguidores: línea simple y fila de botones (SeguirButton) ─────────
+   «N seguidores» en texto suave con el número en negrita; debajo,
+   botones de 48 px separados 10 px: Seguir en tinta (invertido en
+   oscuro; «Siguiendo» en contorno) y el redondo de cuadrícula en
+   contorno. Sin sombras. */
+.rk-seguir {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: 100%;
+  margin-top: 18px;
+}
+
+.rk-seguir-linea {
+  margin: 0;
+  color: rgb(var(--rk-muted));
+  font-size: 0.95rem;
+}
+
+.rk-seguir-linea b {
+  color: var(--rx-texto);
+  font-weight: 600;
+}
+
+.rk-seguir-fila {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  width: 100%;
-  max-width: 400px;
-  margin-top: 18px;
 }
 
-.rk-hero-actions > :first-child {
-  flex: 1;
-  min-width: 0;
+.rk-seguir-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 26px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: rgb(var(--rk-marca-tinta));
+  color: rgb(var(--rk-marca-centro));
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--rx-t-micro) var(--rx-curva),
+    color var(--rx-t-micro) var(--rx-curva),
+    border-color var(--rx-t-micro) var(--rx-curva);
 }
 
-.rk-hero-actions .rk-btn {
-  width: 100%;
-  text-decoration: none;
+[data-theme="dark"] .rk-seguir-boton {
+  background: rgb(var(--rk-marca-centro));
+  color: rgb(var(--rk-marca-tinta));
+}
+
+.rk-seguir-boton[data-siguiendo],
+[data-theme="dark"] .rk-seguir-boton[data-siguiendo] {
+  border-color: var(--rk-linea);
+  background: transparent;
+  color: var(--rx-texto);
+}
+
+.rk-seguir-boton:disabled {
+  opacity: 0.6;
+}
+
+.rk-seguir-redondo {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--rk-linea);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--rx-texto);
+  transition: background-color var(--rx-t-micro) var(--rx-curva);
+}
+
+.rk-seguir-redondo svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-seguir-redondo:hover {
+    background: rgb(var(--rk-foreground) / 0.06);
+  }
+}
+
+.rk-seguir-boton:focus-visible,
+.rk-seguir-redondo:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-lavanda));
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-seguir-boton,
+  .rk-seguir-redondo {
+    transition: none;
+  }
 }
 
 /* ── franja de cifras ───────────────────────────────────────────────── */
