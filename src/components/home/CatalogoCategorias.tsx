@@ -41,9 +41,9 @@ const ICONO_CATEGORIA = {
 
 const ICONO_PESTANA = { recientes: Clock, populares: Heart, packs: Layers } as const;
 
-const SALIDA_MS = 200;
-const HUECO_MS = 200;
-const ENTRADA_MS = 300;
+const SALIDA_MS = 500;
+const HUECO_MS = 80;
+const ENTRADA_MS = 700;
 
 /** Flechas, Inicio y Fin en un tablist: devuelve el índice nuevo o null. */
 function teclaTablist(evento: KeyboardEvent, actual: number, total: number) {
@@ -71,9 +71,11 @@ function teclaTablist(evento: KeyboardEvent, actual: number, total: number) {
  * en el servidor con ProductCard / ColeccionCard.
  *
  * Al cambiar de categoría el ancho de los botones se anima
- * (320 ms) y el panel hace salida (200 ms, opacidad y blur),
- * hueco (200 ms, aquí cambian los datos) y entrada (300 ms). Al
- * cambiar de pestaña, lo mismo solo con descripción y tarjetas.
+ * (600 ms) y el panel hace salida (500 ms, opacidad y blur),
+ * hueco (80 ms, aquí cambian los datos) y entrada (700 ms). Al
+ * cambiar de pestaña, lo mismo solo con descripción y tarjetas;
+ * el subrayado se desliza 550 ms. El panel no es una tarjeta: va
+ * a todo el ancho, con las pestañas sobre una línea fina.
  * Los clics de en medio se ignoran. Con reducir movimiento,
  * todo es instantáneo. Eventos sale elegida en cada carga.
  */
@@ -229,46 +231,48 @@ export default function CatalogoCategorias({ categorias }: { categorias: Categor
         className="rk-cc-panel"
       >
         <div className="rk-cc-todo">
-          {pestanas.length > 1 ? (
-            <div
-              role="tablist"
-              aria-label={`Orden en ${actual.nombre}`}
-              className="rk-cc-pestanas"
-              style={{ ["--rk-cc-n" as string]: pestanas.length, ["--rk-cc-i" as string]: pestana }}
-              onKeyDown={(e) => {
-                const nuevo = teclaTablist(e, pestana, pestanas.length);
-                if (nuevo === null) return;
-                elegirPestana(nuevo);
-                enfocar(e.currentTarget, nuevo);
-              }}
-            >
-              {pestanas.map((p, i) => {
-                const Icono = ICONO_PESTANA[p.clave];
-                const elegida = i === pestana;
+          <div className="rk-cc-linea">
+            {pestanas.length > 1 ? (
+              <div
+                role="tablist"
+                aria-label={`Orden en ${actual.nombre}`}
+                className="rk-cc-pestanas"
+                style={{ ["--rk-cc-n" as string]: pestanas.length, ["--rk-cc-i" as string]: pestana }}
+                onKeyDown={(e) => {
+                  const nuevo = teclaTablist(e, pestana, pestanas.length);
+                  if (nuevo === null) return;
+                  elegirPestana(nuevo);
+                  enfocar(e.currentTarget, nuevo);
+                }}
+              >
+                {pestanas.map((p, i) => {
+                  const Icono = ICONO_PESTANA[p.clave];
+                  const elegida = i === pestana;
 
-                return (
-                  <button
-                    key={p.clave}
-                    type="button"
-                    role="tab"
-                    aria-selected={elegida}
-                    tabIndex={elegida ? 0 : -1}
-                    onClick={() => elegirPestana(i)}
-                    className="rk-cc-pestana"
-                  >
-                    <Icono aria-hidden />
-                    {p.nombre}
-                  </button>
-                );
-              })}
-              <span aria-hidden className="rk-cc-subrayado" />
-            </div>
-          ) : (
-            <p className="rk-cc-solo">
-              <IconoTitulo aria-hidden />
-              {actual.nombre}
-            </p>
-          )}
+                  return (
+                    <button
+                      key={p.clave}
+                      type="button"
+                      role="tab"
+                      aria-selected={elegida}
+                      tabIndex={elegida ? 0 : -1}
+                      onClick={() => elegirPestana(i)}
+                      className="rk-cc-pestana"
+                    >
+                      <Icono aria-hidden />
+                      {p.nombre}
+                    </button>
+                  );
+                })}
+                <span aria-hidden className="rk-cc-subrayado" />
+              </div>
+            ) : (
+              <p className="rk-cc-solo">
+                <IconoTitulo aria-hidden />
+                {actual.nombre}
+              </p>
+            )}
+          </div>
 
           <div className="rk-cc-tarjetas-zona">
             <p className="rk-cc-descripcion" aria-live="polite">

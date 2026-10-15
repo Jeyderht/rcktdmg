@@ -16206,18 +16206,19 @@ div.rk-upload-error > * + * {
 
    Riel de categorías con el estilo del interruptor Admin / Studio
    unido (rk-rol): tinta con la elegida en perla, invertido en
-   oscuro. Panel de vidrio con pestañas (subrayado lavanda),
-   descripción y tarjetas (ProductCard / ColeccionCard). Casi
-   monocromo: la lavanda solo en el subrayado y el foco.
+   oscuro. El panel NO es una tarjeta: va a todo el ancho, con las
+   pestañas sobre una línea fina (subrayado lavanda), descripción y
+   tarjetas (ProductCard / ColeccionCard), con 16 px de margen en el
+   contenido. Sin separadores alrededor: solo espacio (40 / 56 px).
+   Casi monocromo: la lavanda solo en el subrayado y el foco.
    ═══════════════════════════════════════════════════════════════════ */
 .rk-cc {
   --rk-cc-fondo: rgb(var(--rk-marca-tinta));
   --rk-cc-sobre: rgb(var(--rk-marca-centro));
   --rk-cc-suave: rgb(var(--rk-foreground) / 0.6);
   --rk-cc-curva: cubic-bezier(0.4, 0, 0.2, 1);
-  max-width: 80rem;
-  margin: 0 auto;
-  padding: 32px 16px 40px;
+  --rk-cc-lado: 16px;
+  padding: 40px 0;
 }
 
 [data-theme="dark"] .rk-cc {
@@ -16227,7 +16228,8 @@ div.rk-upload-error > * + * {
 
 @media (min-width: 1024px) {
   .rk-cc {
-    padding: 56px 32px;
+    --rk-cc-lado: 32px;
+    padding: 56px 0;
   }
 }
 
@@ -16235,7 +16237,7 @@ div.rk-upload-error > * + * {
 .rk-cc-riel {
   display: flex;
   align-items: center;
-  width: 100%;
+  margin: 0 var(--rk-cc-lado);
   padding: 4px;
   border: 1px solid var(--rk-cc-fondo);
   border-radius: 999px;
@@ -16269,9 +16271,9 @@ div.rk-upload-error > * + * {
 
 .rk-cc-riel[data-listo] .rk-cc-riel-boton {
   transition:
-    width 0.32s var(--rk-cc-curva),
-    background-color 0.32s var(--rk-cc-curva),
-    opacity 0.32s var(--rk-cc-curva);
+    width 0.6s var(--rk-cc-curva),
+    background-color 0.6s var(--rk-cc-curva),
+    opacity 0.6s var(--rk-cc-curva);
 }
 
 /* separador fino entre las no elegidas, nunca junto a la elegida */
@@ -16303,7 +16305,7 @@ div.rk-upload-error > * + * {
 }
 
 .rk-cc-riel[data-listo] .rk-cc-riel-icono {
-  transition: left 0.32s var(--rk-cc-curva);
+  transition: left 0.6s var(--rk-cc-curva);
 }
 
 .rk-cc-riel-icono svg {
@@ -16319,7 +16321,7 @@ div.rk-upload-error > * + * {
   white-space: nowrap;
   opacity: 0;
   transform: translateY(-50%);
-  transition: opacity 0.1s;
+  transition: opacity 0.25s;
 }
 
 .rk-cc-riel-boton[aria-selected="true"] {
@@ -16334,7 +16336,7 @@ div.rk-upload-error > * + * {
 
 .rk-cc-riel-boton[aria-selected="true"] .rk-cc-riel-texto {
   opacity: 1;
-  transition: opacity 0.2s 0.16s;
+  transition: opacity 0.4s 0.3s;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -16349,26 +16351,22 @@ div.rk-upload-error > * + * {
   outline-offset: 2px;
 }
 
-/* Panel */
+/* Panel: sin tarjeta, a todo el ancho */
 .rk-cc-panel {
-  margin-top: 14px;
-  padding: 2px 16px 18px;
-  border: 1px solid var(--rx-borde);
-  border-radius: 24px;
-  background: var(--rx-vidrio);
+  margin-top: 16px;
 }
 
-@media (min-width: 760px) {
-  .rk-cc-panel {
-    padding: 8px 28px 32px;
-  }
+/* línea fina a todo el ancho bajo las pestañas */
+.rk-cc-linea {
+  padding: 0 var(--rk-cc-lado);
+  border-bottom: 1px solid var(--rk-linea);
 }
 
 .rk-cc-pestanas {
   position: relative;
   display: flex;
-  margin: 0 4px;
-  border-bottom: 1px solid var(--rk-linea);
+  max-width: 80rem;
+  margin: 0 auto;
 }
 
 .rk-cc-pestana {
@@ -16417,7 +16415,7 @@ div.rk-upload-error > * + * {
   border-radius: 2px;
   background: rgb(var(--rk-marca-lavanda));
   transform: translateX(calc(var(--rk-cc-i) * 100%));
-  transition: transform 0.3s var(--rk-cc-curva);
+  transition: transform 0.55s var(--rk-cc-curva);
 }
 
 /* Una sola pestaña (Colecciones): solo el nombre */
@@ -16427,9 +16425,9 @@ div.rk-upload-error > * + * {
   justify-content: center;
   gap: 6px;
   min-height: 46px;
-  margin: 0 4px;
+  max-width: 80rem;
+  margin: 0 auto;
   padding: 14px 2px 12px;
-  border-bottom: 1px solid var(--rk-linea);
   color: var(--rx-texto);
   font-size: 0.875rem;
   font-weight: 500;
@@ -16438,6 +16436,13 @@ div.rk-upload-error > * + * {
 .rk-cc-solo svg {
   width: 15px;
   height: 15px;
+}
+
+/* descripción, tarjetas y botón: el contenido, con su margen */
+.rk-cc-tarjetas-zona {
+  max-width: calc(80rem + var(--rk-cc-lado) * 2);
+  margin: 0 auto;
+  padding: 0 var(--rk-cc-lado);
 }
 
 .rk-cc-descripcion {
@@ -16486,19 +16491,19 @@ div.rk-upload-error > * + * {
   margin-top: 8px;
 }
 
-/* Relevo: salida 200 ms, hueco 200 ms, entrada 300 ms */
+/* Relevo: salida 500 ms, hueco 80 ms, entrada 700 ms */
 .rk-cc-todo,
 .rk-cc-tarjetas-zona {
   transition:
-    opacity 0.3s var(--rk-cc-curva),
-    filter 0.3s var(--rk-cc-curva);
+    opacity 0.7s var(--rk-cc-curva),
+    filter 0.7s var(--rk-cc-curva);
 }
 
 .rk-cc[data-fase="fuera-todo"] .rk-cc-todo,
 .rk-cc[data-fase="fuera-tarjetas"] .rk-cc-tarjetas-zona {
   opacity: 0;
   filter: blur(6px);
-  transition-duration: 0.2s;
+  transition-duration: 0.5s;
 }
 
 @media (prefers-reduced-motion: reduce) {

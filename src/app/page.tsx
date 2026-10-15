@@ -297,18 +297,15 @@ export default async function Home() {
         {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */}
         <SelectorBusqueda datos={queBuscas} />
 
-        <SeparadorSeccion />
-
         {/*
           ══════════ CATÁLOGO POR CATEGORÍA ══════════
 
           Eventos, General, Colecciones y Packs, cada una con sus
           pestañas Recientes / Populares / Packs. Eventos sale
-          elegida en cada carga.
+          elegida en cada carga. Sin separadores alrededor: solo
+          espacio.
         */}
         <CatalogoInicio datos={catalogo} />
-
-        <SeparadorSeccion />
 
         {/*
           ══════════ CREADORES ══════════
