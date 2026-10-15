@@ -74,25 +74,25 @@
     un degradado #eef1f6 → #e5e9ef, y es ese fondo ligeramente
     frío lo que deja respirar a las superficies blancas.
   */
-  --rk-background: 238 241 246;
-  --rk-background-2: 229 233 239;
+  --rk-background: 250 250 251;
+  --rk-background-2: 244 247 249;
   --rk-surface: 255 255 255;
   --rk-surface-elevated: 255 255 255;
-  --rk-card: 255 255 255;
+  --rk-card: 248 250 252;
   /* Translúcida, no sólida: la tarjeta deja ver el fondo. */
-  --rk-card-alpha: 0.72;
+  --rk-card-alpha: 1;
 
   /* ---- TEXTO ---- */
-  --rk-foreground: 21 22 27;
-  --rk-ink: 21 22 27; /* alias histórico de foreground */
-  --rk-muted: 21 22 27;
-  --rk-muted-alpha: 0.58;
+  --rk-foreground: 24 24 24;
+  --rk-ink: 24 24 24; /* alias histórico de foreground */
+  --rk-muted: 71 84 103;
+  --rk-muted-alpha: 1;
 
   /* ---- LÍNEAS ---- */
   /* Finas y discretas: la línea sugiere el borde, no lo dibuja. */
-  --rk-border: 21 22 27;
-  --rk-border-alpha: 0.075;
-  --rk-border-strong-alpha: 0.14;
+  --rk-border: 221 229 237;
+  --rk-border-alpha: 1;
+  --rk-border-strong-alpha: 1;
 
   /* ---- MARCA ---- */
   --rk-primary: 21 22 27;
@@ -136,8 +136,8 @@
   /* ---- HALOS DEL FONDO ----
      Neutros: la identidad es tinta sobre papel, así que el
      fondo aporta profundidad con grises, no con color. */
-  --rk-halo-1: rgb(10 11 14 / 0.05);
-  --rk-halo-2: rgb(10 11 14 / 0.035);
+  --rk-halo-1: rgb(87 108 130 / .04);
+  --rk-halo-2: rgb(87 108 130 / .03);
 
   /* ---- PROFUNDIDAD: sombras por capas ---- */
   /* Suaves y abiertas: posan el elemento, no lo despegan. */
@@ -180,10 +180,10 @@
   /* Negro profundo como base, con superficies que se elevan.
      Nunca negro absoluto en las tarjetas: se perdería la
      jerarquía entre capas. */
-  --rk-background: 8 9 12;
-  --rk-background-2: 6 7 10;
-  --rk-surface: 23 23 27;
-  --rk-surface-elevated: 28 29 34;
+  --rk-background: 17 17 17;
+  --rk-background-2: 11 11 11;
+  --rk-surface: 24 24 24;
+  --rk-surface-elevated: 32 32 32;
   /*
     LA TARJETA ES VIDRIO, NO UN PANEL SÓLIDO.
 
@@ -197,13 +197,13 @@
     resultado en pantalla que un velo blanco al 3 %: lo que se
     ve es el fondo a través de la superficie.
   */
-  --rk-card: 23 24 29;
-  --rk-card-alpha: 0.55;
+  --rk-card: 32 32 32;
+  --rk-card-alpha: 1;
 
-  --rk-foreground: 236 236 241;
-  --rk-ink: 236 236 241;
-  --rk-muted: 236 236 241;
-  --rk-muted-alpha: 0.6;
+  --rk-foreground: 245 245 245;
+  --rk-ink: 245 245 245;
+  --rk-muted: 163 172 184;
+  --rk-muted-alpha: 1;
 
   --rk-border: 255 255 255;
   --rk-border-alpha: 0.085;
@@ -230,7 +230,7 @@
   --rk-danger: 248 96 96;
   --rk-danger-contrast: 8 9 11;
 
-  --rk-glass: 24 25 30;
+  --rk-glass: 24 24 24;
   --rk-glass-alpha: 0.64;
   --rk-glass-strong-alpha: 0.82;
   --rk-glass-border: rgb(255 255 255 / 0.1);
@@ -794,21 +794,21 @@ input[type="search"]::-webkit-search-results-decoration {
     contraste queda garantizado sin duplicar reglas.
   */
   .rk-onyx {
-    --rk-foreground: 250 250 252;
-    --rk-ink: 250 250 252;
-    --rk-muted: 250 250 252;
-    --rk-muted-alpha: 0.66;
-    --rk-background: 9 9 11;
-    --rk-background-2: 14 14 17;
-    --rk-surface: 22 22 26;
-    --rk-card: 22 22 26;
+    --rk-foreground: 245 245 245;
+    --rk-ink: 245 245 245;
+    --rk-muted: 163 172 184;
+    --rk-muted-alpha: 1;
+    --rk-background: 17 17 17;
+    --rk-background-2: 11 11 11;
+    --rk-surface: 24 24 24;
+    --rk-card: 32 32 32;
     --rk-card-alpha: 1;
     --rk-border: 255 255 255;
     --rk-border-alpha: 0.14;
     --rk-border-strong-alpha: 0.28;
     --rk-primary: 250 250 252;
     --rk-on-primary: 9 9 11;
-    --rk-glass: 24 24 28;
+    --rk-glass: 24 24 24;
 
     background-color: rgb(9 9 11);
     color: rgb(250 250 252);
@@ -1667,16 +1667,16 @@ input[type="search"]::-webkit-search-results-decoration {
 /* ────────── TOKENS ────────── */
 
 html[data-theme="dark"] {
-  --rx-fondo: #0e1013;
-  --rx-texto: #f5f5f6;
-  --rx-atenuado: #929299;
+  --rx-fondo: #111111;
+  --rx-texto: #f5f5f5;
+  --rx-atenuado: #a3acb8;
   /*
     Subido de #626268 a #7a7c85: con el anterior, el texto
     terciario daba 3,14:1 sobre el fondo, por debajo del 4,5
     que pide AA a 13 px. Este es el valor MÍNIMO que pasa, para
     no aclararlo más de lo necesario.
   */
-  --rx-tenue: #7a7c85;
+  --rx-tenue: #9aa4b2;
   --rx-plata: #d7d9dd;
 
   --rx-linea: rgb(255 255 255 / 0.075);
@@ -1715,19 +1715,19 @@ html[data-theme="dark"] {
 
 :root,
 [data-theme="light"] {
-  --rx-fondo: #eef1f6;
-  --rx-texto: #121217;
-  --rx-atenuado: #5a5c66;
+  --rx-fondo: #fafafb;
+  --rx-texto: #181818;
+  --rx-atenuado: #475467;
   /* Mismo motivo en claro: 3,38:1 era insuficiente. */
-  --rx-tenue: #66686f;
-  --rx-plata: #4a4c55;
+  --rx-tenue: #667085;
+  --rx-plata: #475467;
 
-  --rx-linea: rgb(0 0 0 / 0.07);
-  --rx-linea-alta: rgb(0 0 0 / 0.1);
-  --rx-borde: rgb(0 0 0 / 0.09);
+  --rx-linea: #dde5ed;
+  --rx-linea-alta: #dde5ed;
+  --rx-borde: #dde5ed;
   --rx-borde-alto: rgb(255 255 255 / 0.9);
 
-  --rx-vidrio: rgb(255 255 255 / 0.42);
+  --rx-vidrio: rgb(248 250 252 / .9);
   --rx-vidrio-panel: linear-gradient(
     145deg,
     rgb(255 255 255 / 0.55),
@@ -1735,22 +1735,22 @@ html[data-theme="dark"] {
     rgb(255 255 255 / 0.5)
   );
 
-  --rx-lengueta: rgb(160 163 174 / 0.5);
-  --rx-lengueta-plena: rgb(160 163 174 / 0.5);
+  --rx-lengueta: rgb(221 229 237 / .8);
+  --rx-lengueta-plena: rgb(221 229 237 / .8);
 
-  --rx-tab: rgb(160 163 174 / 0.5);
-  --rx-glow: rgb(160 163 174 / 0.55);
+  --rx-tab: rgb(221 229 237 / .8);
+  --rx-glow: rgb(221 229 237 / .8);
   --rx-blur-glow: 16px;
-  --rx-halo-1: rgb(160 163 174 / 0.3);
-  --rx-halo-2: rgb(160 163 174 / 0.1);
+  --rx-halo-1: rgb(87 108 130 / .16);
+  --rx-halo-2: rgb(87 108 130 / .06);
   --rx-halo-btn-1: rgb(160 163 174 / 0.2);
   --rx-halo-btn-2: rgb(160 163 174 / 0.06);
-  --rx-linea-fina: rgb(0 0 0 / 0.09);
-  --rx-vidrio-2: rgb(255 255 255 / 0.55);
+  --rx-linea-fina: #dde5ed;
+  --rx-vidrio-2: #f8fafc;
   --rx-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --rx-lengueta-media: rgb(160 163 174 / 0.22);
 
-  --rx-h1: linear-gradient(180deg, #15161b 0%, #15161b 38%, #767986 100%);
+  --rx-h1: linear-gradient(180deg,#181818 0%,#181818 38%,#475467 100%);
 }
 
 /* ────────── FONDO Y TEXTO ────────── */
@@ -2477,10 +2477,10 @@ html[data-theme="dark"] {
 /* ────────── TEXTO ATENUADO ────────── */
 
 html[data-theme="dark"] {
-  --rk-muted: 146 146 153;
+  --rk-muted: 163 172 184;
   --rk-muted-alpha: 1;
-  --rk-foreground: 245 245 246;
-  --rk-ink: 245 245 246;
+  --rk-foreground: 245 245 245;
+  --rk-ink: 245 245 245;
   --rk-border: 255 255 255;
   --rk-border-alpha: 0.075;
   --rk-border-strong-alpha: 0.13;
@@ -2488,10 +2488,10 @@ html[data-theme="dark"] {
 
 :root,
 [data-theme="light"] {
-  --rk-muted: 90 92 102;
+  --rk-muted: 71 84 103;
   --rk-muted-alpha: 1;
-  --rk-foreground: 18 18 23;
-  --rk-ink: 18 18 23;
+  --rk-foreground: 24 24 24;
+  --rk-ink: 24 24 24;
 }
 
 /* ────────── APARICIÓN AL ENTRAR ────────── */
@@ -5008,7 +5008,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] {
-  --rk-linea: rgb(21 22 27 / 0.08);
+  --rk-linea: rgb(221 229 237);
 }
 
 .rk-divider {
@@ -13333,10 +13333,10 @@ div.rk-upload-error > * + * {
    ═══════════════════════════════════════════════════════════════════════ */
 
 [data-theme="light"] .rk-onyx {
-  --rx-fondo: #0e1013;
-  --rx-texto: #f5f5f6;
-  --rx-atenuado: #929299;
-  --rx-tenue: #7a7c85;
+  --rx-fondo: #111111;
+  --rx-texto: #f5f5f5;
+  --rx-atenuado: #a3acb8;
+  --rx-tenue: #9aa4b2;
   --rx-plata: #d7d9dd;
   --rx-linea: rgb(255 255 255 / 0.075);
   --rx-linea-alta: rgb(255 255 255 / 0.13);
