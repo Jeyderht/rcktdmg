@@ -406,10 +406,10 @@ h6 {
 
   /* Lo que asoma al hacer scroll rápido o rebote: el tono del pie. */
   html:has(.rk-footer) {
-    background-color: color-mix(in srgb, #fff 2.5%, var(--rx-fondo));
+    background-color: color-mix(in srgb, #ffffff 2.5%, var(--rx-fondo));
   }
   html[data-theme="light"]:has(.rk-footer) {
-    background-color: color-mix(in srgb, #fff 60%, var(--rx-fondo));
+    background-color: color-mix(in srgb, rgb(var(--rk-surface)) 60%, var(--rx-fondo));
   }
 }
 
@@ -11196,7 +11196,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-footer-logo {
-  background: #fff;
+  background: rgb(var(--rk-surface));
 }
 
 .rk-footer-logo img {
@@ -11371,7 +11371,7 @@ table .rk-btn:hover:not(:disabled) {
   height: 32px;
   border-radius: 999px;
   background: var(--rk-marca-degradado);
-  color: #15161b;
+  color: #181818;
   transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
@@ -11404,8 +11404,8 @@ table .rk-btn:hover:not(:disabled) {
   background: linear-gradient(
     90deg,
     rgb(var(--rk-marca-frio)) 0%,
-    #d9d2df 42%,
-    #ecd5d0 68%,
+    #dde5ed 42%,
+    #dde5ed 68%,
     rgb(var(--rk-marca-calido)) 100%
   );
   user-select: none;
@@ -19827,7 +19827,7 @@ html[data-theme] .rk-faq-icon::before {
   border-radius: inherit;
   padding: 2px;
   pointer-events: none;
-  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(255 255 255 / .0) 262deg,#fff 330deg,rgb(255 255 255 / .0) 360deg);
+  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(255 255 255 / .0) 262deg,#ffffff 330deg,rgb(255 255 255 / .0) 360deg);
   -webkit-mask: linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask:
@@ -19857,7 +19857,7 @@ html[data-theme] .rk-faq-icon::before {
   background:
     radial-gradient(60% 95% at 88% 55%,rgb(240 169 138 / .85) 0,rgb(248 214 198 / .55) 45%,transparent 75%),
     radial-gradient(55% 80% at 0% 100%,rgb(157 151 255 / .22) 0,transparent 70%),
-    linear-gradient(180deg,#fdf6f2 0%,#f8ece6 100%);
+    linear-gradient(180deg,#f8fafc 0%,#f4f7f9 100%);
 }
 
 .rk-footer-cta::before {
@@ -19940,11 +19940,11 @@ html[data-theme] .rk-faq-icon::before {
 }
 
 .rk-footer-cta {
-  color: #5a4651;
+  color: #475467;
 }
 
 .rk-footer-cta-title {
-  color: #5a4651 !important;
+  color: #475467 !important;
 }
 
 .rk-footer-cta .rk-btn.rk-btn-ink {
