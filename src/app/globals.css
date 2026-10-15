@@ -3170,8 +3170,8 @@ table .rk-btn:hover:not(:disabled) {
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
-  background: linear-gradient(135deg, #ffffff 0%, #e9e9ec 48%, #ffffff 100%);
-  color: #111;
+  background: linear-gradient(135deg, #ffffff 0%, #f4f7f9 48%, #ffffff 100%);
+  color: #181818;
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.95),
     inset 0 -1px 0 rgb(125 125 125 / 0.12);
@@ -3184,21 +3184,21 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-buscador-accion {
   border-color: transparent;
-  background: #15161b;
-  color: #fff;
+  background: #181818;
+  color: #f5f5f5;
   box-shadow: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rk-buscador-accion:hover {
-    border-color: #fff;
+    border-color: #dde5ed;
     filter: brightness(1.04);
     box-shadow: inset 0 1px 0 #fff;
   }
 
   [data-theme="light"] .rk-buscador-accion:hover {
     border-color: transparent;
-    background: #22242b;
+    background: #202020;
     filter: none;
     box-shadow: none;
   }
@@ -3913,11 +3913,11 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-select,
 [data-theme="light"] .rk-textarea {
   --rk-in-relleno: rgb(255 255 255 / 0.7);
-  --rk-in-borde: rgb(21 22 27 / 0.1);
-  --rk-in-borde-alto: rgb(21 22 27 / 0.06);
+  --rk-in-borde: rgb(var(--rk-border));
+  --rk-in-borde-alto: rgb(var(--rk-border));
   --rk-in-brillo:
-    inset 0 1px 0 #fff,
-    0 1px 2px rgb(21 22 27 / 0.04);
+    inset 0 1px 0 rgb(var(--rk-surface)),
+    0 1px 2px rgb(24 24 24 / 0.04);
   caret-color: rgb(var(--rk-iris-1));
 }
 
@@ -3933,8 +3933,8 @@ table .rk-btn:hover:not(:disabled) {
   [data-theme="light"] .rk-input:hover:not(:disabled):not(:focus),
   [data-theme="light"] .rk-select:hover:not(:disabled):not(:focus),
   [data-theme="light"] .rk-textarea:hover:not(:disabled):not(:focus) {
-    --rk-in-borde: rgb(21 22 27 / 0.2);
-    --rk-in-borde-alto: rgb(21 22 27 / 0.14);
+    --rk-in-borde: rgb(24 24 24 / 0.2);
+    --rk-in-borde-alto: rgb(24 24 24 / 0.14);
   }
 }
 
@@ -4148,7 +4148,7 @@ table .rk-btn:hover:not(:disabled) {
   .rk-input,
   .rk-select,
   .rk-textarea {
-    --rk-in-relleno: rgb(22 24 28 / 0.92);
+    --rk-in-relleno: rgb(24 24 24 / 0.92);
   }
 
   [data-theme="light"] .rk-input,
@@ -5793,7 +5793,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-buscador {
-  border-color: rgb(21 22 27 / 0.1);
+  border-color: rgb(var(--rk-border));
   background: rgb(255 255 255 / 0.7);
   box-shadow: inset 0 1px 0 #fff;
 }
@@ -5804,7 +5804,7 @@ table .rk-btn:hover:not(:disabled) {
   }
 
   [data-theme="light"] .rk-buscador:hover:not(:focus-within) {
-    border-color: rgb(21 22 27 / 0.2);
+    border-color: rgb(24 24 24 / 0.2);
   }
 }
 
