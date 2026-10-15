@@ -108,7 +108,7 @@ const WHATSAPP = (process.env.NEXT_PUBLIC_CONTACTO_WHATSAPP || "").replace(
   ""
 );
 
-function AyudaDirecta() {
+function AyudaDirecta({ sinEtiquetas }: { sinEtiquetas: boolean }) {
   const canales = [
     CORREO && {
       href: `mailto:${CORREO}`,
@@ -210,7 +210,7 @@ function AyudaDirecta() {
       </div>
 
       <div className="rk-help-caption">
-        <span className="rk-help-dot">Ayuda directa</span>
+        {!sinEtiquetas && <span className="rk-help-dot">Ayuda directa</span>}
 
         <h3 id="ayuda-titulo" className="rk-help-title">
           ¿Aún tienes dudas? Te respondemos en minutos.
@@ -225,10 +225,16 @@ function AyudaDirecta() {
   );
 }
 
+/**
+ * `sinEtiquetas`: sin las píldoras «Dudas comunes» y «Ayuda
+ * directa» (Inicio no lleva badges; /planes las conserva).
+ */
 export default function PreguntasFrecuentes({
   className = "",
+  sinEtiquetas = false,
 }: {
   className?: string;
+  sinEtiquetas?: boolean;
 }) {
   return (
     <section
@@ -236,7 +242,9 @@ export default function PreguntasFrecuentes({
       className={`mx-auto w-full max-w-3xl px-4 py-16 sm:px-5 lg:py-20 ${className}`}
     >
       <header className="rk-faq-intro">
-        <span className="rk-faq-eyebrow">Dudas comunes</span>
+        {!sinEtiquetas && (
+          <span className="rk-faq-eyebrow">Dudas comunes</span>
+        )}
 
         {/* El «?» es un círculo de marca que flota; el nombre real va en aria-label. */}
         <h2
@@ -273,7 +281,7 @@ export default function PreguntasFrecuentes({
         ))}
       </div>
 
-      <AyudaDirecta />
+      <AyudaDirecta sinEtiquetas={sinEtiquetas} />
     </section>
   );
 }

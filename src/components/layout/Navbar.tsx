@@ -366,7 +366,7 @@ function NavbarContent() {
       */}
       <header
         ref={cabecera}
-        className="rk-topbar sm:px-4 sm:pt-4"
+        className="rk-topbar"
         data-scrolled={scrolled}
       >
         <div className="mx-auto w-full max-w-7xl">
@@ -587,7 +587,7 @@ export default function Navbar() {
   return (
     <Suspense
       fallback={
-        <header className="rk-topbar sm:px-4 sm:pt-4">
+        <header className="rk-topbar">
           <div className="mx-auto w-full max-w-7xl">
             <div className="rk-topbar-bar">
               <span className="rk-topbar-btn">

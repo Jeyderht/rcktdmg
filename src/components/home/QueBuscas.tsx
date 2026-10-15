@@ -8,10 +8,8 @@ import {
   CalendarDays,
   ChevronLeft,
   ChevronRight,
-  FileType,
   Layers,
   Shapes,
-  Users,
 } from "lucide-react";
 
 /** Una opción ya resuelta en el servidor (SelectorBusqueda). */
@@ -23,28 +21,34 @@ export type OpcionQueBuscasVista = {
   /** Portadas 9:16 (eventos) o 4:5 (diseños generales). */
   vertical: boolean;
   portadas: { id: string; nombre: string; imagen: string }[];
-  /** Solo las cifras que no son 0. */
-  cifras: { clave: "recursos" | "creadores" | "formatos"; etiqueta: string; valor: string }[];
-  boton: string;
+  /** Recursos publicados en la opción (dato real). */
+  total: number;
+  /** «de eventos» / «en total». */
+  sufijo: string;
+  /** Creadores, Formato y Desde: solo las que tienen dato. */
+  columnas: { etiqueta: string; valor: string }[];
 };
 
 const ICONO_OPCION = { eventos: CalendarDays, generales: Shapes } as const;
-const ICONO_CIFRA = { recursos: Layers, creadores: Users, formatos: FileType } as const;
 
-const SALIDA_MS = 200;
-const ENTRADA_MS = 300;
+const SALIDA_MS = 600;
+const HUECO_MS = 80;
+const ENTRADA_MS = 650;
 
 /**
  * «¿Qué estás buscando?»: tira con progreso, marco con las
- * portadas reales y cifras de la opción activa.
+ * portadas reales y resumen de la opción activa.
  *
- * Cada 6 s pasa sola a la otra opción (la línea lavanda de
+ * Cada 8 s pasa sola a la otra opción (la línea lavanda de
  * arriba marca el tiempo: el relevo llega con su animationend).
  * Se pausa con el ratón encima, con foco dentro, mientras se
- * toca, fuera de pantalla y con la pestaña oculta. El cambio
- * es salida (200 ms, opacidad y desenfoque), hueco y entrada
- * (300 ms); los clics de en medio se ignoran. Con reducir
- * movimiento no avanza sola ni desenfoca.
+ * toca, fuera de pantalla y con la pestaña oculta. El cambio es
+ * salida (600 ms, opacidad y desenfoque), hueco (80 ms) y
+ * entrada (650 ms); los clics de en medio se ignoran. Con
+ * reducir movimiento no avanza sola ni desenfoca.
+ *
+ * Nada decorativo: sin barras de ventana ni rutas en el marco,
+ * sin botón final. El único enlace del resumen es la flecha.
  */
 export default function QueBuscas({ opciones }: { opciones: OpcionQueBuscasVista[] }) {
   const [indice, setIndice] = useState(0);
@@ -69,10 +73,15 @@ export default function QueBuscas({ opciones }: { opciones: OpcionQueBuscasVista
       window.setTimeout(
         () => {
           setIndice((i) => (i + paso + total) % total);
-          setFuera(false);
-          window.setTimeout(() => {
-            ocupado.current = false;
-          }, reducido ? 0 : ENTRADA_MS);
+          window.setTimeout(
+            () => {
+              setFuera(false);
+              window.setTimeout(() => {
+                ocupado.current = false;
+              }, reducido ? 0 : ENTRADA_MS);
+            },
+            reducido ? 0 : HUECO_MS
+          );
         },
         reducido ? 0 : SALIDA_MS
       );
@@ -166,61 +175,55 @@ export default function QueBuscas({ opciones }: { opciones: OpcionQueBuscasVista
             aria-label={`Ver ${opcion.titulo.toLowerCase()}`}
             className="rk-qb-marco rk-qb-cambia"
           >
-            <div className="rk-qb-interior">
-              <div aria-hidden className="rk-qb-barra">
-                <i />
-                <i />
-                <i />
-                <span>{opcion.href}</span>
-              </div>
-
-              <div
-                className="rk-qb-portadas"
-                data-forma={opcion.vertical ? "vertical" : "general"}
-              >
-                {opcion.portadas.map((p) => (
-                  <span key={p.id} className="rk-qb-portada">
-                    <Image
-                      src={p.imagen}
-                      alt=""
-                      fill
-                      loading="lazy"
-                      sizes="(min-width: 1024px) 260px, 33vw"
-                      className="object-cover"
-                    />
-                  </span>
-                ))}
-              </div>
-            </div>
+            <span
+              className="rk-qb-portadas"
+              data-forma={opcion.vertical ? "vertical" : "general"}
+            >
+              {opcion.portadas.map((p) => (
+                <span key={p.id} className="rk-qb-portada">
+                  <Image
+                    src={p.imagen}
+                    alt=""
+                    fill
+                    loading="lazy"
+                    sizes="(min-width: 1024px) 260px, 33vw"
+                    className="object-cover"
+                  />
+                </span>
+              ))}
+            </span>
           </Link>
         )}
 
-        {opcion.cifras.length > 0 && (
-          <dl className="rk-qb-cifras rk-qb-cambia">
-            {opcion.cifras.map((c) => {
-              const IconoCifra = ICONO_CIFRA[c.clave];
+        <div className="rk-qb-resumen rk-qb-cambia">
+          <div className="rk-qb-cabecera">
+            <Layers aria-hidden />
+            <span>Recursos publicados</span>
+            <Link
+              href={opcion.href}
+              aria-label={`Ver ${opcion.titulo.toLowerCase()}`}
+              className="rk-qb-ir"
+            >
+              <ArrowRight aria-hidden />
+            </Link>
+          </div>
 
-              return (
-                <div key={c.clave} className="rk-qb-cifra">
-                  <span aria-hidden className="rk-qb-cifra-icono">
-                    <IconoCifra />
-                  </span>
-                  <div>
-                    <dt>{c.etiqueta}</dt>
-                    <dd>{c.valor}</dd>
-                  </div>
+          <p className="rk-qb-cifra">
+            {opcion.total}
+            <span>{opcion.sufijo}</span>
+          </p>
+
+          {opcion.columnas.length > 0 && (
+            <dl className="rk-qb-columnas">
+              {opcion.columnas.map((c) => (
+                <div key={c.etiqueta}>
+                  <dt>{c.etiqueta}</dt>
+                  <dd>{c.valor}</dd>
                 </div>
-              );
-            })}
-          </dl>
-        )}
-      </div>
-
-      <div className="rk-qb-ir rk-qb-cambia">
-        <Link href={opcion.href} className="rk-btn rk-btn-ink">
-          {opcion.boton}
-          <ArrowRight size={16} aria-hidden />
-        </Link>
+              ))}
+            </dl>
+          )}
+        </div>
       </div>
     </section>
   );

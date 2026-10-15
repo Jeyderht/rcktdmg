@@ -65,9 +65,7 @@ export default function CarruselCreadores({
       <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
         <div className="rk-fade-up flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="rk-kicker">Comunidad</p>
-
-            <h2 className="rk-title mt-3 text-[2rem] sm:text-4xl">
+            <h2 className="rk-title text-[2rem] sm:text-4xl">
               Creadores
             </h2>
 
@@ -201,13 +199,6 @@ export default function CarruselCreadores({
                       <ArrowUpRight size={16} aria-hidden />
                     </span>
                   </span>
-
-                  {/* Especialidad real, si se puede deducir. */}
-                  {creador.especialidad && (
-                    <span className="mt-2.5 inline-block rounded-full bg-[rgb(var(--rk-marca-centro)_/_0.15)] px-2.5 py-1 text-[11px] font-medium text-[rgb(var(--rk-marca-centro)_/_0.9)] backdrop-blur-sm">
-                      {creador.especialidad}
-                    </span>
-                  )}
 
                   {/*
                     Cifras reales. En táctil siempre visibles; en

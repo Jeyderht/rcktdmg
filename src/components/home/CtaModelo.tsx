@@ -12,8 +12,15 @@ import TituloVivo from "@/components/home/TituloVivo";
  * los temas claro y oscuro. Solo el círculo de marca, la foto
  * recortada y la colocación de las tarjetas tienen CSS propio
  * (sección AV de globals.css).
+ *
+ * `precioDesde`: el precio más bajo publicado (dato real). Sin él
+ * la tarjeta «Plantillas desde» no se pinta: nunca un precio fijo.
  */
-export default function CtaModelo() {
+export default function CtaModelo({
+  precioDesde,
+}: {
+  precioDesde: number | null;
+}) {
   return (
     <section className="mx-auto w-full max-w-7xl px-4 pb-0 pt-4 sm:px-5 lg:px-8">
       <div className="rk-card rk-fade-up relative overflow-hidden rounded-rk-xl px-5 pt-14 text-center sm:px-10 lg:pt-20">
@@ -67,21 +74,20 @@ export default function CtaModelo() {
             </span>
           </div>
 
-          <div className="rk-card-glass rk-cta-modelo-card is-right">
-            <span className="rk-cta-modelo-ico rk-cta-modelo-only-movil">
-              <Tag size={16} aria-hidden />
-            </span>
-            <span className="rk-cta-modelo-txt text-left">
-              <small className="block text-[11px] text-ink/55">Plantillas desde</small>
-              <b className="block text-[22px] font-semibold tracking-tight tabular-nums">
-                <span className="mr-0.5 text-xs text-ink/55">S/</span>25.00
-              </b>
-              <span className="mt-2 flex gap-1.5">
-                <span className="rk-chip">Eventos</span>
-                <span className="rk-chip">General</span>
+          {precioDesde !== null && (
+            <div className="rk-card-glass rk-cta-modelo-card is-right">
+              <span className="rk-cta-modelo-ico rk-cta-modelo-only-movil">
+                <Tag size={16} aria-hidden />
               </span>
-            </span>
-          </div>
+              <span className="rk-cta-modelo-txt text-left">
+                <small className="block text-[11px] text-ink/55">Plantillas desde</small>
+                <b className="block text-[22px] font-semibold tracking-tight tabular-nums">
+                  <span className="mr-0.5 text-xs text-ink/55">S/</span>
+                  {precioDesde.toFixed(2)}
+                </b>
+              </span>
+            </div>
+          )}
 
           <div className="rk-card-glass rk-cta-modelo-card is-bottom">
             <span className="rk-cta-modelo-ico">

@@ -1,5 +1,6 @@
 import QueBuscas, { type OpcionQueBuscasVista } from "@/components/home/QueBuscas";
 import { CATEGORIA_EVENTOS, type OpcionQueBuscas } from "@/lib/home";
+import { formatPrice } from "@/lib/pricing";
 
 /**
  * "¿Qué estás buscando?"
@@ -28,7 +29,7 @@ const OPCIONES = [
       "Flyers de fiestas, conciertos y fechas señaladas. Listos para publicar.",
     href: `/tienda?categoria=${CATEGORIA_EVENTOS}`,
     vertical: true,
-    boton: "Ver eventos",
+    sufijo: "de eventos",
   },
   {
     clave: "generales",
@@ -37,27 +38,21 @@ const OPCIONES = [
       "Todo lo demás: corporativos, social media, plantillas y colecciones.",
     href: `/tienda?sin=${CATEGORIA_EVENTOS}`,
     vertical: false,
-    boton: "Ver diseños generales",
+    sufijo: "en total",
   },
 ] as const;
 
-/** Cifras reales; una cifra a 0 no se enseña. */
-function cifras(datos: OpcionQueBuscas): OpcionQueBuscasVista["cifras"] {
+/** Columnas del resumen; la que no tiene dato real no se enseña. */
+function columnas(datos: OpcionQueBuscas): OpcionQueBuscasVista["columnas"] {
   return [
-    datos.recursos > 0 && {
-      clave: "recursos" as const,
-      etiqueta: "Recursos publicados",
-      valor: String(datos.recursos),
-    },
-    datos.creadores > 0 && {
-      clave: "creadores" as const,
-      etiqueta: datos.creadores === 1 ? "Creador" : "Creadores",
-      valor: String(datos.creadores),
-    },
+    datos.creadores > 0 && { etiqueta: "Creadores", valor: String(datos.creadores) },
     datos.formatos.length > 0 && {
-      clave: "formatos" as const,
-      etiqueta: datos.formatos.length === 1 ? "Formato" : "Formatos",
+      etiqueta: "Formato",
       valor: datos.formatos.join(" · "),
+    },
+    datos.precioMinimo !== null && {
+      etiqueta: "Desde",
+      valor: formatPrice(datos.precioMinimo),
     },
   ].filter((c) => c !== false);
 }
@@ -70,9 +65,15 @@ export default function SelectorBusqueda({
   return (
     <QueBuscas
       opciones={OPCIONES.map((o) => ({
-        ...o,
+        clave: o.clave,
+        titulo: o.titulo,
+        texto: o.texto,
+        href: o.href,
+        vertical: o.vertical,
         portadas: datos[o.clave].portadas,
-        cifras: cifras(datos[o.clave]),
+        total: datos[o.clave].recursos,
+        sufijo: o.sufijo,
+        columnas: columnas(datos[o.clave]),
       }))}
     />
   );

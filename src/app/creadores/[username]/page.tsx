@@ -84,10 +84,21 @@ async function getCreator(username: string) {
   });
 }
 
-/** Recursos publicados del creador, de una página. */
-async function getRecursos(creatorId: string, pagina: number) {
+/**
+ * Recursos publicados del creador, de una página. Con
+ * `categoria` (slug ya validado), solo los de esa categoría.
+ */
+async function getRecursos(
+  creatorId: string,
+  pagina: number,
+  categoria: string | null
+) {
   return prisma.product.findMany({
-    where: { creatorId, status: "PUBLISHED" },
+    where: {
+      creatorId,
+      status: "PUBLISHED",
+      ...(categoria ? { category: { slug: categoria } } : {}),
+    },
     // El id cierra el orden para que paginar sea estable.
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     skip: (pagina - 1) * POR_PAGINA,
@@ -119,6 +130,22 @@ async function getCategorias(creatorId: string) {
   });
 
   return filas.sort((a, b) => b._count.products - a._count.products);
+}
+
+/*
+  «Corporativos» y «General» son la misma categoría: en las
+  pestañas del perfil se enseña «General». Solo la etiqueta; el
+  slug y los datos no cambian.
+*/
+function nombreDePestana(categoria: { name: string; slug: string }) {
+  return categoria.slug === "corporativos" ? "General" : categoria.name;
+}
+
+/** `?categoria=` del perfil: un slug con forma válida o null. */
+function categoriaPedida(valor: string | string[] | undefined) {
+  return typeof valor === "string" && /^[a-z0-9-]+$/.test(valor)
+    ? valor
+    : null;
 }
 
 export async function generateMetadata({
@@ -160,17 +187,29 @@ export async function generateMetadata({
     todas apuntaran a la primera, el resto de recursos del
     creador quedaría fuera de los buscadores.
   */
-  const pedida = Number((await searchParams).page ?? "1");
+  const consulta = await searchParams;
+  const pedida = Number(consulta.page ?? "1");
 
   const pagina =
     Number.isFinite(pedida) && pedida > 1 ? Math.floor(pedida) : 1;
 
   const base = `/creadores/${creator.username}`;
 
+  // Con filtro de categoría (de las suyas reales), la canónica lo conserva.
+  const pedido = categoriaPedida(consulta.categoria);
+  const categoria =
+    pedido && (await getCategorias(creator.id)).some((c) => c.slug === pedido)
+      ? pedido
+      : null;
+  const filtros = new URLSearchParams();
+  if (categoria) filtros.set("categoria", categoria);
+  if (pagina > 1) filtros.set("page", String(pagina));
+  const ruta = filtros.size > 0 ? `${base}?${filtros}` : base;
+
   return paginaPublica({
     titulo: pagina > 1 ? `${displayName} · Página ${pagina}` : displayName,
     descripcion,
-    ruta: pagina > 1 ? `${base}?page=${pagina}` : base,
+    ruta,
     // El avatar es del almacén público; nunca un archivo privado.
     imagen: creator.avatarUrl,
     tipo: "profile",
@@ -191,15 +230,39 @@ export default async function CreatorPublicProfile({
 
   const totalRecursos = creator._count.products;
 
+  const consulta = await searchParams;
+
+  /*
+    La sesión hace falta para saber si el visitante ya sigue a
+    este creador. Sin sesión el perfil se ve igual: lo único
+    que cambia es que el botón lleva al login.
+  */
+  const [categorias, session] = await Promise.all([
+    getCategorias(creator.id),
+    getSession(),
+  ]);
+
+  /*
+    FILTRO DE CATEGORÍA (?categoria=<slug>)
+
+    Las pestañas filtran los recursos de este creador sin salir
+    del perfil. Solo vale un slug de sus categorías reales; uno
+    inválido es «Todo». El total y la paginación siguen al
+    filtro.
+  */
+  const filtro =
+    categorias.find((c) => c.slug === categoriaPedida(consulta.categoria)) ??
+    null;
+
+  const totalFiltrado = filtro ? filtro._count.products : totalRecursos;
+
   const totalPaginas = Math.max(
     1,
-    Math.ceil(totalRecursos / POR_PAGINA)
+    Math.ceil(totalFiltrado / POR_PAGINA)
   );
 
   const pedida = Number(
-    typeof (await searchParams).page === "string"
-      ? (await searchParams).page
-      : "1"
+    typeof consulta.page === "string" ? consulta.page : "1"
   );
 
   const pagina = Math.min(
@@ -207,20 +270,22 @@ export default async function CreatorPublicProfile({
     totalPaginas
   );
 
-  /*
-    La sesión hace falta para saber si el visitante ya sigue a
-    este creador. Sin sesión el perfil se ve igual: lo único
-    que cambia es que el botón lleva al login.
-  */
-  const session = await getSession();
-
-  const [recursos, categorias, seguimiento] = await Promise.all([
-    totalRecursos > 0 ? getRecursos(creator.id, pagina) : [],
-    getCategorias(creator.id),
+  const [recursos, seguimiento] = await Promise.all([
+    totalFiltrado > 0
+      ? getRecursos(creator.id, pagina, filtro?.slug ?? null)
+      : [],
     estadoSeguimiento(creator.id, session?.userId ?? null),
   ]);
 
   const perfilUrl = `/creadores/${creator.username}`;
+
+  /** URL de una vista del portafolio: filtro + página, al ancla. */
+  const urlRecursos = (categoria: string | null, numero = 1) => {
+    const filtros = new URLSearchParams();
+    if (categoria) filtros.set("categoria", categoria);
+    if (numero > 1) filtros.set("page", String(numero));
+    return `${perfilUrl}${filtros.size > 0 ? `?${filtros}` : ""}#recursos`;
+  };
 
   const displayName =
     creator.publicName || creator.name || "Creador";
@@ -328,27 +393,29 @@ export default async function CreatorPublicProfile({
                 </div>
               )}
 
-              {/* ACCIONES: seguir (ancho) + compartir (redondo) */}
-              <div className="rk-hero-actions">
-                <SeguirButton
-                  creatorId={creator.id}
-                  perfilUrl={perfilUrl}
-                  seguidoresIniciales={seguimiento.seguidores}
-                  siguiendoInicial={seguimiento.siguiendo}
-                  esUnoMismo={seguimiento.esUnoMismo}
-                />
-
+              {/*
+                SEGUIDORES: línea simple «N seguidores» y debajo la
+                fila de botones (Seguir + cuadrícula). Compartir sigue
+                en la barra de la portada.
+              */}
+              <SeguirButton
+                creatorId={creator.id}
+                perfilUrl={perfilUrl}
+                seguidoresIniciales={seguimiento.seguidores}
+                siguiendoInicial={seguimiento.siguiendo}
+                esUnoMismo={seguimiento.esUnoMismo}
+              >
                 {totalRecursos > 0 && (
                   <a
                     href="#recursos"
                     aria-label="Ver sus recursos"
                     title="Ver sus recursos"
-                    className="rk-hero-round"
+                    className="rk-seguir-redondo"
                   >
                     <LayoutGrid aria-hidden />
                   </a>
                 )}
-              </div>
+              </SeguirButton>
 
               {/* CIFRAS: datos reales (los seguidores los muestra Seguir) */}
               <dl className="rk-hero-stats">
@@ -365,21 +432,31 @@ export default async function CreatorPublicProfile({
                 </div>
               </dl>
 
-              {/* PESTAÑAS: sus categorías reales, a la tienda filtrada */}
+              {/*
+                PESTAÑAS: sus categorías reales. Filtran sus recursos
+                aquí mismo (?categoria=…#recursos), sin salir del perfil.
+              */}
               {categorias.length > 0 && (
                 <div className="rk-hero-tabs">
                   <nav className="rk-tabs rk-tabs-track" aria-label="Categorías del creador">
-                    <a href="#recursos" className="rk-tab" aria-current="page">
+                    <Link
+                      href={urlRecursos(null)}
+                      className="rk-tab"
+                      aria-current={filtro ? undefined : "page"}
+                    >
                       Todo
-                    </a>
+                    </Link>
 
                     {categorias.map((categoria) => (
                       <Link
                         key={categoria.slug}
-                        href={`/tienda?categoria=${encodeURIComponent(categoria.slug)}`}
+                        href={urlRecursos(categoria.slug)}
                         className="rk-tab"
+                        aria-current={
+                          filtro?.slug === categoria.slug ? "page" : undefined
+                        }
                       >
-                        {categoria.name}
+                        {nombreDePestana(categoria)}
                         <span className="rk-tab-count">
                           {categoria._count.products}
                         </span>
@@ -434,12 +511,8 @@ export default async function CreatorPublicProfile({
               <Paginacion
                 pagina={pagina}
                 totalPaginas={totalPaginas}
-                href={(numero) =>
-                  // La página 1 es la URL limpia del perfil.
-                  numero <= 1
-                    ? `${perfilUrl}#recursos`
-                    : `${perfilUrl}?page=${numero}#recursos`
-                }
+                // La página 1 es la URL limpia; el filtro se conserva.
+                href={(numero) => urlRecursos(filtro?.slug ?? null, numero)}
               />
             </>
           )}

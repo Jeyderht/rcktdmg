@@ -173,6 +173,8 @@ export type OpcionQueBuscas = {
   creadores: number;
   /** Formatos de archivo distintos, en mayúsculas. */
   formatos: string[];
+  /** Precio más bajo publicado en la opción; null si no hay recursos. */
+  precioMinimo: number | null;
 };
 
 /**
@@ -192,7 +194,7 @@ export async function datosQueBuscas(): Promise<{
     where: Prisma.ProductWhereInput,
     portadas: number
   ): Promise<OpcionQueBuscas> {
-    const [recientes, recursos, creadores, formatos] = await Promise.all([
+    const [recientes, recursos, creadores, formatos, minimo] = await Promise.all([
       prisma.product.findMany({
         where: {
           AND: [
@@ -219,6 +221,7 @@ export async function datosQueBuscas(): Promise<{
         by: ["fileFormat"],
         where: { AND: [where, { fileFormat: { not: null } }] },
       }),
+      prisma.product.aggregate({ where, _min: { price: true } }),
     ]);
 
     return {
@@ -232,6 +235,8 @@ export async function datosQueBuscas(): Promise<{
         .map((f) => (f.fileFormat ?? "").toUpperCase())
         .filter(Boolean)
         .sort(),
+      precioMinimo:
+        minimo._min.price === null ? null : Number(minimo._min.price),
     };
   }
 

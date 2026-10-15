@@ -292,23 +292,19 @@ export default async function Home() {
           </div>
         </section>
 
-        <SeparadorSeccion />
-
-        {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */}
+        {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════
+            Sin separador decorativo con el hero: solo espacio. */}
         <SelectorBusqueda datos={queBuscas} />
-
-        <SeparadorSeccion />
 
         {/*
           ══════════ CATÁLOGO POR CATEGORÍA ══════════
 
           Eventos, General, Colecciones y Packs, cada una con sus
           pestañas Recientes / Populares / Packs. Eventos sale
-          elegida en cada carga.
+          elegida en cada carga. Sin separadores alrededor: solo
+          espacio.
         */}
         <CatalogoInicio datos={catalogo} />
-
-        <SeparadorSeccion />
 
         {/*
           ══════════ CREADORES ══════════
@@ -331,9 +327,7 @@ export default async function Home() {
         <section>
           <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8 lg:py-24">
             <div className="rk-fade-up max-w-2xl">
-              <p className="rk-kicker">Cómo funciona</p>
-
-              <h2 className="rk-title mt-3 text-[2rem] sm:text-5xl">
+              <h2 className="rk-title text-[2rem] sm:text-5xl">
                 Del catálogo a tu proyecto en tres pasos
               </h2>
             </div>
@@ -372,10 +366,18 @@ export default async function Home() {
           <span className="rk-separador-linea" />
         </div>
 
-        <PreguntasFrecuentes />
+        <PreguntasFrecuentes sinEtiquetas />
 
         {/* ══════════ CTA FINAL (con la modelo) ══════════ */}
-        <CtaModelo />
+        {/* Precio más bajo publicado: eventos + diseños generales
+            cubren todo el catálogo publicado. */}
+        <CtaModelo
+          precioDesde={
+            [queBuscas.eventos.precioMinimo, queBuscas.generales.precioMinimo]
+              .filter((p): p is number => p !== null)
+              .reduce<number | null>((min, p) => (min === null || p < min ? p : min), null)
+          }
+        />
       </main>
 
       <Footer />
