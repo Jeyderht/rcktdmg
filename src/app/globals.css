@@ -5567,14 +5567,85 @@ table .rk-btn:hover:not(:disabled) {
   position: sticky;
   top: 0;
   z-index: 40;
-  padding: 12px 12px 0;
+  padding: 0 12px;
+}
+
+/*
+  Banda de vidrio con blur detrás de toda la barra, a todo el ancho.
+  Va en un pseudo-elemento: el backdrop-filter en el <header> haría de
+  bloque contenedor de los hijos fixed (hoja de cuenta, cajón,
+  sugerencias). Tinte del fondo de la web, más denso con scroll, un
+  brillo fino arriba y una línea de 1 px abajo. Sin sombras.
+*/
+.rk-topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--rx-texto) 14%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--rx-fondo) 62%, transparent),
+    color-mix(in srgb, var(--rx-fondo) 40%, transparent)
+  );
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+  backdrop-filter: blur(16px) saturate(1.25);
+  transition: background 0.2s var(--rx-curva);
+}
+
+[data-theme="dark"] .rk-topbar::before {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+
+.rk-topbar[data-scrolled="true"]::before {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--rx-fondo) 74%, transparent),
+    color-mix(in srgb, var(--rx-fondo) 52%, transparent)
+  );
+}
+
+/* sin desenfoque disponible o pedido: fondo casi opaco */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .rk-topbar::before,
+  .rk-topbar[data-scrolled="true"]::before {
+    background: color-mix(in srgb, var(--rx-fondo) 94%, transparent);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .rk-topbar::before,
+  .rk-topbar[data-scrolled="true"]::before {
+    background: color-mix(in srgb, var(--rx-fondo) 94%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-topbar::before {
+    transition: none;
+  }
+}
+
+/* Sin sombras en los botones de la barra: solo borde fino y vidrio.
+   (El aro del avatar no es una sombra: es su borde, Fix 5.) */
+.rk-topbar .rk-topbar-btn,
+.rk-topbar .rk-btn,
+.rk-topbar .rk-buscador,
+.rk-topbar .rk-buscador-accion,
+.rk-topbar .rk-theme-toggle,
+.rk-topbar .rk-rol-opcion,
+.rk-topbar .rk-rol[data-encendido] .rk-rol-opcion[data-elegido] {
+  box-shadow: none;
 }
 
 /* sin caja: cada pieza (logo, buscador, botones) es su propio vidrio
-   y flota sola sobre el contenido */
+   sobre la banda; 68 px de alto con los botones centrados */
 .rk-topbar-bar {
   display: flex;
   align-items: center;
+  min-height: 68px;
   gap: 8px;
   max-width: 80rem;
   margin: 0 auto;
@@ -7473,11 +7544,11 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* Pegada justo bajo el Navbar (Navbar.tsx mide su alto real en
-   --rk-navbar-alto; 56 px es el de móvil, por si aún no hay medida).
+   --rk-navbar-alto; 68 px es el de la barra, por si aún no hay medida).
    Vidrio fuerte: el contenido que pasa por debajo no debe
    competir con el título. */
 .rk-panel-barra {
-  top: var(--rk-navbar-alto, 56px);
+  top: var(--rk-navbar-alto, 68px);
 }
 
 .rk-panel-barra,
