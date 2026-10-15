@@ -76,10 +76,6 @@ export default function CtaModelo() {
               <b className="block text-[22px] font-semibold tracking-tight tabular-nums">
                 <span className="mr-0.5 text-xs text-ink/55">S/</span>25.00
               </b>
-              <span className="mt-2 flex gap-1.5">
-                <span className="rk-chip">Eventos</span>
-                <span className="rk-chip">General</span>
-              </span>
             </span>
           </div>
 

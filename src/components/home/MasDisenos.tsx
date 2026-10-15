@@ -46,9 +46,7 @@ export default function MasDisenos() {
     <section>
       <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
         <div className="rk-fade-up max-w-2xl">
-          <p className="rk-kicker">Para tu negocio</p>
-
-          <h2 className="rk-title mt-3 text-[1.75rem] sm:text-4xl">
+          <h2 className="rk-title text-[1.75rem] sm:text-4xl">
             Más diseños para tu negocio
           </h2>
 
