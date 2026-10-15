@@ -1774,7 +1774,7 @@ body {
 
 [data-theme="light"] body,
 :root:not([data-theme="dark"]) body {
-  background-image: linear-gradient(180deg, #f4f7f9, #f4f7f9);
+  background-image: linear-gradient(180deg, #fafafb, #fafafb);
   background-attachment: fixed;
 }
 
