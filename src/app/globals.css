@@ -15865,16 +15865,22 @@ div.rk-upload-error > * + * {
    rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)
 
    Tira a todo el ancho (borde a borde, sin tarjeta) con la línea de
-   progreso, un marco con las portadas reales de la opción y sus
-   cifras. Casi monocromo: tinta y perla, que se invierten en oscuro;
-   la lavanda solo en el progreso y en el foco.
+   progreso, un marco con las portadas reales de la opción y un
+   resumen sin tarjeta (cifra y tres columnas con líneas finas). Sin
+   sombras ni adornos. Casi monocromo: tinta y perla, que se
+   invierten en oscuro; la lavanda solo en el progreso y el foco.
    ═══════════════════════════════════════════════════════════════════ */
 .rk-qb {
   --rk-qb-fondo: rgb(var(--rk-marca-tinta));
   --rk-qb-sobre: rgb(var(--rk-marca-centro));
   --rk-qb-suave: rgb(var(--rk-foreground) / 0.6);
-  --rk-qb-punteado: rgb(var(--rk-foreground) / 0.16);
-  padding: 40px 0 48px;
+  padding: 40px 0;
+}
+
+@media (min-width: 1024px) {
+  .rk-qb {
+    padding: 56px 0;
+  }
 }
 
 [data-theme="dark"] .rk-qb {
@@ -15919,7 +15925,7 @@ div.rk-upload-error > * + * {
   background: rgb(var(--rk-marca-lavanda));
   transform: scaleX(0);
   transform-origin: left;
-  animation: rk-qb-progreso 6s linear forwards;
+  animation: rk-qb-progreso 8s linear forwards;
 }
 
 .rk-qb-tira[data-pausa] .rk-qb-progreso {
@@ -15998,7 +16004,6 @@ div.rk-upload-error > * + * {
   border-radius: 50%;
   background: var(--rx-vidrio);
   color: var(--rx-texto);
-  box-shadow: var(--rx-sombra-base);
   cursor: pointer;
   transition: border-color var(--rx-t-micro) var(--rx-curva);
 }
@@ -16027,13 +16032,11 @@ div.rk-upload-error > * + * {
   outline-offset: 2px;
 }
 
-/* Cuerpo: marco con las portadas y lista de cifras */
+/* Cuerpo: marco con las portadas y resumen */
 .rk-qb-cuerpo {
   display: grid;
-  gap: 8px;
   max-width: 80rem;
   margin: 18px auto 0;
-  padding: 0 16px;
 }
 
 @media (min-width: 1024px) {
@@ -16041,57 +16044,34 @@ div.rk-upload-error > * + * {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     align-items: center;
     gap: 48px;
-    padding: 0 32px;
+    padding: 0 16px;
   }
 }
 
+/* Marco: vidrio con borde fino y, dentro, solo las portadas sobre el
+   fondo de la web (perla en claro, tinta en oscuro). Sin sombra. */
 .rk-qb-marco {
   display: block;
+  margin: 0 16px;
   padding: 10px;
   border: 1px solid var(--rx-borde);
   border-radius: 28px;
   background: var(--rx-vidrio);
-  box-shadow: var(--rx-sombra-base);
 }
 
-.rk-qb-interior {
-  overflow: hidden;
-  border-radius: 20px;
-  background: var(--rk-qb-fondo);
-  color: var(--rk-qb-sobre);
-}
-
-.rk-qb-barra {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 12px;
-  font-size: 0.7rem;
-  opacity: 0.85;
-}
-
-.rk-qb-barra i {
-  flex: none;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.45;
-}
-
-.rk-qb-barra span {
-  min-width: 0;
-  margin-left: auto;
-  overflow: hidden;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+@media (min-width: 1024px) {
+  .rk-qb-marco {
+    margin: 0;
+  }
 }
 
 .rk-qb-portadas {
   display: grid;
   gap: 8px;
-  padding: 0 10px 10px;
+  padding: 10px;
+  border: 1px solid var(--rk-linea);
+  border-radius: 20px;
+  background: var(--rx-fondo);
 }
 
 .rk-qb-portadas[data-forma="vertical"] {
@@ -16117,73 +16097,126 @@ div.rk-upload-error > * + * {
   aspect-ratio: 4 / 5;
 }
 
-.rk-qb-cifras {
-  margin: 6px 0 0;
-  padding: 0 6px;
+/* Resumen: sin tarjeta, solo líneas finas a todo el ancho */
+.rk-qb-resumen {
+  padding: 22px 16px 0;
 }
 
-.rk-qb-cifra {
+@media (min-width: 1024px) {
+  .rk-qb-resumen {
+    padding: 0;
+  }
+}
+
+.rk-qb-cabecera {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 22px 4px;
-  border-bottom: 1px dashed var(--rk-qb-punteado);
+  gap: 8px;
+  color: var(--rx-texto);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
-.rk-qb-cifra:last-child {
-  border-bottom: 0;
-}
-
-.rk-qb-cifra-icono {
-  display: grid;
-  place-items: center;
+.rk-qb-cabecera > svg {
   flex: none;
-  width: 52px;
-  height: 52px;
-  border: 1px solid var(--rx-borde);
-  border-radius: 14px;
-  background: var(--rx-vidrio);
-  color: var(--rx-texto);
-}
-
-.rk-qb-cifra-icono svg {
-  width: 24px;
-  height: 24px;
-  stroke-width: 1.6;
-}
-
-.rk-qb-cifra dt {
-  margin-bottom: 2px;
-  color: var(--rk-qb-suave);
-  font-size: 1rem;
-}
-
-.rk-qb-cifra dd {
-  margin: 0;
-  color: var(--rx-texto);
-  font-size: 2.1rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.8;
 }
 
 .rk-qb-ir {
-  display: flex;
-  justify-content: center;
-  margin-top: 12px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: rgb(var(--rk-foreground) / 0.07);
+  color: var(--rx-texto);
 }
 
-/* Relevo: salida 200 ms (opacidad y desenfoque), entrada 300 ms */
+.rk-qb-ir svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+}
+
+.rk-qb-cifra {
+  margin: 22px 0 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--rk-linea);
+  color: var(--rx-texto);
+  font-size: 3.4rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.rk-qb-cifra span {
+  margin-left: 8px;
+  color: var(--rk-qb-suave);
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* columnas repartidas por contenido: «JPEG · JPG · ZIP» no cabe en
+   un tercio a 390 px y se cortaría */
+.rk-qb-columnas {
+  display: flex;
+  margin: 0;
+  border-bottom: 1px solid var(--rk-linea);
+}
+
+.rk-qb-columnas > div {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 16px 10px 14px;
+}
+
+.rk-qb-columnas > div:first-child {
+  padding-left: 0;
+}
+
+.rk-qb-columnas > div + div {
+  border-left: 1px solid var(--rk-linea);
+}
+
+.rk-qb-columnas dt {
+  margin-bottom: 8px;
+  color: var(--rk-qb-suave);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.rk-qb-columnas dd {
+  margin: 0;
+  overflow: hidden;
+  color: var(--rx-texto);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rk-qb-ir:focus-visible {
+  outline: 2px solid rgb(var(--rk-marca-lavanda));
+  outline-offset: 2px;
+}
+
+/* Relevo: salida 600 ms (opacidad y desenfoque), hueco 80 ms,
+   entrada 650 ms; más suave que el resto */
 .rk-qb-cambia {
   transition:
-    opacity 0.3s var(--rx-curva),
-    filter 0.3s var(--rx-curva);
+    opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.65s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .rk-qb[data-fuera] .rk-qb-cambia {
   opacity: 0;
   filter: blur(6px);
-  transition-duration: 0.2s;
+  transition-duration: 0.6s;
 }
 
 @media (prefers-reduced-motion: reduce) {

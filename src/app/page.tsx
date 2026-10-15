@@ -292,9 +292,8 @@ export default async function Home() {
           </div>
         </section>
 
-        <SeparadorSeccion />
-
-        {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════ */}
+        {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════
+            Sin separador decorativo con el hero: solo espacio. */}
         <SelectorBusqueda datos={queBuscas} />
 
         {/*
