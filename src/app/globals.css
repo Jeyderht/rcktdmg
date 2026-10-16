@@ -20259,8 +20259,8 @@ html[data-theme] .rk-faq-icon::before {
   --lx: 0%;
   --ly: 100%;
   --g1: rgb(var(--pal-claro-marca-durazno) / .85);
-  --g2: rgb(248 214 198/.55);
-  --l1: rgb(157 151 255/.22);
+  --g2: rgb(var(--pal-oscuro-iris-3) / .55);
+  --l1: rgb(var(--pal-claro-marca-lavanda) / .22);
   --rot: -4deg;
   position: relative;
   display: flex;
@@ -20271,7 +20271,7 @@ html[data-theme] .rk-faq-icon::before {
   height: 13.5rem;
   border-radius: 28px;
   padding: 22px;
-  color: #475467;
+  color: rgb(var(--pal-claro-atenuado));
   box-shadow: inset 0 1px 0 rgb(255 255 255/.7),inset 0 0 0 1px rgb(255 255 255/.35);
   transition: transform .35s cubic-bezier(.2,.8,.2,1);
 }
@@ -20285,7 +20285,7 @@ html[data-theme] .rk-faq-icon::before {
   background:
     radial-gradient(60% 95% at var(--gx) var(--gy),var(--g1) 0,var(--g2) 45%,transparent 75%),
     radial-gradient(55% 80% at var(--lx) var(--ly),var(--l1) 0,transparent 70%),
-    linear-gradient(180deg,#f8fafc 0%,#f4f7f9 100%);
+    linear-gradient(180deg,rgb(var(--pal-claro-tarjeta)) 0%,rgb(var(--pal-claro-fondo-2)) 100%);
 }
 
 .rk-camino::after {
@@ -20306,18 +20306,18 @@ html[data-theme] .rk-faq-icon::before {
 }
 
 .rk-camino-2 {
-  --g1: rgb(157 151 255/.55);
+  --g1: rgb(var(--pal-claro-marca-lavanda) / .55);
   --g2: rgb(201 195 240/.5);
-  --l1: rgb(240 169 138/.28);
+  --l1: rgb(var(--pal-claro-marca-durazno) / .28);
   --rot: 5deg;
 }
 
 .rk-camino-3 {
   --gx: 85%;
   --gy: 40%;
-  --g1: rgb(248 214 198/.95);
-  --g2: rgb(250 250 251 / 0.6);
-  --l1: rgb(157 151 255/.3);
+  --g1: rgb(var(--pal-oscuro-iris-3) / .95);
+  --g2: rgb(var(--pal-claro-fondo) / 0.6);
+  --l1: rgb(var(--pal-claro-marca-lavanda) / .3);
   --rot: -8deg;
 }
 
@@ -20325,10 +20325,10 @@ html[data-theme] .rk-faq-icon::before {
   --gx: 90%;
   --gy: 70%;
   --g1: rgb(201 195 240/.8);
-  --g2: rgb(248 214 198/.6);
+  --g2: rgb(var(--pal-oscuro-iris-3) / .6);
   --lx: 0%;
   --ly: 0%;
-  --l1: rgb(240 169 138/.3);
+  --l1: rgb(var(--pal-claro-marca-durazno) / .3);
   --rot: 3deg;
 }
 
@@ -20362,7 +20362,7 @@ html[data-theme] .rk-faq-icon::before {
   line-height: 1.1;
   font-weight: 700;
   letter-spacing: -.04em;
-  color: #475467;
+  color: rgb(var(--pal-claro-atenuado));
   margin: 0;
 }
 
@@ -20370,7 +20370,7 @@ html[data-theme] .rk-faq-icon::before {
   margin: 8px 0 0;
   font-size: 13px;
   line-height: 1.5;
-  color: rgb(71 84 103 / 0.8);
+  color: rgb(var(--pal-claro-atenuado) / 0.8);
   max-width: 15rem;
 }
 
@@ -20383,7 +20383,7 @@ html[data-theme] .rk-faq-icon::before {
   border-radius: 9999px;
   font-size: 12px;
   font-weight: 600;
-  color: #f5f5f5;
+  color: rgb(var(--pal-oscuro-texto));
   background: rgb(var(--rk-marca-tinta));
   transition: gap .25s;
 }
@@ -20411,15 +20411,15 @@ html[data-theme] .rk-faq-icon::before {
 
 [data-theme="dark"] .rk-camino::before {
   background:
-    radial-gradient(60% 95% at var(--gx) var(--gy),rgb(240 169 138/.38) 0,rgb(240 169 138/.1) 45%,transparent 75%),
-    radial-gradient(55% 80% at var(--lx) var(--ly),rgb(157 151 255/.3) 0,transparent 70%),
+    radial-gradient(60% 95% at var(--gx) var(--gy),rgb(var(--pal-claro-marca-durazno) / .38) 0,rgb(var(--pal-claro-marca-durazno) / .1) 45%,transparent 75%),
+    radial-gradient(55% 80% at var(--lx) var(--ly),rgb(var(--pal-claro-marca-lavanda) / .3) 0,transparent 70%),
     linear-gradient(180deg,rgb(var(--rk-card)) 0%,rgb(var(--rk-card)) 100%);
 }
 
 [data-theme="dark"] .rk-camino-2::before {
   background:
-    radial-gradient(60% 95% at var(--gx) var(--gy),rgb(157 151 255/.4) 0,rgb(157 151 255/.1) 45%,transparent 75%),
-    radial-gradient(55% 80% at var(--lx) var(--ly),rgb(240 169 138/.22) 0,transparent 70%),
+    radial-gradient(60% 95% at var(--gx) var(--gy),rgb(var(--pal-claro-marca-lavanda) / .4) 0,rgb(var(--pal-claro-marca-lavanda) / .1) 45%,transparent 75%),
+    radial-gradient(55% 80% at var(--lx) var(--ly),rgb(var(--pal-claro-marca-durazno) / .22) 0,transparent 70%),
     linear-gradient(180deg,#303030 0%,rgb(var(--rk-card)) 100%);
 }
 
@@ -20432,8 +20432,8 @@ html[data-theme] .rk-faq-icon::before {
 }
 
 [data-theme="dark"] .rk-camino-pill {
-  background: #fafafb;
-  color: #181818;
+  background: rgb(var(--pal-claro-fondo));
+  color: rgb(var(--pal-claro-texto));
 }
 
 [data-theme="dark"] .rk-camino-cohete {
@@ -20476,7 +20476,7 @@ html[data-theme] .rk-faq-icon::before {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: linear-gradient(135deg,#9d97ff,#f0a98a);
+  background: linear-gradient(135deg,rgb(var(--pal-claro-marca-lavanda)),rgb(var(--pal-claro-marca-durazno)));
   animation: rk-kick-pulso 2.6s ease-in-out infinite;
 }
 
