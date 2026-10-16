@@ -18,78 +18,78 @@
    constante en la PALETA y un token que la use.
 
    ÍNDICE (sección y rango de líneas)
-    §0   PALETA · única fuente de los colores                             102–284
-    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 285–329
-    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           330–632
-    §3   BASE  ·  body, selección, utilidades sueltas                     633–718
-    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 719–1460
-    §5   UTILIDADES  ·  @layer utilities                                  1461–1579
-    §6   PIEZAS SUELTAS  ·  @layer components                             1580–1654
-    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1655–1696
-    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1697–1749
-    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1750–1873
-    §10  LA TARJETA DE RECURSO                                            1874–1938
-    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            1939–2840
-    §12  SISTEMA DE INTERACCIÓN                                           2841–3623
-    §13  A. BOTONES                                                       3624–4125
-    §14  B · C · D                                                        4126–4458
-    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4459–4644
-    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4645–4664
-    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4665–4916
-    §18  C2. TARJETA DE RECURSO · versión refinada                        4917–5089
-    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5090–5284
-    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5285–5336
-    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5337–5527
-    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5528–5835
-    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5836–6212
-    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6213–6352
-    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6353–6432
-    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6433–6557
-    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6558–6789
-    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6790–6975
-    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          6976–7311
-    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7312–7806
-    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7807–8047
-    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8048–8230
-    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8231–8539
-    §34  W. TABLAS  ·  rk-table · rk-pagination                           8540–8787
-    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8788–9028
-    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9029–9395
-    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9396–9798
-    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9799–10166
-    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10167–10489
-    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10490–10774
-    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10775–11011
-    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11012–11135
-    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11136–11347
-    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11348–11791
-    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11792–12049
-    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12050–12258
-    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12259–12635
-    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12636–13117
-    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13118–13376
-    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13377–13455
-    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13456–13613
-    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13614–13731
-    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13732–13780
-    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13781–13816
-    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13817–14152
-    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14153–14206
-    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14207–14562
-    §58  AV · CTA final con la modelo (estilo hero)                       14563–14616
-    §59  AW · Ecosistema: fila con núcleo hexagonal                       14617–14879
-    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          14880–14954
-    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      14955–14972
-    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         14973–15029
-    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15030–15160
-    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15161–15480
-    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15481–15841
-    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15842–16097
-    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16098–16311
-    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16312–16684
-    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16685–17005
-    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17006–19846
-    §71  BB. INICIO (encargo de la home)                                  19847–20683
+    §0   PALETA · única fuente de los colores                             102–305
+    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 306–350
+    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           351–653
+    §3   BASE  ·  body, selección, utilidades sueltas                     654–739
+    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 740–1481
+    §5   UTILIDADES  ·  @layer utilities                                  1482–1600
+    §6   PIEZAS SUELTAS  ·  @layer components                             1601–1675
+    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1676–1717
+    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1718–1770
+    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1771–1894
+    §10  LA TARJETA DE RECURSO                                            1895–1959
+    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            1960–2861
+    §12  SISTEMA DE INTERACCIÓN                                           2862–3644
+    §13  A. BOTONES                                                       3645–4146
+    §14  B · C · D                                                        4147–4479
+    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4480–4665
+    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4666–4685
+    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4686–4937
+    §18  C2. TARJETA DE RECURSO · versión refinada                        4938–5110
+    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5111–5305
+    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5306–5357
+    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5358–5548
+    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5549–5856
+    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5857–6233
+    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6234–6373
+    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6374–6453
+    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6454–6578
+    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6579–6810
+    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6811–6996
+    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          6997–7332
+    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7333–7827
+    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7828–8068
+    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8069–8251
+    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8252–8560
+    §34  W. TABLAS  ·  rk-table · rk-pagination                           8561–8808
+    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8809–9049
+    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9050–9416
+    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9417–9819
+    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9820–10187
+    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10188–10510
+    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10511–10795
+    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10796–11032
+    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11033–11156
+    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11157–11368
+    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11369–11812
+    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11813–12070
+    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12071–12279
+    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12280–12656
+    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12657–13138
+    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13139–13407
+    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13408–13486
+    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13487–13644
+    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13645–13762
+    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13763–13811
+    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13812–13847
+    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13848–14183
+    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14184–14237
+    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14238–14593
+    §58  AV · CTA final con la modelo (estilo hero)                       14594–14647
+    §59  AW · Ecosistema: fila con núcleo hexagonal                       14648–14910
+    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          14911–14985
+    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      14986–15003
+    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15004–15060
+    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15061–15191
+    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15192–15511
+    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15512–15872
+    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15873–16128
+    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16129–16342
+    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16343–16715
+    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16716–17036
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17037–19877
+    §71  BB. INICIO (encargo de la home)                                  19878–20714
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -110,62 +110,78 @@
    · «-onice»: la banda ónice (.rk-onyx) cuando difiere del tema oscuro.
    ═════════════════════════════════════════════════════════════════════ */
 :root {
-  --pal-claro-fondo: 250 250 251;                  --pal-oscuro-fondo: 17 17 17;                    /* --rk-background, --rx-fondo */
-  --pal-claro-fondo-2: 244 247 249;                --pal-oscuro-fondo-2: 11 11 11;                  /* --rk-background-2 */
-  --pal-claro-superficie: 255 255 255;             --pal-oscuro-superficie: 24 24 24;               /* --rk-surface */
-  --pal-claro-elevado: 255 255 255;                --pal-oscuro-elevado: 32 32 32;                  /* --rk-surface-elevated */
-  --pal-claro-tarjeta: 248 250 252;                --pal-oscuro-tarjeta: 32 32 32;                  /* --rk-card */
-  --pal-claro-texto: 24 24 24;                     --pal-oscuro-texto: 245 245 245;                 /* --rx-texto, --rk-foreground, --rk-ink, --rx-h1 */
-  --pal-claro-atenuado: 71 84 103;                 --pal-oscuro-atenuado: 163 172 184;              /* --rx-atenuado, --rk-muted, --rx-h1 */
-  --pal-claro-tenue: 102 112 133;                  --pal-oscuro-tenue: 154 164 178;                 /* --rx-tenue */
-  --pal-claro-plata: 71 84 103;                    --pal-oscuro-plata: 215 217 221;                 /* --rx-plata */
-  --pal-claro-borde: 221 229 237;                  --pal-oscuro-borde: 255 255 255;                 /* --rk-border, --rx-linea, --rx-linea-alta, --rx-borde, --rx-linea-fina, --rk-linea */
+  --pal-claro-fondo: 245 245 245;                  --pal-oscuro-fondo: 0 0 0;                    /* --rk-background, --rx-fondo */
+  --pal-claro-fondo-2: 236 236 236;                --pal-oscuro-fondo-2: 0 0 0;                  /* --rk-background-2 */
+  --pal-claro-superficie: 255 255 255;             --pal-oscuro-superficie: 10 10 10;               /* --rk-surface */
+  --pal-claro-elevado: 255 255 255;                --pal-oscuro-elevado: 27 27 27;                  /* --rk-surface-elevated */
+  --pal-claro-tarjeta: 255 255 255;                --pal-oscuro-tarjeta: 15 15 15;                  /* --rk-card */
+  --pal-claro-texto: 10 10 10;                     --pal-oscuro-texto: 255 255 255;                 /* --rx-texto, --rk-foreground, --rk-ink, --rx-h1 */
+  --pal-claro-atenuado: 102 102 102;                 --pal-oscuro-atenuado: 150 150 150;              /* --rx-atenuado, --rk-muted, --rx-h1 */
+  --pal-claro-tenue: 112 112 112;                  --pal-oscuro-tenue: 133 133 133;                 /* --rx-tenue */
+  --pal-claro-plata: 102 102 102;                    --pal-oscuro-plata: 207 207 207;                 /* --rx-plata */
+  --pal-claro-borde: 230 230 230;                  --pal-oscuro-borde: 255 255 255;                 /* --rk-border, --rx-linea, --rx-linea-alta, --rx-borde, --rx-linea-fina, --rk-linea */
   --pal-claro-canto: 255 255 255;                  --pal-oscuro-canto: 255 255 255;                 /* --rk-glass-border, --rk-canto, --rk-canto-vivo, --rx-borde-alto */
   --pal-claro-contorno: 0 0 0;                     --pal-oscuro-contorno: 255 255 255;              /* --rx-b-superficie, --rx-b-card, --rx-b-card-activa, --rx-b-boton, --rx-b-boton-activo, --rx-b-input, --rx-b-input-activo */
-  --pal-claro-primario: 21 22 27;                  --pal-oscuro-primario: 244 246 250;              /* --rk-primary */
-                                                   --pal-oscuro-primario-onice: 250 250 252;        /* --rk-primary */
-  --pal-claro-sobre-primario: 255 255 255;         --pal-oscuro-sobre-primario: 10 11 14;           /* --rk-on-primary */
-                                                   --pal-oscuro-sobre-primario-onice: 9 9 11;       /* --rk-on-primary */
-  --pal-claro-acento: 74 76 85;                    --pal-oscuro-acento: 215 217 221;                /* --rk-accent, --rk-accent-soft */
-  --pal-claro-acento-2: 100 102 112;               --pal-oscuro-acento-2: 180 183 189;              /* --rk-accent-2 */
-  --pal-claro-acento-hover: 56 58 66;              --pal-oscuro-acento-hover: 236 238 241;          /* --rk-accent-hover */
-  --pal-claro-sobre-acento: 255 255 255;           --pal-oscuro-sobre-acento: 8 9 12;               /* --rk-accent-contrast */
-  --pal-claro-exito: 9 135 87;                     --pal-oscuro-exito: 45 190 130;                  /* --rk-success */
-  --pal-claro-aviso: 166 105 6;                    --pal-oscuro-aviso: 226 160 44;                  /* --rk-warning */
-  --pal-claro-peligro: 206 40 40;                  --pal-oscuro-peligro: 248 96 96;                 /* --rk-danger */
-  --pal-claro-sobre-peligro: 255 255 255;          --pal-oscuro-sobre-peligro: 8 9 11;              /* --rk-danger-contrast */
-  --pal-claro-vidrio-base: 255 255 255;            --pal-oscuro-vidrio-base: 24 24 24;              /* --rk-glass */
-  --pal-claro-vidrio: 248 250 252;                 --pal-oscuro-vidrio: 255 255 255;                /* --rx-vidrio, --rx-vidrio-2 */
+  --pal-claro-primario: 10 10 10;                  --pal-oscuro-primario: 27 27 27;              /* --rk-primary */
+                                                   --pal-oscuro-primario-onice: 27 27 27;        /* --rk-primary */
+  --pal-claro-sobre-primario: 255 255 255;         --pal-oscuro-sobre-primario: 255 255 255;           /* --rk-on-primary */
+                                                   --pal-oscuro-sobre-primario-onice: 255 255 255;       /* --rk-on-primary */
+  --pal-claro-acento: 77 77 77;                    --pal-oscuro-acento: 255 255 255;                /* --rk-accent, --rk-accent-soft */
+  --pal-claro-acento-2: 102 102 102;               --pal-oscuro-acento-2: 182 182 182;              /* --rk-accent-2 */
+  --pal-claro-acento-hover: 10 10 10;              --pal-oscuro-acento-hover: 200 200 200;          /* --rk-accent-hover */
+  --pal-claro-sobre-acento: 255 255 255;           --pal-oscuro-sobre-acento: 10 10 10;               /* --rk-accent-contrast */
+  --pal-claro-exito: 10 10 10;                     --pal-oscuro-exito: 255 255 255;                  /* --rk-success */
+  --pal-claro-aviso: 10 10 10;                    --pal-oscuro-aviso: 255 255 255;                  /* --rk-warning */
+  --pal-claro-peligro: 10 10 10;                  --pal-oscuro-peligro: 255 255 255;                 /* --rk-danger */
+  --pal-claro-sobre-peligro: 255 255 255;          --pal-oscuro-sobre-peligro: 10 10 10;              /* --rk-danger-contrast */
+  --pal-claro-vidrio-base: 255 255 255;            --pal-oscuro-vidrio-base: 15 15 15;              /* --rk-glass */
+  --pal-claro-vidrio: 255 255 255;                 --pal-oscuro-vidrio: 255 255 255;                /* --rx-vidrio, --rx-vidrio-2 */
   --pal-claro-vidrio-panel: 255 255 255;           --pal-oscuro-vidrio-panel: 255 255 255;          /* --rx-vidrio-panel */
-  --pal-claro-halo: 87 108 130;                    --pal-oscuro-halo: 255 255 255;                  /* --rk-halo-1, --rk-halo-2, --rx-halo-1, --rx-halo-2 */
-  --pal-claro-halo-boton: 160 163 174;             --pal-oscuro-halo-boton: 255 255 255;            /* --rx-halo-btn-1, --rx-halo-btn-2 */
-  --pal-claro-sombra: 21 22 27;                    --pal-oscuro-sombra: 0 0 0;                      /* --rx-sombra-hover, --rx-sombra-base, --rk-shadow-sm, --rk-shadow, --rk-shadow-lg, --rk-shadow-float, --rk-elevacion, --rk-elevacion-corta */
-  --pal-claro-lengueta: 221 229 237;               --pal-oscuro-lengueta: 255 255 255;              /* --rx-lengueta, --rx-lengueta-plena */
-  --pal-claro-lengueta-media: 160 163 174;         --pal-oscuro-lengueta-media: 255 255 255;        /* --rx-lengueta-media */
-  --pal-claro-tab: 221 229 237;                    --pal-oscuro-tab: 255 255 255;                   /* --rx-tab */
-  --pal-claro-resplandor: 221 229 237;             --pal-oscuro-resplandor: 255 255 255;            /* --rx-glow */
+  --pal-claro-halo: 10 10 10;                    --pal-oscuro-halo: 255 255 255;                  /* --rk-halo-1, --rk-halo-2, --rx-halo-1, --rx-halo-2 */
+  --pal-claro-halo-boton: 163 163 163;             --pal-oscuro-halo-boton: 255 255 255;            /* --rx-halo-btn-1, --rx-halo-btn-2 */
+  --pal-claro-sombra: 10 10 10;                    --pal-oscuro-sombra: 0 0 0;                      /* --rx-sombra-hover, --rx-sombra-base, --rk-shadow-sm, --rk-shadow, --rk-shadow-lg, --rk-shadow-float, --rk-elevacion, --rk-elevacion-corta */
+  --pal-claro-lengueta: 110 116 132;               --pal-oscuro-lengueta: 200 200 200;              /* --rx-lengueta, --rx-lengueta-plena */
+  --pal-claro-lengueta-media: 163 163 163;         --pal-oscuro-lengueta-media: 255 255 255;        /* --rx-lengueta-media */
+  --pal-claro-tab: 110 116 132;                    --pal-oscuro-tab: 200 200 200;                   /* --rx-tab */
+  --pal-claro-resplandor: 110 116 132;             --pal-oscuro-resplandor: 200 200 200;            /* --rx-glow */
                                                    --pal-oscuro-titular: 255 255 255;               /* --rx-h1 */
-                                                   --pal-oscuro-titular-2: 139 142 153;             /* --rx-h1 */
-  --pal-claro-estrella: 214 142 110;               --pal-oscuro-estrella: 248 206 184;              /* --rk-star */
+                                                   --pal-oscuro-titular-2: 77 77 77;             /* --rx-h1 */
+  --pal-claro-estrella: 10 10 10;               --pal-oscuro-estrella: 255 255 255;              /* --rk-star */
   --pal-claro-estrella-apagada: 127 127 127;                                                        /* --rk-star-off */
-  --pal-claro-iris-1: 126 128 156;                 --pal-oscuro-iris-1: 200 201 214;                /* --rk-iris-1 */
-  --pal-claro-iris-2: 176 128 108;                 --pal-oscuro-iris-2: 244 242 241;                /* --rk-iris-2 */
-  --pal-claro-iris-3: 226 160 132;                 --pal-oscuro-iris-3: 248 214 198;                /* --rk-iris-3 */
-  --pal-claro-marca-calido: 248 214 198;                                                            /* --rk-marca-calido */
-  --pal-claro-marca-centro: 244 242 241;                                                            /* --rk-marca-centro */
-  --pal-claro-marca-durazno: 240 169 138;                                                           /* --rk-marca-durazno */
-  --pal-claro-marca-frio: 200 201 214;                                                              /* --rk-marca-frio */
-  --pal-claro-marca-lavanda: 157 151 255;                                                           /* --rk-marca-lavanda */
-  --pal-claro-marca-tinta: 21 22 27;                                                                /* --rk-marca-tinta */
+  --pal-claro-iris-1: 70 70 70;                 --pal-oscuro-iris-1: 205 205 205;                /* --rk-iris-1 */
+  --pal-claro-iris-2: 120 120 120;                 --pal-oscuro-iris-2: 140 140 140;                /* --rk-iris-2 */
+  --pal-claro-iris-3: 10 10 10;                 --pal-oscuro-iris-3: 255 255 255;                /* --rk-iris-3 */
+  --pal-claro-marca-calido: 175 175 175;                                                            /* --rk-marca-calido */
+  --pal-claro-marca-centro: 120 120 120;                                                            /* --rk-marca-centro */
+  --pal-claro-marca-durazno: 175 175 175;                                                           /* --rk-marca-durazno */
+  --pal-claro-marca-frio: 70 70 70;                                                              /* --rk-marca-frio */
+  --pal-claro-marca-lavanda: 10 10 10;                                                           /* --rk-marca-lavanda */
+  --pal-claro-marca-tinta: 10 10 10;                                                                /* --rk-marca-tinta */
   --pal-claro-sobre-foto: 255 255 255;             --pal-oscuro-sobre-foto: 255 255 255;            /* --rk-gv-texto */
 
   /* Series de los gráficos del admin (anillo de Pedidos, Ingresos,
      barras). Hoy son iguales en los dos temas. */
-  --pal-claro-serie-1: 157 151 255;
-  --pal-claro-serie-2: 201 162 201;
-  --pal-claro-serie-3: 240 169 138;
-  --pal-claro-serie-4: 200 201 214;
-  --pal-claro-serie-5: 142 138 216;
+  --pal-claro-serie-1: 10 10 10;
+  --pal-claro-serie-2: 61 61 61;
+  --pal-claro-serie-3: 110 110 110;
+  --pal-claro-serie-4: 158 158 158;
+  --pal-claro-serie-5: 196 196 196;
+
+  /* Coinnect: tinta de las líneas, paradas del titular y valores de oscuro de marca y series. */
+  --pal-claro-linea: 10 10 10;              /* líneas de tinta con alfa: --rk-border, --rx-linea…, --rk-linea */
+  --pal-claro-titular-fin: 138 138 138;     /* --rx-h1, final del degradado */
+  --pal-oscuro-titular-medio: 214 214 214;  /* --rx-h1, parada central */
+  --pal-oscuro-marca-frio: 205 205 205;     /* --rk-marca-frio */
+  --pal-oscuro-marca-centro: 140 140 140;   /* --rk-marca-centro */
+  --pal-oscuro-marca-calido: 85 85 85;      /* --rk-marca-calido */
+  --pal-oscuro-marca-tinta: 20 20 20;       /* --rk-marca-tinta */
+  --pal-oscuro-marca-lavanda: 255 255 255;  /* --rk-marca-lavanda */
+  --pal-oscuro-marca-durazno: 85 85 85;     /* --rk-marca-durazno */
+  --pal-oscuro-serie-1: 255 255 255;        /* --rk-serie-1 */
+  --pal-oscuro-serie-2: 207 207 207;        /* --rk-serie-2 */
+  --pal-oscuro-serie-3: 154 154 154;        /* --rk-serie-3 */
+  --pal-oscuro-serie-4: 106 106 106;        /* --rk-serie-4 */
+  --pal-oscuro-serie-5: 68 68 68;           /* --rk-serie-5 */
 
   /* Blanco y negro puros: fijos, no cambian con el tema (brillos, velos, texto sobre foto). */
   --pal-blanco: 255 255 255;
@@ -280,6 +296,11 @@
 
 [data-theme="dark"] {
   --rk-sombra-tono: var(--pal-oscuro-sombra);
+  --rk-serie-1: var(--pal-oscuro-serie-1);
+  --rk-serie-2: var(--pal-oscuro-serie-2);
+  --rk-serie-3: var(--pal-oscuro-serie-3);
+  --rk-serie-4: var(--pal-oscuro-serie-4);
+  --rk-serie-5: var(--pal-oscuro-serie-5);
 }
 
 /* ═══ §1 · AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compactos ═══ */
@@ -372,9 +393,9 @@
 
   /* ---- LÍNEAS ---- */
   /* Finas y discretas: la línea sugiere el borde, no lo dibuja. */
-  --rk-border: var(--pal-claro-borde);
-  --rk-border-alpha: 1;
-  --rk-border-strong-alpha: 1;
+  --rk-border: var(--pal-claro-linea);
+  --rk-border-alpha: 0.1;
+  --rk-border-strong-alpha: 0.2;
 
   /* ---- MARCA ---- */
   --rk-primary: var(--pal-claro-primario);
@@ -418,8 +439,8 @@
   /* ---- HALOS DEL FONDO ----
      Neutros: la identidad es tinta sobre papel, así que el
      fondo aporta profundidad con grises, no con color. */
-  --rk-halo-1: rgb(var(--pal-claro-halo) / .04);
-  --rk-halo-2: rgb(var(--pal-claro-halo) / .03);
+  --rk-halo-1: rgb(var(--pal-claro-halo) / 0.05);
+  --rk-halo-2: rgb(var(--pal-claro-halo) / 0.03);
 
   /* ---- PROFUNDIDAD: sombras por capas ---- */
   /* Suaves y abiertas: posan el elemento, no lo despegan. */
@@ -488,8 +509,8 @@
   --rk-muted-alpha: 1;
 
   --rk-border: var(--pal-oscuro-borde);
-  --rk-border-alpha: 0.085;
-  --rk-border-strong-alpha: 0.16;
+  --rk-border-alpha: 0.08;
+  --rk-border-strong-alpha: 0.18;
 
   /* En oscuro el primario se invierte para mantener contraste. */
   --rk-primary: var(--pal-oscuro-primario);
@@ -517,8 +538,8 @@
   --rk-glass-strong-alpha: 0.82;
   --rk-glass-border: rgb(var(--pal-oscuro-canto) / 0.1);
 
-  --rk-halo-1: rgb(var(--pal-oscuro-halo) / 0.05);
-  --rk-halo-2: rgb(var(--pal-oscuro-halo) / 0.035);
+  --rk-halo-1: rgb(var(--pal-oscuro-halo) / 0.06);
+  --rk-halo-2: rgb(var(--pal-oscuro-halo) / 0.025);
 
   /* En oscuro la sombra aporta menos; el borde define. */
   --rk-shadow-sm:
@@ -1965,9 +1986,9 @@ html[data-theme="dark"] {
   --rx-tenue: rgb(var(--pal-oscuro-tenue));
   --rx-plata: rgb(var(--pal-oscuro-plata));
 
-  --rx-linea: rgb(var(--pal-oscuro-borde) / 0.075);
-  --rx-linea-alta: rgb(var(--pal-oscuro-borde) / 0.13);
-  --rx-borde: rgb(var(--pal-oscuro-borde) / 0.14);
+  --rx-linea: rgb(var(--pal-oscuro-borde) / 0.08);
+  --rx-linea-alta: rgb(var(--pal-oscuro-borde) / 0.15);
+  --rx-borde: rgb(var(--pal-oscuro-borde) / 0.12);
   --rx-borde-alto: rgb(var(--pal-oscuro-canto) / 0.28);
 
   --rx-vidrio: rgb(var(--pal-oscuro-vidrio) / 0.035);
@@ -1979,24 +2000,24 @@ html[data-theme="dark"] {
   );
 
   /* La lengüeta que asoma por detrás de botones y tarjetas. */
-  --rx-lengueta: rgb(var(--pal-oscuro-lengueta) / 0.72);
-  --rx-lengueta-plena: rgb(var(--pal-oscuro-lengueta) / 0.72);
+  --rx-lengueta: rgb(var(--pal-oscuro-lengueta) / 0.85);
+  --rx-lengueta-plena: rgb(var(--pal-oscuro-lengueta) / 0.85);
 
   /* Lengüeta y halo: la luz que asoma por detrás. */
-  --rx-tab: rgb(var(--pal-oscuro-tab) / 0.72);
+  --rx-tab: rgb(var(--pal-oscuro-tab) / 0.8);
   /* La pieza gris de detrás y su desenfoque propio. */
-  --rx-glow: rgb(var(--pal-oscuro-resplandor) / 0.8);
+  --rx-glow: rgb(var(--pal-oscuro-resplandor) / 0.9);
   --rx-blur-glow: 16px;
-  --rx-halo-1: rgb(var(--pal-oscuro-halo) / 0.34);
-  --rx-halo-2: rgb(var(--pal-oscuro-halo) / 0.12);
+  --rx-halo-1: rgb(var(--pal-oscuro-halo) / 0.08);
+  --rx-halo-2: rgb(var(--pal-oscuro-halo) / 0.03);
   --rx-halo-btn-1: rgb(var(--pal-oscuro-halo-boton) / 0.22);
   --rx-halo-btn-2: rgb(var(--pal-oscuro-halo-boton) / 0.06);
-  --rx-linea-fina: rgb(var(--pal-oscuro-borde) / 0.1);
+  --rx-linea-fina: rgb(var(--pal-oscuro-borde) / 0.08);
   --rx-vidrio-2: rgb(var(--pal-oscuro-vidrio) / 0.035);
   --rx-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --rx-lengueta-media: rgb(var(--pal-oscuro-lengueta-media) / 0.3);
 
-  --rx-h1: linear-gradient(180deg, rgb(var(--pal-oscuro-titular)) 0%, rgb(var(--pal-oscuro-titular)) 38%, rgb(var(--pal-oscuro-titular-2)) 100%);
+  --rx-h1: linear-gradient(180deg, rgb(var(--pal-oscuro-titular)) 0%, rgb(var(--pal-oscuro-titular-medio)) 38%, rgb(var(--pal-oscuro-titular-2)) 100%);
 }
 
 :root,
@@ -2008,9 +2029,9 @@ html[data-theme="dark"] {
   --rx-tenue: rgb(var(--pal-claro-tenue));
   --rx-plata: rgb(var(--pal-claro-plata));
 
-  --rx-linea: rgb(var(--pal-claro-borde));
-  --rx-linea-alta: rgb(var(--pal-claro-borde));
-  --rx-borde: rgb(var(--pal-claro-borde));
+  --rx-linea: rgb(var(--pal-claro-linea) / 0.1);
+  --rx-linea-alta: rgb(var(--pal-claro-linea) / 0.16);
+  --rx-borde: rgb(var(--pal-claro-linea) / 0.14);
   --rx-borde-alto: rgb(var(--pal-claro-canto) / 0.9);
 
   --rx-vidrio: rgb(var(--pal-claro-vidrio) / .9);
@@ -2021,22 +2042,22 @@ html[data-theme="dark"] {
     rgb(var(--pal-claro-vidrio-panel) / 0.5)
   );
 
-  --rx-lengueta: rgb(var(--pal-claro-lengueta) / .8);
-  --rx-lengueta-plena: rgb(var(--pal-claro-lengueta) / .8);
+  --rx-lengueta: rgb(var(--pal-claro-lengueta) / 0.7);
+  --rx-lengueta-plena: rgb(var(--pal-claro-lengueta) / 0.7);
 
-  --rx-tab: rgb(var(--pal-claro-tab) / .8);
-  --rx-glow: rgb(var(--pal-claro-resplandor) / .8);
+  --rx-tab: rgb(var(--pal-claro-tab) / 0.65);
+  --rx-glow: rgb(var(--pal-claro-resplandor) / 0.75);
   --rx-blur-glow: 16px;
-  --rx-halo-1: rgb(var(--pal-claro-halo) / .16);
-  --rx-halo-2: rgb(var(--pal-claro-halo) / .06);
+  --rx-halo-1: rgb(var(--pal-claro-halo) / 0.08);
+  --rx-halo-2: rgb(var(--pal-claro-halo) / 0.04);
   --rx-halo-btn-1: rgb(var(--pal-claro-halo-boton) / 0.2);
   --rx-halo-btn-2: rgb(var(--pal-claro-halo-boton) / 0.06);
-  --rx-linea-fina: rgb(var(--pal-claro-borde));
+  --rx-linea-fina: rgb(var(--pal-claro-linea) / 0.1);
   --rx-vidrio-2: rgb(var(--pal-claro-vidrio));
   --rx-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --rx-lengueta-media: rgb(var(--pal-claro-lengueta-media) / 0.22);
 
-  --rx-h1: linear-gradient(180deg,rgb(var(--pal-claro-texto)) 0%,rgb(var(--pal-claro-texto)) 38%,rgb(var(--pal-claro-atenuado)) 100%);
+  --rx-h1: linear-gradient(180deg,rgb(var(--pal-claro-texto)) 0%,rgb(var(--pal-claro-texto)) 38%,rgb(var(--pal-claro-titular-fin)) 100%);
 }
 
 /* ────────── FONDO Y TEXTO ────────── */
@@ -2769,8 +2790,8 @@ html[data-theme="dark"] {
   --rk-foreground: var(--pal-oscuro-texto);
   --rk-ink: var(--pal-oscuro-texto);
   --rk-border: var(--pal-oscuro-borde);
-  --rk-border-alpha: 0.075;
-  --rk-border-strong-alpha: 0.13;
+  --rk-border-alpha: 0.08;
+  --rk-border-strong-alpha: 0.18;
 }
 
 :root,
@@ -4201,8 +4222,8 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-select,
 [data-theme="light"] .rk-textarea {
   --rk-in-relleno: rgb(var(--pal-blanco) / 0.7);
-  --rk-in-borde: rgb(var(--rk-border));
-  --rk-in-borde-alto: rgb(var(--rk-border));
+  --rk-in-borde: rgb(var(--rk-border) / var(--rk-border-alpha));
+  --rk-in-borde-alto: rgb(var(--rk-border) / var(--rk-border-alpha));
   --rk-in-brillo:
     inset 0 1px 0 rgb(var(--rk-surface)),
     0 1px 2px rgb(var(--pal-oscuro-superficie) / 0.04);
@@ -4501,7 +4522,7 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-tarjeta {
   --rk-tj-relleno: rgb(var(--pal-blanco) / 0.55);
-  --rk-tj-borde: rgb(var(--rk-border));
+  --rk-tj-borde: rgb(var(--rk-border) / var(--rk-border-alpha));
 }
 
 /* imagen: esquinas internas, borde fino y acercamiento */
@@ -4696,7 +4717,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-stepper {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-blanco) / 0.6);
 }
 
@@ -4733,7 +4754,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-stepper-btn {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-blanco) / 0.9);
 }
 
@@ -4819,7 +4840,7 @@ table .rk-btn:hover:not(:disabled) {
 
   [data-theme="light"] .rk-icon-button:hover:not(:disabled) {
     background: rgb(var(--pal-oscuro-superficie) / 0.04);
-    border-color: rgb(var(--rk-border));
+    border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   }
 
 }
@@ -5010,7 +5031,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-card-avatar {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-oscuro-superficie) / 0.05);
 }
 
@@ -5124,7 +5145,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-cart-item {
-  --rk-ci-borde: rgb(var(--rk-border));
+  --rk-ci-borde: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-blanco) / 0.55);
 }
 
@@ -5296,7 +5317,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] {
-  --rk-linea: rgb(var(--pal-claro-borde));
+  --rk-linea: rgb(var(--pal-claro-linea) / 0.1);
 }
 
 .rk-divider {
@@ -5373,7 +5394,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-chip {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-blanco) / 0.55);
   color: rgb(var(--rk-muted));
 }
@@ -5619,7 +5640,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-dock-item[aria-current="page"] {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-blanco) / 0.85);
 }
 
@@ -5982,7 +6003,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-topbar-btn {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-blanco) / 0.7);
 }
 
@@ -6055,7 +6076,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-topbar-link[aria-current="page"] {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--rk-surface));
 }
 
@@ -6081,7 +6102,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-buscador {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-blanco) / 0.7);
   box-shadow: inset 0 1px 0 rgb(var(--pal-blanco));
 }
@@ -6192,7 +6213,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-sugerencias {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
 }
 
 /* botón "Buscar": una sola definición, en el bloque del buscador
@@ -6258,7 +6279,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-theme-toggle {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-oscuro-superficie) / 0.04);
 }
 
@@ -6381,7 +6402,7 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-card,
 [data-theme="light"] .rk-card-glass,
 [data-theme="light"] .rk-card-elevated {
-  --rk-cd-borde: rgb(var(--rk-border));
+  --rk-cd-borde: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-blanco) / 0.55);
   box-shadow: none;
 }
@@ -6832,7 +6853,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-plan {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-oscuro-superficie) / 0.045);
 }
 
@@ -6864,7 +6885,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-plan-body {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--rk-surface));
 }
 
@@ -6888,7 +6909,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-plan-pricebox {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-oscuro-superficie) / 0.02);
 }
 
@@ -6964,7 +6985,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-plan-featured .rk-plan-body {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
 }
 
 @media (min-width: 768px) {
@@ -7005,7 +7026,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-compare {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-oscuro-superficie) / 0.045);
 }
 
@@ -7382,7 +7403,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-faq-item {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-oscuro-superficie) / 0.035);
 }
 
@@ -7432,7 +7453,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-faq-icon {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--rk-surface));
 }
 
@@ -7588,7 +7609,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-help {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--rk-surface));
 }
 
@@ -8928,7 +8949,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-stat-main {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--rk-surface));
 }
 
@@ -9323,7 +9344,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-menu-item[aria-current="page"] {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--rk-surface));
 }
 
@@ -9334,7 +9355,7 @@ table .rk-btn:hover:not(:disabled) {
   }
 
   [data-theme="light"] .rk-menu-item:hover {
-    border-color: rgb(var(--rk-border));
+    border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
     background: rgb(var(--rk-surface));
   }
 
@@ -9614,7 +9635,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-review-form {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--rk-surface));
 }
 
@@ -10215,7 +10236,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-buy {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background:
     radial-gradient(90% 60% at 100% 0%, rgb(var(--rk-iris-2) / 0.16), transparent 70%),
     radial-gradient(70% 50% at 0% 0%, rgb(var(--rk-iris-3) / 0.22), transparent 70%),
@@ -11168,7 +11189,7 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-done {
   --rk-tone: var(--pal-claro-notif-6);
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background:
     radial-gradient(70% 45% at 50% 0%, rgb(var(--rk-tone) / 0.1), transparent 70%),
     rgb(var(--rk-surface));
@@ -12072,7 +12093,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-tile {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-blanco) / 0.62);
 }
 
@@ -12099,7 +12120,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-glass {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background:
     radial-gradient(90% 60% at 100% 0%, rgb(var(--rk-marca-calido) / 0.25), transparent 70%),
     rgb(var(--pal-blanco) / 0.8);
@@ -12182,7 +12203,7 @@ div.rk-upload-error > * + * {
 }
 
 [data-theme="light"] .rk-icon-tile {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background:
     radial-gradient(100% 100% at 100% 0%, rgb(var(--rk-marca-calido) / 0.45), transparent 70%),
     rgb(var(--rk-surface));
@@ -13150,6 +13171,16 @@ div.rk-upload-error > * + * {
   --rk-star: var(--pal-oscuro-estrella);
 }
 
+/* Coinnect: la marca tiene valores propios en oscuro. */
+[data-theme="dark"] {
+  --rk-marca-frio: var(--pal-oscuro-marca-frio);
+  --rk-marca-centro: var(--pal-oscuro-marca-centro);
+  --rk-marca-calido: var(--pal-oscuro-marca-calido);
+  --rk-marca-tinta: var(--pal-oscuro-marca-tinta);
+  --rk-marca-lavanda: var(--pal-oscuro-marca-lavanda);
+  --rk-marca-durazno: var(--pal-oscuro-marca-durazno);
+}
+
 [data-theme="light"] {
   /* en claro: versiones profundas para contraste sobre blanco */
   --rk-iris-1: var(--pal-claro-iris-1);
@@ -13626,25 +13657,25 @@ div.rk-upload-error > * + * {
   --rx-atenuado: rgb(var(--pal-oscuro-atenuado));
   --rx-tenue: rgb(var(--pal-oscuro-tenue));
   --rx-plata: rgb(var(--pal-oscuro-plata));
-  --rx-linea: rgb(var(--pal-oscuro-borde) / 0.075);
-  --rx-linea-alta: rgb(var(--pal-oscuro-borde) / 0.13);
-  --rx-borde: rgb(var(--pal-oscuro-borde) / 0.14);
+  --rx-linea: rgb(var(--pal-oscuro-borde) / 0.08);
+  --rx-linea-alta: rgb(var(--pal-oscuro-borde) / 0.15);
+  --rx-borde: rgb(var(--pal-oscuro-borde) / 0.12);
   --rx-borde-alto: rgb(var(--pal-oscuro-canto) / 0.28);
   --rx-vidrio: rgb(var(--pal-oscuro-vidrio) / 0.035);
   --rx-vidrio-2: rgb(var(--pal-oscuro-vidrio) / 0.035);
-  --rx-lengueta: rgb(var(--pal-oscuro-lengueta) / 0.72);
-  --rx-lengueta-plena: rgb(var(--pal-oscuro-lengueta) / 0.72);
+  --rx-lengueta: rgb(var(--pal-oscuro-lengueta) / 0.85);
+  --rx-lengueta-plena: rgb(var(--pal-oscuro-lengueta) / 0.85);
   --rx-lengueta-media: rgb(var(--pal-oscuro-lengueta-media) / 0.3);
-  --rx-tab: rgb(var(--pal-oscuro-tab) / 0.72);
-  --rx-glow: rgb(var(--pal-oscuro-resplandor) / 0.8);
-  --rx-halo-1: rgb(var(--pal-oscuro-halo) / 0.34);
-  --rx-halo-2: rgb(var(--pal-oscuro-halo) / 0.12);
+  --rx-tab: rgb(var(--pal-oscuro-tab) / 0.8);
+  --rx-glow: rgb(var(--pal-oscuro-resplandor) / 0.9);
+  --rx-halo-1: rgb(var(--pal-oscuro-halo) / 0.08);
+  --rx-halo-2: rgb(var(--pal-oscuro-halo) / 0.03);
   --rx-halo-btn-1: rgb(var(--pal-oscuro-halo-boton) / 0.22);
   --rx-halo-btn-2: rgb(var(--pal-oscuro-halo-boton) / 0.06);
-  --rx-linea-fina: rgb(var(--pal-oscuro-borde) / 0.1);
+  --rx-linea-fina: rgb(var(--pal-oscuro-borde) / 0.08);
   --rx-b-boton: rgb(var(--pal-oscuro-contorno) / 0.14);
   --rx-b-boton-activo: rgb(var(--pal-oscuro-contorno) / 0.3);
-  --rx-h1: linear-gradient(180deg, rgb(var(--pal-oscuro-titular)) 0%, rgb(var(--pal-oscuro-titular)) 38%, rgb(var(--pal-oscuro-titular-2)) 100%);
+  --rx-h1: linear-gradient(180deg, rgb(var(--pal-oscuro-titular)) 0%, rgb(var(--pal-oscuro-titular-medio)) 38%, rgb(var(--pal-oscuro-titular-2)) 100%);
   --rk-linea: rgb(var(--pal-oscuro-borde) / 0.08);
   color: rgb(var(--pal-oscuro-texto));
 }
@@ -14262,7 +14293,7 @@ div.rk-upload-error > * + * {
 }
 
 [data-theme="light"] .rk-promo-slide {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
 }
 
 .rk-promo-slide[data-oculta="true"] {
@@ -15200,7 +15231,7 @@ div.rk-upload-error > * + * {
 [data-theme="light"] .rk-vacio {
   --vacio-fondo: rgb(var(--rk-background));
   --vacio-ficha: rgb(var(--rk-surface));
-  --vacio-ficha-borde: rgb(var(--rk-border));
+  --vacio-ficha-borde: rgb(var(--rk-border) / var(--rk-border-alpha));
   --vacio-pista: rgb(var(--rk-background-2));
   --vacio-perilla: rgb(var(--rk-surface));
   --c-in: rgb(var(--pal-claro-borde));
@@ -15895,7 +15926,7 @@ div.rk-upload-error > * + * {
 }
 
 [data-theme="light"] .rk-rol-opcion {
-  border-color: rgb(var(--rk-border));
+  border-color: rgb(var(--rk-border) / var(--rk-border-alpha));
   background: rgb(var(--pal-blanco) / 0.7);
 }
 
