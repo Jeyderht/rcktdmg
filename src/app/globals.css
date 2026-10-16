@@ -20149,7 +20149,7 @@ html[data-theme] .rk-faq-icon::before {
 }
 
 [data-theme="light"] .rk-footer-cta::after {
-  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(201 195 240 / 0) 262deg,rgb(var(--pal-claro-footer-4)) 318deg,rgb(var(--pal-claro-footer-5)) 350deg,rgb(var(--pal-claro-footer-5) / 0) 360deg);
+  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(var(--pal-claro-dash-2) / 0) 262deg,rgb(var(--pal-claro-footer-4)) 318deg,rgb(var(--pal-claro-footer-5)) 350deg,rgb(var(--pal-claro-footer-5) / 0) 360deg);
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -20388,7 +20388,7 @@ html[data-theme] .rk-faq-icon::before {
   border-radius: inherit;
   padding: 2px;
   pointer-events: none;
-  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(201 195 240/0) 262deg,rgb(var(--pal-claro-footer-4)) 318deg,rgb(var(--pal-claro-footer-5)) 350deg,rgb(var(--pal-claro-footer-5) / 0) 360deg);
+  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(var(--pal-claro-dash-2) / 0) 262deg,rgb(var(--pal-claro-footer-4)) 318deg,rgb(var(--pal-claro-footer-5)) 350deg,rgb(var(--pal-claro-footer-5) / 0) 360deg);
   -webkit-mask: linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask:
@@ -20400,7 +20400,7 @@ html[data-theme] .rk-faq-icon::before {
 
 .rk-camino-2 {
   --g1: rgb(var(--pal-claro-marca-lavanda) / .55);
-  --g2: rgb(201 195 240/.5);
+  --g2: rgb(var(--pal-claro-dash-2) / .5);
   --l1: rgb(var(--pal-claro-marca-durazno) / .28);
   --rot: 5deg;
 }
@@ -20417,7 +20417,7 @@ html[data-theme] .rk-faq-icon::before {
 .rk-camino-4 {
   --gx: 90%;
   --gy: 70%;
-  --g1: rgb(201 195 240/.8);
+  --g1: rgb(var(--pal-claro-dash-2) / .8);
   --g2: rgb(var(--pal-oscuro-iris-3) / .6);
   --lx: 0%;
   --ly: 0%;
@@ -20513,7 +20513,7 @@ html[data-theme] .rk-faq-icon::before {
   background:
     radial-gradient(60% 95% at var(--gx) var(--gy),rgb(var(--pal-claro-marca-lavanda) / .4) 0,rgb(var(--pal-claro-marca-lavanda) / .1) 45%,transparent 75%),
     radial-gradient(55% 80% at var(--lx) var(--ly),rgb(var(--pal-claro-marca-durazno) / .22) 0,transparent 70%),
-    linear-gradient(180deg,#303030 0%,rgb(var(--rk-card)) 100%);
+    linear-gradient(180deg,rgb(var(--pal-oscuro-eco-2)) 0%,rgb(var(--rk-card)) 100%);
 }
 
 [data-theme="dark"] .rk-camino-t {
