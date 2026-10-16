@@ -140,10 +140,10 @@
   --pal-claro-halo: 10 10 10;                    --pal-oscuro-halo: 255 255 255;                  /* --rk-halo-1, --rk-halo-2, --rx-halo-1, --rx-halo-2 */
   --pal-claro-halo-boton: 163 163 163;             --pal-oscuro-halo-boton: 255 255 255;            /* --rx-halo-btn-1, --rx-halo-btn-2 */
   --pal-claro-sombra: 10 10 10;                    --pal-oscuro-sombra: 0 0 0;                      /* --rx-sombra-hover, --rx-sombra-base, --rk-shadow-sm, --rk-shadow, --rk-shadow-lg, --rk-shadow-float, --rk-elevacion, --rk-elevacion-corta */
-  --pal-claro-lengueta: 110 116 132;               --pal-oscuro-lengueta: 200 200 200;              /* --rx-lengueta, --rx-lengueta-plena */
+  --pal-claro-lengueta: 116 116 116;               --pal-oscuro-lengueta: 200 200 200;              /* --rx-lengueta, --rx-lengueta-plena */
   --pal-claro-lengueta-media: 163 163 163;         --pal-oscuro-lengueta-media: 255 255 255;        /* --rx-lengueta-media */
-  --pal-claro-tab: 110 116 132;                    --pal-oscuro-tab: 200 200 200;                   /* --rx-tab */
-  --pal-claro-resplandor: 110 116 132;             --pal-oscuro-resplandor: 200 200 200;            /* --rx-glow */
+  --pal-claro-tab: 116 116 116;                    --pal-oscuro-tab: 200 200 200;                   /* --rx-tab */
+  --pal-claro-resplandor: 116 116 116;             --pal-oscuro-resplandor: 200 200 200;            /* --rx-glow */
                                                    --pal-oscuro-titular: 255 255 255;               /* --rx-h1 */
                                                    --pal-oscuro-titular-2: 77 77 77;             /* --rx-h1 */
   --pal-claro-estrella: 10 10 10;               --pal-oscuro-estrella: 255 255 255;              /* --rk-star */
