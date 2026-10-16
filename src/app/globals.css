@@ -1,7 +1,104 @@
+/* ════ RcktX · globals.css ════
+
+   Hoja única de estilos de la web. Está en orden de cascada: muchas
+   secciones «pisan» a las anteriores a propósito, así que NO se
+   reordena ni se parte sin comprobar píxel a píxel.
+
+   CONVENCIONES
+   · --pal-claro-* / --pal-oscuro-*  constantes de color «R G B» (§0 PALETA).
+     Son la única fuente de los colores: para cambiar uno, se cambia allí.
+   · --rk-*  tokens en tripletas «R G B» sin comas. Se usan como
+     rgb(var(--rk-x) / alfa); Tailwind los lee igual (tailwind.config.ts).
+   · --rx-*  tokens listos para usar (hex, rgb() o degradados).
+   · Clases: rk-* = componentes · rx-* = utilidades de estilo.
+   · Tema: data-theme="light" | "dark" en <html> (ThemeProvider).
+     :root también vale en oscuro salvo que el bloque oscuro lo redefina.
+
+   REGLA: ningún color suelto. Si hace falta uno nuevo, se crea su
+   constante en la PALETA y un token que la use.
+
+   ÍNDICE (sección y rango de líneas)
+    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 101–145
+    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           146–448
+    §3   BASE  ·  body, selección, utilidades sueltas                     449–534
+    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 535–1276
+    §5   UTILIDADES  ·  @layer utilities                                  1277–1395
+    §6   PIEZAS SUELTAS  ·  @layer components                             1396–1470
+    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1471–1512
+    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1513–1565
+    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1566–1689
+    §10  LA TARJETA DE RECURSO                                            1690–1754
+    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            1755–2656
+    §12  SISTEMA DE INTERACCIÓN                                           2657–3439
+    §13  A. BOTONES                                                       3440–3941
+    §14  B · C · D                                                        3942–4274
+    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4275–4460
+    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4461–4480
+    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4481–4732
+    §18  C2. TARJETA DE RECURSO · versión refinada                        4733–4905
+    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         4906–5100
+    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5101–5152
+    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5153–5343
+    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5344–5651
+    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5652–6028
+    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6029–6168
+    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6169–6248
+    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6249–6373
+    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6374–6605
+    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6606–6791
+    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          6792–7127
+    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7128–7622
+    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7623–7863
+    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     7864–8046
+    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8047–8355
+    §34  W. TABLAS  ·  rk-table · rk-pagination                           8356–8603
+    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8604–8844
+    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    8845–9211
+    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9212–9614
+    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9615–9982
+    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 9983–10305
+    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10306–10590
+    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10591–10827
+    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      10828–10951
+    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        10952–11163
+    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11164–11607
+    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11608–11865
+    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    11866–12074
+    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12075–12451
+    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12452–12933
+    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  12934–13192
+    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13193–13271
+    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13272–13429
+    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13430–13547
+    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13548–13596
+    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13597–13632
+    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13633–13968
+    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      13969–14022
+    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14023–14378
+    §58  AV · CTA final con la modelo (estilo hero)                       14379–14432
+    §59  AW · Ecosistema: fila con núcleo hexagonal                       14433–14695
+    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          14696–14770
+    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      14771–14788
+    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         14789–14845
+    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             14846–14976
+    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          14977–15296
+    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15297–15657
+    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15658–15913
+    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  15914–16127
+    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16128–16500
+    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16501–16821
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     16822–19662
+    §71  BB. INICIO (encargo de la home)                                  19663–20499
+
+   Lo que no tiene banner propio dentro de una sección está explicado
+   en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
+   y animaciones con @property; en esas reglas solo cambia el color.
+   ════ FIN DE LA CABECERA ════ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ═══ §1 · AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compactos ═══ */
 /*
   Tamaños arbitrarios de Tailwind (text-[15px]…), un 12 % más
   compactos como el resto de la escala, sin bajar de 11px (lo que ya
@@ -46,6 +143,7 @@
   .text-base.leading-8 { line-height: 1.54rem; }
 }
 
+/* ═══ §2 · DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme] ════════════ */
 /* ==========================================================
    RcktX — DESIGN SYSTEM
    ----------------------------------------------------------
@@ -348,6 +446,7 @@ html {
   overscroll-behavior-x: none;
 }
 
+/* ═══ §3 · BASE  ·  body, selección, utilidades sueltas ══════════════════════ */
 body {
   margin: 0;
   color: rgb(var(--rk-foreground));
@@ -433,6 +532,7 @@ input[type="search"]::-webkit-search-results-decoration {
   background: rgb(var(--rk-foreground) / 0.16);
 }
 
+/* ═══ §4 · COMPONENTES (sistema anterior)  ·  @layer components, banda ónice ═══ */
 @layer components {
   /* ========== SUPERFICIES ========== */
 
@@ -1174,6 +1274,7 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 }
 
+/* ═══ §5 · UTILIDADES  ·  @layer utilities ═══════════════════════════════════ */
 @layer utilities {
   /* ========== ANIMACIONES ========== */
 
@@ -1292,6 +1393,7 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 }
 
+/* ═══ §6 · PIEZAS SUELTAS  ·  @layer components ══════════════════════════════ */
 @layer components {
   /*
     ENLACE DE CABECERA DE SECCIÓN — "Ver todos", "Ver todas"…
@@ -1367,7 +1469,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 /* ══════════════════════════════════════════════════════════
-   APARICIÓN AL ENTRAR EN PANTALLA
+   §7 · APARICIÓN AL ENTRAR EN PANTALLA
 
    La clase la pone JavaScript, nunca el HTML servido. Es
    deliberado: si el script no llega a ejecutarse, o el
@@ -1409,7 +1511,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 /* ══════════════════════════════════════════════════════════
-   TABLEROS — SIDEBAR, CAJÓN Y BARRA
+   §8 · TABLEROS — SIDEBAR, CAJÓN Y BARRA
 
    Mismo lenguaje que las tarjetas: superficie translúcida,
    borde fino y el azul de firma solo para marcar dónde estás.
@@ -1462,7 +1564,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 /* ══════════════════════════════════════════════════════════
-   TIRA DE SUGERENCIAS — DESFILE DE FLYERS
+   §9 · TIRA DE SUGERENCIAS — DESFILE DE FLYERS
 
    El movimiento lo lleva el componente, con `scrollLeft`: aquí
    solo vive el aspecto. Así quien pide menos movimiento se
@@ -1586,7 +1688,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 /* ══════════════════════════════════════════════════════════
-   LA TARJETA DE RECURSO
+   §10 · LA TARJETA DE RECURSO
 
    Antes era una imagen suelta con el texto debajo, sin nada
    que las uniera: sobre el fondo oscuro, las piezas flotaban
@@ -1651,7 +1753,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 /* ══════════════════════════════════════════════════════════
-   RESKIN — SISTEMA VISUAL DE REFERENCIA
+   §11 · RESKIN — SISTEMA VISUAL DE REFERENCIA
 
    Esta capa va la ÚLTIMA del archivo a propósito: define el
    acabado final sobre el sistema `rk-*` que ya existía, sin
@@ -2049,6 +2151,7 @@ h6 {
   uno, `mask` o `will-change`, y la tarjeta no puede moverse al
   señalarla, porque dejaría la lengüeta atrás.
 */
+/* No tocar la forma: lengüeta bajo las pestañas (.rx-pestana). Su color sale de --rx-lengueta / --rx-tab. */
 .rx-pestana {
   position: relative;
   display: flex;
@@ -2552,7 +2655,7 @@ html[data-theme="dark"] {
 }
 
 /* ══════════════════════════════════════════════════════════
-   SISTEMA DE INTERACCIÓN
+   §12 · SISTEMA DE INTERACCIÓN
 
    Una sola fuente para cómo responde TODO lo que se puede
    pulsar, enfocar o señalar. Antes esto vivía repartido en
@@ -3334,7 +3437,7 @@ table .rk-btn:hover:not(:disabled) {
    ║  AN. VISOR DE HISTORIAS    → rk-story-* · rk-btn-added               ║
    ╚═══════════════════════════════════════════════════════════════════════╝ */
 
-/* ═══ A. BOTONES ═══════════════════════════════════════════════════════ */
+/* ═══ §13 · A. BOTONES ═══════════════════════════════════════════════════════ */
 
 /* ── A1. TAMAÑOS ─────────────────────────────────────────────────────── */
 /* large · para CTA y héroes (resuelve que .rk-btn pisaba el tamaño de cta) */
@@ -3472,6 +3575,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-btn.rk-btn-line::before,
+/* No tocar la forma: lengüeta del botón line (::after). Su color sale de --rx-lengueta. */
 .rk-btn.rk-btn-line::after {
   content: "";
   position: absolute;
@@ -3835,7 +3939,7 @@ table .rk-btn:hover:not(:disabled) {
   }
 }
 
-/* ═══ B · C · D ════════════════════════════════════════════════════════ */
+/* ═══ §14 · B · C · D ════════════════════════════════════════════════════════ */
 /* ═══════════════════════════════════════════════════════════════════════
    CAMPOS  ·  .rk-input · .rk-select · .rk-textarea   (estilo web3)
    ═══════════════════════════════════════════════════════════════════════
@@ -4169,7 +4273,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)
+   §15 · TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)
    ═══════════════════════════════════════════════════════════════════════
    Misma estructura que ProductCard.tsx (no cambia el marcado):
      .rx-pestana.rx-pestana-bloque > article.rk-tarjeta.group
@@ -4355,7 +4459,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*
+   §16 · VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*
    ═══════════════════════════════════════════════════════════════════════
    Vidrio transparente para poner encima de fotos o fondos con color.
    Bordes limpios, sin sombras.
@@ -4375,7 +4479,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button
+   §17 · E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button
    ═══════════════════════════════════════════════════════════════════════
    rk-stepper: selector − 1 + del carrito, mismo vidrio que los campos.
    <div class="rk-stepper" role="group" aria-label="Cantidad">
@@ -4627,7 +4731,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   C2. TARJETA DE RECURSO · versión refinada
+   §18 · C2. TARJETA DE RECURSO · versión refinada
    ═══════════════════════════════════════════════════════════════════════
    Pisa a la sección C. Lo que cambia sin tocar el marcado:
      · márgenes y radios proporcionados (imagen 16 px dentro de 22 px)
@@ -4800,7 +4904,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   F. ARTÍCULO DEL CARRITO  ·  rk-cart-item
+   §19 · F. ARTÍCULO DEL CARRITO  ·  rk-cart-item
    ═══════════════════════════════════════════════════════════════════════
    Mismo lenguaje que la tarjeta de recurso: vidrio, borde limpio,
    imagen con hilo de luz. Se arma así:
@@ -4995,7 +5099,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   G. LÍNEAS DE SEPARACIÓN  ·  rk-divider
+   §20 · G. LÍNEAS DE SEPARACIÓN  ·  rk-divider
    ═══════════════════════════════════════════════════════════════════════
    Una sola línea fina en todo el sistema: --rk-linea.
      .rk-divider           → línea horizontal (div o hr)
@@ -5047,7 +5151,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   H. CHIPS Y BADGES  ·  rk-chip · rk-badge
+   §21 · H. CHIPS Y BADGES  ·  rk-chip · rk-badge
    ═══════════════════════════════════════════════════════════════════════
    Mismos nombres que ya usa la app (20 chips, 51 badges): cambian solos.
    CHIP (filtro que se toca)
@@ -5238,7 +5342,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)
+   §22 · I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)
    ═══════════════════════════════════════════════════════════════════════
    Píldora de vidrio flotante para móvil (Inicio, Explorar, Guardados,
    Carrito, Cuenta). Mismo vidrio transparente del resto del sistema.
@@ -5546,7 +5650,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador
+   §23 · J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador
    ═══════════════════════════════════════════════════════════════════════
    Mismo vidrio que el menú inferior, para que arriba y abajo se sientan
    una sola app.
@@ -5923,7 +6027,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)
+   §24 · K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)
    ═══════════════════════════════════════════════════════════════════════
    El único control de tema del sitio (barra, hoja de cuenta, ajustes).
    Cápsula con sol y luna; un círculo de vidrio se desliza al lado del
@@ -6063,7 +6167,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   L. TARJETAS DE INFORMACIÓN  ·  rk-card
+   §25 · L. TARJETAS DE INFORMACIÓN  ·  rk-card
    ═══════════════════════════════════════════════════════════════════════
    Mismo nombre que ya usa la app (132 veces): cambia solo con el CSS.
    Mismo lenguaje que la tarjeta de recurso: vidrio transparente, borde
@@ -6143,7 +6247,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   M. PASOS  ·  rk-step (pasos, ofertas)
+   §26 · M. PASOS  ·  rk-step (pasos, ofertas)
    ═══════════════════════════════════════════════════════════════════════
    Marco de color suave con borde limpio, un círculo con el número o
    icono, y un panel interior con el texto.
@@ -6268,7 +6372,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   N. RESUMEN DEL PEDIDO  ·  rk-receipt
+   §27 · N. RESUMEN DEL PEDIDO  ·  rk-receipt
    ═══════════════════════════════════════════════════════════════════════
    Tarjeta tipo pase de abordar: dos muescas laterales recortadas a la
    altura de la línea punteada, que separa el detalle del total.
@@ -6500,7 +6604,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   Q. TARJETAS DE PLANES  ·  rk-plan
+   §28 · Q. TARJETAS DE PLANES  ·  rk-plan
    ═══════════════════════════════════════════════════════════════════════
    Funda con el nombre arriba (pestaña) y una tarjeta interior que se
    monta encima, con el precio en su propia caja y el botón dentro.
@@ -6686,7 +6790,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   R. COMPARACIÓN DE PLANES  ·  rk-compare
+   §29 · R. COMPARACIÓN DE PLANES  ·  rk-compare
    ═══════════════════════════════════════════════════════════════════════
    Tabla en una funda de color suave; las filas se alternan con una
    cápsula clara. Columnas: 1 de nombres + 1 por plan (--rk-cmp-cols).
@@ -7022,7 +7126,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   S. PREGUNTAS FRECUENTES  ·  rk-faq
+   §30 · S. PREGUNTAS FRECUENTES  ·  rk-faq
    ═══════════════════════════════════════════════════════════════════════
    Acordeón sin JavaScript con <details>. Cada pregunta es una tarjeta
    suave; la respuesta aparece dentro de la misma tarjeta, en gris.
@@ -7517,7 +7621,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*
+   §31 · T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*
    ═══════════════════════════════════════════════════════════════════════
    T1. Panel de cuenta / creador / admin (mismas clases que ya usa la
        app en PanelNav: cambian solas). La sección activa es una cápsula
@@ -7758,7 +7862,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty
+   §32 · U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty
    ═══════════════════════════════════════════════════════════════════════
    U1. rk-skeleton: bloque de vidrio con un brillo que lo recorre.
        Formas: rk-skeleton-line · rk-skeleton-circle
@@ -7941,7 +8045,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress
+   §33 · V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress
    ═══════════════════════════════════════════════════════════════════════
    V1. rk-upload: caja punteada para elegir/arrastrar.
        <button class="rk-upload">
@@ -8250,7 +8354,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   W. TABLAS  ·  rk-table · rk-pagination
+   §34 · W. TABLAS  ·  rk-table · rk-pagination
    ═══════════════════════════════════════════════════════════════════════
    Para admin y creadores. La tabla vive en una caja de vidrio con su
    propio scroll horizontal (la página nunca se mueve de lado).
@@ -8498,7 +8602,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat
+   §35 · X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat
    ═══════════════════════════════════════════════════════════════════════
    X1. rk-profile: avatar con aro de vidrio + botón de cámara (ink) que
        asoma por debajo como lengüeta; nombre, badge y cargo.
@@ -8739,7 +8843,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu
+   §36 · Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu
    ═══════════════════════════════════════════════════════════════════════
    Y1. rk-avatar-btn: botón redondo con la foto. Abierto
        (aria-expanded="true") → cristal + lengüeta abajo, mitad difusa.
@@ -9106,7 +9210,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review
+   §37 · Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review
    ═══════════════════════════════════════════════════════════════════════
    Z1. rk-rating: resumen. Nota grande en iris, estrellas, total y
        reparto 5→1 con barras de degradado.
@@ -9509,7 +9613,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AA. NOTIFICACIONES  ·  rk-notif-*
+   §38 · AA. NOTIFICACIONES  ·  rk-notif-*
    ═══════════════════════════════════════════════════════════════════════
    AA1. Campana: usa rk-avatar-btn (cristal + lengüeta al abrir) y
         rk-notif-count para el número sin leer.
@@ -9877,7 +9981,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk-rating-link
+   §39 · AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk-rating-link
    ═══════════════════════════════════════════════════════════════════════
    AB1. rk-rating-link: estrellas + nota + total bajo el título.
    AB2. rk-buy: caja de precio y compra. Velo iris arriba, precio grande,
@@ -10200,7 +10304,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*
+   §40 · AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*
    ═══════════════════════════════════════════════════════════════════════
    AC1. Escritorio: rk-filter-group (caja suave) con rk-filter-option.
         La elegida (aria-current="true" o aria-pressed="true") es una
@@ -10485,7 +10589,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AD. ACCESO (login · registro)  ·  rk-auth-*
+   §41 · AD. ACCESO (login · registro)  ·  rk-auth-*
    ═══════════════════════════════════════════════════════════════════════
    AD1. rk-auth: página centrada, sin fondo propio.
    AD2. rk-auth-logo: isotipo en vidrio con lengüeta difusa.
@@ -10722,7 +10826,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)
+   §42 · AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)
    ═══════════════════════════════════════════════════════════════════════
    AF1. rk-steps-line: avance Carrito → Confirmar → Pago. Cada paso es
         .is-done, .is-current o nada (pendiente). La línea se pinta con
@@ -10846,7 +10950,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*
+   §43 · AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*
    ═══════════════════════════════════════════════════════════════════════
    AG1. rk-done: tarjeta central. data-tone="success" (pagado) o
         "warning" (pendiente) decide el color del icono y del aviso.
@@ -11058,7 +11162,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AH. PIE DE PÁGINA  ·  rk-footer-*
+   §44 · AH. PIE DE PÁGINA  ·  rk-footer-*
    ═══════════════════════════════════════════════════════════════════════
    AH1. rk-footer: bloque de vidrio con esquinas superiores redondas.
    AH2. rk-footer-cta: franja de marca (frío → cálido) con llamada a
@@ -11502,7 +11606,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-table-head
+   §45 · AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-table-head
    ═══════════════════════════════════════════════════════════════════════
    Para las páginas del panel que tienen tabla en escritorio y tarjetas
    en móvil:
@@ -11760,7 +11864,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo
+   §46 · AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo
    ═══════════════════════════════════════════════════════════════════════
    Clases antiguas que aún usan muchas páginas (Mi cuenta, panel del
    creador, admin, colecciones, estadísticas…). En vez de reescribir
@@ -11969,7 +12073,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*
+   §47 · AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*
    ═══════════════════════════════════════════════════════════════════════
    Perfil centrado estilo app: la portada se funde hacia el fondo, una
    barra flotante (volver · @usuario · compartir) va encima, el avatar
@@ -12346,7 +12450,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*
+   §48 · AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*
    ═══════════════════════════════════════════════════════════════════════
    AL1. rk-dash-hero: tarjeta de saldo con la marca (frío → cálido):
         etiqueta, monto grande con céntimos atenuados, chips y tres
@@ -12828,7 +12932,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AE. COLORES DE MARCA  ·  frío → centro → cálido
+   §49 · AE. COLORES DE MARCA  ·  frío → centro → cálido
    ═══════════════════════════════════════════════════════════════════════
    Los acentos de todos los componentes salen de --rk-iris-1/2/3. Aquí
    dejan de ser violeta y cian y pasan a ser los colores de marca, los
@@ -13087,7 +13191,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check-dot
+   §50 · AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check-dot
    ═══════════════════════════════════════════════════════════════════════
    Piezas pequeñas para las últimas páginas (únete, favoritos, ya
    adquirido, requisitos del admin).
@@ -13166,7 +13270,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added
+   §51 · AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added
    ═══════════════════════════════════════════════════════════════════════
    La historia es negra en los dos temas (la pieza manda), así que aquí
    nada depende del tema: vidrio claro sobre negro y acentos de marca.
@@ -13324,7 +13428,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx
+   §52 · AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx
    ═══════════════════════════════════════════════════════════════════════
    La banda ónice es negra en los dos temas. En claro sus hijos heredaban
    los tokens y reglas del tema claro (texto oscuro, tarjetas y botones
@@ -13442,7 +13546,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout
+   §53 · AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout
    ═══════════════════════════════════════════════════════════════════════ */
 
 .rk-faq-a a {
@@ -13491,7 +13595,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions
+   §54 · AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions
    ═══════════════════════════════════════════════════════════════════════
    Todos los botones de la derecha (buscar, panel, studio, avisos,
    favoritos, carrito) son el mismo círculo de vidrio de 44 px, separados
@@ -13527,7 +13631,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*
+   §55 · AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*
    ═══════════════════════════════════════════════════════════════════════
    Carpeta de escritorio: la parte de atrás con su pestaña a la derecha
    (dos rayitas), una hoja blanca y las portadas de la categoría dentro,
@@ -13862,7 +13966,7 @@ div.rk-upload-error > * + * {
   content: none;
 }
 
-/* ═══ AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image ═══
+/* ═══ §56 · AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image ═══
    Vidrio claro como el botón secundario, igual en los dos temas:
    blanco transparente, texto e iconos blancos, sin sombra. */
 .rk-glass-on-image,
@@ -13917,7 +14021,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*
+   §57 · AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*
    ═══════════════════════════════════════════════════════════════════════
    Carrusel tipo coverflow justo debajo de la barra superior. La portada
    activa va al centro con su información; las vecinas asoman a los
@@ -14272,7 +14376,7 @@ div.rk-upload-error > * + * {
   }
 }
 
-/* ═══════════ AV · CTA final con la modelo (estilo hero) ═══════════
+/* ═══════════ §58 · AV · CTA final con la modelo (estilo hero) ═══════════
    La sección usa rk-card, rk-display, rk-btn, rk-card-glass y
    rk-chip. Aquí solo va lo propio: el círculo de marca, la foto
    recortada y dónde flotan las tarjetas. */
@@ -14326,7 +14430,7 @@ div.rk-upload-error > * + * {
   .rk-cta-modelo-card.is-bottom { left: -40px; }
 }
 
-/* ═══════════ AW · Ecosistema: fila con núcleo hexagonal ═══════════
+/* ═══════════ §59 · AW · Ecosistema: fila con núcleo hexagonal ═══════════
    Caja con proporción fija; todo dentro va en porcentaje del ancho.
    Fondo de puntos, dos arcos y un haz vertical; al centro un
    hexágono con el cohete en círculo negro; a los lados programas
@@ -14361,6 +14465,7 @@ div.rk-upload-error > * + * {
 /* pulso de puntos: la retícula en color de marca se prende en
    un anillo que sale del centro hacia afuera; dos ondas
    desfasadas para que el pulso sea continuo */
+/* Animación del anillo del ecosistema: no tocar. */
 @property --rk-eco-r {
   syntax: "<length-percentage>"; /* así un minificador puede dejar "0" */
   inherits: false;
@@ -14589,7 +14694,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ══════════════════════════════════════════════════════════
-   AX. PANTALLA DE CARGA (app/loading.tsx)
+   §60 · AX. PANTALLA DE CARGA (app/loading.tsx)
    Minimal: el cohete solo, en el color del texto, y un arco
    fino con el degradado de marca que gira alrededor.
    Primero el cohete (estático) aparece de transparente a
@@ -14597,6 +14702,7 @@ div.rk-upload-error > * + * {
    crece mientras gira. Arranca con 0.1 s de
    retraso para no parpadear en navegaciones rápidas.
    ══════════════════════════════════════════════════════════ */
+/* Animación de la barra de carga (app/loading.tsx): no tocar. */
 @property --rk-cargador-largo {
   syntax: "<length-percentage>"; /* así un minificador puede dejar "0" */
   inherits: false;
@@ -14663,7 +14769,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ══════════════════════════════════════════════════════════
-   AY. ISOTIPO (components/layout/Isotipo.tsx)
+   §61 · AY. ISOTIPO (components/layout/Isotipo.tsx)
    Solo el cohete, sin el cuadro negro: máscara del SVG pintada
    con el color del texto (blanco en oscuro, negro en claro).
    ══════════════════════════════════════════════════════════ */
@@ -14681,7 +14787,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ══════════════════════════════════════════════════════════
-   AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)
+   §62 · AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)
    Dos líneas finas con un nodo cuadrado en cada punta y, al
    centro, el isotipo dentro de un recuadro. Ocupa el hueco que
    antes dejaba el margen superior del pie.
@@ -14738,7 +14844,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ══════════════════════════════════════════════════════════
-   BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)
+   §63 · BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)
    Solo portadas: 3 columnas en móvil, 4 en tablet y 5 en
    escritorio. Al tocar una se abre su tarjeta en una hoja.
    ══════════════════════════════════════════════════════════ */
@@ -14869,7 +14975,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)
+   §64 · rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)
 
    Tarjeta suave con antetítulo, una ficha de estado (isotipo ×
    barra × icono) y una caja abierta con el isotipo grabado. La
@@ -15189,7 +15295,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   rk-hc · Hero «Todo lo que necesitas para crear mejor»
+   §65 · rk-hc · Hero «Todo lo que necesitas para crear mejor»
 
    Texto centrado y titular en tres alturas. La «e» de «crear» es
    un interruptor que se enciende solo; a su lado una flecha en
@@ -15550,7 +15656,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   rk-rol · Interruptor de rol en la barra superior (Navbar)
+   §66 · rk-rol · Interruptor de rol en la barra superior (Navbar)
 
    «Admin · Studio» en dos estados:
    A) Fuera de los paneles: dos botones redondos de 44 px, solo
@@ -15806,7 +15912,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)
+   §67 · rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)
 
    Un marco grande con las portadas apiladas que se relevan con un
    fundido y un leve acercamiento. Encima, en vidrio oscuro: chip de
@@ -16020,7 +16126,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)
+   §68 · rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)
 
    Tira a todo el ancho (borde a borde, sin tarjeta) con la línea de
    progreso, un marco con las portadas reales de la opción y un
@@ -16393,7 +16499,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.tsx)
+   §69 · rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.tsx)
 
    Riel de categorías con el estilo del interruptor Admin / Studio
    unido (rk-rol): tinta con la elegida en perla, invertido en
@@ -16714,7 +16820,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ══════════════════════════════════════════════════════════
-   BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)
+   §70 · BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)
    Todo limitado al contenedor .rk-dash (430 → 760 → 1160 px):
    Ingresos (rk-ing, BalanceAdmin.tsx) con su selector de mes
    (rk-cal) y su odómetro (rk-num, Odometro.tsx), Mi plataforma
@@ -19555,7 +19661,7 @@ div.rk-upload-error > * + * {
 }
 
 /* ══════════════════════════════════════════════════════════
-   BB. INICIO (encargo de la home)
+   §71 · BB. INICIO (encargo de la home)
    Bloques aprobados en la vista previa del inicio, uno por
    parche. Los colores fijos son los de marca del encargo.
    ══════════════════════════════════════════════════════════ */
@@ -19828,6 +19934,7 @@ html[data-theme] .rk-faq-icon::before {
    Tarjeta crema/durazno/lila con una luz que recorre el borde,
    el isotipo grande al fondo con su reflejo (rk-cohete-brillo)
    y el botón «Únete» en tinta. */
+/* Animación del borde cónico (.rk-camino, .rk-footer-cta): gira --rk-luz. No tocar; en los colores, solo los del degradado. */
 @property --rk-luz {
   syntax: '<angle>';
   inherits: false;
