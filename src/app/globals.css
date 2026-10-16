@@ -15553,15 +15553,16 @@ div.rk-upload-error > * + * {
    rk-rol · Interruptor de rol en la barra superior (Navbar)
 
    «Admin · Studio» en dos estados:
-   A) Fuera de los paneles: dos botones sueltos, cada uno con el
-      vidrio de los botones de la barra (rk-topbar-btn), icono +
-      texto, 6 px entre ellos. Hover y foco con un acento lavanda.
+   A) Fuera de los paneles: dos botones redondos de 44 px, solo
+      icono (18 px), con el vidrio de los botones de la barra
+      (rk-topbar-btn), 6 px entre ellos. El nombre va en
+      aria-label. Hover y foco con un acento lavanda.
    B) Dentro de un panel (data-encendido): una sola píldora de
       tinta y la sección activa en perla. En oscuro se invierte.
    De A a B los botones se acercan y la tinta aparece detrás:
    solo transform y opacidad, 300 ms. La tinta va en ::before
    para animar solo su opacidad.
-   Por debajo de 360 px los botones quedan en solo icono.
+   La píldora de B sigue con sus reglas por ancho (más abajo).
    ═══════════════════════════════════════════════════════════════════ */
 .rk-rol {
   position: relative;
@@ -15759,6 +15760,25 @@ div.rk-upload-error > * + * {
   .rk-rol-texto {
     display: none;
   }
+}
+
+/* A · Fuera de los paneles, en todos los anchos: botón redondo de
+   44 px con solo el icono. Va después de las reglas por ancho para
+   que estas solo afecten a la píldora (B). */
+.rk-rol:not([data-encendido]) .rk-rol-opcion {
+  justify-content: center;
+  width: 44px;
+  padding: 0;
+}
+
+.rk-rol:not([data-encendido]) .rk-rol-texto {
+  display: none;
+}
+
+.rk-rol:not([data-encendido]) .rk-rol-opcion svg {
+  display: block;
+  width: 18px;
+  height: 18px;
 }
 
 @media (prefers-reduced-motion: reduce) {
