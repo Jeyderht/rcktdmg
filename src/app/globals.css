@@ -9517,9 +9517,9 @@ table .rk-btn:hover:not(:disabled) {
   display: grid;
   gap: 12px;
   padding: 18px;
-  border: 1px solid rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(var(--pal-blanco) / 0.1);
   border-radius: 24px;
-  background: rgb(255 255 255 / 0.04);
+  background: rgb(var(--pal-blanco) / 0.04);
   -webkit-backdrop-filter: blur(20px) saturate(1.3);
   backdrop-filter: blur(20px) saturate(1.3);
 }
@@ -9584,11 +9584,11 @@ table .rk-btn:hover:not(:disabled) {
   padding: 16px;
   border: 1px solid var(--rk-linea);
   border-radius: 20px;
-  background: rgb(255 255 255 / 0.025);
+  background: rgb(var(--pal-blanco) / 0.025);
 }
 
 [data-theme="light"] .rk-review {
-  background: rgb(255 255 255 / 0.6);
+  background: rgb(var(--pal-blanco) / 0.6);
 }
 
 .rk-review-head {
@@ -9742,7 +9742,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-notif-count {
-  box-shadow: 0 0 0 2px #fff;
+  box-shadow: 0 0 0 2px rgb(var(--pal-blanco));
 }
 
 /* ── AA2. PANEL ─────────────────────────────────────────────────────── */
@@ -9870,7 +9870,7 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-notif-item:not([data-tone]) { --rk-tone: 110 116 132; }
 
 .rk-notif-item.is-unread {
-  background: rgb(255 255 255 / 0.05);
+  background: rgb(var(--pal-blanco) / 0.05);
 }
 
 [data-theme="light"] .rk-notif-item.is-unread {
@@ -9879,7 +9879,7 @@ table .rk-btn:hover:not(:disabled) {
 
 @media (hover: hover) and (pointer: fine) {
   .rk-notif-item:hover {
-    background: rgb(255 255 255 / 0.08);
+    background: rgb(var(--pal-blanco) / 0.08);
   }
 
   [data-theme="light"] .rk-notif-item:hover {
@@ -9940,7 +9940,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .is-unread .rk-notif-icon::after {
-  box-shadow: 0 0 0 2px #fff;
+  box-shadow: 0 0 0 2px rgb(var(--pal-blanco));
 }
 
 .rk-notif-text {
@@ -10036,18 +10036,18 @@ table .rk-btn:hover:not(:disabled) {
 .rk-notif-page .rk-notif-item {
   border: 1px solid var(--rk-linea);
   border-radius: 20px;
-  background: rgb(255 255 255 / 0.025);
+  background: rgb(var(--pal-blanco) / 0.025);
 }
 
 [data-theme="light"] .rk-notif-page .rk-notif-item {
-  background: rgb(255 255 255 / 0.6);
+  background: rgb(var(--pal-blanco) / 0.6);
 }
 
 .rk-notif-page .rk-notif-item.is-unread {
   border-color: rgb(var(--rk-iris-1) / 0.35);
   background:
     radial-gradient(70% 120% at 0% 0%, rgb(var(--rk-iris-1) / 0.1), transparent 70%),
-    rgb(255 255 255 / 0.04);
+    rgb(var(--pal-blanco) / 0.04);
 }
 
 [data-theme="light"] .rk-notif-page .rk-notif-item.is-unread {
@@ -10114,12 +10114,12 @@ table .rk-btn:hover:not(:disabled) {
   display: grid;
   gap: 18px;
   padding: 18px;
-  border: 1px solid rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(var(--pal-blanco) / 0.1);
   border-radius: 26px;
   background:
     radial-gradient(90% 60% at 100% 0%, rgb(var(--rk-iris-1) / 0.16), transparent 70%),
     radial-gradient(70% 50% at 0% 0%, rgb(var(--rk-iris-3) / 0.1), transparent 70%),
-    rgb(255 255 255 / 0.04);
+    rgb(var(--pal-blanco) / 0.04);
   -webkit-backdrop-filter: blur(22px) saturate(1.3);
   backdrop-filter: blur(22px) saturate(1.3);
   isolation: isolate;
@@ -10253,13 +10253,13 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 22px;
   background:
     radial-gradient(80% 120% at 100% 50%, rgb(var(--rk-iris-2) / 0.1), transparent 70%),
-    rgb(255 255 255 / 0.03);
+    rgb(var(--pal-blanco) / 0.03);
 }
 
 [data-theme="light"] .rk-creator {
   background:
     radial-gradient(80% 120% at 100% 50%, rgb(var(--rk-iris-2) / 0.14), transparent 70%),
-    rgb(255 255 255 / 0.7);
+    rgb(var(--pal-blanco) / 0.7);
 }
 
 .rk-creator-avatar {
@@ -10288,7 +10288,7 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-creator-avatar {
   box-shadow:
-    0 0 0 2px #fff,
+    0 0 0 2px rgb(var(--pal-blanco)),
     0 0 0 3px rgb(var(--rk-iris-1) / 0.6);
 }
 
@@ -10343,11 +10343,11 @@ table .rk-btn:hover:not(:disabled) {
   padding: 18px;
   border: 1px solid var(--rk-linea);
   border-radius: 22px;
-  background: rgb(255 255 255 / 0.025);
+  background: rgb(var(--pal-blanco) / 0.025);
 }
 
 [data-theme="light"] .rk-detail-card {
-  background: rgb(255 255 255 / 0.6);
+  background: rgb(var(--pal-blanco) / 0.6);
 }
 
 .rk-detail-title {
@@ -10416,12 +10416,12 @@ table .rk-btn:hover:not(:disabled) {
   padding: 14px 10px 10px;
   border: 1px solid var(--rk-linea);
   border-radius: 22px;
-  background: rgb(255 255 255 / 0.03);
+  background: rgb(var(--pal-blanco) / 0.03);
   isolation: isolate;
 }
 
 [data-theme="light"] .rk-filter-group {
-  background: rgb(255 255 255 / 0.55);
+  background: rgb(var(--pal-blanco) / 0.55);
 }
 
 .rk-filter-title {
@@ -10516,7 +10516,7 @@ table .rk-btn:hover:not(:disabled) {
   z-index: -1;
   border: 1px solid var(--rx-b-boton);
   border-radius: inherit;
-  background: rgb(255 255 255 / 0.07);
+  background: rgb(var(--pal-blanco) / 0.07);
   -webkit-backdrop-filter: blur(24px) saturate(1.5);
   backdrop-filter: blur(24px) saturate(1.5);
 }
@@ -10536,7 +10536,7 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-filter-option[aria-current="true"]::before,
 [data-theme="light"] .rk-filter-option[aria-pressed="true"]::before {
-  background: rgb(255 255 255 / 0.5);
+  background: rgb(var(--pal-blanco) / 0.5);
 }
 
 [data-theme="light"] .rk-filter-option[aria-current="true"]::after,
@@ -10551,7 +10551,7 @@ table .rk-btn:hover:not(:disabled) {
   height: 14px;
   border-radius: 999px;
   box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 0.25),
+    inset 0 0 0 1px rgb(var(--pal-blanco) / 0.25),
     0 0 0 1px rgb(var(--pal-claro-estrella-apagada) / 0.35);
 }
 
@@ -10604,7 +10604,7 @@ table .rk-btn:hover:not(:disabled) {
   flex-direction: column;
   width: 100%;
   max-height: 85vh;
-  border: 1px solid rgb(255 255 255 / 0.12);
+  border: 1px solid rgb(var(--pal-blanco) / 0.12);
   border-bottom: 0;
   border-radius: 30px 30px 0 0;
   background: rgb(var(--pal-oscuro-superficie) / 0.86);
@@ -10615,8 +10615,8 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-sheet-panel {
-  border-color: rgb(255 255 255 / 0.95);
-  background: rgb(255 255 255 / 0.88);
+  border-color: rgb(var(--pal-blanco) / 0.95);
+  background: rgb(var(--pal-blanco) / 0.88);
 }
 
 .rk-sheet-panel .rk-menu-grabber {
@@ -10720,7 +10720,7 @@ table .rk-btn:hover:not(:disabled) {
   padding: 0 14px 0 10px;
   border: 1px solid var(--rk-linea);
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.04);
+  background: rgb(var(--pal-blanco) / 0.04);
   color: rgb(var(--rk-muted));
   font-size: 0.715rem;
   text-decoration: none;
@@ -10730,7 +10730,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-auth-back {
-  background: rgb(255 255 255 / 0.6);
+  background: rgb(var(--pal-blanco) / 0.6);
 }
 
 .rk-auth-back svg {
@@ -10780,7 +10780,7 @@ table .rk-btn:hover:not(:disabled) {
   z-index: -1;
   border: 1px solid var(--rx-b-boton);
   border-radius: inherit;
-  background: rgb(255 255 255 / 0.08);
+  background: rgb(var(--pal-blanco) / 0.08);
   -webkit-backdrop-filter: blur(24px) saturate(1.5);
   backdrop-filter: blur(24px) saturate(1.5);
 }
@@ -10798,7 +10798,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-auth-logo::before {
-  background: rgb(255 255 255 / 0.55);
+  background: rgb(var(--pal-blanco) / 0.55);
 }
 
 [data-theme="light"] .rk-auth-logo::after {
@@ -10823,7 +10823,7 @@ table .rk-btn:hover:not(:disabled) {
   display: grid;
   gap: 22px;
   padding: 22px;
-  border: 1px solid rgb(255 255 255 / 0.12);
+  border: 1px solid rgb(var(--pal-blanco) / 0.12);
   border-radius: 30px;
   background: rgb(var(--pal-oscuro-superficie) / 0.6);
   -webkit-backdrop-filter: blur(30px) saturate(1.5);
@@ -10832,8 +10832,8 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-auth-card {
-  border-color: rgb(255 255 255 / 0.95);
-  background: rgb(255 255 255 / 0.72);
+  border-color: rgb(var(--pal-blanco) / 0.95);
+  background: rgb(var(--pal-blanco) / 0.72);
 }
 
 @media (min-width: 640px) {
@@ -10981,7 +10981,7 @@ table .rk-btn:hover:not(:disabled) {
   height: 28px;
   border: 1px solid var(--rk-linea);
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.04);
+  background: rgb(var(--pal-blanco) / 0.04);
   color: rgb(var(--rk-muted));
   font-size: 0.6875rem;
   font-weight: 700;
@@ -11064,11 +11064,11 @@ table .rk-btn:hover:not(:disabled) {
   justify-items: center;
   gap: 10px;
   padding: 32px 20px 24px;
-  border: 1px solid rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(var(--pal-blanco) / 0.1);
   border-radius: 30px;
   background:
     radial-gradient(70% 45% at 50% 0%, rgb(var(--rk-tone) / 0.12), transparent 70%),
-    rgb(255 255 255 / 0.03);
+    rgb(var(--pal-blanco) / 0.03);
   text-align: center;
   isolation: isolate;
 }
@@ -11273,13 +11273,13 @@ table .rk-btn:hover:not(:disabled) {
   border: 1px solid var(--rk-linea);
   border-bottom: 0;
   border-radius: 32px 32px 0 0;
-  background: rgb(255 255 255 / 0.025);
+  background: rgb(var(--pal-blanco) / 0.025);
   -webkit-backdrop-filter: blur(24px) saturate(1.3);
   backdrop-filter: blur(24px) saturate(1.3);
 }
 
 [data-theme="light"] .rk-footer {
-  background: rgb(255 255 255 / 0.6);
+  background: rgb(var(--pal-blanco) / 0.6);
 }
 
 @media (min-width: 1024px) {
@@ -11391,7 +11391,7 @@ table .rk-btn:hover:not(:disabled) {
   height: 48px;
   border: 1px solid var(--rx-b-boton);
   border-radius: 16px;
-  background: rgb(255 255 255 / 0.06);
+  background: rgb(var(--pal-blanco) / 0.06);
 }
 
 [data-theme="light"] .rk-footer-logo {
@@ -11619,12 +11619,12 @@ table .rk-btn:hover:not(:disabled) {
   height: 26px;
   border-radius: 0 0 26px 26px;
   background:
-    linear-gradient(rgb(255 255 255 / 0.025), rgb(255 255 255 / 0.025)),
+    linear-gradient(rgb(var(--pal-blanco) / 0.025), rgb(var(--pal-blanco) / 0.025)),
     var(--rx-fondo);
 }
 [data-theme="light"] .rk-footer-marca::before {
   background:
-    linear-gradient(rgb(255 255 255 / 0.6), rgb(255 255 255 / 0.6)),
+    linear-gradient(rgb(var(--pal-blanco) / 0.6), rgb(var(--pal-blanco) / 0.6)),
     var(--rx-fondo);
 }
 
@@ -11792,7 +11792,7 @@ table .rk-btn:hover:not(:disabled) {
   background:
     radial-gradient(90% 70% at 100% 100%, rgb(var(--rk-marca-calido) / 0.08), transparent 70%),
     radial-gradient(70% 60% at 100% 0%, rgb(var(--rk-marca-frio) / 0.1), transparent 70%),
-    rgb(255 255 255 / 0.03);
+    rgb(var(--pal-blanco) / 0.03);
   color: inherit;
   text-decoration: none;
 }
@@ -11801,7 +11801,7 @@ table .rk-btn:hover:not(:disabled) {
   background:
     radial-gradient(90% 70% at 100% 100%, rgb(var(--rk-marca-calido) / 0.3), transparent 70%),
     radial-gradient(70% 60% at 100% 0%, rgb(var(--rk-marca-frio) / 0.35), transparent 70%),
-    rgb(255 255 255 / 0.75);
+    rgb(var(--pal-blanco) / 0.75);
 }
 
 .rk-row-card-head {
@@ -11974,9 +11974,9 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-tile,
 [data-theme="light"] .rk-tile {
-  border: 1px solid rgb(255 255 255 / 0.08);
+  border: 1px solid rgb(var(--pal-blanco) / 0.08);
   border-radius: 22px;
-  background: rgb(255 255 255 / 0.03);
+  background: rgb(var(--pal-blanco) / 0.03);
   -webkit-backdrop-filter: blur(22px) saturate(1.2);
   backdrop-filter: blur(22px) saturate(1.2);
   box-shadow: none;
@@ -11984,12 +11984,12 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-tile {
   border-color: rgb(var(--rk-border));
-  background: rgb(255 255 255 / 0.62);
+  background: rgb(var(--pal-blanco) / 0.62);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rk-tile:hover {
-    border-color: rgb(255 255 255 / 0.16);
+    border-color: rgb(var(--pal-blanco) / 0.16);
     box-shadow: none;
   }
 
@@ -12000,10 +12000,10 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-glass,
 [data-theme="light"] .rk-glass {
-  border: 1px solid rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(var(--pal-blanco) / 0.1);
   background:
     radial-gradient(90% 60% at 100% 0%, rgb(var(--rk-marca-calido) / 0.08), transparent 70%),
-    rgb(255 255 255 / 0.04);
+    rgb(var(--pal-blanco) / 0.04);
   -webkit-backdrop-filter: blur(22px) saturate(1.3);
   backdrop-filter: blur(22px) saturate(1.3);
   box-shadow: none;
@@ -12013,12 +12013,12 @@ table .rk-btn:hover:not(:disabled) {
   border-color: rgb(var(--rk-border));
   background:
     radial-gradient(90% 60% at 100% 0%, rgb(var(--rk-marca-calido) / 0.25), transparent 70%),
-    rgb(255 255 255 / 0.8);
+    rgb(var(--pal-blanco) / 0.8);
 }
 
 .rk-glass-strong,
 [data-theme="light"] .rk-glass-strong {
-  border: 1px solid rgb(255 255 255 / 0.12);
+  border: 1px solid rgb(var(--pal-blanco) / 0.12);
   background: rgb(var(--pal-oscuro-superficie) / 0.84);
   -webkit-backdrop-filter: blur(28px) saturate(1.5);
   backdrop-filter: blur(28px) saturate(1.5);
@@ -12026,8 +12026,8 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-glass-strong {
-  border-color: rgb(255 255 255 / 0.95);
-  background: rgb(255 255 255 / 0.88);
+  border-color: rgb(var(--pal-blanco) / 0.95);
+  background: rgb(var(--pal-blanco) / 0.88);
 }
 
 .rk-float,
@@ -12049,7 +12049,7 @@ table .rk-btn:hover:not(:disabled) {
   background: linear-gradient(
     100deg,
     transparent 20%,
-    rgb(255 255 255 / 0.08) 45%,
+    rgb(var(--pal-blanco) / 0.08) 45%,
     rgb(var(--rk-marca-calido) / 0.06) 55%,
     transparent 80%
   );
@@ -12061,7 +12061,7 @@ table .rk-btn:hover:not(:disabled) {
   background: linear-gradient(
     100deg,
     transparent 20%,
-    rgb(255 255 255 / 0.85) 45%,
+    rgb(var(--pal-blanco) / 0.85) 45%,
     rgb(var(--rk-marca-calido) / 0.1) 55%,
     transparent 80%
   );
@@ -12084,11 +12084,11 @@ div.rk-upload-error > * + * {
   flex: none;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(var(--pal-blanco) / 0.1);
   border-radius: 12px;
   background:
     radial-gradient(100% 100% at 100% 0%, rgb(var(--rk-marca-calido) / 0.18), transparent 70%),
-    rgb(255 255 255 / 0.05);
+    rgb(var(--pal-blanco) / 0.05);
   color: var(--rx-texto);
 }
 
@@ -12116,12 +12116,12 @@ div.rk-upload-error > * + * {
 /* flechas de carruseles (inicio) */
 .rk-hero-round.rk-flecha {
   border-color: var(--rk-linea);
-  background: rgb(255 255 255 / 0.05);
+  background: rgb(var(--pal-blanco) / 0.05);
   color: var(--rx-texto);
 }
 
 [data-theme="light"] .rk-hero-round.rk-flecha {
-  background: rgb(255 255 255 / 0.85);
+  background: rgb(var(--pal-blanco) / 0.85);
 }
 
 /* portada de marca (cuando no hay imagen) y avatar con aro */
@@ -12142,7 +12142,7 @@ div.rk-upload-error > * + * {
 
 [data-theme="light"] .rk-avatar-anillo {
   box-shadow:
-    0 0 0 3px #fff,
+    0 0 0 3px rgb(var(--pal-blanco)),
     0 0 0 4px rgb(var(--rk-iris-3) / 0.7);
 }
 
@@ -12246,9 +12246,9 @@ div.rk-upload-error > * + * {
   width: 46px;
   height: 46px;
   padding: 0;
-  border: 1px solid rgb(255 255 255 / 0.5);
+  border: 1px solid rgb(var(--pal-blanco) / 0.5);
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.35);
+  background: rgb(var(--pal-blanco) / 0.35);
   color: rgb(var(--rk-marca-tinta));
   cursor: pointer;
   -webkit-backdrop-filter: blur(16px) saturate(1.4);
@@ -12264,7 +12264,7 @@ div.rk-upload-error > * + * {
 
 @media (hover: hover) and (pointer: fine) {
   .rk-hero-round:hover {
-    background: rgb(255 255 255 / 0.55);
+    background: rgb(var(--pal-blanco) / 0.55);
   }
 }
 
@@ -12294,7 +12294,7 @@ div.rk-upload-error > * + * {
   background: var(--rk-marca-degradado);
   box-shadow:
     0 0 0 4px rgb(14 15 19),
-    0 0 0 5px rgb(255 255 255 / 0.18);
+    0 0 0 5px rgb(var(--pal-blanco) / 0.18);
   color: rgb(var(--rk-marca-tinta));
   font-size: 2.2rem;
   font-weight: 700;
@@ -12302,7 +12302,7 @@ div.rk-upload-error > * + * {
 
 [data-theme="light"] .rk-hero-avatar {
   box-shadow:
-    0 0 0 5px #fff,
+    0 0 0 5px rgb(var(--pal-blanco)),
     0 0 0 6px rgb(var(--pal-claro-sombra) / 0.08);
 }
 
@@ -12605,9 +12605,9 @@ div.rk-upload-error > * + * {
   gap: 6px;
   min-height: 30px;
   padding: 0 12px;
-  border: 1px solid rgb(255 255 255 / 0.6);
+  border: 1px solid rgb(var(--pal-blanco) / 0.6);
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.35);
+  background: rgb(var(--pal-blanco) / 0.35);
   font-size: 0.6875rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -12630,9 +12630,9 @@ div.rk-upload-error > * + * {
   justify-items: center;
   gap: 8px;
   padding: 14px 6px;
-  border: 1px solid rgb(255 255 255 / 0.6);
+  border: 1px solid rgb(var(--pal-blanco) / 0.6);
   border-radius: 20px;
-  background: rgb(255 255 255 / 0.3);
+  background: rgb(var(--pal-blanco) / 0.3);
   color: inherit;
   font-size: 0.715rem;
   font-weight: 500;
@@ -12650,7 +12650,7 @@ div.rk-upload-error > * + * {
 
 @media (hover: hover) and (pointer: fine) {
   .rk-dash-tile:hover {
-    background: rgb(255 255 255 / 0.55);
+    background: rgb(var(--pal-blanco) / 0.55);
   }
 }
 
@@ -12664,11 +12664,11 @@ div.rk-upload-error > * + * {
   padding: 18px;
   border: 1px solid var(--rk-linea);
   border-radius: 26px;
-  background: rgb(255 255 255 / 0.03);
+  background: rgb(var(--pal-blanco) / 0.03);
 }
 
 [data-theme="light"] .rk-dash-card {
-  background: rgb(255 255 255 / 0.75);
+  background: rgb(var(--pal-blanco) / 0.75);
 }
 
 /* ── AL2. ANILLO ────────────────────────────────────────────────────── */
@@ -12983,12 +12983,12 @@ div.rk-upload-error > * + * {
 
 .rk-tabcard .rk-dash-chip {
   border-color: var(--rk-linea);
-  background: rgb(255 255 255 / 0.06);
+  background: rgb(var(--pal-blanco) / 0.06);
   color: var(--rx-texto);
 }
 
 [data-theme="light"] .rk-tabcard .rk-dash-chip {
-  background: rgb(255 255 255 / 0.7);
+  background: rgb(var(--pal-blanco) / 0.7);
 }
 
 .rk-tabcard-foot {
@@ -13109,7 +13109,7 @@ div.rk-upload-error > * + * {
 }
 
 .rk-menu-promo {
-  border: 1px solid rgb(255 255 255 / 0.5);
+  border: 1px solid rgb(var(--pal-blanco) / 0.5);
   background:
     radial-gradient(70% 160% at 100% 50%, rgb(var(--rk-marca-calido) / 0.95), transparent 70%),
     radial-gradient(60% 160% at 0% 50%, rgb(var(--rk-marca-frio) / 0.9), transparent 70%),
@@ -13141,7 +13141,7 @@ div.rk-upload-error > * + * {
 [data-theme="light"] .rk-menu-head .rk-avatar-btn-img,
 [data-theme="light"] .rk-avatar-btn > .rk-avatar-btn-img {
   box-shadow:
-    0 0 0 2px var(--rk-aro-hueco, #fff),
+    0 0 0 2px var(--rk-aro-hueco, rgb(var(--pal-blanco))),
     0 0 0 4px rgb(var(--rk-iris-3) / 0.8);
 }
 
@@ -13205,7 +13205,7 @@ div.rk-upload-error > * + * {
 
 [data-theme="light"] .rk-creator-avatar {
   box-shadow:
-    0 0 0 2px #fff,
+    0 0 0 2px rgb(var(--pal-blanco)),
     0 0 0 3px rgb(var(--rk-iris-3) / 0.8);
 }
 
@@ -13387,7 +13387,7 @@ div.rk-upload-error > * + * {
 }
 
 .rk-story-track {
-  background: rgb(255 255 255 / 0.2);
+  background: rgb(var(--pal-blanco) / 0.2);
 }
 
 .rk-story-fill {
@@ -13410,9 +13410,9 @@ div.rk-upload-error > * + * {
   display: grid;
   place-items: center;
   padding: 0;
-  border: 1px solid rgb(255 255 255 / 0.18);
+  border: 1px solid rgb(var(--pal-blanco) / 0.18);
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.08);
+  background: rgb(var(--pal-blanco) / 0.08);
   color: rgb(var(--pal-oscuro-texto));
   cursor: pointer;
   -webkit-backdrop-filter: blur(16px) saturate(1.4);
@@ -13425,8 +13425,8 @@ div.rk-upload-error > * + * {
 
 @media (hover: hover) and (pointer: fine) {
   .rk-story-btn:hover {
-    border-color: rgb(255 255 255 / 0.32);
-    background: rgb(255 255 255 / 0.16);
+    border-color: rgb(var(--pal-blanco) / 0.32);
+    background: rgb(var(--pal-blanco) / 0.16);
   }
 }
 
@@ -13441,7 +13441,7 @@ div.rk-upload-error > * + * {
 }
 
 .rk-story-cta {
-  border-color: rgb(255 255 255 / 0.5);
+  border-color: rgb(var(--pal-blanco) / 0.5);
   background: var(--rk-marca-degradado);
   color: rgb(var(--rk-marca-tinta));
 }
@@ -13490,7 +13490,7 @@ div.rk-upload-error > * + * {
    claro y oscuro, así que la etiqueta tampoco cambia con el tema. */
 .rk-tarjeta .rk-glass-on-image,
 [data-theme="light"] .rk-tarjeta .rk-glass-on-image {
-  border-color: rgb(255 255 255 / 0.22);
+  border-color: rgb(var(--pal-blanco) / 0.22);
   background: rgb(var(--pal-oscuro-fondo) / 0.42);
   color: rgb(var(--pal-oscuro-texto));
   -webkit-backdrop-filter: blur(10px) saturate(1.3);
@@ -13576,28 +13576,28 @@ div.rk-upload-error > * + * {
 
 /* tarjetas: vidrio oscuro transparente, como en tema oscuro */
 [data-theme="light"] .rk-onyx .rk-tarjeta {
-  --rk-tj-relleno: rgb(255 255 255 / 0.03);
-  --rk-tj-borde: rgb(255 255 255 / 0.08);
-  background: rgb(255 255 255 / 0.03);
-  border-color: rgb(255 255 255 / 0.08);
+  --rk-tj-relleno: rgb(var(--pal-blanco) / 0.03);
+  --rk-tj-borde: rgb(var(--pal-blanco) / 0.08);
+  background: rgb(var(--pal-blanco) / 0.03);
+  border-color: rgb(var(--pal-blanco) / 0.08);
   color: rgb(var(--pal-oscuro-texto));
 }
 
 [data-theme="light"] .rk-onyx .rk-tarjeta .rk-frame::after {
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(var(--pal-blanco) / 0.07);
 }
 
 [data-theme="light"] .rk-onyx .rk-tarjeta-formato {
-  border-color: rgb(255 255 255 / 0.12);
+  border-color: rgb(var(--pal-blanco) / 0.12);
 }
 
 [data-theme="light"] .rk-onyx .rk-card-divider {
-  border-color: rgb(255 255 255 / 0.08);
+  border-color: rgb(var(--pal-blanco) / 0.08);
 }
 
 [data-theme="light"] .rk-onyx .rk-card-avatar {
-  border-color: rgb(255 255 255 / 0.2);
-  background: rgb(255 255 255 / 0.08);
+  border-color: rgb(var(--pal-blanco) / 0.2);
+  background: rgb(var(--pal-blanco) / 0.08);
   color: rgb(var(--pal-oscuro-texto));
 }
 
@@ -13606,38 +13606,38 @@ div.rk-upload-error > * + * {
 [data-theme="light"] .rk-onyx .rk-btn-line,
 [data-theme="light"] .rk-onyx .rk-btn-paper,
 [data-theme="light"] .rk-onyx .rk-btn-glass {
-  border-color: rgb(255 255 255 / 0.14);
+  border-color: rgb(var(--pal-blanco) / 0.14);
   color: rgb(var(--pal-oscuro-texto));
 }
 
 [data-theme="light"] .rk-onyx .rk-btn-line,
 [data-theme="light"] .rk-onyx .rk-btn-paper,
 [data-theme="light"] .rk-onyx .rk-btn-glass {
-  background: rgb(255 255 255 / 0.04);
+  background: rgb(var(--pal-blanco) / 0.04);
 }
 
 [data-theme="light"] .rk-onyx .rk-btn.rk-btn-line {
-  --rk-sec-glass: rgb(255 255 255 / 0.05);
+  --rk-sec-glass: rgb(var(--pal-blanco) / 0.05);
 }
 
 [data-theme="light"] .rk-onyx .rk-btn.rk-btn-line::after {
-  box-shadow: 0 -9px 11px 1px rgb(255 255 255 / 0.72);
+  box-shadow: 0 -9px 11px 1px rgb(var(--pal-blanco) / 0.72);
 }
 
 @media (hover: hover) and (pointer: fine) {
   [data-theme="light"] .rk-onyx .rk-btn-line:hover:not(:disabled),
   [data-theme="light"] .rk-onyx .rk-btn-paper:hover:not(:disabled),
   [data-theme="light"] .rk-onyx .rk-btn.rk-btn-line:hover:not(:disabled) {
-    --rk-sec-glass: rgb(255 255 255 / 0.08);
-    border-color: rgb(255 255 255 / 0.34);
-    background: rgb(255 255 255 / 0.08);
+    --rk-sec-glass: rgb(var(--pal-blanco) / 0.08);
+    border-color: rgb(var(--pal-blanco) / 0.34);
+    background: rgb(var(--pal-blanco) / 0.08);
     color: rgb(var(--pal-oscuro-texto));
   }
 }
 
 /* divisor de la tarjeta dentro de la banda */
 [data-theme="light"] .rk-onyx .rk-card-divider {
-  background: rgb(255 255 255 / 0.08);
+  background: rgb(var(--pal-blanco) / 0.08);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -13710,8 +13710,8 @@ div.rk-upload-error > * + * {
 
 /* en oscuro el círculo se distingue del fondo */
 :root:not([data-theme="light"]) .rk-topbar-btn {
-  border-color: rgb(255 255 255 / 0.12);
-  background: rgb(255 255 255 / 0.05);
+  border-color: rgb(var(--pal-blanco) / 0.12);
+  background: rgb(var(--pal-blanco) / 0.05);
 }
 
 .rk-topbar-actions .rk-topbar-btn svg {
@@ -13758,7 +13758,7 @@ div.rk-upload-error > * + * {
 
 .rk-folder {
   --rk-fd-back: rgb(var(--pal-claro-tenue));
-  --rk-fd-brillo: rgb(255 255 255 / 0.4);
+  --rk-fd-brillo: rgb(var(--pal-blanco) / 0.4);
   position: relative;
   display: block;
   aspect-ratio: 4 / 3.1;
@@ -13790,7 +13790,7 @@ div.rk-upload-error > * + * {
   z-index: -3;
   border-radius: 16px;
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.16), transparent 30%),
+    linear-gradient(180deg, rgb(var(--pal-blanco) / 0.16), transparent 30%),
     var(--rk-fd-back);
 }
 
@@ -13803,9 +13803,9 @@ div.rk-upload-error > * + * {
   height: 22px;
   border-radius: 12px 12px 0 0;
   background:
-    linear-gradient(90deg, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0.4)) 18% 7px / 34% 3px no-repeat,
-    linear-gradient(90deg, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0.4)) 70% 7px / 18% 3px no-repeat,
-    linear-gradient(180deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.16)),
+    linear-gradient(90deg, rgb(var(--pal-blanco) / 0.4), rgb(var(--pal-blanco) / 0.4)) 18% 7px / 34% 3px no-repeat,
+    linear-gradient(90deg, rgb(var(--pal-blanco) / 0.4), rgb(var(--pal-blanco) / 0.4)) 70% 7px / 18% 3px no-repeat,
+    linear-gradient(180deg, rgb(var(--pal-blanco) / 0.16), rgb(var(--pal-blanco) / 0.16)),
     var(--rk-fd-back);
 }
 
@@ -13815,7 +13815,7 @@ div.rk-upload-error > * + * {
   inset: 15% 7% 12%;
   z-index: -2;
   border-radius: 10px;
-  background: #ffffff;
+  background: rgb(var(--pal-blanco));
 }
 
 .rk-folder-paper {
@@ -13849,7 +13849,7 @@ div.rk-upload-error > * + * {
   inset: 26% 30% 6% 30%;
   background:
     repeating-linear-gradient(180deg, transparent 0 9px, rgb(var(--pal-oscuro-superficie) / 0.07) 9px 10px),
-    #ffffff;
+    rgb(var(--pal-blanco));
 }
 
 /* ── frente de vidrio con pestaña a la izquierda ──────────────────────── */
@@ -13900,8 +13900,8 @@ div.rk-upload-error > * + * {
   width: 34px;
   height: 34px;
   border-radius: 999px;
-  border: 1px solid rgb(255 255 255 / 0.7);
-  background: rgb(255 255 255 / 0.42);
+  border: 1px solid rgb(var(--pal-blanco) / 0.7);
+  background: rgb(var(--pal-blanco) / 0.42);
   -webkit-backdrop-filter: blur(10px) saturate(1.3);
           backdrop-filter: blur(10px) saturate(1.3);
   container-type: inline-size;
@@ -14034,14 +14034,14 @@ div.rk-upload-error > * + * {
    que los demás iconos de la barra. Con foto queda como está. */
 .rk-topbar-actions .rk-avatar-btn:not(:has(.rk-avatar-btn-img)) {
   border: 1px solid rgb(var(--pal-claro-primario) / 0.08);
-  background: rgb(255 255 255 / 0.7);
+  background: rgb(var(--pal-blanco) / 0.7);
   -webkit-backdrop-filter: blur(20px) saturate(1.5);
   backdrop-filter: blur(20px) saturate(1.5);
 }
 
 :root:not([data-theme="light"]) .rk-topbar-actions .rk-avatar-btn:not(:has(.rk-avatar-btn-img)) {
-  border-color: rgb(255 255 255 / 0.12);
-  background: rgb(255 255 255 / 0.05);
+  border-color: rgb(var(--pal-blanco) / 0.12);
+  background: rgb(var(--pal-blanco) / 0.05);
 }
 
 .rk-topbar-actions .rk-avatar-btn:not(:has(.rk-avatar-btn-img)) svg {
@@ -14069,7 +14069,7 @@ div.rk-upload-error > * + * {
 [data-theme="dark"] .rk-glass-on-image,
 .rk-tarjeta .rk-glass-on-image,
 [data-theme="light"] .rk-tarjeta .rk-glass-on-image {
-  border: 1px solid rgb(255 255 255 / 0.4);
+  border: 1px solid rgb(var(--pal-blanco) / 0.4);
   /*
     Dos capas: el vidrio blanco que da el carácter, y DEBAJO un velo
     oscuro que le da base. Sin el velo, el texto blanco desaparecía
@@ -14079,7 +14079,7 @@ div.rk-upload-error > * + * {
     por detrás.
   */
   background:
-    linear-gradient(rgb(255 255 255 / 0.14), rgb(255 255 255 / 0.14)),
+    linear-gradient(rgb(var(--pal-blanco) / 0.14), rgb(var(--pal-blanco) / 0.14)),
     rgb(var(--rk-background) / 0.42);
   color: rgb(var(--rk-foreground));
   box-shadow: none;
@@ -14099,9 +14099,9 @@ div.rk-upload-error > * + * {
   [data-theme="light"] a.rk-glass-on-image:hover,
   .rk-tarjeta button.rk-glass-on-image:hover,
   [data-theme="light"] .rk-tarjeta button.rk-glass-on-image:hover {
-    border-color: rgb(255 255 255 / 0.6);
+    border-color: rgb(var(--pal-blanco) / 0.6);
     background:
-      linear-gradient(rgb(255 255 255 / 0.24), rgb(255 255 255 / 0.24)),
+      linear-gradient(rgb(var(--pal-blanco) / 0.24), rgb(var(--pal-blanco) / 0.24)),
       rgb(var(--pal-oscuro-fondo) / 0.42);
   }
 }
@@ -14159,7 +14159,7 @@ div.rk-upload-error > * + * {
   aspect-ratio: 16 / 9;
   margin-left: calc(var(--rk-promo-w) / -2);
   overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 0.12);
+  border: 1px solid rgb(var(--pal-blanco) / 0.12);
   border-radius: 26px;
   background: rgb(var(--rk-marca-frio) / 0.3);
   /* --d, --escala y --giro los pone el componente; z-index y filter van
@@ -14265,7 +14265,7 @@ div.rk-upload-error > * + * {
   display: -webkit-box;
   max-width: 24ch;
   overflow: hidden;
-  color: rgb(255 255 255 / 0.88);
+  color: rgb(var(--pal-blanco) / 0.88);
   font-size: clamp(0.825rem, 2.29vw, 1.21rem);
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -14278,7 +14278,7 @@ div.rk-upload-error > * + * {
   display: -webkit-box;
   max-width: 46ch;
   overflow: hidden;
-  color: rgb(255 255 255 / 0.6);
+  color: rgb(var(--pal-blanco) / 0.6);
   font-size: 0.715rem;
   line-height: 1.5;
   -webkit-box-orient: vertical;
@@ -14286,7 +14286,7 @@ div.rk-upload-error > * + * {
 }
 
 .rk-promo-price {
-  color: rgb(255 255 255 / 0.65);
+  color: rgb(var(--pal-blanco) / 0.65);
   font-size: 0.715rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -14318,10 +14318,10 @@ div.rk-upload-error > * + * {
    blanco en ambos temas (va sobre el degradado oscuro de la portada) */
 .rk-promo-info .rk-btn.rk-btn-line.rk-promo-cta,
 [data-theme="light"] .rk-promo-info .rk-btn.rk-btn-line.rk-promo-cta {
-  --rk-sec-glass: rgb(255 255 255 / 0.14);
+  --rk-sec-glass: rgb(var(--pal-blanco) / 0.14);
   align-self: flex-end;
   color: rgb(var(--pal-oscuro-texto));
-  border-color: rgb(255 255 255 / 0.42);
+  border-color: rgb(var(--pal-blanco) / 0.42);
 }
 
 @media (max-width: 639px) {
@@ -14604,7 +14604,7 @@ div.rk-upload-error > * + * {
 }
 .rk-eco-arco.is-arriba { bottom: 64%; }
 .rk-eco-arco.is-abajo { top: 64%; background: rgb(var(--rk-marca-calido) / 0.03); }
-[data-theme="dark"] .rk-eco-arco { background: rgb(255 255 255 / 0.01); }
+[data-theme="dark"] .rk-eco-arco { background: rgb(var(--pal-blanco) / 0.01); }
 
 /* núcleo: el envoltorio lleva la sombra (clip-path la cortaría) */
 .rk-eco-hexwrap {
@@ -14625,12 +14625,12 @@ div.rk-upload-error > * + * {
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: linear-gradient(180deg, #ffffff, rgb(var(--pal-claro-fondo)));
+  background: linear-gradient(180deg, rgb(var(--pal-blanco)), rgb(var(--pal-claro-fondo)));
 }
 [data-theme="dark"] .rk-eco-hex {
   background: linear-gradient(180deg, #303030, rgb(var(--rk-card)));
 }
-[data-theme="dark"] .rk-eco-hexwrap { filter: drop-shadow(0 14px 24px rgb(0 0 0 / 0.3)); }
+[data-theme="dark"] .rk-eco-hexwrap { filter: drop-shadow(0 14px 24px rgb(var(--pal-negro) / 0.3)); }
 
 .rk-eco-nucleo {
   position: relative;
@@ -14643,17 +14643,17 @@ div.rk-upload-error > * + * {
 }
 /* igual en ambos modos, como el ícono: degradado lavanda→durazno con brillo y cohete blanco */
 .rk-eco-nucleo {
-  --rk-eco-cohete: #ffffff;
+  --rk-eco-cohete: rgb(var(--pal-blanco));
   --rk-eco-cohete-sombra: rgb(110 80 110 / 0.28);
   background:
-    linear-gradient(118deg, transparent 52%, rgb(255 255 255 / 0.35) 60%, transparent 70%),
+    linear-gradient(118deg, transparent 52%, rgb(var(--pal-blanco) / 0.35) 60%, transparent 70%),
     linear-gradient(135deg, #c9c6ea, rgb(var(--pal-claro-borde)) 50%, #f8d3c3);
-  border: 1px solid rgb(255 255 255 / 0.4);
+  border: 1px solid rgb(var(--pal-blanco) / 0.4);
   box-shadow: 0 8px 20px rgb(120 100 150 / 0.2);
 }
 [data-theme="dark"] .rk-eco-nucleo {
-  border-color: rgb(255 255 255 / 0.25);
-  box-shadow: 0 8px 20px rgb(0 0 0 / 0.35);
+  border-color: rgb(var(--pal-blanco) / 0.25);
+  box-shadow: 0 8px 20px rgb(var(--pal-negro) / 0.35);
 }
 
 /* el cohete es una máscara del SVG para poder pintarlo con degradado;
@@ -14690,8 +14690,8 @@ div.rk-upload-error > * + * {
 .rk-eco-app.is-fuerte-calido,
 .rk-eco-app.is-blanco,
 .rk-eco-app.is-tenue {
-  background: #ffffff;
-  border: 1px solid rgb(0 0 0 / 0.05);
+  background: rgb(var(--pal-blanco));
+  border: 1px solid rgb(var(--pal-negro) / 0.05);
 }
 
 .rk-eco-app.is-fuerte-frio,
@@ -14702,7 +14702,7 @@ div.rk-upload-error > * + * {
 
 .rk-eco-app.is-blanco {
   width: 10%;
-  box-shadow: 0 8px 20px rgb(0 0 0 / 0.05);
+  box-shadow: 0 8px 20px rgb(var(--pal-negro) / 0.05);
 }
 
 .rk-eco-app.is-tenue {
@@ -14716,8 +14716,8 @@ div.rk-upload-error > * + * {
 [data-theme="dark"] .rk-eco-app.is-blanco,
 [data-theme="dark"] .rk-eco-app.is-tenue {
   background: linear-gradient(180deg, #303030, rgb(var(--rk-card)));
-  border-color: rgb(255 255 255 / 0.07);
-  box-shadow: 0 10px 22px rgb(0 0 0 / 0.35);
+  border-color: rgb(var(--pal-blanco) / 0.07);
+  box-shadow: 0 10px 22px rgb(var(--pal-negro) / 0.35);
 }
 [data-theme="dark"] .rk-eco-app.is-tenue { box-shadow: none; }
 
@@ -15017,7 +15017,7 @@ div.rk-upload-error > * + * {
   border: 1px solid var(--rk-linea);
   border-radius: 28px;
   background: rgb(var(--rk-background));
-  box-shadow: 0 30px 60px rgb(0 0 0 / 0.25);
+  box-shadow: 0 30px 60px rgb(var(--pal-negro) / 0.25);
   animation: rk-galeria-hoja 0.35s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 .rk-galeria-cerrar {
@@ -15078,10 +15078,10 @@ div.rk-upload-error > * + * {
    el mismo dibujo sirve en oscuro y en claro.
    ═══════════════════════════════════════════════════════════════════ */
 .rk-vacio {
-  --vacio-fondo: rgb(255 255 255 / 0.035);
+  --vacio-fondo: rgb(var(--pal-blanco) / 0.035);
   --vacio-ficha: rgb(var(--pal-oscuro-elevado));
-  --vacio-ficha-borde: rgb(255 255 255 / 0.08);
-  --vacio-pista: rgb(255 255 255 / 0.07);
+  --vacio-ficha-borde: rgb(var(--pal-blanco) / 0.08);
+  --vacio-pista: rgb(var(--pal-blanco) / 0.07);
   --vacio-perilla: rgb(var(--pal-claro-fondo));
   --vacio-suave: rgb(var(--rk-foreground) / 0.55);
   /* La caja usa los colores de marca: lavanda, perla y durazno. */
@@ -15151,7 +15151,7 @@ div.rk-upload-error > * + * {
   border-radius: 24px;
   background: var(--vacio-ficha);
   border: 1px solid var(--vacio-ficha-borde);
-  box-shadow: 0 18px 40px rgb(0 0 0 / 0.18);
+  box-shadow: 0 18px 40px rgb(var(--pal-negro) / 0.18);
 }
 
 [data-theme="light"] .rk-vacio-ficha {
