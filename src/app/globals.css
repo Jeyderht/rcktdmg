@@ -18,78 +18,78 @@
    constante en la PALETA y un token que la use.
 
    ÍNDICE (sección y rango de líneas)
-    §0   PALETA · única fuente de los colores                             102–195
-    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 196–240
-    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           241–543
-    §3   BASE  ·  body, selección, utilidades sueltas                     544–629
-    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 630–1371
-    §5   UTILIDADES  ·  @layer utilities                                  1372–1490
-    §6   PIEZAS SUELTAS  ·  @layer components                             1491–1565
-    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1566–1607
-    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1608–1660
-    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1661–1784
-    §10  LA TARJETA DE RECURSO                                            1785–1849
-    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            1850–2751
-    §12  SISTEMA DE INTERACCIÓN                                           2752–3534
-    §13  A. BOTONES                                                       3535–4036
-    §14  B · C · D                                                        4037–4369
-    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4370–4555
-    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4556–4575
-    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4576–4827
-    §18  C2. TARJETA DE RECURSO · versión refinada                        4828–5000
-    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5001–5195
-    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5196–5247
-    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5248–5438
-    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5439–5746
-    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5747–6123
-    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6124–6263
-    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6264–6343
-    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6344–6468
-    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6469–6700
-    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6701–6886
-    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          6887–7222
-    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7223–7717
-    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7718–7958
-    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     7959–8141
-    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8142–8450
-    §34  W. TABLAS  ·  rk-table · rk-pagination                           8451–8698
-    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8699–8939
-    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    8940–9306
-    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9307–9709
-    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9710–10077
-    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10078–10400
-    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10401–10685
-    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10686–10922
-    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      10923–11046
-    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11047–11258
-    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11259–11702
-    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11703–11960
-    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    11961–12169
-    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12170–12546
-    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12547–13028
-    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13029–13287
-    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13288–13366
-    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13367–13524
-    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13525–13642
-    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13643–13691
-    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13692–13727
-    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13728–14063
-    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14064–14117
-    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14118–14473
-    §58  AV · CTA final con la modelo (estilo hero)                       14474–14527
-    §59  AW · Ecosistema: fila con núcleo hexagonal                       14528–14790
-    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          14791–14865
-    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      14866–14883
-    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         14884–14940
-    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             14941–15071
-    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15072–15391
-    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15392–15752
-    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15753–16008
-    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16009–16222
-    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16223–16595
-    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16596–16916
-    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     16917–19757
-    §71  BB. INICIO (encargo de la home)                                  19758–20594
+    §0   PALETA · única fuente de los colores                             102–276
+    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 277–321
+    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           322–624
+    §3   BASE  ·  body, selección, utilidades sueltas                     625–710
+    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 711–1452
+    §5   UTILIDADES  ·  @layer utilities                                  1453–1571
+    §6   PIEZAS SUELTAS  ·  @layer components                             1572–1646
+    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1647–1688
+    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1689–1741
+    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1742–1865
+    §10  LA TARJETA DE RECURSO                                            1866–1930
+    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            1931–2832
+    §12  SISTEMA DE INTERACCIÓN                                           2833–3615
+    §13  A. BOTONES                                                       3616–4117
+    §14  B · C · D                                                        4118–4450
+    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4451–4636
+    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4637–4656
+    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4657–4908
+    §18  C2. TARJETA DE RECURSO · versión refinada                        4909–5081
+    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5082–5276
+    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5277–5328
+    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5329–5519
+    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5520–5827
+    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5828–6204
+    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6205–6344
+    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6345–6424
+    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6425–6549
+    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6550–6781
+    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6782–6967
+    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          6968–7303
+    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7304–7798
+    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7799–8039
+    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8040–8222
+    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8223–8531
+    §34  W. TABLAS  ·  rk-table · rk-pagination                           8532–8779
+    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8780–9020
+    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9021–9387
+    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9388–9790
+    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9791–10158
+    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10159–10481
+    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10482–10766
+    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10767–11003
+    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11004–11127
+    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11128–11339
+    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11340–11783
+    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11784–12041
+    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12042–12250
+    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12251–12627
+    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12628–13109
+    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13110–13368
+    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13369–13447
+    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13448–13605
+    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13606–13723
+    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13724–13772
+    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13773–13808
+    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13809–14144
+    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14145–14198
+    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14199–14554
+    §58  AV · CTA final con la modelo (estilo hero)                       14555–14608
+    §59  AW · Ecosistema: fila con núcleo hexagonal                       14609–14871
+    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          14872–14946
+    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      14947–14964
+    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         14965–15021
+    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15022–15152
+    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15153–15472
+    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15473–15833
+    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15834–16089
+    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16090–16303
+    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16304–16676
+    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16677–16997
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     16998–19838
+    §71  BB. INICIO (encargo de la home)                                  19839–20675
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -170,6 +170,87 @@
   /* Blanco y negro puros: fijos, no cambian con el tema (brillos, velos, texto sobre foto). */
   --pal-blanco: 255 255 255;
   --pal-negro: 0 0 0;
+
+  /* Colores propios de componentes, sin rol general todavía. Las --pal-claro-*
+     valen en los dos temas salvo que su regla sea solo de oscuro. */
+  --pal-claro-btn: 125 125 125;                 /* .rk-btn-ink, .rk-btn-primary */
+  --pal-claro-btn-2: 50 50 50;                  /* .rk-btn-cta */
+  --pal-claro-card: 252 253 255;                /* [data-theme="light"] .rk-card, [data-the */
+  --pal-claro-btn-3: 168 170 192;               /* .rk-btn-primary */
+  --pal-claro-btn-4: 232 168 146;               /* .rk-btn-primary */
+  --pal-claro-btn-5: 150 152 176;               /* [data-theme="light"] .rk-btn-primary */
+  --pal-claro-btn-6: 222 150 126;               /* [data-theme="light"] .rk-btn-primary */
+  --pal-claro-btn-7: 110 116 132;               /* [data-theme="light"] .rk-btn.rk-btn-line */
+  --pal-claro-btn-8: 74 20 24;                  /* .rk-btn-danger, .rk-btn-buy */
+  --pal-claro-btn-9: 255 244 244;               /* [data-theme="light"] .rk-btn-danger, [da */
+  --pal-claro-btn-10: 52 211 153;               /* .rk-btn-buy */
+  --pal-claro-btn-11: 12 58 42;                 /* .rk-btn-buy */
+  --pal-claro-btn-12: 236 252 244;              /* [data-theme="light"] .rk-btn-buy */
+  --pal-claro-badge: 236 236 241;               /* .rk-badge */
+  --pal-claro-badge-2: 170 172 180;             /* .rk-badge-neutral */
+  --pal-claro-badge-3: 248 200 176;             /* .rk-badge-accent */
+  --pal-claro-badge-4: 251 191 36;              /* .rk-badge-warning */
+  --pal-claro-badge-5: 248 113 113;             /* .rk-badge-danger */
+  --pal-claro-badge-6: 60 62 72;                /* [data-theme="light"] .rk-badge */
+  --pal-claro-badge-7: 90 92 102;               /* [data-theme="light"] .rk-badge-neutral */
+  --pal-claro-badge-8: 176 92 62;               /* [data-theme="light"] .rk-badge-accent */
+  --pal-claro-dock: 48 48 48;                   /* [data-theme="light"] .rk-dock .rk-dock-b */
+  --pal-claro-step: 200 214 240;                /* .rk-step */
+  --pal-claro-step-2: 225 232 248;              /* .rk-step */
+  --pal-claro-step-3: 196 216 246;              /* .rk-step-frio */
+  --pal-claro-step-4: 222 230 250;              /* .rk-step-frio */
+  --pal-claro-step-5: 246 236 206;              /* .rk-step-neutro */
+  --pal-claro-step-6: 226 232 244;              /* .rk-step-neutro */
+  --pal-claro-step-7: 250 214 198;              /* .rk-step-calido */
+  --pal-claro-step-8: 248 232 214;              /* .rk-step-calido */
+  --pal-oscuro-receipt: 160 184 230;            /* [data-theme="dark"] .rk-receipt */
+  --pal-claro-plan: 140 150 190;                /* .rk-plan-featured .rk-plan-head */
+  --pal-claro-faq: 20 160 180;                  /* [data-theme="light"] .rk-faq-icon::befor */
+  --pal-claro-help: 120 84 62;                  /* .rk-help-scene */
+  --pal-claro-help-2: 150 104 76;               /* .rk-help-scene */
+  --pal-claro-upload: 200 40 48;                /* [data-theme="light"] .rk-upload-error */
+  --pal-claro-text: 226 92 92;                  /* [data-theme="light"] .rk-text-iris */
+  --pal-claro-text-2: 124 92 240;               /* [data-theme="light"] .rk-text-iris */
+  --pal-claro-text-3: 40 150 220;               /* [data-theme="light"] .rk-text-iris */
+  --pal-claro-menu: 22 23 28;                   /* .rk-menu-head .rk-avatar-btn-img */
+  --pal-claro-notif: 240 82 82;                 /* .rk-notif-count */
+  --pal-claro-notif-2: 14 15 19;                /* .rk-notif-count */
+  --pal-claro-notif-3: 110 84 230;              /* [data-theme="light"] .rk-notif-link */
+  --pal-claro-notif-4: 150 152 165;             /* .rk-notif-item */
+  --pal-claro-notif-5: 245 180 60;              /* .rk-notif-item[data-tone="warning"] */
+  --pal-claro-notif-6: 9 150 98;                /* [data-theme="light"] .rk-notif-item[data */
+  --pal-claro-notif-7: 214 140 20;              /* [data-theme="light"] .rk-notif-item[data */
+  --pal-claro-notif-8: 214 48 56;               /* [data-theme="light"] .rk-notif-item[data */
+  --pal-claro-swatch: 208 58 58;                /* .rk-swatch-multi */
+  --pal-claro-swatch-2: 230 192 47;             /* .rk-swatch-multi */
+  --pal-claro-swatch-3: 58 157 93;              /* .rk-swatch-multi */
+  --pal-claro-swatch-4: 47 111 224;             /* .rk-swatch-multi */
+  --pal-claro-swatch-5: 122 79 208;             /* .rk-swatch-multi */
+  --pal-claro-footer: 163 156 255;              /* .rk-footer-marca::after */
+  --pal-claro-footer-2: 214 194 245;            /* .rk-footer-marca::after */
+  --pal-claro-footer-3: 255 174 140;            /* .rk-footer-marca::after */
+  --pal-claro-text-4: 170 118 96;               /* [data-theme="light"] .rk-text-iris */
+  --pal-claro-text-5: 206 128 96;               /* [data-theme="light"] .rk-text-iris */
+  --pal-claro-story: 10 10 12;                  /* .rk-story-avatar */
+  --pal-claro-tarjeta-2: 255 214 214;           /* .rk-tarjeta .rk-glass-on-image.text-dang */
+  --pal-claro-prog: 31 127 209;                 /* .rk-prog-sigla.is-ps */
+  --pal-claro-prog-2: 122 90 245;               /* .rk-prog-sigla.is-canva */
+  --pal-claro-cta: 183 179 238;                 /* .rk-cta-modelo-circle */
+  --pal-claro-cta-2: 252 198 176;               /* .rk-cta-modelo-circle */
+  --pal-claro-cta-3: 141 138 208;               /* .rk-cta-modelo-circle */
+  --pal-claro-eco: 143 139 214;                 /* .rk-eco-pulso */
+  --pal-oscuro-eco: 195 191 255;                /* [data-theme="dark"] .rk-eco-pulso */
+  --pal-claro-eco-2: 120 100 150;               /* .rk-eco-hexwrap */
+  --pal-oscuro-eco-2: 48 48 48;                 /* [data-theme="dark"] .rk-eco-hex */
+  --pal-claro-eco-3: 110 80 110;                /* .rk-eco-nucleo */
+  --pal-claro-eco-4: 201 198 234;               /* .rk-eco-nucleo */
+  --pal-claro-eco-5: 248 211 195;               /* .rk-eco-nucleo */
+  --pal-claro-eco-6: 255 181 154;               /* .rk-eco-hex::after */
+  --pal-claro-hc: 142 139 216;                  /* [data-fase="inicio"] .rk-hc-marco, [data */
+  --pal-claro-dash: 233 201 220;                /* .rk-dash .rk-pl-tarjeta */
+  --pal-claro-dash-2: 201 195 240;              /* .rk-dash .rk-pl-tarjeta */
+  --pal-claro-dash-3: 183 179 240;              /* .rk-dash .rk-pl-tarjeta */
+  --pal-claro-faq-2: 127 121 214;               /* .rk-faq-intro .rk-faq-eyebrow */
 }
 
 /* Tokens semánticos nuevos: nombran usos que hoy van con colores
@@ -2101,7 +2182,7 @@ h6 {
   border-color: rgb(var(--pal-blanco) / 0.95);
   box-shadow:
     inset 0 1px 0 rgb(var(--pal-blanco) / 0.95),
-    inset 0 -1px 0 rgb(125 125 125 / 0.12),
+    inset 0 -1px 0 rgb(var(--pal-claro-btn) / 0.12),
     0 2px 8px rgb(var(--pal-negro) / 0.16);
 }
 
@@ -2439,7 +2520,7 @@ h6 {
   isolation: isolate;
   box-shadow:
     inset 0 1px 0 rgb(var(--pal-blanco)),
-    inset 0 -1px 0 rgb(50 50 50 / 0.14),
+    inset 0 -1px 0 rgb(var(--pal-claro-btn-2) / 0.14),
     0 0 0 1px rgb(var(--pal-blanco) / 0.14),
     0 5px 18px rgb(var(--pal-blanco) / 0.1);
   /*
@@ -2560,7 +2641,7 @@ h6 {
   [data-theme="light"] .rk-input,
   [data-theme="light"] .rk-select,
   [data-theme="light"] .rk-textarea {
-    background: rgb(252 253 255 / 0.95);
+    background: rgb(var(--pal-claro-card) / 0.95);
   }
 }
 
@@ -3372,7 +3453,7 @@ table .rk-btn:hover:not(:disabled) {
   color: rgb(var(--pal-claro-texto));
   box-shadow:
     inset 0 1px 0 rgb(var(--pal-blanco) / 0.95),
-    inset 0 -1px 0 rgb(125 125 125 / 0.12);
+    inset 0 -1px 0 rgb(var(--pal-claro-btn) / 0.12);
   transition:
     transform var(--rx-t-hover) var(--rx-curva),
     box-shadow var(--rx-t-hover) var(--rx-curva),
@@ -3579,8 +3660,8 @@ table .rk-btn:hover:not(:disabled) {
   --rk-pri-frio: var(--pal-oscuro-iris-1);
   --rk-pri-centro: var(--pal-oscuro-iris-2);
   --rk-pri-calido: var(--pal-oscuro-iris-3);
-  --rk-pri-borde-frio: 168 170 192;
-  --rk-pri-borde-calido: 232 168 146;
+  --rk-pri-borde-frio: var(--pal-claro-btn-3);
+  --rk-pri-borde-calido: var(--pal-claro-btn-4);
   --rk-pri-borde-alfa: 0.75;
   --rk-pri-brillo: 0.55;
 
@@ -3627,8 +3708,8 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-btn-primary {
-  --rk-pri-borde-frio: 150 152 176;
-  --rk-pri-borde-calido: 222 150 126;
+  --rk-pri-borde-frio: var(--pal-claro-btn-5);
+  --rk-pri-borde-calido: var(--pal-claro-btn-6);
   box-shadow:
     inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
     inset 0 0 12px rgb(255 255 255 / var(--rk-pri-brillo));
@@ -3703,7 +3784,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-btn.rk-btn-line::after {
-  box-shadow: 0 -10px 12px 2px rgb(110 116 132 / 0.5);
+  box-shadow: 0 -10px 12px 2px rgb(var(--pal-claro-btn-7) / 0.5);
 }
 
 [data-theme="light"] .rk-btn.rk-btn-line {
@@ -3851,7 +3932,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-btn-danger,
 .rk-btn-buy {
   --rk-dan-tono: var(--pal-oscuro-peligro);
-  --rk-dan-fondo: 74 20 24;
+  --rk-dan-fondo: var(--pal-claro-btn-8);
 
   position: relative;
   color: rgb(var(--pal-oscuro-texto) / 0.92);
@@ -3889,7 +3970,7 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-btn-danger,
 [data-theme="light"] .rk-btn-buy {
   --rk-dan-tono: var(--pal-claro-peligro);
-  --rk-dan-fondo: 255 244 244;
+  --rk-dan-fondo: var(--pal-claro-btn-9);
 
   color: rgb(var(--rk-dan-tono));
   border-color: rgb(var(--rk-dan-tono) / 0.32);
@@ -3912,14 +3993,14 @@ table .rk-btn:hover:not(:disabled) {
 /* 6b. BUY · mismo estilo que danger, en tonos verdes
    Uso: <button class="rk-btn rk-btn-buy">Comprar</button> */
 .rk-btn-buy {
-  --rk-dan-tono: 52 211 153;
-  --rk-dan-fondo: 12 58 42;
+  --rk-dan-tono: var(--pal-claro-btn-10);
+  --rk-dan-fondo: var(--pal-claro-btn-11);
   color: rgb(var(--pal-oscuro-texto) / 0.94);
 }
 
 [data-theme="light"] .rk-btn-buy {
   --rk-dan-tono: var(--pal-claro-exito);
-  --rk-dan-fondo: 236 252 244;
+  --rk-dan-fondo: var(--pal-claro-btn-12);
   color: rgb(var(--rk-dan-tono));
 }
 
@@ -4179,7 +4260,7 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-input[data-estado="ok"],
 .rk-textarea[data-estado="ok"] {
-  --rk-in-tono: 52 211 153;
+  --rk-in-tono: var(--pal-claro-btn-10);
 }
 
 [data-theme="light"] .rk-input[aria-invalid="true"],
@@ -4353,7 +4434,7 @@ table .rk-btn:hover:not(:disabled) {
   [data-theme="light"] .rk-input,
   [data-theme="light"] .rk-select,
   [data-theme="light"] .rk-textarea {
-    --rk-in-relleno: rgb(252 253 255 / 0.95);
+    --rk-in-relleno: rgb(var(--pal-claro-card) / 0.95);
   }
 }
 
@@ -4761,7 +4842,7 @@ table .rk-btn:hover:not(:disabled) {
    (vino oscuro + borde rojo + brillo rojo interior) */
 .rk-icon-button-danger {
   --rk-dan-tono: var(--pal-oscuro-peligro);
-  --rk-dan-fondo: 74 20 24;
+  --rk-dan-fondo: var(--pal-claro-btn-8);
 
   color: rgb(var(--pal-oscuro-texto) / 0.92);
   background:
@@ -4775,7 +4856,7 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-icon-button-danger {
   --rk-dan-tono: var(--pal-claro-peligro);
-  --rk-dan-fondo: 255 244 244;
+  --rk-dan-fondo: var(--pal-claro-btn-9);
 
   color: rgb(var(--rk-dan-tono));
   border-color: rgb(var(--rk-dan-tono) / 0.32);
@@ -5337,7 +5418,7 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-chip[aria-pressed="true"],
 [data-theme="light"] .rk-chip[aria-current],
 [data-theme="light"] .rk-chip[data-activo="true"] {
-  border-color: rgb(222 150 126 / 0.55);
+  border-color: rgb(var(--pal-claro-btn-6) / 0.55);
 }
 
 .rk-chip-count {
@@ -5367,7 +5448,7 @@ table .rk-btn:hover:not(:disabled) {
 
 /* ── H2. BADGE ──────────────────────────────────────────────────────── */
 .rk-badge {
-  --rk-bd-tono: 236 236 241;
+  --rk-bd-tono: var(--pal-claro-badge);
 
   display: inline-flex;
   align-items: center;
@@ -5386,33 +5467,33 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-badge-neutral {
-  --rk-bd-tono: 170 172 180;
+  --rk-bd-tono: var(--pal-claro-badge-2);
 }
 
 .rk-badge-accent {
-  --rk-bd-tono: 248 200 176;
+  --rk-bd-tono: var(--pal-claro-badge-3);
 }
 
 .rk-badge-success {
-  --rk-bd-tono: 52 211 153;
+  --rk-bd-tono: var(--pal-claro-btn-10);
 }
 
 .rk-badge-warning {
-  --rk-bd-tono: 251 191 36;
+  --rk-bd-tono: var(--pal-claro-badge-4);
 }
 
 .rk-badge-danger {
-  --rk-bd-tono: 248 113 113;
+  --rk-bd-tono: var(--pal-claro-badge-5);
 }
 
 [data-theme="light"] .rk-badge {
-  --rk-bd-tono: 60 62 72;
+  --rk-bd-tono: var(--pal-claro-badge-6);
   background: rgb(var(--rk-bd-tono) / 0.07);
   border-color: rgb(var(--rk-bd-tono) / 0.22);
 }
 
-[data-theme="light"] .rk-badge-neutral { --rk-bd-tono: 90 92 102; }
-[data-theme="light"] .rk-badge-accent  { --rk-bd-tono: 176 92 62; }
+[data-theme="light"] .rk-badge-neutral { --rk-bd-tono: var(--pal-claro-badge-7); }
+[data-theme="light"] .rk-badge-accent  { --rk-bd-tono: var(--pal-claro-badge-8); }
 [data-theme="light"] .rk-badge-success { --rk-bd-tono: var(--pal-claro-exito); }
 [data-theme="light"] .rk-badge-warning { --rk-bd-tono: var(--pal-claro-aviso); }
 [data-theme="light"] .rk-badge-danger  { --rk-bd-tono: var(--pal-claro-peligro); }
@@ -5723,7 +5804,7 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-dock .rk-dock-bar::before {
   border-color: rgb(var(--pal-blanco) / 0.3);
-  background: rgb(48 48 48 / 0.18);
+  background: rgb(var(--pal-claro-dock) / 0.18);
   -webkit-backdrop-filter: blur(28px) saturate(1.4) brightness(0.92);
   backdrop-filter: blur(28px) saturate(1.4) brightness(0.92);
 }
@@ -6358,8 +6439,8 @@ table .rk-btn:hover:not(:disabled) {
    (los tres colores del degradado del primary).
    ═══════════════════════════════════════════════════════════════════════ */
 .rk-step {
-  --rk-sp-tono: 200 214 240;
-  --rk-sp-tono-2: 225 232 248;
+  --rk-sp-tono: var(--pal-claro-step);
+  --rk-sp-tono-2: var(--pal-claro-step-2);
 
   display: grid;
   grid-template-columns: 64px minmax(0, 1fr);
@@ -6370,9 +6451,9 @@ table .rk-btn:hover:not(:disabled) {
   background: linear-gradient(160deg, rgb(var(--rk-sp-tono)), rgb(var(--rk-sp-tono-2)));
 }
 
-.rk-step-frio   { --rk-sp-tono: 196 216 246; --rk-sp-tono-2: 222 230 250; }
-.rk-step-neutro { --rk-sp-tono: 246 236 206; --rk-sp-tono-2: 226 232 244; }
-.rk-step-calido { --rk-sp-tono: 250 214 198; --rk-sp-tono-2: 248 232 214; }
+.rk-step-frio   { --rk-sp-tono: var(--pal-claro-step-3); --rk-sp-tono-2: var(--pal-claro-step-4); }
+.rk-step-neutro { --rk-sp-tono: var(--pal-claro-step-5); --rk-sp-tono-2: var(--pal-claro-step-6); }
+.rk-step-calido { --rk-sp-tono: var(--pal-claro-step-7); --rk-sp-tono-2: var(--pal-claro-step-8); }
 
 /* tema oscuro: el mismo tono, muy transparente sobre el fondo oscuro */
 [data-theme="dark"] .rk-step {
@@ -6485,7 +6566,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-receipt {
   --rk-rc-corte: 146px;
   --rk-rc-muesca: 14px;
-  --rk-rc-tono: 196 216 246;
+  --rk-rc-tono: var(--pal-claro-step-3);
 
   display: grid;
   gap: 18px;
@@ -6508,7 +6589,7 @@ table .rk-btn:hover:not(:disabled) {
 
 /* tema oscuro: vidrio */
 [data-theme="dark"] .rk-receipt {
-  --rk-rc-tono: 160 184 230;
+  --rk-rc-tono: var(--pal-oscuro-receipt);
   background: rgb(var(--pal-blanco) / 0.05);
   box-shadow: inset 0 0 0 1px rgb(var(--pal-blanco) / 0.08);
   -webkit-backdrop-filter: blur(22px) saturate(1.2);
@@ -6864,9 +6945,9 @@ table .rk-btn:hover:not(:disabled) {
 /* destacado: pestaña oscura con degradado cálido, texto blanco */
 .rk-plan-featured .rk-plan-head {
   background:
-    radial-gradient(80% 140% at 85% 0%, rgb(248 200 176 / 0.45), transparent 60%),
-    radial-gradient(60% 120% at 10% 100%, rgb(140 150 190 / 0.4), transparent 70%),
-    linear-gradient(135deg, rgb(var(--pal-oscuro-superficie)), #303030);
+    radial-gradient(80% 140% at 85% 0%, rgb(var(--pal-claro-badge-3) / 0.45), transparent 60%),
+    radial-gradient(60% 120% at 10% 100%, rgb(var(--pal-claro-plan) / 0.4), transparent 70%),
+    linear-gradient(135deg, rgb(var(--pal-oscuro-superficie)), rgb(var(--pal-claro-dock)));
   color: rgb(var(--pal-oscuro-texto));
 }
 
@@ -7358,7 +7439,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-faq-icon::before {
-  background: rgb(20 160 180);
+  background: rgb(var(--pal-claro-faq));
 }
 
 .rk-faq-item[open] .rk-faq-icon::before {
@@ -7513,9 +7594,9 @@ table .rk-btn:hover:not(:disabled) {
   border-radius: 20px;
   background:
     var(--rk-help-img) center / cover no-repeat,
-    radial-gradient(120% 60% at 30% 100%, rgb(120 84 62 / 0.95), transparent 70%),
-    radial-gradient(90% 50% at 90% 85%, rgb(150 104 76 / 0.9), transparent 70%),
-    linear-gradient(180deg, rgb(var(--pal-claro-atenuado)) 0%, rgb(var(--pal-claro-tenue)) 35%, rgb(var(--pal-claro-atenuado)) 70%, #303030 100%);
+    radial-gradient(120% 60% at 30% 100%, rgb(var(--pal-claro-help) / 0.95), transparent 70%),
+    radial-gradient(90% 50% at 90% 85%, rgb(var(--pal-claro-help-2) / 0.9), transparent 70%),
+    linear-gradient(180deg, rgb(var(--pal-claro-atenuado)) 0%, rgb(var(--pal-claro-tenue)) 35%, rgb(var(--pal-claro-atenuado)) 70%, rgb(var(--pal-claro-dock)) 100%);
   overflow: hidden;
 }
 
@@ -7948,12 +8029,12 @@ table .rk-btn:hover:not(:disabled) {
 
 /* claro: el cristal es más blanco; la mitad difusa se refuerza */
 [data-theme="light"] .rk-panel-activo::after {
-  box-shadow: 10px 0 12px 2px rgb(110 116 132 / 0.5);
+  box-shadow: 10px 0 12px 2px rgb(var(--pal-claro-btn-7) / 0.5);
 }
 
 [data-theme="light"] .rk-tab[aria-current="page"]::after,
 [data-theme="light"] .rk-tab[aria-selected="true"]::after {
-  box-shadow: 0 -10px 12px 2px rgb(110 116 132 / 0.5);
+  box-shadow: 0 -10px 12px 2px rgb(var(--pal-claro-btn-7) / 0.5);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -8096,7 +8177,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-empty-icon::after {
-  box-shadow: 0 -10px 12px 2px rgb(110 116 132 / 0.5);
+  box-shadow: 0 -10px 12px 2px rgb(var(--pal-claro-btn-7) / 0.5);
 }
 
 .rk-empty-icon svg {
@@ -8252,7 +8333,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-upload-icon::after {
-  box-shadow: 0 -9px 11px 2px rgb(110 116 132 / 0.5);
+  box-shadow: 0 -9px 11px 2px rgb(var(--pal-claro-btn-7) / 0.5);
 }
 
 .rk-upload-icon svg {
@@ -8325,7 +8406,7 @@ table .rk-btn:hover:not(:disabled) {
   align-items: center;
   gap: 6px;
   margin: 3px 0 0;
-  color: rgb(52 211 153);
+  color: rgb(var(--pal-claro-btn-10));
   font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
@@ -8434,7 +8515,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-upload-error {
-  --rk-dan-tono: 200 40 48;
+  --rk-dan-tono: var(--pal-claro-upload);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -8681,7 +8762,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-pagination-item[aria-current="page"]::after {
-  box-shadow: 0 -9px 11px 2px rgb(110 116 132 / 0.5);
+  box-shadow: 0 -9px 11px 2px rgb(var(--pal-claro-btn-7) / 0.5);
 }
 
 /* ── W5. MÓVIL: CADA FILA ES UNA TARJETA ───────────────────────────────
@@ -8921,7 +9002,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-text-iris {
-  background-image: linear-gradient(90deg, rgb(226 92 92), rgb(124 92 240) 50%, rgb(40 150 220));
+  background-image: linear-gradient(90deg, rgb(var(--pal-claro-text)), rgb(var(--pal-claro-text-2)) 50%, rgb(var(--pal-claro-text-3)));
 }
 
 /* ── X6. VACÍO CON HALO ─────────────────────────────────────────────── */
@@ -9041,7 +9122,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-avatar-btn::after {
-  box-shadow: 0 -9px 11px 2px rgb(110 116 132 / 0.5);
+  box-shadow: 0 -9px 11px 2px rgb(var(--pal-claro-btn-7) / 0.5);
 }
 
 .rk-avatar-btn[aria-expanded="true"]::before,
@@ -9097,7 +9178,7 @@ table .rk-btn:hover:not(:disabled) {
   height: 48px;
   font-size: 0.825rem;
   box-shadow:
-    0 0 0 2px rgb(22 23 28),
+    0 0 0 2px rgb(var(--pal-claro-menu)),
     0 0 0 4px rgb(var(--rk-iris-2) / 0.8);
 }
 
@@ -9732,8 +9813,8 @@ table .rk-btn:hover:not(:disabled) {
   height: 18px;
   padding: 0 5px;
   border-radius: 999px;
-  background: rgb(240 82 82);
-  box-shadow: 0 0 0 2px rgb(14 15 19);
+  background: rgb(var(--pal-claro-notif));
+  box-shadow: 0 0 0 2px rgb(var(--pal-claro-notif-2));
   color: rgb(var(--pal-oscuro-texto));
   font-size: 10px;
   font-weight: 700;
@@ -9796,7 +9877,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-notif-link {
-  color: rgb(110 84 230);
+  color: rgb(var(--pal-claro-notif-3));
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -9849,7 +9930,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-notif-item {
-  --rk-tone: 150 152 165;
+  --rk-tone: var(--pal-claro-notif-4);
   position: relative;
   display: flex;
   align-items: flex-start;
@@ -9858,16 +9939,16 @@ table .rk-btn:hover:not(:disabled) {
   transition: background-color var(--rx-t-micro) var(--rx-curva);
 }
 
-.rk-notif-item[data-tone="success"] { --rk-tone: 52 211 153; }
-.rk-notif-item[data-tone="warning"] { --rk-tone: 245 180 60; }
+.rk-notif-item[data-tone="success"] { --rk-tone: var(--pal-claro-btn-10); }
+.rk-notif-item[data-tone="warning"] { --rk-tone: var(--pal-claro-notif-5); }
 .rk-notif-item[data-tone="danger"]  { --rk-tone: var(--pal-oscuro-peligro); }
 .rk-notif-item[data-tone="accent"]  { --rk-tone: var(--rk-iris-1); }
 
-[data-theme="light"] .rk-notif-item[data-tone="success"] { --rk-tone: 9 150 98; }
-[data-theme="light"] .rk-notif-item[data-tone="warning"] { --rk-tone: 214 140 20; }
-[data-theme="light"] .rk-notif-item[data-tone="danger"]  { --rk-tone: 214 48 56; }
+[data-theme="light"] .rk-notif-item[data-tone="success"] { --rk-tone: var(--pal-claro-notif-6); }
+[data-theme="light"] .rk-notif-item[data-tone="warning"] { --rk-tone: var(--pal-claro-notif-7); }
+[data-theme="light"] .rk-notif-item[data-tone="danger"]  { --rk-tone: var(--pal-claro-notif-8); }
 [data-theme="light"] .rk-notif-item[data-tone="neutral"],
-[data-theme="light"] .rk-notif-item:not([data-tone]) { --rk-tone: 110 116 132; }
+[data-theme="light"] .rk-notif-item:not([data-tone]) { --rk-tone: var(--pal-claro-btn-7); }
 
 .rk-notif-item.is-unread {
   background: rgb(var(--pal-blanco) / 0.05);
@@ -9936,7 +10017,7 @@ table .rk-btn:hover:not(:disabled) {
   height: 10px;
   border-radius: 999px;
   background: linear-gradient(135deg, rgb(var(--rk-iris-1)), rgb(var(--rk-iris-2)));
-  box-shadow: 0 0 0 2px rgb(22 23 28);
+  box-shadow: 0 0 0 2px rgb(var(--pal-claro-menu));
 }
 
 [data-theme="light"] .is-unread .rk-notif-icon::after {
@@ -10225,7 +10306,7 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-buy-perk-icon {
   background: rgb(var(--rk-iris-1) / 0.1);
-  color: rgb(110 84 230);
+  color: rgb(var(--pal-claro-notif-3));
 }
 
 .rk-buy-perk-icon svg {
@@ -10279,7 +10360,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(var(--rk-iris-3) / 0.6)
   );
   box-shadow:
-    0 0 0 2px rgb(14 15 19),
+    0 0 0 2px rgb(var(--pal-claro-notif-2)),
     0 0 0 3px rgb(var(--rk-iris-2) / 0.7);
   color: rgb(var(--pal-oscuro-texto));
   font-size: 0.88rem;
@@ -10322,7 +10403,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-creator-name svg {
-  color: rgb(40 150 220);
+  color: rgb(var(--pal-claro-text-3));
 }
 
 .rk-creator-user {
@@ -10541,7 +10622,7 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-filter-option[aria-current="true"]::after,
 [data-theme="light"] .rk-filter-option[aria-pressed="true"]::after {
-  box-shadow: 10px 0 12px 2px rgb(110 116 132 / 0.5);
+  box-shadow: 10px 0 12px 2px rgb(var(--pal-claro-btn-7) / 0.5);
 }
 
 /* ── AC2. MUESTRA DE COLOR ──────────────────────────────────────────── */
@@ -10556,7 +10637,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-swatch-multi {
-  background-image: conic-gradient(#d03a3a, #e6c02f, #3a9d5d, #2f6fe0, #7a4fd0, #d03a3a);
+  background-image: conic-gradient(rgb(var(--pal-claro-swatch)), rgb(var(--pal-claro-swatch-2)), rgb(var(--pal-claro-swatch-3)), rgb(var(--pal-claro-swatch-4)), rgb(var(--pal-claro-swatch-5)), rgb(var(--pal-claro-swatch)));
 }
 
 /* ── AC3. BARRA MÓVIL ───────────────────────────────────────────────── */
@@ -10802,7 +10883,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-auth-logo::after {
-  box-shadow: 0 -10px 12px 2px rgb(110 116 132 / 0.5);
+  box-shadow: 0 -10px 12px 2px rgb(var(--pal-claro-btn-7) / 0.5);
 }
 
 .rk-auth-logo img,
@@ -11059,7 +11140,7 @@ table .rk-btn:hover:not(:disabled) {
    ═══════════════════════════════════════════════════════════════════════ */
 
 .rk-done {
-  --rk-tone: 52 211 153;
+  --rk-tone: var(--pal-claro-btn-10);
   display: grid;
   justify-items: center;
   gap: 10px;
@@ -11074,11 +11155,11 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 .rk-done[data-tone="warning"] {
-  --rk-tone: 245 180 60;
+  --rk-tone: var(--pal-claro-notif-5);
 }
 
 [data-theme="light"] .rk-done {
-  --rk-tone: 9 150 98;
+  --rk-tone: var(--pal-claro-notif-6);
   border-color: rgb(var(--rk-border));
   background:
     radial-gradient(70% 45% at 50% 0%, rgb(var(--rk-tone) / 0.1), transparent 70%),
@@ -11086,7 +11167,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-done[data-tone="warning"] {
-  --rk-tone: 214 140 20;
+  --rk-tone: var(--pal-claro-notif-7);
 }
 
 @media (min-width: 640px) {
@@ -11640,7 +11721,7 @@ table .rk-btn:hover:not(:disabled) {
   height: 29px;
   border-radius: 0 0 29px 29px;
   background:
-    linear-gradient(90deg, transparent 38%, #a39cff 45%, #d6c2f5 50%, #ffae8c 55%, transparent 62%) no-repeat,
+    linear-gradient(90deg, transparent 38%, rgb(var(--pal-claro-footer)) 45%, rgb(var(--pal-claro-footer-2)) 50%, rgb(var(--pal-claro-footer-3)) 55%, transparent 62%) no-repeat,
     rgb(var(--rk-marca-frio) / 0.25);
   background-size: 260% 100%, auto;
   background-position: 120% 0, 0 0;
@@ -12135,7 +12216,7 @@ div.rk-upload-error > * + * {
 .rk-avatar-anillo {
   background: var(--rk-marca-degradado);
   box-shadow:
-    0 0 0 3px rgb(14 15 19),
+    0 0 0 3px rgb(var(--pal-claro-notif-2)),
     0 0 0 4px rgb(var(--rk-marca-calido) / 0.6);
   color: rgb(var(--rk-marca-tinta));
 }
@@ -12293,7 +12374,7 @@ div.rk-upload-error > * + * {
   border-radius: 999px;
   background: var(--rk-marca-degradado);
   box-shadow:
-    0 0 0 4px rgb(14 15 19),
+    0 0 0 4px rgb(var(--pal-claro-notif-2)),
     0 0 0 5px rgb(var(--pal-blanco) / 0.18);
   color: rgb(var(--rk-marca-tinta));
   font-size: 2.2rem;
@@ -13091,7 +13172,7 @@ div.rk-upload-error > * + * {
 }
 
 [data-theme="light"] .rk-text-iris {
-  background-image: linear-gradient(90deg, rgb(var(--pal-claro-atenuado)), rgb(170 118 96) 55%, rgb(206 128 96));
+  background-image: linear-gradient(90deg, rgb(var(--pal-claro-atenuado)), rgb(var(--pal-claro-text-4)) 55%, rgb(var(--pal-claro-text-5)));
 }
 
 /* ── rellenos con texto: marca + tinta oscura ────────────────────────── */
@@ -13134,7 +13215,7 @@ div.rk-upload-error > * + * {
 .rk-menu-head .rk-avatar-btn-img,
 .rk-avatar-btn > .rk-avatar-btn-img {
   box-shadow:
-    0 0 0 2px var(--rk-aro-hueco, rgb(22 23 28)),
+    0 0 0 2px var(--rk-aro-hueco, rgb(var(--pal-claro-menu))),
     0 0 0 4px rgb(var(--rk-marca-calido) / 0.8);
 }
 
@@ -13199,7 +13280,7 @@ div.rk-upload-error > * + * {
 
 .rk-creator-avatar {
   box-shadow:
-    0 0 0 2px rgb(14 15 19),
+    0 0 0 2px rgb(var(--pal-claro-notif-2)),
     0 0 0 3px rgb(var(--rk-marca-calido) / 0.75);
 }
 
@@ -13347,15 +13428,15 @@ div.rk-upload-error > * + * {
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  background: rgb(52 211 153 / 0.16);
-  box-shadow: 0 0 0 4px rgb(52 211 153 / 0.07);
-  color: rgb(52 211 153);
+  background: rgb(var(--pal-claro-btn-10) / 0.16);
+  box-shadow: 0 0 0 4px rgb(var(--pal-claro-btn-10) / 0.07);
+  color: rgb(var(--pal-claro-btn-10));
 }
 
 [data-theme="light"] .rk-check-dot {
-  background: rgb(9 150 98 / 0.12);
-  box-shadow: 0 0 0 4px rgb(9 150 98 / 0.06);
-  color: rgb(9 150 98);
+  background: rgb(var(--pal-claro-notif-6) / 0.12);
+  box-shadow: 0 0 0 4px rgb(var(--pal-claro-notif-6) / 0.06);
+  color: rgb(var(--pal-claro-notif-6));
 }
 
 /* flechas de la galería sobre la imagen: siempre vidrio claro */
@@ -13397,7 +13478,7 @@ div.rk-upload-error > * + * {
 .rk-story-avatar {
   background: var(--rk-marca-degradado);
   box-shadow:
-    0 0 0 2px #0a0a0c,
+    0 0 0 2px rgb(var(--pal-claro-story)),
     0 0 0 3.5px rgb(var(--rk-marca-calido) / 0.85);
   color: rgb(var(--rk-marca-tinta));
 }
@@ -13454,24 +13535,24 @@ div.rk-upload-error > * + * {
 }
 
 .rk-story-btn.is-done {
-  border-color: rgb(52 211 153 / 0.6);
-  background: rgb(52 211 153 / 0.18);
-  color: rgb(52 211 153);
+  border-color: rgb(var(--pal-claro-btn-10) / 0.6);
+  background: rgb(var(--pal-claro-btn-10) / 0.18);
+  color: rgb(var(--pal-claro-btn-10));
 }
 
 /* botón de carrito ya agregado: verde suave, sin sombra */
 .rk-btn.rk-btn-added,
 [data-theme] .rk-btn.rk-btn-added {
-  border-color: rgb(52 211 153 / 0.45);
-  background: rgb(52 211 153 / 0.14);
+  border-color: rgb(var(--pal-claro-btn-10) / 0.45);
+  background: rgb(var(--pal-claro-btn-10) / 0.14);
   box-shadow: none;
-  color: rgb(52 211 153);
+  color: rgb(var(--pal-claro-btn-10));
 }
 
 [data-theme="light"] .rk-btn.rk-btn-added {
-  border-color: rgb(9 150 98 / 0.35);
-  background: rgb(9 150 98 / 0.1);
-  color: rgb(9 150 98);
+  border-color: rgb(var(--pal-claro-notif-6) / 0.35);
+  background: rgb(var(--pal-claro-notif-6) / 0.1);
+  color: rgb(var(--pal-claro-notif-6));
 }
 
 .rk-btn.rk-btn-added::before,
@@ -13501,8 +13582,8 @@ div.rk-upload-error > * + * {
 .rk-tarjeta .rk-glass-on-image.text-danger,
 [data-theme="light"] .rk-tarjeta .rk-glass-on-image.text-danger {
   border-color: rgb(var(--pal-oscuro-peligro) / 0.55);
-  background: rgb(74 20 24 / 0.6);
-  color: rgb(255 214 214);
+  background: rgb(var(--pal-claro-btn-8) / 0.6);
+  color: rgb(var(--pal-claro-tarjeta-2));
 }
 
 /* rejilla de recursos en móvil: 2 columnas (tienda, recomendados) */
@@ -13918,8 +13999,8 @@ div.rk-upload-error > * + * {
   line-height: 1;
 }
 
-.rk-prog-sigla.is-ps { color: #1f7fd1; }
-.rk-prog-sigla.is-canva { color: #7a5af5; }
+.rk-prog-sigla.is-ps { color: rgb(var(--pal-claro-prog)); }
+.rk-prog-sigla.is-canva { color: rgb(var(--pal-claro-prog-2)); }
 
 @media (max-width: 639px) {
   .rk-folder-programa { width: 18px; height: 18px; }
@@ -14111,8 +14192,8 @@ div.rk-upload-error > * + * {
 .rk-tarjeta .rk-glass-on-image.text-danger,
 [data-theme="light"] .rk-tarjeta .rk-glass-on-image.text-danger {
   border-color: rgb(var(--pal-oscuro-peligro) / 0.5);
-  background: rgb(74 20 24 / 0.28);
-  color: rgb(255 214 214);
+  background: rgb(var(--pal-claro-btn-8) / 0.28);
+  color: rgb(var(--pal-claro-tarjeta-2));
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -14483,8 +14564,8 @@ div.rk-upload-error > * + * {
 .rk-cta-modelo-circle {
   position: absolute; left: 50%; top: 4%; transform: translateX(-50%);
   width: min(86%, 440px); aspect-ratio: 1 / 1; border-radius: 50%;
-  background: linear-gradient(150deg, #b7b3ee, rgb(var(--pal-claro-borde)) 50%, #fcc6b0);
-  box-shadow: 0 30px 80px rgb(141 138 208 / .25);
+  background: linear-gradient(150deg, rgb(var(--pal-claro-cta)), rgb(var(--pal-claro-borde)) 50%, rgb(var(--pal-claro-cta-2)));
+  box-shadow: 0 30px 80px rgb(var(--pal-claro-cta-3) / .25);
 }
 .rk-cta-modelo-img {
   position: relative; width: min(74%, 380px); height: auto; display: block;
@@ -14567,12 +14648,12 @@ div.rk-upload-error > * + * {
   initial-value: 0%;
 }
 .rk-eco-pulso {
-  --rk-eco-chispa: #8f8bd6;
+  --rk-eco-chispa: rgb(var(--pal-claro-eco));
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
-[data-theme="dark"] .rk-eco-pulso { --rk-eco-chispa: #c3bfff; }
+[data-theme="dark"] .rk-eco-pulso { --rk-eco-chispa: rgb(var(--pal-oscuro-eco)); }
 .rk-eco-pulso::before,
 .rk-eco-pulso::after {
   content: "";
@@ -14614,7 +14695,7 @@ div.rk-upload-error > * + * {
   transform: translate(-50%, -50%);
   width: 30%;
   z-index: 1;
-  filter: drop-shadow(0 14px 24px rgb(120 100 150 / 0.12));
+  filter: drop-shadow(0 14px 24px rgb(var(--pal-claro-eco-2) / 0.12));
 }
 @media (min-width: 640px) {
   .rk-eco-hexwrap { width: 21%; }
@@ -14628,7 +14709,7 @@ div.rk-upload-error > * + * {
   background: linear-gradient(180deg, rgb(var(--pal-blanco)), rgb(var(--pal-claro-fondo)));
 }
 [data-theme="dark"] .rk-eco-hex {
-  background: linear-gradient(180deg, #303030, rgb(var(--rk-card)));
+  background: linear-gradient(180deg, rgb(var(--pal-oscuro-eco-2)), rgb(var(--rk-card)));
 }
 [data-theme="dark"] .rk-eco-hexwrap { filter: drop-shadow(0 14px 24px rgb(var(--pal-negro) / 0.3)); }
 
@@ -14644,12 +14725,12 @@ div.rk-upload-error > * + * {
 /* igual en ambos modos, como el ícono: degradado lavanda→durazno con brillo y cohete blanco */
 .rk-eco-nucleo {
   --rk-eco-cohete: rgb(var(--pal-blanco));
-  --rk-eco-cohete-sombra: rgb(110 80 110 / 0.28);
+  --rk-eco-cohete-sombra: rgb(var(--pal-claro-eco-3) / 0.28);
   background:
     linear-gradient(118deg, transparent 52%, rgb(var(--pal-blanco) / 0.35) 60%, transparent 70%),
-    linear-gradient(135deg, #c9c6ea, rgb(var(--pal-claro-borde)) 50%, #f8d3c3);
+    linear-gradient(135deg, rgb(var(--pal-claro-eco-4)), rgb(var(--pal-claro-borde)) 50%, rgb(var(--pal-claro-eco-5)));
   border: 1px solid rgb(var(--pal-blanco) / 0.4);
-  box-shadow: 0 8px 20px rgb(120 100 150 / 0.2);
+  box-shadow: 0 8px 20px rgb(var(--pal-claro-eco-2) / 0.2);
 }
 [data-theme="dark"] .rk-eco-nucleo {
   border-color: rgb(var(--pal-blanco) / 0.25);
@@ -14697,7 +14778,7 @@ div.rk-upload-error > * + * {
 .rk-eco-app.is-fuerte-frio,
 .rk-eco-app.is-fuerte-calido {
   width: 12.5%;
-  box-shadow: 0 10px 24px rgb(120 100 150 / 0.14);
+  box-shadow: 0 10px 24px rgb(var(--pal-claro-eco-2) / 0.14);
 }
 
 .rk-eco-app.is-blanco {
@@ -14715,7 +14796,7 @@ div.rk-upload-error > * + * {
 [data-theme="dark"] .rk-eco-app.is-fuerte-calido,
 [data-theme="dark"] .rk-eco-app.is-blanco,
 [data-theme="dark"] .rk-eco-app.is-tenue {
-  background: linear-gradient(180deg, #303030, rgb(var(--rk-card)));
+  background: linear-gradient(180deg, rgb(var(--pal-oscuro-eco-2)), rgb(var(--rk-card)));
   border-color: rgb(var(--pal-blanco) / 0.07);
   box-shadow: 0 10px 22px rgb(var(--pal-negro) / 0.35);
 }
@@ -14759,7 +14840,7 @@ div.rk-upload-error > * + * {
   inset: -7px;
   border-radius: 999px;
   pointer-events: none;
-  background: conic-gradient(transparent 0 45%, rgb(var(--pal-claro-marca-lavanda)) 70%, #ffb59a 92%, transparent 100%);
+  background: conic-gradient(transparent 0 45%, rgb(var(--pal-claro-marca-lavanda)) 70%, rgb(var(--pal-claro-eco-6)) 92%, transparent 100%);
   filter: blur(3px);
   opacity: 0.9;
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
@@ -14823,7 +14904,7 @@ div.rk-upload-error > * + * {
   background: conic-gradient(
     transparent 0 calc(100% - var(--rk-cargador-largo)),
     rgb(var(--pal-claro-marca-lavanda)) calc(100% - var(--rk-cargador-largo) * 0.45),
-    #ffb59a 100%
+    rgb(var(--pal-claro-eco-6)) 100%
   );
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
           mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
@@ -15484,7 +15565,7 @@ div.rk-upload-error > * + * {
 }
 
 [data-theme="dark"] .rk-hc-switch {
-  background: #303030;
+  background: rgb(var(--pal-oscuro-eco-2));
 }
 
 /* El degradado de marca aparece solo al encender */
@@ -15596,7 +15677,7 @@ div.rk-upload-error > * + * {
 
 [data-fase="inicio"] .rk-hc-marco,
 [data-fase="arrastra"] .rk-hc-marco {
-  border-color: #8e8bd8;
+  border-color: rgb(var(--pal-claro-hc));
 }
 
 /* Al salir, el puntero vuelve deslizándose a la esquina de inicio */
@@ -15622,7 +15703,7 @@ div.rk-upload-error > * + * {
   width: 7px;
   height: 7px;
   background: rgb(var(--pal-blanco));
-  border: 1.5px solid #8e8bd8;
+  border: 1.5px solid rgb(var(--pal-claro-hc));
   border-radius: 1px;
   opacity: 0;
   transition: opacity 0.5s cubic-bezier(0.37, 0, 0.63, 1);
@@ -17049,7 +17130,7 @@ div.rk-upload-error > * + * {
   border-bottom: 0;
   background:
     radial-gradient(70% 90% at 100% 0%,rgb(var(--pal-blanco) / .55),transparent 60%),
-    linear-gradient(135deg,rgb(var(--pal-oscuro-iris-3)) 0%,#e9c9dc 35%,#c9c3f0 70%,#b7b3f0 100%);
+    linear-gradient(135deg,rgb(var(--pal-oscuro-iris-3)) 0%,rgb(var(--pal-claro-dash)) 35%,rgb(var(--pal-claro-dash-2)) 70%,rgb(var(--pal-claro-dash-3)) 100%);
   color: rgb(var(--pal-claro-texto));
   display: flex;
   justify-content: space-between;
@@ -18842,7 +18923,7 @@ div.rk-upload-error > * + * {
   [data-theme="light"] .rk-dash .rk-input,
   [data-theme="light"] .rk-dash .rk-select,
   [data-theme="light"] .rk-dash .rk-textarea {
-    background: rgb(252 253 255 / 0.95);
+    background: rgb(var(--pal-claro-card) / 0.95);
   }
 }
 
@@ -18960,7 +19041,7 @@ div.rk-upload-error > * + * {
   color: rgb(var(--pal-claro-texto));
   box-shadow:
     inset 0 1px 0 rgb(var(--pal-blanco) / 0.95),
-    inset 0 -1px 0 rgb(125 125 125 / 0.12),
+    inset 0 -1px 0 rgb(var(--pal-claro-btn) / 0.12),
     0 2px 8px rgb(var(--pal-negro) / 0.16);
 }
 
@@ -19028,7 +19109,7 @@ div.rk-upload-error > * + * {
   isolation: isolate;
   box-shadow:
     inset 0 1px 0 rgb(var(--pal-blanco)),
-    inset 0 -1px 0 rgb(50 50 50 / 0.14),
+    inset 0 -1px 0 rgb(var(--pal-claro-btn-2) / 0.14),
     0 0 0 1px rgb(var(--pal-blanco) / 0.14),
     0 5px 18px rgb(var(--pal-blanco) / 0.1);
 }
@@ -19367,8 +19448,8 @@ div.rk-upload-error > * + * {
   --rk-pri-frio: var(--pal-oscuro-iris-1);
   --rk-pri-centro: var(--pal-oscuro-iris-2);
   --rk-pri-calido: var(--pal-oscuro-iris-3);
-  --rk-pri-borde-frio: 168 170 192;
-  --rk-pri-borde-calido: 232 168 146;
+  --rk-pri-borde-frio: var(--pal-claro-btn-3);
+  --rk-pri-borde-calido: var(--pal-claro-btn-4);
   --rk-pri-borde-alfa: 0.75;
   --rk-pri-brillo: 0.55;
   --rk-pri-fondo:
@@ -19412,8 +19493,8 @@ div.rk-upload-error > * + * {
 }
 
 [data-theme="light"] .rk-dash .rk-btn-primary {
-  --rk-pri-borde-frio: 150 152 176;
-  --rk-pri-borde-calido: 222 150 126;
+  --rk-pri-borde-frio: var(--pal-claro-btn-5);
+  --rk-pri-borde-calido: var(--pal-claro-btn-6);
   box-shadow:
     inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
     inset 0 0 12px rgb(255 255 255 / var(--rk-pri-brillo));
@@ -19474,7 +19555,7 @@ div.rk-upload-error > * + * {
 }
 
 [data-theme="light"] .rk-dash .rk-btn.rk-btn-line::after {
-  box-shadow: 0 -10px 12px 2px rgb(110 116 132 / 0.5);
+  box-shadow: 0 -10px 12px 2px rgb(var(--pal-claro-btn-7) / 0.5);
 }
 
 [data-theme="light"] .rk-dash .rk-btn.rk-btn-line {
@@ -19589,7 +19670,7 @@ div.rk-upload-error > * + * {
 .rk-dash .rk-btn-danger,
 .rk-dash .rk-btn-buy {
   --rk-dan-tono: var(--pal-oscuro-peligro);
-  --rk-dan-fondo: 74 20 24;
+  --rk-dan-fondo: var(--pal-claro-btn-8);
   position: relative;
   color: rgb(var(--pal-oscuro-texto) / 0.92);
   background:
@@ -19626,7 +19707,7 @@ div.rk-upload-error > * + * {
 [data-theme="light"] .rk-dash .rk-btn-danger,
 [data-theme="light"] .rk-dash .rk-btn-buy {
   --rk-dan-tono: var(--pal-claro-peligro);
-  --rk-dan-fondo: 255 244 244;
+  --rk-dan-fondo: var(--pal-claro-btn-9);
   color: rgb(var(--rk-dan-tono));
   border-color: rgb(var(--rk-dan-tono) / 0.32);
   box-shadow:
@@ -19644,14 +19725,14 @@ div.rk-upload-error > * + * {
 }
 
 .rk-dash .rk-btn-buy {
-  --rk-dan-tono: 52 211 153;
-  --rk-dan-fondo: 12 58 42;
+  --rk-dan-tono: var(--pal-claro-btn-10);
+  --rk-dan-fondo: var(--pal-claro-btn-11);
   color: rgb(var(--pal-oscuro-texto) / 0.94);
 }
 
 [data-theme="light"] .rk-dash .rk-btn-buy {
   --rk-dan-tono: var(--pal-claro-exito);
-  --rk-dan-fondo: 236 252 244;
+  --rk-dan-fondo: var(--pal-claro-btn-12);
   color: rgb(var(--rk-dan-tono));
 }
 
@@ -19871,7 +19952,7 @@ html[data-theme] .rk-faq-icon::before {
   font-weight: 700 !important;
   letter-spacing: .14em !important;
   text-transform: uppercase;
-  color: #7f79d6 !important;
+  color: rgb(var(--pal-claro-faq-2)) !important;
 }
 
 [data-theme="dark"] .rk-faq-intro .rk-faq-eyebrow {
