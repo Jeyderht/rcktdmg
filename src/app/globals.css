@@ -18,78 +18,78 @@
    constante en la PALETA y un token que la use.
 
    ÍNDICE (sección y rango de líneas)
-    §0   PALETA · única fuente de los colores                             102–191
-    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 192–236
-    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           237–539
-    §3   BASE  ·  body, selección, utilidades sueltas                     540–625
-    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 626–1367
-    §5   UTILIDADES  ·  @layer utilities                                  1368–1486
-    §6   PIEZAS SUELTAS  ·  @layer components                             1487–1561
-    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1562–1603
-    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1604–1656
-    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1657–1780
-    §10  LA TARJETA DE RECURSO                                            1781–1845
-    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            1846–2747
-    §12  SISTEMA DE INTERACCIÓN                                           2748–3530
-    §13  A. BOTONES                                                       3531–4032
-    §14  B · C · D                                                        4033–4365
-    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4366–4551
-    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4552–4571
-    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4572–4823
-    §18  C2. TARJETA DE RECURSO · versión refinada                        4824–4996
-    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         4997–5191
-    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5192–5243
-    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5244–5434
-    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5435–5742
-    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5743–6119
-    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6120–6259
-    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6260–6339
-    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6340–6464
-    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6465–6696
-    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6697–6882
-    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          6883–7218
-    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7219–7713
-    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7714–7954
-    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     7955–8137
-    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8138–8446
-    §34  W. TABLAS  ·  rk-table · rk-pagination                           8447–8694
-    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8695–8935
-    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    8936–9302
-    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9303–9705
-    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9706–10073
-    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10074–10396
-    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10397–10681
-    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10682–10918
-    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      10919–11042
-    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11043–11254
-    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11255–11698
-    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11699–11956
-    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    11957–12165
-    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12166–12542
-    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12543–13024
-    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13025–13283
-    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13284–13362
-    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13363–13520
-    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13521–13638
-    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13639–13687
-    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13688–13723
-    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13724–14059
-    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14060–14113
-    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14114–14469
-    §58  AV · CTA final con la modelo (estilo hero)                       14470–14523
-    §59  AW · Ecosistema: fila con núcleo hexagonal                       14524–14786
-    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          14787–14861
-    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      14862–14879
-    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         14880–14936
-    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             14937–15067
-    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15068–15387
-    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15388–15748
-    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15749–16004
-    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16005–16218
-    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16219–16591
-    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16592–16912
-    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     16913–19753
-    §71  BB. INICIO (encargo de la home)                                  19754–20590
+    §0   PALETA · única fuente de los colores                             102–195
+    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 196–240
+    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           241–543
+    §3   BASE  ·  body, selección, utilidades sueltas                     544–629
+    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 630–1371
+    §5   UTILIDADES  ·  @layer utilities                                  1372–1490
+    §6   PIEZAS SUELTAS  ·  @layer components                             1491–1565
+    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1566–1607
+    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1608–1660
+    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1661–1784
+    §10  LA TARJETA DE RECURSO                                            1785–1849
+    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            1850–2751
+    §12  SISTEMA DE INTERACCIÓN                                           2752–3534
+    §13  A. BOTONES                                                       3535–4036
+    §14  B · C · D                                                        4037–4369
+    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4370–4555
+    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4556–4575
+    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4576–4827
+    §18  C2. TARJETA DE RECURSO · versión refinada                        4828–5000
+    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5001–5195
+    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5196–5247
+    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5248–5438
+    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5439–5746
+    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5747–6123
+    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6124–6263
+    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6264–6343
+    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6344–6468
+    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6469–6700
+    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6701–6886
+    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          6887–7222
+    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7223–7717
+    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7718–7958
+    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     7959–8141
+    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8142–8450
+    §34  W. TABLAS  ·  rk-table · rk-pagination                           8451–8698
+    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8699–8939
+    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    8940–9306
+    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9307–9709
+    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9710–10077
+    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10078–10400
+    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10401–10685
+    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10686–10922
+    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      10923–11046
+    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11047–11258
+    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11259–11702
+    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11703–11960
+    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    11961–12169
+    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12170–12546
+    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12547–13028
+    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13029–13287
+    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13288–13366
+    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13367–13524
+    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13525–13642
+    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13643–13691
+    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13692–13727
+    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13728–14063
+    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14064–14117
+    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14118–14473
+    §58  AV · CTA final con la modelo (estilo hero)                       14474–14527
+    §59  AW · Ecosistema: fila con núcleo hexagonal                       14528–14790
+    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          14791–14865
+    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      14866–14883
+    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         14884–14940
+    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             14941–15071
+    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15072–15391
+    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15392–15752
+    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15753–16008
+    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16009–16222
+    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16223–16595
+    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16596–16916
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     16917–19757
+    §71  BB. INICIO (encargo de la home)                                  19758–20594
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -166,6 +166,10 @@
   --pal-claro-serie-3: 240 169 138;
   --pal-claro-serie-4: 200 201 214;
   --pal-claro-serie-5: 142 138 216;
+
+  /* Blanco y negro puros: fijos, no cambian con el tema (brillos, velos, texto sobre foto). */
+  --pal-blanco: 255 255 255;
+  --pal-negro: 0 0 0;
 }
 
 /* Tokens semánticos nuevos: nombran usos que hoy van con colores
@@ -596,7 +600,7 @@ h6 {
 
   /* Lo que asoma al hacer scroll rápido o rebote: el tono del pie. */
   html:has(.rk-footer) {
-    background-color: color-mix(in srgb, #ffffff 2.5%, var(--rx-fondo));
+    background-color: color-mix(in srgb, rgb(var(--pal-blanco)) 2.5%, var(--rx-fondo));
   }
   html[data-theme="light"]:has(.rk-footer) {
     background-color: color-mix(in srgb, rgb(var(--rk-surface)) 60%, var(--rx-fondo));
@@ -659,8 +663,8 @@ input[type="search"]::-webkit-search-results-decoration {
     background: rgb(var(--rk-glass) / 0.55);
     -webkit-backdrop-filter: saturate(200%) blur(16px);
     backdrop-filter: saturate(200%) blur(16px);
-    border: 1px solid rgb(255 255 255 / 0.25);
-    box-shadow: 0 2px 10px rgb(0 0 0 / 0.18);
+    border: 1px solid rgb(var(--pal-blanco) / 0.25);
+    box-shadow: 0 2px 10px rgb(var(--pal-negro) / 0.18);
   }
 
   /*
@@ -678,7 +682,7 @@ input[type="search"]::-webkit-search-results-decoration {
   */
   [data-theme="dark"] .rk-glass-on-image {
     background: rgb(var(--rk-background) / 0.4);
-    border-color: rgb(255 255 255 / 0.22);
+    border-color: rgb(var(--pal-blanco) / 0.22);
     -webkit-backdrop-filter: blur(18px) saturate(120%);
     backdrop-filter: blur(18px) saturate(120%);
   }
@@ -2092,13 +2096,13 @@ h6 {
 
 .rk-btn-ink,
 .rk-btn-primary {
-  background: linear-gradient(135deg, #ffffff 0%, rgb(var(--pal-claro-fondo-2)) 48%, #ffffff 100%);
+  background: linear-gradient(135deg, rgb(var(--pal-blanco)) 0%, rgb(var(--pal-claro-fondo-2)) 48%, rgb(var(--pal-blanco)) 100%);
   color: rgb(var(--pal-claro-texto));
-  border-color: rgb(255 255 255 / 0.95);
+  border-color: rgb(var(--pal-blanco) / 0.95);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.95),
     inset 0 -1px 0 rgb(125 125 125 / 0.12),
-    0 2px 8px rgb(0 0 0 / 0.16);
+    0 2px 8px rgb(var(--pal-negro) / 0.16);
 }
 
 /* Línea de luz en el canto de arriba. */
@@ -2114,7 +2118,7 @@ h6 {
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(255 255 255 / 0.95),
+    rgb(var(--pal-blanco) / 0.95),
     transparent
   );
 }
@@ -2131,19 +2135,19 @@ h6 {
   pointer-events: none;
   background: radial-gradient(
     circle,
-    rgb(255 255 255 / 0.32),
+    rgb(var(--pal-blanco) / 0.32),
     transparent 68%
   );
 }
 
 .rk-btn-ink:hover:not(:disabled),
 .rk-btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ffffff 0%, rgb(var(--pal-claro-fondo-2)) 48%, #ffffff 100%);
+  background: linear-gradient(135deg, rgb(var(--pal-blanco)) 0%, rgb(var(--pal-claro-fondo-2)) 48%, rgb(var(--pal-blanco)) 100%);
   color: rgb(var(--pal-claro-texto));
   filter: brightness(1.04);
   box-shadow:
-    inset 0 1px 0 #fff,
-    0 6px 20px rgb(255 255 255 / 0.1);
+    inset 0 1px 0 rgb(var(--pal-blanco)),
+    0 6px 20px rgb(var(--pal-blanco) / 0.1);
 }
 
 /*
@@ -2174,8 +2178,8 @@ h6 {
 .rk-btn-glass,
 .rk-btn-secondary,
 .rk-btn-paper {
-  background: rgb(255 255 255 / 0.045);
-  border-color: rgb(255 255 255 / 0.16);
+  background: rgb(var(--pal-blanco) / 0.045);
+  border-color: rgb(var(--pal-blanco) / 0.16);
   border-top-color: var(--rx-borde-alto);
   color: var(--rx-texto);
   -webkit-backdrop-filter: blur(6px);
@@ -2187,7 +2191,7 @@ h6 {
 [data-theme="light"] .rk-btn-glass,
 [data-theme="light"] .rk-btn-secondary,
 [data-theme="light"] .rk-btn-paper {
-  background: rgb(255 255 255 / 0.5);
+  background: rgb(var(--pal-blanco) / 0.5);
   border-color: var(--rx-borde);
 }
 
@@ -2196,8 +2200,8 @@ h6 {
 .rk-btn-secondary:hover:not(:disabled),
 .rk-btn-paper:hover:not(:disabled),
 .rk-btn-ghost:hover:not(:disabled) {
-  border-color: rgb(255 255 255 / 0.34);
-  background: rgb(255 255 255 / 0.06);
+  border-color: rgb(var(--pal-blanco) / 0.34);
+  background: rgb(var(--pal-blanco) / 0.06);
   color: var(--rx-texto);
 }
 
@@ -2206,8 +2210,8 @@ h6 {
 [data-theme="light"] .rk-btn-secondary:hover:not(:disabled),
 [data-theme="light"] .rk-btn-paper:hover:not(:disabled),
 [data-theme="light"] .rk-btn-ghost:hover:not(:disabled) {
-  border-color: rgb(0 0 0 / 0.2);
-  background: rgb(255 255 255 / 0.65);
+  border-color: rgb(var(--pal-negro) / 0.2);
+  background: rgb(var(--pal-blanco) / 0.65);
 }
 
 /* ────────── LENGÜETA Y HALO ────────── */
@@ -2386,7 +2390,7 @@ h6 {
 .rk-btn-glass:hover:not(:disabled),
 .rk-btn-secondary:hover:not(:disabled),
 .rk-btn-paper:hover:not(:disabled) {
-  border-color: rgb(255 255 255 / 0.34);
+  border-color: rgb(var(--pal-blanco) / 0.34);
   background:
     radial-gradient(
       50% 100% at 50% 100%,
@@ -2402,7 +2406,7 @@ h6 {
 [data-theme="light"] .rk-btn-glass:hover:not(:disabled),
 [data-theme="light"] .rk-btn-secondary:hover:not(:disabled),
 [data-theme="light"] .rk-btn-paper:hover:not(:disabled) {
-  border-color: rgb(0 0 0 / 0.2);
+  border-color: rgb(var(--pal-negro) / 0.2);
 }
 
 /*
@@ -2434,10 +2438,10 @@ h6 {
   overflow: hidden;
   isolation: isolate;
   box-shadow:
-    inset 0 1px 0 #fff,
+    inset 0 1px 0 rgb(var(--pal-blanco)),
     inset 0 -1px 0 rgb(50 50 50 / 0.14),
-    0 0 0 1px rgb(255 255 255 / 0.14),
-    0 5px 18px rgb(255 255 255 / 0.1);
+    0 0 0 1px rgb(var(--pal-blanco) / 0.14),
+    0 5px 18px rgb(var(--pal-blanco) / 0.1);
   /*
     Eran 250 ms, que no es ninguno de los tres tiempos del
     sistema, y dos de las tres propiedades iban sin curva. Pasa
@@ -2460,11 +2464,11 @@ h6 {
   border-radius: inherit;
   background: linear-gradient(
     115deg,
-    rgb(255 255 255 / 0.45),
-    rgb(255 255 255 / 0.08) 35%,
+    rgb(var(--pal-blanco) / 0.45),
+    rgb(var(--pal-blanco) / 0.08) 35%,
     transparent 52%,
-    rgb(255 255 255 / 0.12) 80%,
-    rgb(255 255 255 / 0.28)
+    rgb(var(--pal-blanco) / 0.12) 80%,
+    rgb(var(--pal-blanco) / 0.28)
   );
 }
 
@@ -2480,7 +2484,7 @@ h6 {
   border-radius: 0;
   background: radial-gradient(
     circle,
-    rgb(255 255 255 / 0.32),
+    rgb(var(--pal-blanco) / 0.32),
     transparent 68%
   );
   transform: rotate(18deg);
@@ -2498,8 +2502,8 @@ h6 {
   transform: translateY(-1px);
   filter: brightness(1.045);
   box-shadow:
-    inset 0 1px 0 #fff,
-    0 7px 22px rgb(255 255 255 / 0.1);
+    inset 0 1px 0 rgb(var(--pal-blanco)),
+    0 7px 22px rgb(var(--pal-blanco) / 0.1);
 }
 
 .rk-btn-cta:hover:not(:disabled)::after {
@@ -2569,28 +2573,28 @@ h6 {
     Pintarla aquí la dejaba plana y con los lados del degradado
     marcados.
   */
-  background: rgb(255 255 255 / 0.024);
+  background: rgb(var(--pal-blanco) / 0.024);
   -webkit-backdrop-filter: blur(22px) saturate(0.9);
   backdrop-filter: blur(22px) saturate(0.9);
 }
 
 [data-theme="light"] .rk-tarjeta {
-  background: rgb(255 255 255 / 0.45);
+  background: rgb(var(--pal-blanco) / 0.45);
 }
 
 .rk-tarjeta:hover,
 .rk-tarjeta:focus-within {
   border-color: var(--rx-borde-alto);
   box-shadow:
-    0 8px 28px rgb(0 0 0 / 0.18),
-    0 0 24px rgb(255 255 255 / 0.045);
+    0 8px 28px rgb(var(--pal-negro) / 0.18),
+    0 0 24px rgb(var(--pal-blanco) / 0.045);
   transition: all 0.2s;
 }
 
 [data-theme="light"] .rk-tarjeta:hover,
 [data-theme="light"] .rk-tarjeta:focus-within {
-  border-color: rgb(0 0 0 / 0.2);
-  box-shadow: 0 8px 28px rgb(0 0 0 / 0.1);
+  border-color: rgb(var(--pal-negro) / 0.2);
+  box-shadow: 0 8px 28px rgb(var(--pal-negro) / 0.1);
 }
 
 /* ────────── CHIPS, BADGES Y ETIQUETAS ────────── */
@@ -2599,18 +2603,18 @@ h6 {
 .rk-glass-on-image {
   border-radius: 999px;
   font-size: 11px;
-  border: 1px solid rgb(255 255 255 / 0.2);
+  border: 1px solid rgb(var(--pal-blanco) / 0.2);
   color: rgb(var(--pal-oscuro-texto));
-  background: rgb(255 255 255 / 0.06);
+  background: rgb(var(--pal-blanco) / 0.06);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
 
 [data-theme="light"] .rk-chip,
 [data-theme="light"] .rk-glass-on-image {
-  border-color: rgb(0 0 0 / 0.14);
+  border-color: rgb(var(--pal-negro) / 0.14);
   color: rgb(var(--rk-muted));
-  background: rgb(255 255 255 / 0.6);
+  background: rgb(var(--pal-blanco) / 0.6);
 }
 
 /*
@@ -2634,13 +2638,13 @@ h6 {
   button.rk-glass-on-image:hover,
   a.rk-glass-on-image:hover {
     background: rgb(var(--pal-oscuro-fondo) / 0.55);
-    border-color: rgb(255 255 255 / 0.36);
+    border-color: rgb(var(--pal-blanco) / 0.36);
   }
 
   [data-theme="light"] button.rk-glass-on-image:hover,
   [data-theme="light"] a.rk-glass-on-image:hover {
-    background: rgb(255 255 255 / 0.82);
-    border-color: rgb(0 0 0 / 0.24);
+    background: rgb(var(--pal-blanco) / 0.82);
+    border-color: rgb(var(--pal-negro) / 0.24);
   }
 }
 
@@ -2916,13 +2920,13 @@ html[data-theme="dark"] {
   .rk-btn-line:hover:not(:disabled),
   .rk-btn-glass:hover:not(:disabled),
   .rk-btn-secondary:hover:not(:disabled) {
-    background-color: rgb(255 255 255 / 0.06);
+    background-color: rgb(var(--pal-blanco) / 0.06);
   }
 
   [data-theme="light"] .rk-btn-line:hover:not(:disabled),
   [data-theme="light"] .rk-btn-glass:hover:not(:disabled),
   [data-theme="light"] .rk-btn-secondary:hover:not(:disabled) {
-    background-color: rgb(255 255 255 / 0.72);
+    background-color: rgb(var(--pal-blanco) / 0.72);
   }
 
   /*
@@ -3133,14 +3137,14 @@ html[data-theme="dark"] {
 */
 .rk-chip[aria-current],
 .rk-chip[data-activo="true"] {
-  background: rgb(255 255 255 / 0.17);
+  background: rgb(var(--pal-blanco) / 0.17);
   border-color: var(--rx-b-boton-activo);
   color: rgb(var(--rk-foreground));
 }
 
 [data-theme="light"] .rk-chip[aria-current],
 [data-theme="light"] .rk-chip[data-activo="true"] {
-  background: rgb(255 255 255 / 0.9);
+  background: rgb(var(--pal-blanco) / 0.9);
 }
 
 /* ────────── 10. TABLAS ────────── */
@@ -3155,11 +3159,11 @@ table tbody tr {
 
 @media (hover: hover) and (pointer: fine) {
   table tbody tr:hover {
-    background: rgb(255 255 255 / 0.03);
+    background: rgb(var(--pal-blanco) / 0.03);
   }
 
   [data-theme="light"] table tbody tr:hover {
-    background: rgb(0 0 0 / 0.025);
+    background: rgb(var(--pal-negro) / 0.025);
   }
 }
 
@@ -3358,16 +3362,16 @@ table .rk-btn:hover:not(:disabled) {
   height: 2.5rem;
   padding: 0 1.125rem;
   border-radius: var(--rk-radius-full);
-  border: 1px solid rgb(255 255 255 / 0.95);
+  border: 1px solid rgb(var(--pal-blanco) / 0.95);
   font-size: 0.77rem;
   font-weight: 500;
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
-  background: linear-gradient(135deg, #ffffff 0%, rgb(var(--pal-claro-fondo-2)) 48%, #ffffff 100%);
+  background: linear-gradient(135deg, rgb(var(--pal-blanco)) 0%, rgb(var(--pal-claro-fondo-2)) 48%, rgb(var(--pal-blanco)) 100%);
   color: rgb(var(--pal-claro-texto));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.95),
     inset 0 -1px 0 rgb(125 125 125 / 0.12);
   transition:
     transform var(--rx-t-hover) var(--rx-curva),
@@ -3387,7 +3391,7 @@ table .rk-btn:hover:not(:disabled) {
   .rk-buscador-accion:hover {
     border-color: rgb(var(--pal-claro-borde));
     filter: brightness(1.04);
-    box-shadow: inset 0 1px 0 #fff;
+    box-shadow: inset 0 1px 0 rgb(var(--pal-blanco));
   }
 
   [data-theme="light"] .rk-buscador-accion:hover {
@@ -3593,7 +3597,7 @@ table .rk-btn:hover:not(:disabled) {
   color: rgb(var(--pal-claro-texto));
   border-color: transparent;
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
     inset 0 0 12px rgb(255 255 255 / var(--rk-pri-brillo));
 }
 
@@ -3610,7 +3614,7 @@ table .rk-btn:hover:not(:disabled) {
     --rk-pri-brillo: 0.8;
     filter: brightness(1.03) saturate(1.08);
     box-shadow:
-      inset 0 1px 0 #fff,
+      inset 0 1px 0 rgb(var(--pal-blanco)),
       inset 0 0 18px rgb(255 255 255 / var(--rk-pri-brillo));
   }
 }
@@ -3626,7 +3630,7 @@ table .rk-btn:hover:not(:disabled) {
   --rk-pri-borde-frio: 150 152 176;
   --rk-pri-borde-calido: 222 150 126;
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
     inset 0 0 12px rgb(255 255 255 / var(--rk-pri-brillo));
 }
 
@@ -3636,7 +3640,7 @@ table .rk-btn:hover:not(:disabled) {
     --rk-pri-brillo: 0.8;
     filter: brightness(1.02) saturate(1.1);
     box-shadow:
-      inset 0 1px 0 #fff,
+      inset 0 1px 0 rgb(var(--pal-blanco)),
       inset 0 0 18px rgb(255 255 255 / var(--rk-pri-brillo));
   }
 }
@@ -3703,19 +3707,19 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-btn.rk-btn-line {
-  --rk-sec-glass: rgb(255 255 255 / 0.55);
+  --rk-sec-glass: rgb(var(--pal-blanco) / 0.55);
 }
 
 .rk-btn.rk-btn-line:hover:not(:disabled) {
-  --rk-sec-glass: rgb(255 255 255 / 0.08);
-  border-color: rgb(255 255 255 / 0.34);
+  --rk-sec-glass: rgb(var(--pal-blanco) / 0.08);
+  border-color: rgb(var(--pal-blanco) / 0.34);
   color: var(--rx-texto);
   transform: none;
 }
 
 [data-theme="light"] .rk-btn.rk-btn-line:hover:not(:disabled) {
-  --rk-sec-glass: rgb(255 255 255 / 0.75);
-  border-color: rgb(0 0 0 / 0.2);
+  --rk-sec-glass: rgb(var(--pal-blanco) / 0.75);
+  border-color: rgb(var(--pal-negro) / 0.2);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -3765,7 +3769,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-btn.rk-btn-glass {
   --rk-vid-blur: 14px;
   --rk-vid-alfa: 0.07;
-  --rk-vid-borde: rgb(255 255 255 / 0.16);
+  --rk-vid-borde: rgb(var(--pal-blanco) / 0.16);
 
   background:
     linear-gradient(
@@ -3777,7 +3781,7 @@ table .rk-btn:hover:not(:disabled) {
   -webkit-backdrop-filter: blur(var(--rk-vid-blur)) saturate(1.6);
   backdrop-filter: blur(var(--rk-vid-blur)) saturate(1.6);
   border-color: var(--rk-vid-borde);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.14);
+  box-shadow: inset 0 1px 0 rgb(var(--pal-blanco) / 0.14);
   color: var(--rx-texto);
 }
 
@@ -3788,9 +3792,9 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-btn.rk-btn-secondary,
 [data-theme="light"] .rk-btn.rk-btn-glass {
   --rk-vid-alfa: 0.3;
-  --rk-vid-borde: rgb(255 255 255 / 0.75);
+  --rk-vid-borde: rgb(var(--pal-blanco) / 0.75);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
     0 0 0 1px rgb(var(--pal-claro-sombra) / 0.05);
 }
 
@@ -3823,16 +3827,16 @@ table .rk-btn:hover:not(:disabled) {
   .rk-btn.rk-btn-secondary:hover:not(:disabled),
   .rk-btn.rk-btn-glass:hover:not(:disabled) {
     --rk-vid-alfa: 0.12;
-    --rk-vid-borde: rgb(255 255 255 / 0.3);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22);
+    --rk-vid-borde: rgb(var(--pal-blanco) / 0.3);
+    box-shadow: inset 0 1px 0 rgb(var(--pal-blanco) / 0.22);
   }
 
   [data-theme="light"] .rk-btn.rk-btn-secondary:hover:not(:disabled),
   [data-theme="light"] .rk-btn.rk-btn-glass:hover:not(:disabled) {
     --rk-vid-alfa: 0.5;
-    --rk-vid-borde: rgb(255 255 255 / 0.95);
+    --rk-vid-borde: rgb(var(--pal-blanco) / 0.95);
     box-shadow:
-      inset 0 1px 0 #fff,
+      inset 0 1px 0 rgb(var(--pal-blanco)),
       0 0 0 1px rgb(var(--pal-claro-sombra) / 0.08);
   }
 }
@@ -3856,7 +3860,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(var(--rk-dan-fondo));
   border-color: rgb(var(--rk-dan-tono) / 0.55);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.12),
     inset 0 0 12px rgb(var(--rk-dan-tono) / 0.3);
   transition:
     background-color var(--rx-t-micro) var(--rx-curva),
@@ -3872,7 +3876,7 @@ table .rk-btn:hover:not(:disabled) {
     color: rgb(var(--pal-oscuro-texto));
     border-color: rgb(var(--rk-dan-tono) / 0.8);
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.16),
+      inset 0 1px 0 rgb(var(--pal-blanco) / 0.16),
       inset 0 0 20px rgb(var(--rk-dan-tono) / 0.55);
   }
 }
@@ -3890,7 +3894,7 @@ table .rk-btn:hover:not(:disabled) {
   color: rgb(var(--rk-dan-tono));
   border-color: rgb(var(--rk-dan-tono) / 0.32);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
     inset 0 0 10px rgb(var(--rk-dan-tono) / 0.1);
 }
 
@@ -3900,7 +3904,7 @@ table .rk-btn:hover:not(:disabled) {
     color: rgb(var(--rk-dan-tono));
     border-color: rgb(var(--rk-dan-tono) / 0.55);
     box-shadow:
-      inset 0 1px 0 #fff,
+      inset 0 1px 0 rgb(var(--pal-blanco)),
       inset 0 0 16px rgb(var(--rk-dan-tono) / 0.22);
   }
 }
@@ -3923,14 +3927,14 @@ table .rk-btn:hover:not(:disabled) {
    (Seguir/Siguiendo, Favorito, filtros). Sirve en line, secondary,
    glass y ghost. */
 .rk-btn.rk-btn-line[aria-pressed="true"] {
-  --rk-sec-glass: rgb(255 255 255 / 0.14);
+  --rk-sec-glass: rgb(var(--pal-blanco) / 0.14);
   border-color: var(--rx-b-boton-activo);
 }
 
 .rk-btn.rk-btn-secondary[aria-pressed="true"],
 .rk-btn.rk-btn-glass[aria-pressed="true"] {
   --rk-vid-alfa: 0.16;
-  --rk-vid-borde: rgb(255 255 255 / 0.38);
+  --rk-vid-borde: rgb(var(--pal-blanco) / 0.38);
 }
 
 .rk-btn.rk-btn-ghost[aria-pressed="true"] {
@@ -3939,15 +3943,15 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-btn.rk-btn-line[aria-pressed="true"] {
-  --rk-sec-glass: rgb(255 255 255 / 0.95);
-  border-color: rgb(0 0 0 / 0.22);
+  --rk-sec-glass: rgb(var(--pal-blanco) / 0.95);
+  border-color: rgb(var(--pal-negro) / 0.22);
 }
 
 [data-theme="light"] .rk-btn.rk-btn-secondary[aria-pressed="true"],
 [data-theme="light"] .rk-btn.rk-btn-glass[aria-pressed="true"] {
   --rk-vid-alfa: 0.7;
   box-shadow:
-    inset 0 1px 0 #fff,
+    inset 0 1px 0 rgb(var(--pal-blanco)),
     0 0 0 1px rgb(var(--pal-claro-sombra) / 0.14);
 }
 
@@ -3967,8 +3971,8 @@ table .rk-btn:hover:not(:disabled) {
   gap: 4px;
   padding: 4px;
   border-radius: var(--rk-radius-full);
-  border: 1px solid rgb(255 255 255 / 0.12);
-  background: rgb(255 255 255 / 0.04);
+  border: 1px solid rgb(var(--pal-blanco) / 0.12);
+  background: rgb(var(--pal-blanco) / 0.04);
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
   backdrop-filter: blur(14px) saturate(1.4);
 }
@@ -3998,18 +4002,18 @@ table .rk-btn:hover:not(:disabled) {
     radial-gradient(60% 160% at 0% 50%, rgb(var(--rk-seg-frio) / 0.9), transparent 70%),
     linear-gradient(90deg, rgb(var(--rk-seg-frio)), rgb(var(--rk-seg-centro)) 48%, rgb(var(--rk-seg-calido)));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.9),
-    inset 0 0 12px rgb(255 255 255 / 0.55);
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
+    inset 0 0 12px rgb(var(--pal-blanco) / 0.55);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rk-segment-option:not([aria-pressed="true"]):hover {
     color: var(--rx-texto);
-    background: rgb(255 255 255 / 0.06);
+    background: rgb(var(--pal-blanco) / 0.06);
   }
 
   [data-theme="light"] .rk-segment-option:not([aria-pressed="true"]):hover {
-    background: rgb(255 255 255 / 0.7);
+    background: rgb(var(--pal-blanco) / 0.7);
   }
 }
 
@@ -4019,8 +4023,8 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-segment {
-  border-color: rgb(0 0 0 / 0.08);
-  background: rgb(255 255 255 / 0.45);
+  border-color: rgb(var(--pal-negro) / 0.08);
+  background: rgb(var(--pal-blanco) / 0.45);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4057,10 +4061,10 @@ table .rk-btn:hover:not(:disabled) {
 .rk-select,
 .rk-textarea {
   --rk-in-blur: 18px;
-  --rk-in-relleno: rgb(255 255 255 / 0.035);
-  --rk-in-borde: rgb(255 255 255 / 0.1);
-  --rk-in-borde-alto: rgb(255 255 255 / 0.2);
-  --rk-in-brillo: inset 0 1px 0 rgb(255 255 255 / 0.06);
+  --rk-in-relleno: rgb(var(--pal-blanco) / 0.035);
+  --rk-in-borde: rgb(var(--pal-blanco) / 0.1);
+  --rk-in-borde-alto: rgb(var(--pal-blanco) / 0.2);
+  --rk-in-brillo: inset 0 1px 0 rgb(var(--pal-blanco) / 0.06);
   --rk-in-halo: 0 0 0 0 transparent;
   --rk-in-flecha: none;
 
@@ -4074,7 +4078,7 @@ table .rk-btn:hover:not(:disabled) {
     var(--rk-in-flecha) right 18px center / 16px no-repeat,
     linear-gradient(
       180deg,
-      rgb(255 255 255 / 0.03),
+      rgb(var(--pal-blanco) / 0.03),
       transparent 60%
     ),
     var(--rk-in-relleno);
@@ -4107,7 +4111,7 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-input,
 [data-theme="light"] .rk-select,
 [data-theme="light"] .rk-textarea {
-  --rk-in-relleno: rgb(255 255 255 / 0.7);
+  --rk-in-relleno: rgb(var(--pal-blanco) / 0.7);
   --rk-in-borde: rgb(var(--rk-border));
   --rk-in-borde-alto: rgb(var(--rk-border));
   --rk-in-brillo:
@@ -4121,8 +4125,8 @@ table .rk-btn:hover:not(:disabled) {
   .rk-input:hover:not(:disabled):not(:focus),
   .rk-select:hover:not(:disabled):not(:focus),
   .rk-textarea:hover:not(:disabled):not(:focus) {
-    --rk-in-borde: rgb(255 255 255 / 0.2);
-    --rk-in-borde-alto: rgb(255 255 255 / 0.3);
+    --rk-in-borde: rgb(var(--pal-blanco) / 0.2);
+    --rk-in-borde-alto: rgb(var(--pal-blanco) / 0.3);
   }
 
   [data-theme="light"] .rk-input:hover:not(:disabled):not(:focus),
@@ -4137,7 +4141,7 @@ table .rk-btn:hover:not(:disabled) {
 .rk-input:focus,
 .rk-select:focus,
 .rk-textarea:focus {
-  --rk-in-relleno: rgb(255 255 255 / 0.055);
+  --rk-in-relleno: rgb(var(--pal-blanco) / 0.055);
   --rk-in-borde: rgb(var(--rk-iris-2) / 0.55);
   --rk-in-borde-alto: rgb(var(--rk-iris-2) / 0.7);
   --rk-in-halo: 0 0 0 3px rgb(var(--rk-iris-1) / 0.1);
@@ -4147,7 +4151,7 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-input:focus,
 [data-theme="light"] .rk-select:focus,
 [data-theme="light"] .rk-textarea:focus {
-  --rk-in-relleno: rgb(255 255 255 / 0.95);
+  --rk-in-relleno: rgb(var(--pal-blanco) / 0.95);
   --rk-in-borde: rgb(var(--rk-iris-1) / 0.6);
   --rk-in-borde-alto: rgb(var(--rk-iris-1) / 0.6);
   --rk-in-halo: 0 0 0 3px rgb(var(--rk-iris-1) / 0.1);
@@ -4376,8 +4380,8 @@ table .rk-btn:hover:not(:disabled) {
    Ajustes: --rk-tj-relleno, --rk-tj-borde, --rk-tj-zoom
    ═══════════════════════════════════════════════════════════════════════ */
 .rk-tarjeta {
-  --rk-tj-relleno: rgb(255 255 255 / 0.03);
-  --rk-tj-borde: rgb(255 255 255 / 0.08);
+  --rk-tj-relleno: rgb(var(--pal-blanco) / 0.03);
+  --rk-tj-borde: rgb(var(--pal-blanco) / 0.08);
   --rk-tj-zoom: 1.04;
 
   padding: 8px;
@@ -4407,7 +4411,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 [data-theme="light"] .rk-tarjeta {
-  --rk-tj-relleno: rgb(255 255 255 / 0.55);
+  --rk-tj-relleno: rgb(var(--pal-blanco) / 0.55);
   --rk-tj-borde: rgb(var(--rk-border));
 }
 
@@ -4423,7 +4427,7 @@ table .rk-btn:hover:not(:disabled) {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(var(--pal-blanco) / 0.07);
   pointer-events: none;
 }
 
@@ -4434,11 +4438,11 @@ table .rk-btn:hover:not(:disabled) {
 /* etiquetas sobre la imagen: vidrio casi invisible (estilo "Response time")
    apenas un velo gris, borde muy fino y texto claro atenuado */
 .rk-tarjeta .rk-glass-on-image {
-  background: rgb(255 255 255 / 0.06);
-  border: 1px solid rgb(255 255 255 / 0.14);
+  background: rgb(var(--pal-blanco) / 0.06);
+  border: 1px solid rgb(var(--pal-blanco) / 0.14);
   text-shadow: none;
   box-shadow: none;
-  color: rgb(255 255 255 / 0.82);
+  color: rgb(var(--pal-blanco) / 0.82);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   letter-spacing: 0.02em;
@@ -4451,35 +4455,35 @@ table .rk-btn:hover:not(:disabled) {
   .rk-tarjeta a.rk-glass-on-image:hover,
   [data-theme="light"] .rk-tarjeta button.rk-glass-on-image:hover,
   [data-theme="light"] .rk-tarjeta a.rk-glass-on-image:hover {
-    background: rgb(255 255 255 / 0.14);
-    border-color: rgb(255 255 255 / 0.32);
+    background: rgb(var(--pal-blanco) / 0.14);
+    border-color: rgb(var(--pal-blanco) / 0.32);
   }
 }
 
 [data-theme="light"] .rk-tarjeta .rk-glass-on-image {
-  background: rgb(255 255 255 / 0.06);
-  border-color: rgb(255 255 255 / 0.14);
-  color: rgb(255 255 255 / 0.82);
+  background: rgb(var(--pal-blanco) / 0.06);
+  border-color: rgb(var(--pal-blanco) / 0.14);
+  color: rgb(var(--pal-blanco) / 0.82);
 }
 
 /* hover / foco: solo el borde se aclara; sin sombras ni brillos */
 @media (hover: hover) and (pointer: fine) {
   .rk-tarjeta:hover {
-    --rk-tj-relleno: rgb(255 255 255 / 0.05);
-    --rk-tj-borde: rgb(255 255 255 / 0.16);
+    --rk-tj-relleno: rgb(var(--pal-blanco) / 0.05);
+    --rk-tj-borde: rgb(var(--pal-blanco) / 0.16);
     box-shadow: none;
     transform: none;
   }
 
   [data-theme="light"] .rk-tarjeta:hover {
-    --rk-tj-relleno: rgb(255 255 255 / 0.8);
+    --rk-tj-relleno: rgb(var(--pal-blanco) / 0.8);
     --rk-tj-borde: rgb(var(--pal-claro-texto) / 0.14);
     box-shadow: none;
   }
 }
 
 .rk-tarjeta:focus-within {
-  --rk-tj-borde: rgb(255 255 255 / 0.2);
+  --rk-tj-borde: rgb(var(--pal-blanco) / 0.2);
   box-shadow: none;
   transform: none;
 }
@@ -4524,7 +4528,7 @@ table .rk-btn:hover:not(:disabled) {
   margin-left: auto;
   padding: 2px 7px;
   border-radius: 999px;
-  border: 1px solid rgb(255 255 255 / 0.12);
+  border: 1px solid rgb(var(--pal-blanco) / 0.12);
   font-size: 9.5px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -4595,8 +4599,8 @@ table .rk-btn:hover:not(:disabled) {
   height: var(--rk-st-alto);
   padding: 3px;
   border-radius: 999px;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  background: rgb(255 255 255 / 0.035);
+  border: 1px solid rgb(var(--pal-blanco) / 0.1);
+  background: rgb(var(--pal-blanco) / 0.035);
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
   backdrop-filter: blur(14px) saturate(1.4);
   color: var(--rx-texto);
@@ -4604,7 +4608,7 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-stepper {
   border-color: rgb(var(--rk-border));
-  background: rgb(255 255 255 / 0.6);
+  background: rgb(var(--pal-blanco) / 0.6);
 }
 
 .rk-stepper-sm {
@@ -4621,8 +4625,8 @@ table .rk-btn:hover:not(:disabled) {
   height: var(--rk-st-btn);
   padding: 0;
   border-radius: 999px;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  background: rgb(255 255 255 / 0.05);
+  border: 1px solid rgb(var(--pal-blanco) / 0.1);
+  background: rgb(var(--pal-blanco) / 0.05);
   color: inherit;
   font: inherit;
   font-size: 0.88rem;
@@ -4641,13 +4645,13 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-stepper-btn {
   border-color: rgb(var(--rk-border));
-  background: rgb(255 255 255 / 0.9);
+  background: rgb(var(--pal-blanco) / 0.9);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rk-stepper-btn:hover:not(:disabled) {
-    background: rgb(255 255 255 / 0.12);
-    border-color: rgb(255 255 255 / 0.24);
+    background: rgb(var(--pal-blanco) / 0.12);
+    border-color: rgb(var(--pal-blanco) / 0.24);
   }
 
   [data-theme="light"] .rk-stepper-btn:hover:not(:disabled) {
@@ -4720,8 +4724,8 @@ table .rk-btn:hover:not(:disabled) {
 @media (hover: hover) and (pointer: fine) {
   .rk-icon-button:hover:not(:disabled) {
     color: var(--rx-texto);
-    background: rgb(255 255 255 / 0.06);
-    border-color: rgb(255 255 255 / 0.12);
+    background: rgb(var(--pal-blanco) / 0.06);
+    border-color: rgb(var(--pal-blanco) / 0.12);
   }
 
   [data-theme="light"] .rk-icon-button:hover:not(:disabled) {
@@ -4765,7 +4769,7 @@ table .rk-btn:hover:not(:disabled) {
     rgb(var(--rk-dan-fondo));
   border-color: rgb(var(--rk-dan-tono) / 0.55);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.12),
     inset 0 0 10px rgb(var(--rk-dan-tono) / 0.3);
 }
 
@@ -4776,7 +4780,7 @@ table .rk-btn:hover:not(:disabled) {
   color: rgb(var(--rk-dan-tono));
   border-color: rgb(var(--rk-dan-tono) / 0.32);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
     inset 0 0 8px rgb(var(--rk-dan-tono) / 0.1);
 }
 
@@ -4792,14 +4796,14 @@ table .rk-btn:hover:not(:disabled) {
   .rk-icon-button-danger:hover:not(:disabled) {
     color: rgb(var(--pal-oscuro-texto));
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.16),
+      inset 0 1px 0 rgb(var(--pal-blanco) / 0.16),
       inset 0 0 16px rgb(var(--rk-dan-tono) / 0.55);
   }
 
   [data-theme="light"] .rk-icon-button-danger:hover:not(:disabled) {
     color: rgb(var(--rk-dan-tono));
     box-shadow:
-      inset 0 1px 0 #fff,
+      inset 0 1px 0 rgb(var(--pal-blanco)),
       inset 0 0 14px rgb(var(--rk-dan-tono) / 0.22);
   }
 }
@@ -4853,7 +4857,7 @@ table .rk-btn:hover:not(:disabled) {
   inset: auto 0 0;
   height: 38%;
   border-radius: 0 0 inherit inherit;
-  background: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.28));
+  background: linear-gradient(180deg, transparent, rgb(var(--pal-negro) / 0.28));
   pointer-events: none;
   z-index: 1;
 }
@@ -4909,8 +4913,8 @@ table .rk-btn:hover:not(:disabled) {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 1px solid rgb(255 255 255 / 0.14);
-  background: rgb(255 255 255 / 0.08);
+  border: 1px solid rgb(var(--pal-blanco) / 0.14);
+  background: rgb(var(--pal-blanco) / 0.08);
   font-size: 8.5px;
   font-weight: 600;
   color: var(--rx-texto);
@@ -4939,7 +4943,7 @@ table .rk-btn:hover:not(:disabled) {
   height: 1px;
   margin: 10px 0 8px;
   border: 0;
-  background: rgb(255 255 255 / 0.07);
+  background: rgb(var(--pal-blanco) / 0.07);
 }
 
 [data-theme="light"] .rk-card-divider {
@@ -4957,8 +4961,8 @@ table .rk-btn:hover:not(:disabled) {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid rgb(255 255 255 / 0.22);
-  background: rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(var(--pal-blanco) / 0.22);
+  background: rgb(var(--pal-blanco) / 0.1);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   color: rgb(var(--pal-oscuro-texto));
@@ -5016,7 +5020,7 @@ table .rk-btn:hover:not(:disabled) {
    </article>
    ═══════════════════════════════════════════════════════════════════════ */
 .rk-cart-item {
-  --rk-ci-borde: rgb(255 255 255 / 0.08);
+  --rk-ci-borde: rgb(var(--pal-blanco) / 0.08);
 
   display: grid;
   grid-template-columns: 84px minmax(0, 1fr);
@@ -5024,7 +5028,7 @@ table .rk-btn:hover:not(:disabled) {
   padding: 8px 12px 8px 8px;
   border-radius: 22px;
   border: 1px solid var(--rk-ci-borde);
-  background: rgb(255 255 255 / 0.03);
+  background: rgb(var(--pal-blanco) / 0.03);
   -webkit-backdrop-filter: blur(22px) saturate(1.2);
   backdrop-filter: blur(22px) saturate(1.2);
   transition: border-color var(--rx-t-micro) var(--rx-curva);
@@ -5032,12 +5036,12 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-cart-item {
   --rk-ci-borde: rgb(var(--rk-border));
-  background: rgb(255 255 255 / 0.55);
+  background: rgb(var(--pal-blanco) / 0.55);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rk-cart-item:hover {
-    --rk-ci-borde: rgb(255 255 255 / 0.16);
+    --rk-ci-borde: rgb(var(--pal-blanco) / 0.16);
   }
 
   [data-theme="light"] .rk-cart-item:hover {
@@ -5070,7 +5074,7 @@ table .rk-btn:hover:not(:disabled) {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(var(--pal-blanco) / 0.07);
   pointer-events: none;
 }
 
@@ -5199,7 +5203,7 @@ table .rk-btn:hover:not(:disabled) {
    ═══════════════════════════════════════════════════════════════════════ */
 :root,
 [data-theme="dark"] {
-  --rk-linea: rgb(255 255 255 / 0.08);
+  --rk-linea: rgb(var(--pal-blanco) / 0.08);
 }
 
 [data-theme="light"] {
@@ -5263,8 +5267,8 @@ table .rk-btn:hover:not(:disabled) {
   min-height: 36px;
   padding: 0 14px;
   border-radius: 999px;
-  border: 1px solid rgb(255 255 255 / 0.12);
-  background: rgb(255 255 255 / 0.04);
+  border: 1px solid rgb(var(--pal-blanco) / 0.12);
+  background: rgb(var(--pal-blanco) / 0.04);
   -webkit-backdrop-filter: blur(12px) saturate(1.4);
   backdrop-filter: blur(12px) saturate(1.4);
   box-shadow: none;
@@ -5281,13 +5285,13 @@ table .rk-btn:hover:not(:disabled) {
 
 [data-theme="light"] .rk-chip {
   border-color: rgb(var(--rk-border));
-  background: rgb(255 255 255 / 0.55);
+  background: rgb(var(--pal-blanco) / 0.55);
   color: rgb(var(--rk-muted));
 }
 
 @media (hover: hover) and (pointer: fine) {
   .rk-chip:hover {
-    border-color: rgb(255 255 255 / 0.26);
+    border-color: rgb(var(--pal-blanco) / 0.26);
     color: var(--rx-texto);
   }
 
@@ -5321,7 +5325,7 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-chip[aria-pressed="true"],
 [data-theme="light"] .rk-chip[aria-current],
 [data-theme="light"] .rk-chip[data-activo="true"] {
-  border-color: rgb(255 255 255 / 0.6);
+  border-color: rgb(var(--pal-blanco) / 0.6);
   background:
     radial-gradient(70% 160% at 100% 50%, rgb(var(--pal-claro-marca-calido) / 0.95), transparent 70%),
     radial-gradient(60% 160% at 0% 50%, rgb(var(--pal-claro-borde) / 0.9), transparent 70%),
