@@ -98,8 +98,8 @@ export const viewport: Viewport = {
   // en la navegación inferior de iPhone.
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafafb" },
-    { media: "(prefers-color-scheme: dark)", color: "#111111" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f5f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };
 

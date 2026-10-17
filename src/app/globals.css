@@ -290,7 +290,7 @@
   --pal-claro-faq: 132 132 132;                  /* [data-theme="light"] .rk-faq-icon::befor */
   --pal-claro-help: 91 91 91;                  /* .rk-help-scene */
   --pal-claro-help-2: 114 114 114;               /* .rk-help-scene */
-  --pal-claro-upload: 200 40 48;                /* [data-theme="light"] .rk-upload-error */
+  --pal-claro-upload: 10 10 10;                /* [data-theme="light"] .rk-upload-error */
   --pal-claro-text: 120 120 120;                  /* [data-theme="light"] .rk-text-iris */
   --pal-claro-text-2: 109 109 109;               /* [data-theme="light"] .rk-text-iris */
   --pal-claro-text-3: 132 132 132;               /* [data-theme="light"] .rk-text-iris */
