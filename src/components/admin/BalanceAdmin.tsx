@@ -33,7 +33,7 @@ const serie = (n: number) => ({ c: `rgb(var(--rk-serie-${n}))`, suave: `rgb(var(
 const SERIES = [
   { n: "General", ...serie(1) },
   { n: "Comisión", ...serie(3) },
-  { n: "Creadores", ...serie(2) },
+  { n: "Creadores", ...serie(4) },
 ];
 
 const W = 300;
