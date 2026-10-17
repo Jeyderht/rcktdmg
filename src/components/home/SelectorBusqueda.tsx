@@ -1,6 +1,5 @@
 import QueBuscas, { type OpcionQueBuscasVista } from "@/components/home/QueBuscas";
 import { CATEGORIA_EVENTOS, type OpcionQueBuscas } from "@/lib/home";
-import { formatPrice } from "@/lib/pricing";
 
 /**
  * "¿Qué estás buscando?"
@@ -26,7 +25,7 @@ const OPCIONES = [
     clave: "eventos",
     titulo: "Eventos",
     texto:
-      "Flyers de fiestas, conciertos y fechas señaladas. Listos para publicar.",
+      "Flyers de fiestas, conciertos y fechas señaladas.",
     href: `/tienda?categoria=${CATEGORIA_EVENTOS}`,
     vertical: true,
     sufijo: "de eventos",
@@ -42,18 +41,17 @@ const OPCIONES = [
   },
 ] as const;
 
-/** Columnas del resumen; la que no tiene dato real no se enseña. */
+/**
+ * Columnas del resumen; la que no tiene dato real no se enseña.
+ * Sin «Desde»: el precio más bajo ya sale en el hero.
+ */
 function columnas(datos: OpcionQueBuscas): OpcionQueBuscasVista["columnas"] {
   return [
     datos.creadores > 0 && { etiqueta: "Creadores", valor: String(datos.creadores) },
-    datos.formatos.length > 0 && {
-      etiqueta: "Formato",
-      valor: datos.formatos.join(" · "),
-    },
-    datos.precioMinimo !== null && {
-      etiqueta: "Desde",
-      valor: formatPrice(datos.precioMinimo),
-    },
+    // Cifra grande en un tercio del ancho: con varios formatos
+    // («JPEG · JPG · ZIP») no cabe y se cortaba; va el número.
+    datos.formatos.length === 1 && { etiqueta: "Formato", valor: datos.formatos[0] },
+    datos.formatos.length > 1 && { etiqueta: "Formatos", valor: String(datos.formatos.length) },
   ].filter((c) => c !== false);
 }
 

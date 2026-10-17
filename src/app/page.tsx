@@ -2,15 +2,24 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import {
   ArrowRight,
+  BadgeCheck,
   Compass,
-  ShoppingBag,
+  CreditCard,
   Download,
+  FileImage,
+  Layers,
+  ShieldCheck,
+  ShoppingBag,
+  Wallet,
+  Zap,
 } from "lucide-react";
 
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SelectorBusqueda from "@/components/home/SelectorBusqueda";
 import CatalogoInicio from "@/components/home/CatalogoInicio";
+import CarruselFlyers, { type FlyerCarrusel } from "@/components/home/CarruselFlyers";
+import { formatPrice } from "@/lib/pricing";
 import PalabrasEscritas from "@/components/home/PalabrasEscritas";
 import SliderPortadas from "@/components/home/SliderPortadas";
 import CarruselCreadores from "@/components/home/CarruselCreadores";
@@ -76,6 +85,30 @@ const PASOS = [
   },
 ];
 
+/* «Por qué comprar en RcktX»: lo que de verdad hace la tienda. */
+const MOTIVOS = [
+  {
+    icono: FileImage,
+    titulo: "Listos para editar",
+    texto: "Archivos en el formato de su ficha (PSD, AI o JPEG) para usar al instante.",
+  },
+  {
+    icono: Zap,
+    titulo: "Descarga al pagar",
+    texto: "Queda en tu cuenta y lo bajas cuando quieras, sin esperar a nadie.",
+  },
+  {
+    icono: Wallet,
+    titulo: "Paga en soles",
+    texto: "Yape, Plin o tarjeta. Sin cuentas en dólares ni conversiones.",
+  },
+  {
+    icono: BadgeCheck,
+    titulo: "Licencia incluida",
+    texto: "Cada recurso indica su licencia en la ficha y en Mi cuenta.",
+  },
+];
+
 export default async function Home() {
   /*
    * Todos los datos de la home salen de la base de datos.
@@ -105,6 +138,28 @@ export default async function Home() {
     /* Catálogo por categoría: 4 categorías, hasta 8 por pestaña. */
     datosCatalogoInicio(),
   ]);
+
+  /*
+    Carrusel del hero: solo flyers de EVENTOS, los 7 más recientes
+    con imagen. Sin relleno: con 1 o 2 flyers se ven 1 o 2.
+  */
+  const flyers: FlyerCarrusel[] = catalogo.eventos.recientes.slice(0, 7).flatMap((p) => {
+    const imagen = p.coverUrl || p.images[0]?.url;
+
+    return imagen
+      ? [{
+          id: p.id,
+          slug: p.slug,
+          name: p.name,
+          price: Number(p.price),
+          imagen,
+          creador: p.creator.publicName || p.creator.name || "Creador",
+        }]
+      : [];
+  });
+
+  /* «Populares ahora»: los tres primeros términos reales. */
+  const populares = destacadosBusqueda.slice(0, 3);
 
   /*
     Datos estructurados de la home.
@@ -159,15 +214,9 @@ export default async function Home() {
 
       <main className="rk-inicio">
 
-        {/*
-          Separador entre la barra superior y el slider: la línea
-          con nodos del separador del pie, sin el isotipo.
-        */}
-        <div aria-hidden className="rk-separador rk-separador-arriba">
-          <span className="rk-separador-linea" />
-        </div>
-
-        {/* ══════════ SLIDER DE PORTADAS ══════════ */}
+        {/* ══════════ SLIDER DE PORTADAS ══════════
+            Primer elemento, justo bajo el menú: es el espacio de
+            anuncios. Sin portadas activas, el hero queda primero. */}
         {promos.length > 0 && <SliderPortadas portadas={promos} />}
 
         {/* ══════════ HERO ══════════ */}
@@ -195,10 +244,10 @@ export default async function Home() {
                 */}
                 <h1
                   className="rk-hc-titulo"
-                  aria-label="Todo lo que necesitas para crear mejor, más rápido, con estilo y sin límites."
+                  aria-label="Plantillas y flyers para crear eventos, tu negocio, redes sociales y vender más."
                 >
                   <span aria-hidden className="rk-hc-l1">
-                    Todo lo que necesitas para
+                    Plantillas y flyers para
                   </span>
                   <span aria-hidden className="rk-hc-gigante">
                     <span className="rk-hc-letras">cr</span>
@@ -210,10 +259,10 @@ export default async function Home() {
                   <span aria-hidden className="rk-hc-l3">
                     <PalabrasEscritas
                       palabras={[
-                        "mejor.",
-                        "más rápido.",
-                        "con estilo.",
-                        "sin límites.",
+                        "eventos.",
+                        "tu negocio.",
+                        "redes sociales.",
+                        "vender más.",
                       ]}
                     />
                   </span>
@@ -257,8 +306,10 @@ export default async function Home() {
                       Centrado sin transform: el :hover y el :active
                       del botón ponían su propio transform, pisaban el
                       -translate-y-1/2 y el botón bajaba media altura.
+                      A 9 px del borde (+1 px de borde = 10 px), lo
+                      mismo que arriba y abajo.
                     */}
-                    <div className="absolute inset-y-0 right-1.5 flex items-center">
+                    <div className="absolute inset-y-0 right-[9px] flex items-center">
                       <button
                         type="submit"
                         className="rk-buscador-accion"
@@ -269,13 +320,29 @@ export default async function Home() {
                   </div>
                 </form>
 
+                {/* POPULARES AHORA: términos reales; sin datos, no se pinta. */}
+                {populares.length > 0 && (
+                  <div className="rkp-populares">
+                    <span>Populares ahora</span>
+                    {populares.map((t) => (
+                      <Link
+                        key={t.etiqueta}
+                        href={`/tienda?q=${encodeURIComponent(t.etiqueta)}`}
+                        className="rkp-chip"
+                      >
+                        {t.etiqueta}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+
                 {/* Hero a una columna: buscador y botones centrados bajo el titular. */}
                 <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href="/tienda"
-                    className="rk-btn rk-btn-line"
+                    className="rk-btn rk-btn-ink"
                   >
-                    Explorar recursos
+                    Ver recursos
                     <ArrowRight size={16} />
                   </Link>
 
@@ -286,6 +353,30 @@ export default async function Home() {
                     Ver creadores
                   </Link>
                 </div>
+
+                {/* CARRUSEL DE FLYERS DE EVENTOS (sin flyers, no se pinta) */}
+                <CarruselFlyers flyers={flyers} />
+
+                {queBuscas.eventos.precioMinimo !== null && (
+                  <p className="rkp-fan-pie">
+                    Flyers editables desde <b>{formatPrice(queBuscas.eventos.precioMinimo)}</b> · se descargan al pagar
+                  </p>
+                )}
+
+                <ul className="rkp-confianza">
+                  <li>
+                    <Zap size={14} aria-hidden />
+                    Descarga inmediata
+                  </li>
+                  <li>
+                    <CreditCard size={14} aria-hidden />
+                    Yape, Plin y tarjeta
+                  </li>
+                  <li>
+                    <ShieldCheck size={14} aria-hidden />
+                    Licencia de uso
+                  </li>
+                </ul>
               </div>
 
             </div>
@@ -293,7 +384,7 @@ export default async function Home() {
         </section>
 
         {/* ══════════ ¿QUÉ ESTÁS BUSCANDO? ══════════
-            Sin separador decorativo con el hero: solo espacio. */}
+            El título queda solo para lectores de pantalla. */}
         <SelectorBusqueda datos={queBuscas} />
 
         {/*
@@ -301,25 +392,9 @@ export default async function Home() {
 
           Eventos, General, Colecciones y Packs, cada una con sus
           pestañas Recientes / Populares / Packs. Eventos sale
-          elegida en cada carga. Sin separadores alrededor: solo
-          espacio.
+          elegida en cada carga.
         */}
         <CatalogoInicio datos={catalogo} />
-
-        {/*
-          ══════════ CREADORES ══════════
-
-          Era una rejilla de cuatro. Ahora es un carrusel que
-          cabe en una línea aunque haya veinte creadores. Es
-          la MISMA sección, no una segunda: se sustituye, no
-          se duplica.
-        */}
-        <CarruselCreadores creadores={creadoresHome} />
-
-        <SeparadorSeccion />
-
-        {/* ══════════ MÁS DISEÑOS PARA TU NEGOCIO ══════════ */}
-        <MasDisenos />
 
         <SeparadorSeccion />
 
@@ -358,15 +433,81 @@ export default async function Home() {
 
         <SeparadorSeccion />
 
-        {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
-        <Ecosistema />
+        {/*
+          ══════════ CREADORES ══════════
+
+          Carrusel que cabe en una línea aunque haya veinte
+          creadores.
+        */}
+        <CarruselCreadores creadores={creadoresHome} />
+
+        <SeparadorSeccion />
+
+        {/* ══════════ PACKS Y COLECCIONES ══════════ */}
+        <section>
+          <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8">
+            <div className="rkp-packs-caja">
+              <Layers size={28} aria-hidden />
+
+              <div>
+                <h2>Llévate más y paga menos</h2>
+                <p>
+                  Los packs y colecciones agrupan varios recursos a un precio menor que por separado.
+                </p>
+              </div>
+
+              <div className="rkp-packs-acciones">
+                <Link href="/packs" className="rk-btn rk-btn-ink">
+                  Ver packs
+                  <ArrowRight size={16} />
+                </Link>
+                <Link href="/colecciones-comerciales" className="rk-btn rk-btn-ghost">
+                  Ver colecciones
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <SeparadorSeccion />
+
+        {/* ══════════ POR QUÉ COMPRAR EN RCKTX ══════════ */}
+        <section className="rkp-porque">
+          <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8">
+            <h2 className="rk-title text-[1.75rem] sm:text-4xl">
+              Por qué comprar en RcktX
+            </h2>
+
+            <ul className="rkp-porque-lista">
+              {MOTIVOS.map((m) => {
+                const Icono = m.icono;
+
+                return (
+                  <li key={m.titulo} className="rk-card">
+                    <Icono size={22} aria-hidden />
+                    <h3>{m.titulo}</h3>
+                    <p>{m.texto}</p>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+
+        <SeparadorSeccion />
+
+        {/* ══════════ MÁS DISEÑOS PARA TU NEGOCIO ══════════ */}
+        <MasDisenos />
+
+        <SeparadorSeccion />
 
         {/* ══════════ PREGUNTAS FRECUENTES ══════════ */}
-        <div aria-hidden className="rk-separador rk-separador-arriba rk-sep-faq">
-          <span className="rk-separador-linea" />
-        </div>
-
         <PreguntasFrecuentes sinEtiquetas />
+
+        <SeparadorSeccion />
+
+        {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
+        <Ecosistema />
 
         {/* ══════════ CTA FINAL (con la modelo) ══════════ */}
         {/* Precio más bajo publicado: eventos + diseños generales

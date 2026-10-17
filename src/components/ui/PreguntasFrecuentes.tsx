@@ -246,13 +246,22 @@ export default function PreguntasFrecuentes({
           <span className="rk-faq-eyebrow">Dudas comunes</span>
         )}
 
-        {/* El «?» es un círculo de marca que flota; el nombre real va en aria-label. */}
+        {/*
+          Fuera del inicio, el «?» es un círculo de marca que flota; en el
+          inicio (sinEtiquetas) el título va sin él. El nombre real va en
+          aria-label.
+        */}
         <h2
           id="faq-titulo"
           className="rk-faq-title"
           aria-label="Preguntas frecuentes"
         >
-          Preguntas <span className="rk-faq-ins" aria-hidden="true">?</span>{" "}
+          Preguntas{" "}
+          {!sinEtiquetas && (
+            <>
+              <span className="rk-faq-ins" aria-hidden="true">?</span>{" "}
+            </>
+          )}
           frecuentes
         </h2>
 

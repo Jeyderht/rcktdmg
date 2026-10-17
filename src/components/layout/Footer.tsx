@@ -74,6 +74,10 @@ export default function Footer() {
 
         {/* LLAMADA A CREADORES · tarjeta de marca con el cohete */}
         <div className="rk-footer-cta">
+          {/* Haz de luz que cruza y polvo de partículas (decorativos). */}
+          <span aria-hidden className="rk-fc-haz" />
+          <span aria-hidden className="rk-fc-polvo" />
+
           <Image
             src="/marketing/cohete.svg"
             alt=""
@@ -89,7 +93,8 @@ export default function Footer() {
 
           <div className="rk-footer-cta-body">
             <p className="rk-footer-cta-title">
-              Publica tus recursos y vende en RcktX
+              <span className="rk-fc-t1">Publica tus recursos</span>{" "}
+              <span className="rk-fc-t2">y vende en RcktX</span>
             </p>
 
             <div className="rk-footer-cta-actions">
