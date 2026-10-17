@@ -244,10 +244,10 @@ export default async function Home() {
                 */}
                 <h1
                   className="rk-hc-titulo"
-                  aria-label="Plantillas y flyers para crear eventos, tu negocio, redes sociales y vender más."
+                  aria-label="Todo lo que necesitas para crear mejor, más rápido, con estilo y sin límites."
                 >
                   <span aria-hidden className="rk-hc-l1">
-                    Plantillas y flyers para
+                    Todo lo que necesitas para
                   </span>
                   <span aria-hidden className="rk-hc-gigante">
                     <span className="rk-hc-letras">cr</span>
@@ -259,10 +259,10 @@ export default async function Home() {
                   <span aria-hidden className="rk-hc-l3">
                     <PalabrasEscritas
                       palabras={[
-                        "eventos.",
-                        "tu negocio.",
-                        "redes sociales.",
-                        "vender más.",
+                        "mejor.",
+                        "más rápido.",
+                        "con estilo.",
+                        "sin límites.",
                       ]}
                     />
                   </span>
@@ -342,7 +342,7 @@ export default async function Home() {
                     href="/tienda"
                     className="rk-btn rk-btn-ink"
                   >
-                    Ver recursos
+                    Explorar recursos
                     <ArrowRight size={16} />
                   </Link>
 
