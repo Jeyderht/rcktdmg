@@ -83,14 +83,14 @@
     §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15117–15173
     §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15174–15304
     §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15305–15624
-    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15625–15975
-    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15976–16231
-    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16232–16445
-    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16446–16818
-    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16819–17139
-    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17140–19979
-    §71  BB. INICIO (encargo de la home)                                  19980–20808
-    §72  Inicio · vender más                                              20809–21686
+    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15625–15980
+    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15981–16236
+    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16237–16450
+    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16451–16823
+    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16824–17144
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17145–19984
+    §71  BB. INICIO (encargo de la home)                                  19985–20813
+    §72  Inicio · vender más                                              20814–21691
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -15679,13 +15679,17 @@ div.rk-upload-error > * + * {
   --hc-g2: rgb(var(--rk-letras-2));
   --hc-g3: rgb(var(--rk-letras-3));
   /*
-    «cr» y «ar» en tinta sólida, sin degradado ni animación de
-    color (§72, Inicio). El relleno y el margen negativo venían
-    del recorte del degradado; se conservan para no mover nada.
+    El recorte del degradado llega solo hasta la caja del texto;
+    con el tracking negativo las puntas de la «r» se salían. El
+    relleno agranda la caja y el margen negativo lo compensa.
   */
   padding: 0.1em 0.08em;
   margin: -0.1em -0.08em;
+  background: linear-gradient(90deg, var(--hc-g1), var(--hc-g2) 50%, var(--hc-g3));
+  -webkit-background-clip: text;
+          background-clip: text;
   color: rgb(var(--rk-foreground));
+  animation: rk-hc-letras 5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
 [data-theme="dark"] .rk-hc-letras {
@@ -15969,6 +15973,7 @@ div.rk-upload-error > * + * {
     animation: none;
   }
   .rk-hc-switch::before { opacity: 1; }
+  .rk-hc-letras { color: transparent; }
   .rk-hc-marco { display: none; }
   .rk-hc-switch i { transform: translateX(0.58em); }
 }
