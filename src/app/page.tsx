@@ -340,7 +340,7 @@ export default async function Home() {
                 <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href="/tienda"
-                    className="rk-btn rk-btn-ink"
+                    className="rk-btn rk-btn-line"
                   >
                     Explorar recursos
                     <ArrowRight size={16} />
