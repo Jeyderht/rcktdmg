@@ -18,78 +18,78 @@
    constante en la PALETA y un token que la use.
 
    ÍNDICE (sección y rango de líneas)
-    §0   PALETA · única fuente de los colores                             102–358
-    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 359–403
-    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           404–706
-    §3   BASE  ·  body, selección, utilidades sueltas                     707–792
-    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 793–1534
-    §5   UTILIDADES  ·  @layer utilities                                  1535–1653
-    §6   PIEZAS SUELTAS  ·  @layer components                             1654–1728
-    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1729–1770
-    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1771–1823
-    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1824–1947
-    §10  LA TARJETA DE RECURSO                                            1948–2012
-    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            2013–2914
-    §12  SISTEMA DE INTERACCIÓN                                           2915–3697
-    §13  A. BOTONES                                                       3698–4204
-    §14  B · C · D                                                        4205–4537
-    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4538–4723
-    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4724–4743
-    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4744–4995
-    §18  C2. TARJETA DE RECURSO · versión refinada                        4996–5168
-    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5169–5363
-    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5364–5415
-    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5416–5606
-    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5607–5914
-    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5915–6291
-    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6292–6431
-    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6432–6511
-    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6512–6632
-    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6633–6864
-    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6865–7050
-    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          7051–7386
-    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7387–7881
-    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7882–8122
-    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8123–8305
-    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8306–8614
-    §34  W. TABLAS  ·  rk-table · rk-pagination                           8615–8862
-    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8863–9103
-    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9104–9470
-    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9471–9873
-    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9874–10241
-    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10242–10564
-    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10565–10849
-    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10850–11086
-    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11087–11210
-    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11211–11422
-    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11423–11866
-    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11867–12124
-    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12125–12333
-    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12334–12710
-    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12711–13192
-    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13193–13461
-    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13462–13540
-    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13541–13698
-    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13699–13816
-    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13817–13865
-    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13866–13901
-    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13902–14237
-    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14238–14291
-    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14292–14647
-    §58  AV · CTA final con la modelo (estilo hero)                       14648–14701
-    §59  AW · Ecosistema: fila con núcleo hexagonal                       14702–14964
-    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          14965–15039
-    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      15040–15057
-    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15058–15114
-    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15115–15245
-    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15246–15565
-    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15566–15926
-    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15927–16182
-    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16183–16396
-    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16397–16769
-    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16770–17090
-    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17091–19931
-    §71  BB. INICIO (encargo de la home)                                  19932–20768
+    §0   PALETA · única fuente de los colores                             102–401
+    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 402–446
+    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           447–749
+    §3   BASE  ·  body, selección, utilidades sueltas                     750–835
+    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 836–1577
+    §5   UTILIDADES  ·  @layer utilities                                  1578–1696
+    §6   PIEZAS SUELTAS  ·  @layer components                             1697–1771
+    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1772–1813
+    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1814–1866
+    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1867–1990
+    §10  LA TARJETA DE RECURSO                                            1991–2055
+    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            2056–2957
+    §12  SISTEMA DE INTERACCIÓN                                           2958–3740
+    §13  A. BOTONES                                                       3741–4247
+    §14  B · C · D                                                        4248–4580
+    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4581–4766
+    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4767–4786
+    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4787–5038
+    §18  C2. TARJETA DE RECURSO · versión refinada                        5039–5211
+    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5212–5406
+    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5407–5458
+    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5459–5649
+    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5650–5957
+    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5958–6334
+    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6335–6474
+    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6475–6554
+    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6555–6675
+    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6676–6907
+    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6908–7093
+    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          7094–7429
+    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7430–7924
+    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7925–8165
+    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8166–8348
+    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8349–8657
+    §34  W. TABLAS  ·  rk-table · rk-pagination                           8658–8905
+    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8906–9146
+    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9147–9513
+    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9514–9916
+    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9917–10284
+    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10285–10607
+    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10608–10892
+    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10893–11129
+    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11130–11253
+    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11254–11465
+    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11466–11900
+    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11901–12158
+    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12159–12367
+    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12368–12744
+    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12745–13226
+    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13227–13495
+    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13496–13574
+    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13575–13732
+    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13733–13850
+    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13851–13899
+    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13900–13935
+    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13936–14271
+    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14272–14325
+    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14326–14681
+    §58  AV · CTA final con la modelo (estilo hero)                       14682–14735
+    §59  AW · Ecosistema: fila con núcleo hexagonal                       14736–14998
+    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          14999–15073
+    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      15074–15091
+    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15092–15148
+    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15149–15279
+    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15280–15599
+    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15600–15960
+    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15961–16216
+    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16217–16430
+    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16431–16803
+    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16804–17124
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17125–19965
+    §71  BB. INICIO (encargo de la home)                                  19966–20794
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -214,6 +214,27 @@
   --pal-oscuro-cta-medio: 23 23 23;           /* círculo de la modelo, oscuro */
   --pal-oscuro-cta-fin: 11 11 11;             /* círculo de la modelo, oscuro */
 
+  /* Coinnect B4: tarjeta «Únete», banda del pie, ecosistema y «Más diseños» */
+  --pal-claro-unete: 10 10 10;                /* tarjeta «Únete», claro */
+  --pal-oscuro-unete: 13 13 13;               /* tarjeta «Únete», oscuro */
+  --pal-claro-unete-alto: 20 20 20;           /* tarjeta «Únete», arriba del degradado */
+  --pal-oscuro-unete-alto: 20 20 20;          /* tarjeta «Únete», arriba del degradado */
+  --pal-claro-banda-ext: 230 230 230;         /* banda de firma del pie, extremos */
+  --pal-claro-banda-centro: 196 196 196;      /* banda de firma, centro */
+  --pal-oscuro-banda-ext: 16 16 16;           /* banda de firma del pie, extremos */
+  --pal-oscuro-banda-centro: 38 38 38;        /* banda de firma, centro */
+  --pal-claro-eco-fondo: 239 239 239;         /* hexágono del ecosistema, claro */
+  --pal-oscuro-eco-fondo: 13 13 13;           /* hexágono del ecosistema, oscuro */
+  --pal-claro-eco-aro: 154 154 154;           /* aro del ecosistema, claro */
+  --pal-oscuro-eco-aro: 106 106 106;          /* aro del ecosistema, oscuro */
+  --pal-claro-eco-nucleo-a: 255 255 255;      /* núcleo del ecosistema, claro */
+  --pal-claro-eco-nucleo-b: 228 228 228;      /* núcleo, claro */
+  --pal-oscuro-eco-nucleo-a: 44 44 44;        /* núcleo del ecosistema, oscuro */
+  --pal-oscuro-eco-nucleo-b: 16 16 16;        /* núcleo, oscuro */
+  --pal-claro-eco-letra: 10 10 10;            /* letras de Adobe, logo de Figma y siglas, claro */
+  --pal-oscuro-eco-letra: 255 255 255;        /* letras de Adobe, logo de Figma y siglas, oscuro */
+  --pal-oscuro-camino: 21 21 21;              /* «Más diseños», arriba del degradado, oscuro */
+
   /* Blanco y negro puros: fijos, no cambian con el tema (brillos, velos, texto sobre foto). */
   --pal-blanco: 255 255 255;
   --pal-negro: 0 0 0;
@@ -273,26 +294,26 @@
   --pal-claro-swatch-3: 58 157 93;              /* .rk-swatch-multi */
   --pal-claro-swatch-4: 47 111 224;             /* .rk-swatch-multi */
   --pal-claro-swatch-5: 122 79 208;             /* .rk-swatch-multi */
-  --pal-claro-footer: 163 156 255;              /* .rk-footer-marca::after */
-  --pal-claro-footer-2: 214 194 245;            /* .rk-footer-marca::after */
-  --pal-claro-footer-3: 255 174 140;            /* .rk-footer-marca::after */
+  --pal-claro-footer: 165 165 165;              /* .rk-footer-marca::after */
+  --pal-claro-footer-2: 201 201 201;            /* .rk-footer-marca::after */
+  --pal-claro-footer-3: 189 189 189;            /* .rk-footer-marca::after */
   --pal-claro-text-4: 127 127 127;               /* [data-theme="light"] .rk-text-iris */
   --pal-claro-text-5: 142 142 142;               /* [data-theme="light"] .rk-text-iris */
   --pal-claro-story: 10 10 12;                  /* .rk-story-avatar */
   --pal-claro-tarjeta-2: 255 255 255;           /* .rk-tarjeta .rk-glass-on-image.text-dang */
-  --pal-claro-prog: 31 127 209;                 /* .rk-prog-sigla.is-ps */
-  --pal-claro-prog-2: 122 90 245;               /* .rk-prog-sigla.is-canva */
+  --pal-claro-prog: 110 110 110;                 /* .rk-prog-sigla.is-ps */
+  --pal-claro-prog-2: 112 112 112;               /* .rk-prog-sigla.is-canva */
   --pal-claro-cta: 185 185 185;                 /* .rk-cta-modelo-circle */
   --pal-claro-cta-2: 211 211 211;               /* .rk-cta-modelo-circle */
   --pal-claro-cta-3: 147 147 147;               /* .rk-cta-modelo-circle */
-  --pal-claro-eco: 143 139 214;                 /* .rk-eco-pulso */
-  --pal-oscuro-eco: 195 191 255;                /* [data-theme="dark"] .rk-eco-pulso */
-  --pal-claro-eco-2: 120 100 150;               /* .rk-eco-hexwrap */
+  --pal-claro-eco: 145 145 145;                 /* .rk-eco-pulso */
+  --pal-oscuro-eco: 195 195 195;                /* [data-theme="dark"] .rk-eco-pulso */
+  --pal-claro-eco-2: 108 108 108;               /* .rk-eco-hexwrap */
   --pal-oscuro-eco-2: 48 48 48;                 /* [data-theme="dark"] .rk-eco-hex */
-  --pal-claro-eco-3: 110 80 110;                /* .rk-eco-nucleo */
-  --pal-claro-eco-4: 201 198 234;               /* .rk-eco-nucleo */
-  --pal-claro-eco-5: 248 211 195;               /* .rk-eco-nucleo */
-  --pal-claro-eco-6: 255 181 154;               /* .rk-eco-hex::after */
+  --pal-claro-eco-3: 92 92 92;                /* .rk-eco-nucleo */
+  --pal-claro-eco-4: 200 200 200;               /* .rk-eco-nucleo */
+  --pal-claro-eco-5: 218 218 218;               /* .rk-eco-nucleo */
+  --pal-claro-eco-6: 195 195 195;               /* .rk-eco-hex::after */
   --pal-claro-hc: 145 145 145;                  /* [data-fase="inicio"] .rk-hc-marco, [data */
   --pal-claro-dash: 233 201 220;                /* .rk-dash .rk-pl-tarjeta */
   --pal-claro-dash-2: 201 195 240;              /* .rk-dash .rk-pl-tarjeta */
@@ -300,12 +321,12 @@
   --pal-claro-faq-2: 129 129 129;               /* .rk-faq-intro .rk-faq-eyebrow */
   --pal-oscuro-faq: 171 171 171;                /* [data-theme="dark"] .rk-faq-intro .rk-fa */
   --pal-claro-faq-3: 175 175 175;               /* .rk-faq-ins */
-  --pal-oscuro-eco-3: 210 206 248;              /* .rk-eco-nucleo, [data-theme="dark"] .rk- */
-  --pal-oscuro-eco-4: 251 230 218;              /* .rk-eco-nucleo, [data-theme="dark"] .rk- */
-  --pal-oscuro-eco-5: 249 211 192;              /* .rk-eco-nucleo, [data-theme="dark"] .rk- */
-  --pal-claro-footer-4: 207 201 247;            /* [data-theme="light"] .rk-footer-cta::aft */
-  --pal-claro-footer-5: 251 217 198;            /* [data-theme="light"] .rk-footer-cta::aft */
-  --pal-claro-footer-6: 150 100 85;             /* .rk-footer-cta .rk-btn.rk-btn-ink */
+  --pal-oscuro-eco-3: 208 208 208;              /* .rk-eco-nucleo, [data-theme="dark"] .rk- */
+  --pal-oscuro-eco-4: 234 234 234;              /* .rk-eco-nucleo, [data-theme="dark"] .rk- */
+  --pal-oscuro-eco-5: 220 220 220;              /* .rk-eco-nucleo, [data-theme="dark"] .rk- */
+  --pal-claro-footer-4: 205 205 205;            /* [data-theme="light"] .rk-footer-cta::aft */
+  --pal-claro-footer-5: 222 222 222;            /* [data-theme="light"] .rk-footer-cta::aft */
+  --pal-claro-footer-6: 112 112 112;             /* .rk-footer-cta .rk-btn.rk-btn-ink */
 }
 
 /* Tokens semánticos nuevos: nombran usos que hoy van con colores
@@ -334,6 +355,17 @@
   --rk-cta-1: var(--pal-claro-cta-1);
   --rk-cta-medio: var(--pal-claro-cta-medio);
   --rk-cta-fin: var(--pal-claro-cta-fin);
+  --rk-unete: var(--pal-claro-unete);
+  --rk-unete-alto: var(--pal-claro-unete-alto);
+  --rk-banda-ext: var(--pal-claro-banda-ext);
+  --rk-banda-centro: var(--pal-claro-banda-centro);
+  --rk-eco-aro-2: var(--pal-claro-eco-aro);
+  --rk-eco-n-a: var(--pal-claro-eco-nucleo-a);
+  --rk-eco-n-b: var(--pal-claro-eco-nucleo-b);
+  --rk-eco-borde: rgb(var(--pal-claro-texto) / .1);
+  --rk-eco-cohete-c: var(--pal-claro-texto);
+  --rk-eco-letra: var(--pal-claro-eco-letra);
+  --rk-camino-luz: var(--pal-claro-texto);
 }
 
 [data-theme="dark"] {
@@ -343,6 +375,17 @@
   --rk-serie-3: var(--pal-oscuro-serie-3);
   --rk-serie-4: var(--pal-oscuro-serie-4);
   --rk-serie-5: var(--pal-oscuro-serie-5);
+  --rk-unete: var(--pal-oscuro-unete);
+  --rk-unete-alto: var(--pal-oscuro-unete-alto);
+  --rk-banda-ext: var(--pal-oscuro-banda-ext);
+  --rk-banda-centro: var(--pal-oscuro-banda-centro);
+  --rk-eco-aro-2: var(--pal-oscuro-eco-aro);
+  --rk-eco-n-a: var(--pal-oscuro-eco-nucleo-a);
+  --rk-eco-n-b: var(--pal-oscuro-eco-nucleo-b);
+  --rk-eco-borde: rgb(var(--pal-blanco) / .16);
+  --rk-eco-cohete-c: var(--pal-blanco);
+  --rk-eco-letra: var(--pal-oscuro-eco-letra);
+  --rk-camino-luz: var(--pal-blanco);
   --rk-cta-1: var(--pal-oscuro-cta-1);
   --rk-cta-medio: var(--pal-oscuro-cta-medio);
   --rk-cta-fin: var(--pal-oscuro-cta-fin);
@@ -5495,9 +5538,9 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-chip[data-activo="true"] {
   border-color: rgb(var(--pal-blanco) / 0.6);
   background:
-    radial-gradient(70% 160% at 100% 50%, rgb(var(--pal-claro-marca-calido) / 0.95), transparent 70%),
+    radial-gradient(70% 160% at 100% 50%, rgb(var(--rk-marca-calido) / 0.95), transparent 70%),
     radial-gradient(60% 160% at 0% 50%, rgb(var(--pal-claro-borde) / 0.9), transparent 70%),
-    linear-gradient(90deg, rgb(var(--pal-claro-borde)), rgb(var(--rk-background)) 48%, rgb(var(--pal-claro-marca-calido)));
+    linear-gradient(90deg, rgb(var(--pal-claro-borde)), rgb(var(--rk-background)) 48%, rgb(var(--rk-marca-calido)));
   color: rgb(var(--rk-foreground));
 }
 
@@ -11467,10 +11510,8 @@ table .rk-btn:hover:not(:disabled) {
   padding: 36px 24px;
   border-radius: 28px;
   background:
-    radial-gradient(70% 160% at 100% 50%, rgb(var(--rk-marca-calido) / 0.95), transparent 70%),
-    radial-gradient(60% 160% at 0% 50%, rgb(var(--rk-marca-frio) / 0.9), transparent 70%),
-    var(--rk-marca-degradado);
-  color: rgb(var(--rk-marca-tinta));
+    radial-gradient(70% 160% at 100% 50%, rgb(var(--pal-blanco) / 0.06), transparent 70%), radial-gradient(60% 160% at 0% 50%, rgb(var(--pal-blanco) / 0.04), transparent 70%), linear-gradient(rgb(var(--rk-unete)), rgb(var(--rk-unete)));
+  color: rgb(var(--pal-blanco));
 }
 
 .rk-footer-cta-cohete {
@@ -11517,9 +11558,9 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="dark"] .rk-footer-cta .rk-btn.rk-btn-ink,
 [data-theme="light"] .rk-footer-cta .rk-btn.rk-btn-ink {
   border-color: transparent;
-  background: rgb(var(--rk-marca-tinta));
+  background: rgb(var(--pal-blanco));
   box-shadow: none;
-  color: rgb(var(--rk-foreground));
+  color: rgb(var(--pal-claro-texto));
 }
 
 @media (min-width: 768px) {
@@ -11764,13 +11805,7 @@ table .rk-btn:hover:not(:disabled) {
   margin: 28px -16px -28px;
   padding-top: 26px;
   /* degradado parejo, sin centro blanco */
-  background: linear-gradient(
-    90deg,
-    rgb(var(--rk-marca-frio)) 0%,
-    rgb(var(--pal-claro-borde)) 42%,
-    rgb(var(--pal-claro-borde)) 68%,
-    rgb(var(--rk-marca-calido)) 100%
-  );
+  background: linear-gradient( 90deg, rgb(var(--rk-banda-ext)) 0%, rgb(var(--rk-banda-centro)) 42%, rgb(var(--rk-banda-centro)) 68%, rgb(var(--rk-banda-ext)) 100% );
   user-select: none;
 }
 
@@ -11804,8 +11839,7 @@ table .rk-btn:hover:not(:disabled) {
   height: 29px;
   border-radius: 0 0 29px 29px;
   background:
-    linear-gradient(90deg, transparent 38%, rgb(var(--pal-claro-footer)) 45%, rgb(var(--pal-claro-footer-2)) 50%, rgb(var(--pal-claro-footer-3)) 55%, transparent 62%) no-repeat,
-    rgb(var(--rk-marca-frio) / 0.25);
+    linear-gradient(90deg, transparent 38%, rgb(var(--pal-blanco) / .55) 45%, rgb(var(--pal-blanco) / .55) 50%, rgb(var(--pal-blanco) / .55) 55%, transparent 62%) no-repeat, rgb(var(--pal-claro-btn) / 0.12);
   background-size: 260% 100%, auto;
   background-position: 120% 0, 0 0;
   animation: rk-banda-brillo 5s ease-in-out infinite;
@@ -14092,8 +14126,8 @@ div.rk-upload-error > * + * {
   line-height: 1;
 }
 
-.rk-prog-sigla.is-ps { color: rgb(var(--pal-claro-prog)); }
-.rk-prog-sigla.is-canva { color: rgb(var(--pal-claro-prog-2)); }
+.rk-prog-sigla.is-ps { color: rgb(var(--rk-eco-letra)); }
+.rk-prog-sigla.is-canva { color: rgb(var(--rk-eco-letra)); }
 
 @media (max-width: 639px) {
   .rk-folder-programa { width: 18px; height: 18px; }
@@ -14799,10 +14833,10 @@ div.rk-upload-error > * + * {
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: linear-gradient(180deg, rgb(var(--pal-blanco)), rgb(var(--pal-claro-fondo)));
+  background: linear-gradient(180deg, rgb(var(--pal-blanco)), rgb(var(--pal-claro-eco-fondo)));
 }
 [data-theme="dark"] .rk-eco-hex {
-  background: linear-gradient(180deg, rgb(var(--pal-oscuro-eco-2)), rgb(var(--rk-card)));
+  background: linear-gradient(180deg, rgb(var(--pal-oscuro-elevado)), rgb(var(--pal-oscuro-eco-fondo)));
 }
 [data-theme="dark"] .rk-eco-hexwrap { filter: drop-shadow(0 14px 24px rgb(var(--pal-negro) / 0.3)); }
 
@@ -14889,8 +14923,8 @@ div.rk-upload-error > * + * {
 [data-theme="dark"] .rk-eco-app.is-fuerte-calido,
 [data-theme="dark"] .rk-eco-app.is-blanco,
 [data-theme="dark"] .rk-eco-app.is-tenue {
-  background: linear-gradient(180deg, rgb(var(--pal-oscuro-eco-2)), rgb(var(--rk-card)));
-  border-color: rgb(var(--pal-blanco) / 0.07);
+  background: linear-gradient(180deg, rgb(var(--pal-oscuro-elevado)), rgb(var(--pal-oscuro-tarjeta)));
+  border-color: rgb(var(--pal-blanco) / 0.1);
   box-shadow: 0 10px 22px rgb(var(--pal-negro) / 0.35);
 }
 [data-theme="dark"] .rk-eco-app.is-tenue { box-shadow: none; }
@@ -14933,7 +14967,7 @@ div.rk-upload-error > * + * {
   inset: -7px;
   border-radius: 999px;
   pointer-events: none;
-  background: conic-gradient(transparent 0 45%, rgb(var(--pal-claro-marca-lavanda)) 70%, rgb(var(--pal-claro-eco-6)) 92%, transparent 100%);
+  background: conic-gradient(transparent 0 45%, rgb(var(--rk-marca-lavanda)) 70%, rgb(var(--rk-eco-aro-2)) 92%, transparent 100%);
   filter: blur(3px);
   opacity: 0.9;
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
@@ -14996,7 +15030,7 @@ div.rk-upload-error > * + * {
   border-radius: 999px;
   background: conic-gradient(
     transparent 0 calc(100% - var(--rk-cargador-largo)),
-    rgb(var(--pal-claro-marca-lavanda)) calc(100% - var(--rk-cargador-largo) * 0.45),
+    rgb(var(--rk-marca-lavanda)) calc(100% - var(--rk-cargador-largo) * 0.45),
     rgb(var(--pal-claro-eco-6)) 100%
   );
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
@@ -17701,7 +17735,7 @@ div.rk-upload-error > * + * {
 }
 
 .rk-dash [data-c="1"] {
-  --c: rgb(var(--pal-claro-marca-lavanda));
+  --c: rgb(var(--rk-marca-lavanda));
 }
 
 .rk-dash [data-c="2"] {
@@ -17709,7 +17743,7 @@ div.rk-upload-error > * + * {
 }
 
 .rk-dash [data-c="3"] {
-  --c: rgb(var(--pal-claro-marca-durazno));
+  --c: rgb(var(--rk-marca-durazno));
 }
 
 .rk-dash [data-c="4"] {
@@ -17760,7 +17794,7 @@ div.rk-upload-error > * + * {
   width: 55%;
   max-width: 14px;
   border-radius: 4px 4px 0 0;
-  background: rgb(var(--pal-claro-marca-lavanda));
+  background: rgb(var(--rk-marca-lavanda));
 }
 
 .rk-dash .rk-num {
@@ -17802,8 +17836,8 @@ div.rk-upload-error > * + * {
 }
 
 .rk-dash .rk-ing {
-  --rk-lavanda: rgb(var(--pal-claro-marca-lavanda));
-  --rk-durazno: rgb(var(--pal-claro-marca-durazno));
+  --rk-lavanda: rgb(var(--rk-marca-lavanda));
+  --rk-durazno: rgb(var(--rk-marca-durazno));
   --rk-rosa: rgb(var(--pal-claro-serie-2));
   display: grid;
   gap: 10px;
@@ -18266,7 +18300,7 @@ div.rk-upload-error > * + * {
 }
 
 .rk-dash .rk-ing-tabs .rk-ing-tab:focus-visible {
-  outline: 2px solid rgb(var(--pal-claro-marca-lavanda));
+  outline: 2px solid rgb(var(--rk-marca-lavanda));
   outline-offset: 1px;
 }
 
@@ -18477,7 +18511,7 @@ div.rk-upload-error > * + * {
 
 .rk-dash .rk-ing-isla .rk-ing-isla-act:focus-visible,
 .rk-dash .rk-ing-isla .rk-ing-tab:focus-visible {
-  outline-color: rgb(var(--pal-claro-marca-lavanda));
+  outline-color: rgb(var(--rk-marca-lavanda));
 }
 
 .rk-dash .rk-ing-monto,
@@ -19954,7 +19988,7 @@ div.rk-upload-error > * + * {
 /* el outline de arriba no puede apagar el foco de teclado:
    mismo anillo que las pestañas del catálogo (BB9) */
 .rk-btn.rk-btn-ink.rk-btn-negro:focus-visible {
-  outline: 2px solid rgb(var(--pal-claro-marca-lavanda)) !important;
+  outline: 2px solid rgb(var(--rk-marca-lavanda)) !important;
   outline-offset: 2px;
 }
 
@@ -20127,10 +20161,10 @@ html[data-theme] .rk-faq-icon::before {
 @keyframes rk-ins-pulso {
   0%,
   55% {
-    box-shadow: 0 0 0 0 rgb(var(--pal-claro-marca-lavanda) / .45);
+    box-shadow: 0 0 0 0 rgb(var(--rk-marca-lavanda) / .45);
   }
   100% {
-    box-shadow: 0 0 0 .32em rgb(var(--pal-claro-marca-lavanda) / 0);
+    box-shadow: 0 0 0 .32em rgb(var(--rk-marca-lavanda) / 0);
   }
 }
 
@@ -20184,10 +20218,9 @@ html[data-theme] .rk-faq-icon::before {
 .rk-eco-nucleo,
 [data-theme="dark"] .rk-eco-nucleo {
   background:
-    radial-gradient(closest-side,rgb(var(--pal-blanco) / .55) 0,rgb(var(--pal-blanco) / 0) 62%),
-    conic-gradient(from 210deg at 50% 50%,rgb(var(--pal-oscuro-eco-3)),rgb(var(--pal-claro-fondo-2)),rgb(var(--pal-claro-fondo)),rgb(var(--pal-oscuro-eco-4)),rgb(var(--pal-oscuro-eco-5)),rgb(var(--pal-claro-fondo-2)),rgb(var(--pal-oscuro-eco-3))) !important;
+    radial-gradient(closest-side,rgb(var(--pal-blanco) / .55) 0,rgb(var(--pal-blanco) / 0) 62%), conic-gradient(from 210deg at 50% 50%,rgb(var(--rk-eco-n-a)),rgb(var(--rk-eco-n-b)),rgb(var(--rk-eco-n-a)),rgb(var(--rk-eco-n-b)),rgb(var(--rk-eco-n-a)),rgb(var(--rk-eco-n-b)),rgb(var(--rk-eco-n-a))) !important;
   box-shadow: none !important;
-  border: 1px solid rgb(var(--pal-blanco) / .55) !important;
+  border: 1px solid var(--rk-eco-borde) !important;
 }
 
 .rk-eco-isotipo-wrap {
@@ -20195,7 +20228,7 @@ html[data-theme] .rk-faq-icon::before {
 }
 
 .rk-eco-nucleo {
-  --rk-eco-cohete: rgb(var(--pal-blanco));
+  --rk-eco-cohete: rgb(var(--rk-eco-cohete-c));
   --rk-eco-cohete-sombra: transparent;
 }
 
@@ -20234,7 +20267,7 @@ html[data-theme] .rk-faq-icon::before {
 }
 
 [data-theme="light"] .rk-footer-cta::after {
-  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(var(--pal-claro-dash-2) / 0) 262deg,rgb(var(--pal-claro-footer-4)) 318deg,rgb(var(--pal-claro-footer-5)) 350deg,rgb(var(--pal-claro-footer-5) / 0) 360deg);
+  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(var(--pal-blanco) / 0) 262deg,rgb(var(--pal-blanco)) 318deg,rgb(var(--pal-blanco)) 350deg,rgb(var(--pal-blanco) / 0) 360deg);
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -20251,9 +20284,7 @@ html[data-theme] .rk-faq-icon::before {
   pointer-events: none;
   border-radius: inherit;
   background:
-    radial-gradient(60% 95% at 88% 55%,rgb(var(--pal-claro-marca-durazno) / .85) 0,rgb(var(--pal-oscuro-iris-3) / .55) 45%,transparent 75%),
-    radial-gradient(55% 80% at 0% 100%,rgb(var(--pal-claro-marca-lavanda) / .22) 0,transparent 70%),
-    linear-gradient(180deg,rgb(var(--pal-claro-tarjeta)) 0%,rgb(var(--pal-claro-fondo-2)) 100%);
+    radial-gradient(60% 95% at 88% 55%,rgb(var(--pal-blanco) / .10) 0,rgb(var(--pal-blanco) / .04) 45%,transparent 75%), radial-gradient(55% 80% at 0% 100%,rgb(var(--pal-blanco) / .05) 0,transparent 70%), linear-gradient(180deg,rgb(var(--rk-unete-alto)) 0%,rgb(var(--rk-unete)) 100%);
 }
 
 .rk-footer-cta::before {
@@ -20262,8 +20293,7 @@ html[data-theme] .rk-faq-icon::before {
 
 .rk-footer-cta {
   box-shadow:
-    inset 0 1px 0 rgb(var(--pal-blanco) / .7),
-    inset 0 0 0 1px rgb(var(--pal-blanco) / .35);
+    inset 0 1px 0 rgb(var(--pal-blanco) / .14), inset 0 0 0 1px rgb(var(--pal-blanco) / .1);
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -20336,16 +20366,16 @@ html[data-theme] .rk-faq-icon::before {
 }
 
 .rk-footer-cta {
-  color: rgb(var(--pal-claro-atenuado));
+  color: rgb(var(--pal-blanco));
 }
 
 .rk-footer-cta-title {
-  color: rgb(var(--pal-claro-atenuado)) !important;
+  color: rgb(var(--pal-blanco)) !important;
 }
 
 .rk-footer-cta .rk-btn.rk-btn-ink {
-  background: linear-gradient(135deg,rgb(var(--pal-blanco) / .7),rgb(var(--pal-oscuro-iris-3) / .75)) !important;
-  color: rgb(var(--pal-claro-atenuado)) !important;
+  background: linear-gradient(135deg,rgb(var(--pal-blanco)),rgb(var(--pal-blanco))) !important;
+  color: rgb(var(--pal-claro-texto)) !important;
   border: 0 !important;
   box-shadow: none !important;
   outline: 0 !important;
@@ -20370,8 +20400,8 @@ html[data-theme] .rk-faq-icon::before {
 }
 
 .rk-footer-cta .rk-btn.rk-btn-ink {
-  background: rgb(var(--rk-marca-tinta)) !important;
-  color: rgb(var(--pal-oscuro-texto)) !important;
+  background: rgb(var(--pal-blanco)) !important;
+  color: rgb(var(--pal-claro-texto)) !important;
   border: 0 !important;
   box-shadow: none !important;
   outline: 0 !important;
@@ -20379,7 +20409,7 @@ html[data-theme] .rk-faq-icon::before {
 
 /* el outline de arriba no puede apagar el foco de teclado */
 .rk-footer-cta .rk-btn.rk-btn-ink:focus-visible {
-  outline: 2px solid rgb(var(--pal-claro-marca-lavanda)) !important;
+  outline: 2px solid rgb(var(--pal-blanco)) !important;
   outline-offset: 2px;
 }
 
@@ -20436,9 +20466,9 @@ html[data-theme] .rk-faq-icon::before {
   --gy: 55%;
   --lx: 0%;
   --ly: 100%;
-  --g1: rgb(var(--pal-claro-marca-durazno) / .85);
-  --g2: rgb(var(--pal-oscuro-iris-3) / .55);
-  --l1: rgb(var(--pal-claro-marca-lavanda) / .22);
+  --g1: rgb(var(--rk-camino-luz) / .07);
+  --g2: rgb(var(--rk-camino-luz) / .03);
+  --l1: rgb(var(--rk-camino-luz) / .04);
   --rot: -4deg;
   position: relative;
   display: flex;
@@ -20449,8 +20479,8 @@ html[data-theme] .rk-faq-icon::before {
   height: 13.5rem;
   border-radius: 28px;
   padding: 22px;
-  color: rgb(var(--pal-claro-atenuado));
-  box-shadow: inset 0 1px 0 rgb(var(--pal-blanco) / .7),inset 0 0 0 1px rgb(var(--pal-blanco) / .35);
+  color: rgb(var(--pal-claro-texto));
+  box-shadow: inset 0 1px 0 rgb(var(--pal-blanco) / .7),inset 0 0 0 1px rgb(var(--pal-claro-texto) / .08);
   transition: transform .35s cubic-bezier(.2,.8,.2,1);
 }
 
@@ -20473,7 +20503,7 @@ html[data-theme] .rk-faq-icon::before {
   border-radius: inherit;
   padding: 2px;
   pointer-events: none;
-  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(var(--pal-claro-dash-2) / 0) 262deg,rgb(var(--pal-claro-footer-4)) 318deg,rgb(var(--pal-claro-footer-5)) 350deg,rgb(var(--pal-claro-footer-5) / 0) 360deg);
+  background: conic-gradient(from var(--rk-luz),transparent 0deg,transparent 250deg,rgb(var(--pal-claro-btn) / 0) 262deg,rgb(var(--pal-claro-btn) / .9) 318deg,rgb(var(--pal-claro-btn) / .9) 350deg,rgb(var(--pal-claro-btn) / 0) 360deg);
   -webkit-mask: linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask:
@@ -20484,29 +20514,29 @@ html[data-theme] .rk-faq-icon::before {
 }
 
 .rk-camino-2 {
-  --g1: rgb(var(--pal-claro-marca-lavanda) / .55);
-  --g2: rgb(var(--pal-claro-dash-2) / .5);
-  --l1: rgb(var(--pal-claro-marca-durazno) / .28);
+  --g1: rgb(var(--rk-camino-luz) / .07);
+  --g2: rgb(var(--rk-camino-luz) / .03);
+  --l1: rgb(var(--rk-camino-luz) / .04);
   --rot: 5deg;
 }
 
 .rk-camino-3 {
   --gx: 85%;
   --gy: 40%;
-  --g1: rgb(var(--pal-oscuro-iris-3) / .95);
-  --g2: rgb(var(--pal-claro-fondo) / 0.6);
-  --l1: rgb(var(--pal-claro-marca-lavanda) / .3);
+  --g1: rgb(var(--rk-camino-luz) / .07);
+  --g2: rgb(var(--rk-camino-luz) / .03);
+  --l1: rgb(var(--rk-camino-luz) / .04);
   --rot: -8deg;
 }
 
 .rk-camino-4 {
   --gx: 90%;
   --gy: 70%;
-  --g1: rgb(var(--pal-claro-dash-2) / .8);
-  --g2: rgb(var(--pal-oscuro-iris-3) / .6);
+  --g1: rgb(var(--rk-camino-luz) / .07);
+  --g2: rgb(var(--rk-camino-luz) / .03);
   --lx: 0%;
   --ly: 0%;
-  --l1: rgb(var(--pal-claro-marca-durazno) / .3);
+  --l1: rgb(var(--rk-camino-luz) / .04);
   --rot: 3deg;
 }
 
@@ -20540,7 +20570,7 @@ html[data-theme] .rk-faq-icon::before {
   line-height: 1.1;
   font-weight: 700;
   letter-spacing: -.04em;
-  color: rgb(var(--pal-claro-atenuado));
+  color: rgb(var(--pal-claro-texto));
   margin: 0;
 }
 
@@ -20548,7 +20578,7 @@ html[data-theme] .rk-faq-icon::before {
   margin: 8px 0 0;
   font-size: 13px;
   line-height: 1.5;
-  color: rgb(var(--pal-claro-atenuado) / 0.8);
+  color: rgb(var(--pal-claro-texto) / 0.65);
   max-width: 15rem;
 }
 
@@ -20584,21 +20614,17 @@ html[data-theme] .rk-faq-icon::before {
 
 [data-theme="dark"] .rk-camino {
   color: rgb(var(--rk-foreground));
-  box-shadow: inset 0 1px 0 rgb(var(--pal-blanco) / .14),inset 0 0 0 1px rgb(var(--pal-blanco) / .1);
+  box-shadow: inset 0 1px 0 rgb(var(--pal-blanco) / .14),inset 0 0 0 1px rgb(var(--pal-blanco) / .08);
 }
 
 [data-theme="dark"] .rk-camino::before {
   background:
-    radial-gradient(60% 95% at var(--gx) var(--gy),rgb(var(--pal-claro-marca-durazno) / .38) 0,rgb(var(--pal-claro-marca-durazno) / .1) 45%,transparent 75%),
-    radial-gradient(55% 80% at var(--lx) var(--ly),rgb(var(--pal-claro-marca-lavanda) / .3) 0,transparent 70%),
-    linear-gradient(180deg,rgb(var(--rk-card)) 0%,rgb(var(--rk-card)) 100%);
+    radial-gradient(60% 95% at var(--gx) var(--gy),rgb(var(--pal-blanco) / .08) 0,rgb(var(--pal-blanco) / .03) 45%,transparent 75%), radial-gradient(55% 80% at var(--lx) var(--ly),rgb(var(--pal-blanco) / .04) 0,transparent 70%), linear-gradient(180deg,rgb(var(--pal-oscuro-camino)) 0%,rgb(var(--pal-oscuro-superficie)) 100%);
 }
 
 [data-theme="dark"] .rk-camino-2::before {
   background:
-    radial-gradient(60% 95% at var(--gx) var(--gy),rgb(var(--pal-claro-marca-lavanda) / .4) 0,rgb(var(--pal-claro-marca-lavanda) / .1) 45%,transparent 75%),
-    radial-gradient(55% 80% at var(--lx) var(--ly),rgb(var(--pal-claro-marca-durazno) / .22) 0,transparent 70%),
-    linear-gradient(180deg,rgb(var(--pal-oscuro-eco-2)) 0%,rgb(var(--rk-card)) 100%);
+    radial-gradient(60% 95% at var(--gx) var(--gy),rgb(var(--pal-blanco) / .08) 0,rgb(var(--pal-blanco) / .03) 45%,transparent 75%), radial-gradient(55% 80% at var(--lx) var(--ly),rgb(var(--pal-blanco) / .04) 0,transparent 70%), linear-gradient(180deg,rgb(var(--pal-oscuro-camino)) 0%,rgb(var(--pal-oscuro-superficie)) 100%);
 }
 
 [data-theme="dark"] .rk-camino-t {
@@ -20606,7 +20632,7 @@ html[data-theme] .rk-faq-icon::before {
 }
 
 [data-theme="dark"] .rk-camino-x {
-  color: rgb(var(--pal-blanco) / .75);
+  color: rgb(var(--pal-blanco) / .7);
 }
 
 [data-theme="dark"] .rk-camino-pill {
@@ -20654,7 +20680,7 @@ html[data-theme] .rk-faq-icon::before {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: linear-gradient(135deg,rgb(var(--pal-claro-marca-lavanda)),rgb(var(--pal-claro-marca-durazno)));
+  background: linear-gradient(135deg,rgb(var(--rk-marca-lavanda)),rgb(var(--rk-marca-durazno)));
   animation: rk-kick-pulso 2.6s ease-in-out infinite;
 }
 

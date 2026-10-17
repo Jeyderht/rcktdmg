@@ -31,18 +31,18 @@ type Programa = {
   x: number;
   nivel: Nivel;
   sigla?: string;
-  /** Color oficial de las letras del ícono de Adobe. */
+  /** Color de las letras del ícono (token --rk-eco-letra: monocromo, cambia con el tema). */
   letra?: string;
   figma?: boolean;
 };
 
 const PROGRAMAS: Programa[] = [
-  { nombre: "InDesign", x: 5.5, nivel: "tenue", sigla: "Id", letra: "#FF3366" },
-  { nombre: "Illustrator", x: 18, nivel: "blanco", sigla: "Ai", letra: "#FF9A00" },
-  { nombre: "Photoshop", x: 33, nivel: "fuerte-frio", sigla: "Ps", letra: "#31A8FF" },
+  { nombre: "InDesign", x: 5.5, nivel: "tenue", sigla: "Id", letra: "rgb(var(--rk-eco-letra))" },
+  { nombre: "Illustrator", x: 18, nivel: "blanco", sigla: "Ai", letra: "rgb(var(--rk-eco-letra))" },
+  { nombre: "Photoshop", x: 33, nivel: "fuerte-frio", sigla: "Ps", letra: "rgb(var(--rk-eco-letra))" },
   { nombre: "Figma", x: 67, nivel: "fuerte-calido", figma: true },
-  { nombre: "After Effects", x: 82, nivel: "blanco", sigla: "Ae", letra: "#D291FF" },
-  { nombre: "Premiere Pro", x: 94.5, nivel: "tenue", sigla: "Pr", letra: "#9999FF" },
+  { nombre: "After Effects", x: 82, nivel: "blanco", sigla: "Ae", letra: "rgb(var(--rk-eco-letra))" },
+  { nombre: "Premiere Pro", x: 94.5, nivel: "tenue", sigla: "Pr", letra: "rgb(var(--rk-eco-letra))" },
 ];
 
 export default function Ecosistema() {
