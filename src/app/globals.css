@@ -18,78 +18,78 @@
    constante en la PALETA y un token que la use.
 
    ÍNDICE (sección y rango de líneas)
-    §0   PALETA · única fuente de los colores                             102–401
-    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 402–446
-    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           447–749
-    §3   BASE  ·  body, selección, utilidades sueltas                     750–835
-    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 836–1577
-    §5   UTILIDADES  ·  @layer utilities                                  1578–1696
-    §6   PIEZAS SUELTAS  ·  @layer components                             1697–1771
-    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1772–1813
-    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1814–1866
-    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1867–1990
-    §10  LA TARJETA DE RECURSO                                            1991–2055
-    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            2056–2957
-    §12  SISTEMA DE INTERACCIÓN                                           2958–3740
-    §13  A. BOTONES                                                       3741–4247
-    §14  B · C · D                                                        4248–4580
-    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4581–4766
-    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4767–4786
-    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4787–5038
-    §18  C2. TARJETA DE RECURSO · versión refinada                        5039–5211
-    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5212–5406
-    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5407–5458
-    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5459–5649
-    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5650–5957
-    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5958–6334
-    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6335–6474
-    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6475–6554
-    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6555–6675
-    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6676–6907
-    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6908–7093
-    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          7094–7429
-    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7430–7924
-    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7925–8165
-    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8166–8348
-    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8349–8657
-    §34  W. TABLAS  ·  rk-table · rk-pagination                           8658–8905
-    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8906–9146
-    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9147–9513
-    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9514–9916
-    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9917–10284
-    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10285–10607
-    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10608–10892
-    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10893–11129
-    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11130–11253
-    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11254–11465
-    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11466–11900
-    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11901–12158
-    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12159–12367
-    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12368–12744
-    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12745–13226
-    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13227–13495
-    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13496–13574
-    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13575–13732
-    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13733–13850
-    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13851–13899
-    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13900–13935
-    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13936–14271
-    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14272–14325
-    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14326–14681
-    §58  AV · CTA final con la modelo (estilo hero)                       14682–14735
-    §59  AW · Ecosistema: fila con núcleo hexagonal                       14736–14998
-    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          14999–15073
-    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      15074–15091
-    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15092–15148
-    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15149–15279
-    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15280–15599
-    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15600–15960
-    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15961–16216
-    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16217–16430
-    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16431–16803
-    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16804–17124
-    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17125–19965
-    §71  BB. INICIO (encargo de la home)                                  19966–20794
+    §0   PALETA · única fuente de los colores                             102–405
+    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 406–450
+    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           451–753
+    §3   BASE  ·  body, selección, utilidades sueltas                     754–839
+    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 840–1581
+    §5   UTILIDADES  ·  @layer utilities                                  1582–1700
+    §6   PIEZAS SUELTAS  ·  @layer components                             1701–1775
+    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1776–1817
+    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1818–1870
+    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1871–1994
+    §10  LA TARJETA DE RECURSO                                            1995–2059
+    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            2060–2961
+    §12  SISTEMA DE INTERACCIÓN                                           2962–3744
+    §13  A. BOTONES                                                       3745–4251
+    §14  B · C · D                                                        4252–4584
+    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4585–4770
+    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4771–4790
+    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4791–5042
+    §18  C2. TARJETA DE RECURSO · versión refinada                        5043–5215
+    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5216–5410
+    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5411–5462
+    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5463–5653
+    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5654–5961
+    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5962–6338
+    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6339–6478
+    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6479–6558
+    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6559–6679
+    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6680–6911
+    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6912–7097
+    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          7098–7433
+    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7434–7928
+    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7929–8169
+    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8170–8352
+    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8353–8661
+    §34  W. TABLAS  ·  rk-table · rk-pagination                           8662–8909
+    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8910–9150
+    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9151–9517
+    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9518–9920
+    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9921–10288
+    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10289–10611
+    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10612–10896
+    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10897–11133
+    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11134–11257
+    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11258–11469
+    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11470–11904
+    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11905–12162
+    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12163–12371
+    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12372–12748
+    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12749–13230
+    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13231–13499
+    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13500–13578
+    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13579–13736
+    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13737–13854
+    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13855–13903
+    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13904–13939
+    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13940–14275
+    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14276–14329
+    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14330–14685
+    §58  AV · CTA final con la modelo (estilo hero)                       14686–14739
+    §59  AW · Ecosistema: fila con núcleo hexagonal                       14740–15002
+    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          15003–15077
+    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      15078–15095
+    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15096–15152
+    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15153–15283
+    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15284–15603
+    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15604–15964
+    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15965–16220
+    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16221–16434
+    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16435–16807
+    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16808–17128
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17129–19969
+    §71  BB. INICIO (encargo de la home)                                  19970–20798
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -235,6 +235,10 @@
   --pal-oscuro-eco-letra: 255 255 255;        /* letras de Adobe, logo de Figma y siglas, oscuro */
   --pal-oscuro-camino: 21 21 21;              /* «Más diseños», arriba del degradado, oscuro */
 
+  /* Coinnect B5: carrito y recibo */
+  --pal-claro-recibo: 226 226 226;            /* tono del recibo (--rk-rc-tono), claro */
+  --pal-claro-recibo-tira: 236 236 236;       /* tira del recibo (.rk-receipt-strip), claro */
+
   /* Blanco y negro puros: fijos, no cambian con el tema (brillos, velos, texto sobre foto). */
   --pal-blanco: 255 255 255;
   --pal-negro: 0 0 0;
@@ -249,11 +253,11 @@
   --pal-claro-btn-5: 153 153 153;               /* [data-theme="light"] .rk-btn-primary */
   --pal-claro-btn-6: 164 164 164;               /* [data-theme="light"] .rk-btn-primary */
   --pal-claro-btn-7: 116 116 116;               /* [data-theme="light"] .rk-btn.rk-btn-line */
-  --pal-claro-btn-8: 74 20 24;                  /* .rk-btn-danger, .rk-btn-buy */
-  --pal-claro-btn-9: 255 244 244;               /* [data-theme="light"] .rk-btn-danger, [da */
-  --pal-claro-btn-10: 52 211 153;               /* .rk-btn-buy */
-  --pal-claro-btn-11: 12 58 42;                 /* .rk-btn-buy */
-  --pal-claro-btn-12: 236 252 244;              /* [data-theme="light"] .rk-btn-buy */
+  --pal-claro-btn-8: 27 27 27;                  /* .rk-btn-danger, .rk-btn-buy */
+  --pal-claro-btn-9: 245 245 245;               /* [data-theme="light"] .rk-btn-danger, [da */
+  --pal-claro-btn-10: 255 255 255;               /* .rk-btn-buy */
+  --pal-claro-btn-11: 27 27 27;                 /* .rk-btn-buy */
+  --pal-claro-btn-12: 245 245 245;              /* [data-theme="light"] .rk-btn-buy */
   --pal-claro-badge: 236 236 241;               /* .rk-badge */
   --pal-claro-badge-2: 172 172 172;             /* .rk-badge-neutral */
   --pal-claro-badge-3: 214 214 214;             /* .rk-badge-accent */
@@ -271,7 +275,7 @@
   --pal-claro-step-6: 241 241 241;              /* .rk-step-neutro */
   --pal-claro-step-7: 232 232 232;              /* .rk-step-calido */
   --pal-claro-step-8: 241 241 241;              /* .rk-step-calido */
-  --pal-oscuro-receipt: 160 184 230;            /* [data-theme="dark"] .rk-receipt */
+  --pal-oscuro-receipt: 255 255 255;            /* [data-theme="dark"] .rk-receipt */
   --pal-claro-plan: 150 150 150;                /* .rk-plan-featured .rk-plan-head */
   --pal-claro-faq: 132 132 132;                  /* [data-theme="light"] .rk-faq-icon::befor */
   --pal-claro-help: 91 91 91;                  /* .rk-help-scene */
@@ -6799,7 +6803,7 @@ table .rk-btn:hover:not(:disabled) {
   margin: 0;
   padding: 14px 16px;
   border-radius: 14px;
-  background: rgb(var(--rk-rc-tono) / 0.75);
+  background: rgb(var(--pal-claro-recibo-tira));
 }
 
 [data-theme="dark"] .rk-receipt-strip {
@@ -13469,7 +13473,7 @@ div.rk-upload-error > * + * {
 
 /* resumen tipo pase: franja con los colores de marca, no azul */
 .rk-receipt {
-  --rk-rc-tono: var(--rk-marca-frio);
+  --rk-rc-tono: var(--pal-claro-recibo);
 }
 
 [data-theme="light"] .rk-receipt-strip {
