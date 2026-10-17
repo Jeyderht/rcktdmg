@@ -241,8 +241,8 @@ export async function datosQueBuscas(): Promise<{
   }
 
   const [eventos, generales] = await Promise.all([
-    opcion(construirWhere({ categoria: CATEGORIA_EVENTOS }), 3),
-    opcion(construirWhere({ sinCategoria: CATEGORIA_EVENTOS }), 2),
+    opcion(construirWhere({ categoria: CATEGORIA_EVENTOS }), 9),
+    opcion(construirWhere({ sinCategoria: CATEGORIA_EVENTOS }), 6),
   ]);
 
   return { eventos, generales };

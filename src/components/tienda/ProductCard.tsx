@@ -6,6 +6,7 @@ import {
 } from "@/lib/tipos-publicacion";
 import Link from "next/link";
 
+import AgregarTarjeta from "@/components/tienda/AgregarTarjeta";
 import FavoriteButton from "@/components/tienda/FavoriteButton";
 import { getPriceDisplay, formatPrice } from "@/lib/pricing";
 import { ArrowUpRight } from "lucide-react";
@@ -58,9 +59,12 @@ export type ProductCardData = {
 export default function ProductCard({
   product,
   showFavorite = true,
+  conAgregar = false,
 }: {
   product: ProductCardData;
   showFavorite?: boolean;
+  /** Botón compacto «Agregar» junto al formato (solo lo pide el inicio). */
+  conAgregar?: boolean;
 }) {
   // Si el recurso no tiene portada, se usa la primera
   // imagen de la galería.
@@ -224,6 +228,20 @@ export default function ProductCard({
           {/* Formato real del archivo, nunca supuesto. */}
           {product.fileFormat && (
             <span className="rk-tarjeta-formato">{product.fileFormat}</span>
+          )}
+
+          {conAgregar && (
+            <AgregarTarjeta
+              product={{
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                slug: product.slug,
+                coverUrl: product.coverUrl || product.image?.url || null,
+                pieceType: product.pieceType ?? null,
+                categorySlug: product.category?.slug ?? null,
+              }}
+            />
           )}
         </div>
       </div>

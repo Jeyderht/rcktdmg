@@ -35,7 +35,7 @@ function Recursos({ recursos }: { recursos: Recurso[] }) {
     <ul className="rk-cc-tarjetas">
       {recursos.map((r) => (
         <li key={r.id} className="rk-cc-tarjeta">
-          <ProductCard product={aTarjeta(r)} />
+          <ProductCard product={aTarjeta(r)} conAgregar />
         </li>
       ))}
     </ul>

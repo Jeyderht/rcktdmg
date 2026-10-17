@@ -4,11 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  ArrowRight,
   CalendarDays,
   ChevronLeft,
   ChevronRight,
-  Layers,
   Shapes,
 } from "lucide-react";
 
@@ -25,7 +23,7 @@ export type OpcionQueBuscasVista = {
   total: number;
   /** «de eventos» / «en total». */
   sufijo: string;
-  /** Creadores, Formato y Desde: solo las que tienen dato. */
+  /** Creadores y Formato: solo las que tienen dato. */
   columnas: { etiqueta: string; valor: string }[];
 };
 
@@ -57,6 +55,7 @@ export default function QueBuscas({ opciones }: { opciones: OpcionQueBuscasVista
 
   const ocupado = useRef(false);
   const seccion = useRef<HTMLElement>(null);
+  const pista = useRef<HTMLSpanElement>(null);
 
   const total = opciones.length;
 
@@ -108,6 +107,35 @@ export default function QueBuscas({ opciones }: { opciones: OpcionQueBuscasVista
     };
   }, []);
 
+  /*
+    La pantalla del laptop es un slider: con más portadas de las que
+    caben, avanza sola una portada cada 3,2 s y vuelve al principio
+    al llegar al final. Se pausa con las mismas pausas de la tira y
+    no se mueve con «reducir movimiento». Al cambiar de opción,
+    vuelve al inicio.
+  */
+  useEffect(() => {
+    const el = pista.current;
+    if (!el) return;
+
+    el.scrollLeft = 0;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (Object.values(pausas).some(Boolean)) return;
+
+    const reloj = window.setInterval(() => {
+      const tarjeta = el.firstElementChild as HTMLElement | null;
+      if (!tarjeta || el.scrollWidth <= el.clientWidth + 4) return;
+
+      const paso = tarjeta.offsetWidth + 8;
+      const fin = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+
+      el.scrollTo({ left: fin ? 0 : el.scrollLeft + paso, behavior: "smooth" });
+    }, 3200);
+
+    return () => window.clearInterval(reloj);
+  }, [indice, pausas]);
+
   if (total === 0) return null;
 
   const opcion = opciones[indice];
@@ -145,11 +173,11 @@ export default function QueBuscas({ opciones }: { opciones: OpcionQueBuscasVista
         )}
 
         <div className="rk-qb-tira-dentro">
-          <span aria-hidden className="rk-qb-icono rk-qb-cambia">
+          <span aria-hidden className="rk-qb-icono">
             <Icono />
           </span>
 
-          <div className="rk-qb-texto rk-qb-cambia">
+          <div className="rk-qb-texto">
             <b>{opcion.titulo}</b>
             <span aria-live="polite">{opcion.texto}</span>
           </div>
@@ -173,11 +201,17 @@ export default function QueBuscas({ opciones }: { opciones: OpcionQueBuscasVista
           <Link
             href={opcion.href}
             aria-label={`Ver ${opcion.titulo.toLowerCase()}`}
-            className="rk-qb-marco rk-qb-cambia"
+            className="rk-qb-marco"
           >
+            <span className="rk-qb-pantalla">
             <span
-              className="rk-qb-portadas"
+              ref={pista}
+              className="rk-qb-portadas rk-qb-cambia"
               data-forma={opcion.vertical ? "vertical" : "general"}
+              onMouseEnter={() => setPausas((p) => ({ ...p, puntero: true }))}
+              onMouseLeave={() => setPausas((p) => ({ ...p, puntero: false }))}
+              onTouchStart={() => setPausas((p) => ({ ...p, toque: true }))}
+              onTouchEnd={() => setPausas((p) => ({ ...p, toque: false }))}
             >
               {opcion.portadas.map((p) => (
                 <span key={p.id} className="rk-qb-portada">
@@ -192,22 +226,11 @@ export default function QueBuscas({ opciones }: { opciones: OpcionQueBuscasVista
                 </span>
               ))}
             </span>
+            </span>
           </Link>
         )}
 
-        <div className="rk-qb-resumen rk-qb-cambia">
-          <div className="rk-qb-cabecera">
-            <Layers aria-hidden />
-            <span>Recursos publicados</span>
-            <Link
-              href={opcion.href}
-              aria-label={`Ver ${opcion.titulo.toLowerCase()}`}
-              className="rk-qb-ir"
-            >
-              <ArrowRight aria-hidden />
-            </Link>
-          </div>
-
+        <div className="rk-qb-resumen">
           <p className="rk-qb-cifra">
             {opcion.total}
             <span>{opcion.sufijo}</span>
