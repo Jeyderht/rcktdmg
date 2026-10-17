@@ -117,7 +117,7 @@
   --pal-claro-tarjeta: 255 255 255;                --pal-oscuro-tarjeta: 15 15 15;                  /* --rk-card */
   --pal-claro-texto: 10 10 10;                     --pal-oscuro-texto: 255 255 255;                 /* --rx-texto, --rk-foreground, --rk-ink, --rx-h1 */
   --pal-claro-atenuado: 102 102 102;                 --pal-oscuro-atenuado: 150 150 150;              /* --rx-atenuado, --rk-muted, --rx-h1 */
-  --pal-claro-tenue: 112 112 112;                  --pal-oscuro-tenue: 133 133 133;                 /* --rx-tenue */
+  --pal-claro-tenue: 106 106 106;                  --pal-oscuro-tenue: 133 133 133;                 /* --rx-tenue */
   --pal-claro-plata: 102 102 102;                    --pal-oscuro-plata: 207 207 207;                 /* --rx-plata */
   --pal-claro-borde: 230 230 230;                  --pal-oscuro-borde: 255 255 255;                 /* --rk-border, --rx-linea, --rx-linea-alta, --rx-borde, --rx-linea-fina, --rk-linea */
   --pal-claro-canto: 255 255 255;                  --pal-oscuro-canto: 255 255 255;                 /* --rk-glass-border, --rk-canto, --rk-canto-vivo, --rx-borde-alto */
@@ -1318,7 +1318,7 @@ input[type="search"]::-webkit-search-results-decoration {
   /* Ghost: sin fondo, solo texto. */
   .rk-btn-ghost {
     background: transparent;
-    color: rgb(var(--rk-muted) / 0.75);
+    color: rgb(var(--rk-muted) / 0.8);
   }
 
   .rk-btn-ghost:hover:not(:disabled) {
@@ -1555,7 +1555,7 @@ input[type="search"]::-webkit-search-results-decoration {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.22em;
-    color: rgb(var(--rk-muted) / 0.62);
+    color: rgb(var(--rk-muted) / 0.8);
   }
 
   .rk-title {
@@ -15315,7 +15315,7 @@ div.rk-upload-error > * + * {
   --vacio-ficha-borde: rgb(var(--pal-blanco) / 0.08);
   --vacio-pista: rgb(var(--pal-blanco) / 0.07);
   --vacio-perilla: rgb(var(--pal-claro-fondo));
-  --vacio-suave: rgb(var(--rk-foreground) / 0.55);
+  --vacio-suave: rgb(var(--rk-foreground) / 0.6);
   /* La caja usa los colores de marca: lavanda, perla y durazno. */
   --c-in: rgb(var(--pal-claro-tenue));
   --c-in2: rgb(var(--pal-claro-tenue));
@@ -15416,7 +15416,7 @@ div.rk-upload-error > * + * {
   flex: none;
   font-size: 1.1rem;
   line-height: 1;
-  color: var(--vacio-suave);
+  color: rgb(var(--rk-foreground) / 0.55);
   opacity: 0.6;
 }
 
@@ -17792,7 +17792,7 @@ div.rk-upload-error > * + * {
 
 .rk-dash .rk-k3-sub {
   font-size: 11px;
-  color: rgb(var(--rk-foreground)/.55);
+  color: rgb(var(--rk-foreground)/.6);
 }
 
 .rk-dash .rk-k3-t:has(> .rk-k3-tit) {
@@ -19109,7 +19109,7 @@ div.rk-upload-error > * + * {
 
 .rk-dash .rk-btn-ghost {
   background: transparent;
-  color: rgb(var(--rk-muted) / 0.75);
+  color: rgb(var(--rk-muted) / 0.8);
 }
 
 .rk-dash .rk-btn-danger {
