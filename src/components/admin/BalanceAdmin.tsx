@@ -23,10 +23,17 @@ import Odometro from "@/components/admin/Odometro";
 const NOM = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Dic"];
 const NOML = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"];
 
+/*
+  Colores de las series: tokens --rk-serie-N de globals.css (§0 PALETA),
+  los mismos que el resto del panel. «suave» es el punto de la serie no
+  activa: el mismo color al 55 % (antes, el hex con «8c»).
+*/
+const serie = (n: number) => ({ c: `rgb(var(--rk-serie-${n}))`, suave: `rgb(var(--rk-serie-${n}) / 0.549)` });
+
 const SERIES = [
-  { n: "General", c: "#9d97ff" },
-  { n: "Comisión", c: "#f0a98a" },
-  { n: "Creadores", c: "#c9a2c9" },
+  { n: "General", ...serie(1) },
+  { n: "Comisión", ...serie(3) },
+  { n: "Creadores", ...serie(4) },
 ];
 
 const W = 300;
@@ -419,7 +426,7 @@ export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoM
                   ["--c" as string]: s.c,
                   left: `${x}%`,
                   top: `${(pts[k][vis][1] / H) * 100}%`,
-                  background: k === vista ? s.c : `${s.c}8c`,
+                  background: k === vista ? s.c : s.suave,
                 }}
                 onPointerEnter={(e) => e.pointerType === "mouse" && setOculta(true)}
                 onPointerLeave={(e) => e.pointerType === "mouse" && setOculta(false)}

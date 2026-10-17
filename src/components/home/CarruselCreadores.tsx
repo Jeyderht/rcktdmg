@@ -167,7 +167,7 @@ export default function CarruselCreadores({
                 {/* PANEL */}
                 <span className="absolute inset-x-0 bottom-0 p-4">
                   <span className="flex items-center gap-2.5">
-                    <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[rgb(var(--rk-marca-centro)_/_0.2)] ring-1 ring-[rgb(var(--rk-marca-centro)_/_0.3)]">
+                    <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[rgb(var(--pal-blanco)_/_0.2)] ring-1 ring-[rgb(var(--pal-blanco)_/_0.3)]">
                       {creador.avatarUrl ? (
                         <Image
                           src={creador.avatarUrl}
@@ -177,7 +177,7 @@ export default function CarruselCreadores({
                           sizes="36px"
                         />
                       ) : (
-                        <span className="text-xs font-semibold text-[rgb(var(--rk-marca-centro))]">
+                        <span className="text-xs font-semibold text-[rgb(var(--pal-blanco))]">
                           {creador.nombre.charAt(0).toUpperCase()}
                         </span>
                       )}
@@ -185,17 +185,17 @@ export default function CarruselCreadores({
 
                     <span className="min-w-0 flex-1">
                       <span className="flex min-w-0 items-center gap-1">
-                        <span className="truncate text-[15px] font-semibold text-[rgb(var(--rk-marca-centro))]">
+                        <span className="truncate text-[15px] font-semibold text-[rgb(var(--pal-blanco))]">
                           {creador.nombre}
                         </span>
                       </span>
 
-                      <span className="block truncate text-[12px] text-[rgb(var(--rk-marca-centro)_/_0.7)]">
+                      <span className="block truncate text-[12px] text-[rgb(var(--pal-blanco)_/_0.7)]">
                         @{creador.username}
                       </span>
                     </span>
 
-                    <span className="rk-press grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[rgb(var(--rk-marca-centro))] text-[rgb(var(--rk-marca-tinta))] transition-transform duration-normal ease-rk group-hover:rotate-45">
+                    <span className="rk-press grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[rgb(var(--pal-blanco))] text-[rgb(var(--rk-marca-tinta))] transition-transform duration-normal ease-rk group-hover:rotate-45">
                       <ArrowUpRight size={16} aria-hidden />
                     </span>
                   </span>
@@ -205,7 +205,7 @@ export default function CarruselCreadores({
                     escritorio aparecen al acercarse, para que la
                     tarjeta en reposo respire.
                   */}
-                  <span className="mt-2 block text-[12px] tabular-nums text-[rgb(var(--rk-marca-centro)_/_0.75)] transition-opacity duration-normal ease-rk lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-visible:opacity-100">
+                  <span className="mt-2 block text-[12px] tabular-nums text-[rgb(var(--pal-blanco)_/_0.75)] transition-opacity duration-normal ease-rk lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-visible:opacity-100">
                     {creador.recursos}{" "}
                     {creador.recursos === 1 ? "recurso" : "recursos"}
                     {creador.seguidores > 0 &&
