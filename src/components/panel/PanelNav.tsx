@@ -135,7 +135,7 @@ function PanelNavInterno({
         <div key={grupo.id} className="flex flex-col gap-0.5">
           {/* Con un solo grupo (cliente) no hace falta rotular. */}
           {grupos.length > 1 && (
-            <p className="rk-kicker px-3 pb-1.5 text-[10px] uppercase tracking-wider text-ink/45">
+            <p className="rk-kicker px-3 pb-1.5 text-[10px] uppercase tracking-wider text-ink/55">
               {grupo.titulo}
             </p>
           )}
