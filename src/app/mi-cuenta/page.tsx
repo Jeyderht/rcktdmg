@@ -169,14 +169,17 @@ export default function Account() {
             </p>
           </header>
 
-          {/* Solo justo después de registrarse; se puede cerrar. */}
-          <BienvenidaCuenta nombre={displayName} />
+          {/* Avisos a todo el ancho. La bienvenida, solo justo
+              después de registrarse; se puede cerrar. */}
+          <div className="rk-db-ancho">
+            <BienvenidaCuenta nombre={displayName} />
 
-          {error && (
-            <div role="alert" className="rk-upload-error rk-fade mt-4">
-              {error}
-            </div>
-          )}
+            {error && (
+              <div role="alert" className="rk-upload-error rk-fade mt-4">
+                {error}
+              </div>
+            )}
+          </div>
 
           <div className="rk-db">
             {/* MI CUENTA · lo invertido y sus accesos */}
@@ -272,8 +275,11 @@ export default function Account() {
               }))}
             />
           </div>
+        </div>
 
-          {/* Accesos por rol y recomendaciones, bajo las tarjetas. */}
+        {/* Accesos por rol y recomendaciones, bajo las tarjetas y
+            fuera de su rejilla: van a todo el ancho. */}
+        <div>
           <div className="mt-6">
             <QuickAccess user={user} />
           </div>

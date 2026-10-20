@@ -88,10 +88,10 @@
     §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16267–16480
     §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16481–16853
     §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16854–17174
-    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17175–20014
-    §71  BB. INICIO (encargo de la home)                                  20015–20843
-    §72  Inicio · vender más                                              20844–21721
-    §73  Explorar (tienda)                                                21722–22310
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17175–20022
+    §71  BB. INICIO (encargo de la home)                                  20023–20851
+    §72  Inicio · vender más                                              20852–21729
+    §73  Explorar (tienda)                                                21730–22318
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -17244,6 +17244,14 @@ div.rk-upload-error > * + * {
 
   .rk-dash [data-vista="Dashboard"]>div:not(.rk-db) {
     grid-column: span 2;
+  }
+}
+
+/* Paneles de cliente y creador: bloques que van a todo el ancho de
+   la rejilla del Dashboard (avisos, botones). En admin no se usa. */
+@media (min-width:768px) {
+  .rk-dash [data-vista="Dashboard"]>div.rk-db-ancho {
+    grid-column: 1/-1;
   }
 }
 

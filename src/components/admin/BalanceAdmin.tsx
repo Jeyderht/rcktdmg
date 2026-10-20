@@ -43,6 +43,7 @@ const clave = (a: number, m: number) => `${a}-${String(m + 1).padStart(2, "0")}`
 export default function BalanceAdmin({
   datos,
   etiquetas,
+  vistaInicial = 1,
 }: {
   datos: Record<string, IngresoMes>;
   /**
@@ -51,6 +52,8 @@ export default function BalanceAdmin({
    * «Creadores» es solo su parte.
    */
   etiquetas?: readonly [string, string, string];
+  /** Serie que se enseña al abrir (0, 1 o 2). En admin, Comisión. */
+  vistaInicial?: 0 | 1 | 2;
 }) {
   const series = etiquetas
     ? SERIES.map((s, i) => ({ ...s, n: etiquetas[i] }))
@@ -59,7 +62,7 @@ export default function BalanceAdmin({
   /* Mes de referencia: el actual al cargar (en el reloj del navegador). */
   const [hoy] = useState(() => new Date());
   const [ref, setRef] = useState({ a: hoy.getFullYear(), m: hoy.getMonth() });
-  const [vista, setVista] = useState(1);
+  const [vista, setVista] = useState<number>(vistaInicial);
   const [mes, setMes] = useState(5);
   const [vis, setVis] = useState(5);
   const [vivo, setVivo] = useState(false);

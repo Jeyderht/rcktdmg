@@ -316,7 +316,7 @@ export default function CreatorDashboard() {
             </p>
           </header>
 
-          <div className="mt-4 flex flex-wrap items-center gap-2.5">
+          <div className="rk-db-ancho mt-4 flex flex-wrap items-center gap-2.5">
             <Link href="/creadores/panel/nuevo" className="rk-btn rk-btn-primary rk-btn-compact">
               Nuevo recurso
             </Link>
@@ -331,7 +331,7 @@ export default function CreatorDashboard() {
           {/* El perfil público no existe hasta que elige su usuario:
               no se inventa uno por él. */}
           {!user?.username && (
-            <div className="rk-card mt-4 border-warning/30 bg-warning/[0.06] p-4">
+            <div className="rk-db-ancho rk-card mt-4 border-warning/30 bg-warning/[0.06] p-4">
               <p className="text-sm font-medium">Tu perfil público todavía no existe</p>
               <p className="mt-1 text-[13px] leading-6 text-ink/65">
                 Necesitas un nombre de usuario para tener una dirección
@@ -348,6 +348,7 @@ export default function CreatorDashboard() {
             <BalanceAdmin
               datos={ingresos}
               etiquetas={["Ventas", "Comisión", "Para ti"]}
+              vistaInicial={2}
             />
           </div>
 
