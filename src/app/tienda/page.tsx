@@ -309,7 +309,7 @@ export default async function Store({ searchParams }: StoreProps) {
     <>
       <Navbar />
 
-      <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
+      <main className="rk-explorar mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
 
         {/* ══════════ CABECERA ══════════ */}
         {/*
