@@ -39,58 +39,58 @@
     §18  C2. TARJETA DE RECURSO · versión refinada                        5064–5236
     §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5237–5431
     §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5432–5483
-    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5484–5674
-    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5675–5982
-    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         5983–6359
-    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6360–6499
-    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6500–6579
-    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6580–6700
-    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6701–6932
-    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6933–7118
-    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          7119–7454
-    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7455–7949
-    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7950–8190
-    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8191–8373
-    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8374–8682
-    §34  W. TABLAS  ·  rk-table · rk-pagination                           8683–8930
-    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8931–9171
-    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9172–9538
-    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9539–9941
-    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9942–10309
-    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10310–10632
-    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10633–10917
-    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10918–11154
-    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11155–11278
-    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11279–11490
-    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11491–11925
-    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11926–12183
-    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12184–12392
-    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12393–12769
-    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12770–13251
-    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13252–13520
-    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13521–13599
-    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13600–13757
-    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13758–13875
-    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13876–13924
-    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13925–13960
-    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13961–14296
-    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14297–14350
-    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14351–14706
-    §58  AV · CTA final con la modelo (estilo hero)                       14707–14760
-    §59  AW · Ecosistema: fila con núcleo hexagonal                       14761–15023
-    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          15024–15098
-    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      15099–15116
-    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15117–15173
-    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15174–15304
-    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15305–15624
-    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15625–15980
-    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        15981–16236
-    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16237–16450
-    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16451–16823
-    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16824–17144
-    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17145–19984
-    §71  BB. INICIO (encargo de la home)                                  19985–20813
-    §72  Inicio · vender más                                              20814–21691
+    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5484–5703
+    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5704–6011
+    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         6012–6388
+    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6389–6528
+    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6529–6608
+    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6609–6729
+    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6730–6961
+    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6962–7147
+    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          7148–7483
+    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7484–7978
+    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7979–8219
+    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8220–8402
+    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8403–8711
+    §34  W. TABLAS  ·  rk-table · rk-pagination                           8712–8959
+    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8960–9200
+    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9201–9567
+    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9568–9970
+    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9971–10338
+    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10339–10661
+    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10662–10946
+    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10947–11183
+    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11184–11307
+    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11308–11519
+    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11520–11954
+    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11955–12212
+    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12213–12421
+    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12422–12798
+    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12799–13280
+    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13281–13549
+    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13550–13628
+    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13629–13786
+    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13787–13904
+    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13905–13953
+    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13954–13989
+    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13990–14325
+    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14326–14379
+    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14380–14735
+    §58  AV · CTA final con la modelo (estilo hero)                       14736–14789
+    §59  AW · Ecosistema: fila con núcleo hexagonal                       14790–15052
+    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          15053–15127
+    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      15128–15145
+    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15146–15202
+    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15203–15333
+    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15334–15653
+    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15654–16009
+    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        16010–16265
+    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16266–16479
+    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16480–16852
+    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16853–17173
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17174–20013
+    §71  BB. INICIO (encargo de la home)                                  20014–20842
+    §72  Inicio · vender más                                              20843–21720
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -4231,15 +4231,15 @@ table .rk-btn:hover:not(:disabled) {
     box-shadow var(--rx-t-hover) var(--rx-curva);
 }
 
-.rk-segment-option[aria-pressed="true"] {
-  color: rgb(var(--pal-claro-texto));
-  background:
-    radial-gradient(70% 160% at 100% 50%, rgb(var(--rk-seg-calido) / 0.95), transparent 70%),
-    radial-gradient(60% 160% at 0% 50%, rgb(var(--rk-seg-frio) / 0.9), transparent 70%),
-    linear-gradient(90deg, rgb(var(--rk-seg-frio)), rgb(var(--rk-seg-centro)) 48%, rgb(var(--rk-seg-calido)));
-  box-shadow:
-    inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
-    inset 0 0 12px rgb(var(--pal-blanco) / 0.55);
+/* opción elegida: tinta sólida, igual que el chip activo */
+.rk-segment-option[aria-pressed="true"],
+[data-theme="light"] .rk-segment-option[aria-pressed="true"],
+[data-theme="dark"] .rk-segment-option[aria-pressed="true"] {
+  color: rgb(var(--rk-background));
+  background: rgb(var(--rk-foreground));
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -5552,7 +5552,11 @@ table .rk-btn:hover:not(:disabled) {
   }
 }
 
-/* activo: el mismo degradado frío → cálido del primary */
+/*
+   activo: tinta sólida, sin degradado (negro en claro, blanco en
+   oscuro). Van también las variantes con [data-theme] para que
+   ninguna regla de chip anterior gane por especificidad.
+*/
 .rk-chip.rk-chip-active,
 .rk-chip[aria-pressed="true"],
 .rk-chip[aria-current],
@@ -5560,20 +5564,36 @@ table .rk-btn:hover:not(:disabled) {
 [data-theme="light"] .rk-chip.rk-chip-active,
 [data-theme="light"] .rk-chip[aria-pressed="true"],
 [data-theme="light"] .rk-chip[aria-current],
-[data-theme="light"] .rk-chip[data-activo="true"] {
-  border-color: rgb(var(--pal-blanco) / 0.6);
-  background:
-    radial-gradient(70% 160% at 100% 50%, rgb(var(--rk-marca-calido) / 0.95), transparent 70%),
-    radial-gradient(60% 160% at 0% 50%, rgb(var(--pal-claro-borde) / 0.9), transparent 70%),
-    linear-gradient(90deg, rgb(var(--pal-claro-borde)), rgb(var(--rk-background)) 48%, rgb(var(--rk-marca-calido)));
-  color: rgb(var(--rk-foreground));
+[data-theme="light"] .rk-chip[data-activo="true"],
+[data-theme="dark"] .rk-chip.rk-chip-active,
+[data-theme="dark"] .rk-chip[aria-pressed="true"],
+[data-theme="dark"] .rk-chip[aria-current],
+[data-theme="dark"] .rk-chip[data-activo="true"] {
+  border-color: rgb(var(--rk-foreground));
+  background: rgb(var(--rk-foreground));
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+  color: rgb(var(--rk-background));
 }
 
-[data-theme="light"] .rk-chip.rk-chip-active,
-[data-theme="light"] .rk-chip[aria-pressed="true"],
-[data-theme="light"] .rk-chip[aria-current],
-[data-theme="light"] .rk-chip[data-activo="true"] {
-  border-color: rgb(var(--pal-claro-btn-6) / 0.55);
+@media (hover: hover) and (pointer: fine) {
+  .rk-chip.rk-chip-active:hover,
+  .rk-chip[aria-pressed="true"]:hover,
+  .rk-chip[aria-current]:hover,
+  .rk-chip[data-activo="true"]:hover,
+  [data-theme="light"] .rk-chip.rk-chip-active:hover,
+  [data-theme="light"] .rk-chip[aria-pressed="true"]:hover,
+  [data-theme="light"] .rk-chip[aria-current]:hover,
+  [data-theme="light"] .rk-chip[data-activo="true"]:hover,
+  [data-theme="dark"] .rk-chip.rk-chip-active:hover,
+  [data-theme="dark"] .rk-chip[aria-pressed="true"]:hover,
+  [data-theme="dark"] .rk-chip[aria-current]:hover,
+  [data-theme="dark"] .rk-chip[data-activo="true"]:hover {
+    border-color: rgb(var(--rk-foreground));
+    background: rgb(var(--rk-foreground) / 0.86);
+    color: rgb(var(--rk-background));
+  }
 }
 
 .rk-chip-count {
@@ -5594,11 +5614,20 @@ table .rk-btn:hover:not(:disabled) {
   background: rgb(var(--pal-oscuro-superficie) / 0.06);
 }
 
-.rk-chip-active .rk-chip-count,
+.rk-chip.rk-chip-active .rk-chip-count,
 .rk-chip[aria-pressed="true"] .rk-chip-count,
 .rk-chip[aria-current] .rk-chip-count,
-.rk-chip[data-activo="true"] .rk-chip-count {
-  background: rgb(var(--pal-oscuro-superficie) / 0.1);
+.rk-chip[data-activo="true"] .rk-chip-count,
+[data-theme="light"] .rk-chip.rk-chip-active .rk-chip-count,
+[data-theme="light"] .rk-chip[aria-pressed="true"] .rk-chip-count,
+[data-theme="light"] .rk-chip[aria-current] .rk-chip-count,
+[data-theme="light"] .rk-chip[data-activo="true"] .rk-chip-count,
+[data-theme="dark"] .rk-chip.rk-chip-active .rk-chip-count,
+[data-theme="dark"] .rk-chip[aria-pressed="true"] .rk-chip-count,
+[data-theme="dark"] .rk-chip[aria-current] .rk-chip-count,
+[data-theme="dark"] .rk-chip[data-activo="true"] .rk-chip-count {
+  background: rgb(var(--rk-background) / 0.2);
+  color: rgb(var(--rk-background));
 }
 
 /* ── H2. BADGE ──────────────────────────────────────────────────────── */
