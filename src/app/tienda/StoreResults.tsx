@@ -5,6 +5,7 @@ import GaleriaTienda from "./GaleriaTienda";
 import Paginacion from "@/components/ui/Paginacion";
 import { consultarCatalogo } from "@/lib/catalogo-consulta";
 import {
+  POR_PAGINA,
   hayFiltros,
   urlTienda,
   type ParametrosTienda,
@@ -71,11 +72,7 @@ export default async function StoreResults({
 
   return (
     <>
-      {/*
-        Solo portadas. Al tocar una se abre su tarjeta con precio
-        e información. aTarjeta ya entrega datos planos (números
-        y textos), así que pasan tal cual al componente de cliente.
-      */}
+      {/* Solo portadas; al tocar una se abre su ficha. */}
       <div className="rk-fade-up mt-5">
         <GaleriaTienda productos={productos} />
       </div>
@@ -99,7 +96,7 @@ export function StoreResultsSkeleton() {
   return (
     <div aria-busy="true" aria-label="Cargando recursos" className="mt-5">
       <div className="rk-ex-rejilla">
-        {Array.from({ length: 12 }).map((_, index) => (
+        {Array.from({ length: POR_PAGINA }).map((_, index) => (
           <div key={index} className="rk-ex-hueco animate-pulse" />
         ))}
       </div>

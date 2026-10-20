@@ -26,13 +26,13 @@ const COLORES_PANEL = [
   "rosa",
 ];
 
-/** Formatos que siempre se ofrecen; se suman los que existan. */
-const FORMATOS_BASE = ["psd", "jpg", "png", "zip"];
-
 type Opcion = {
   valor: string;
   etiqueta: string;
+  /** Con los demás filtros activos. */
   conteo: number;
+  /** Hay recursos publicados con este valor (sin filtros). */
+  existe: boolean;
 };
 
 /**
@@ -42,25 +42,37 @@ type Opcion = {
  * añadida o quitada: funciona sin JavaScript, se renderiza en el
  * servidor y se puede compartir. Los contadores vienen de
  * facetasTienda (cada grupo contado con los demás filtros
- * activos). Una opción sin recursos y sin marcar no lleva a
- * ninguna parte: se ve atenuada y no es un enlace.
+ * activos).
+ *
+ * Solo se ofrece lo que existe en el catálogo publicado (`base`,
+ * sin filtros): un formato, color o licencia que ningún recurso
+ * tiene no se enseña, y un grupo sin opciones tampoco. Una opción
+ * que existe pero da 0 con los filtros de ahora se ve atenuada y
+ * no es un enlace.
  */
 export default function PanelFiltros({
   parametros,
   facetas,
+  base,
   categorias,
 }: {
   parametros: ParametrosTienda;
   facetas: FacetasTienda;
+  base: FacetasTienda;
   categorias: { slug: string; name: string }[];
 }) {
   const formatos = [
     ...new Set([
-      ...FORMATOS_BASE,
-      ...Object.keys(facetas.formatos),
+      ...Object.keys(base.formatos),
       ...lista(parametros.formato),
     ]),
-  ];
+  ].sort();
+
+  const colores = COLORES_PANEL.filter(
+    (valor) =>
+      (base.colores[valor] ?? 0) > 0 ||
+      lista(parametros.color).includes(valor)
+  );
 
   return (
     <div className="rk-ex-filtros">
@@ -81,6 +93,7 @@ export default function PanelFiltros({
         opciones={LICENCIAS.map((l) => ({
           ...l,
           conteo: facetas.licencias[l.valor] ?? 0,
+          existe: (base.licencias[l.valor] ?? 0) > 0,
         }))}
       />
 
@@ -92,6 +105,7 @@ export default function PanelFiltros({
           valor: c.slug,
           etiqueta: c.name,
           conteo: facetas.categorias[c.slug] ?? 0,
+          existe: (base.categorias[c.slug] ?? 0) > 0,
         }))}
       />
 
@@ -103,9 +117,11 @@ export default function PanelFiltros({
           valor: f,
           etiqueta: f.toUpperCase(),
           conteo: facetas.formatos[f] ?? 0,
+          existe: (base.formatos[f] ?? 0) > 0,
         }))}
       />
 
+      {colores.length > 0 && (
       <details className="rk-ex-grupo" open>
         <summary>
           Color
@@ -113,7 +129,7 @@ export default function PanelFiltros({
         </summary>
 
         <ul className="rk-ex-colores" aria-label="Color">
-          {COLORES_PANEL.flatMap((valor) => {
+          {colores.flatMap((valor) => {
             const color = COLORES.find((c) => c.valor === valor);
 
             if (!color) return [];
@@ -151,6 +167,7 @@ export default function PanelFiltros({
           })}
         </ul>
       </details>
+      )}
 
       <Grupo
         titulo="Orientación"
@@ -159,6 +176,7 @@ export default function PanelFiltros({
         opciones={ORIENTACIONES.map((o) => ({
           ...o,
           conteo: facetas.orientaciones[o.valor] ?? 0,
+          existe: (base.orientaciones[o.valor] ?? 0) > 0,
         }))}
       />
     </div>
@@ -178,6 +196,11 @@ function Grupo({
   opciones: Opcion[];
 }) {
   const marcados = lista(parametros[clave]);
+  const visibles = opciones.filter(
+    (o) => o.existe || marcados.includes(o.valor)
+  );
+
+  if (visibles.length === 0) return null;
 
   return (
     <details className="rk-ex-grupo" open>
@@ -187,7 +210,7 @@ function Grupo({
       </summary>
 
       <ul aria-label={titulo}>
-        {opciones.map((opcion) => {
+        {visibles.map((opcion) => {
           const marcado = marcados.includes(opcion.valor);
           const contenido = (
             <>

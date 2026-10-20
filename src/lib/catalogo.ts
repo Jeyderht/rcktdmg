@@ -10,8 +10,8 @@ import type { Prisma } from "@prisma/client";
 
 export const TAG_PACK = "pack";
 
-/** Recursos por página en Explorar: 12 = 3 filas de 4 en escritorio. */
-export const POR_PAGINA = 12;
+/** Recursos por página en la tienda: 21 = 7 filas completas de 3. */
+export const POR_PAGINA = 21;
 
 export type OrdenCatalogo =
   | "relevancia"

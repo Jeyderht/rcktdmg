@@ -91,7 +91,7 @@
     §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17175–20014
     §71  BB. INICIO (encargo de la home)                                  20015–20843
     §72  Inicio · vender más                                              20844–21721
-    §73  Explorar (tienda)                                                21722–22309
+    §73  Explorar (tienda)                                                21722–22310
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -21727,7 +21727,8 @@ html[data-theme] .rk-footer-marca::before {
 /* El halo decorativo de la cabecera (rk-halo-marca, blur 90 px)
    se recortaba con el overflow-hidden de la sección y quedaba un
    rectángulo gris de bordes duros. El desenfoque sale libre y
-   solo se recorta el desbordamiento horizontal de la página. */
+   solo se recorta el desbordamiento horizontal de la página. La
+   opacidad .55 vale para todos los halos de marca del sitio. */
 .rk-explorar > section:first-child {
   overflow: visible;
 }
@@ -21736,7 +21737,7 @@ html[data-theme] .rk-footer-marca::before {
   overflow-x: clip;
 }
 
-.rk-explorar .rk-halo-marca {
+.rk-halo-marca {
   opacity: 0.55;
 }
 

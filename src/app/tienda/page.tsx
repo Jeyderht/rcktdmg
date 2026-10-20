@@ -38,6 +38,7 @@ import {
   ORIENTACIONES,
   RANGOS_PRECIO,
   alternar,
+  hayFiltros,
   leerParametros,
   lista,
   ordenPorDefecto,
@@ -163,12 +164,18 @@ export default async function Store({ searchParams }: StoreProps) {
   const parametros = leerParametros(await searchParams);
 
   /*
-    Las categorías salen de la base, las activas: no se inventa
-    ninguna. La fila sigue ORDEN_CATEGORIAS y las demás van
-    después, por nombre. Los contadores (facetas) cuentan cada
-    grupo con los demás filtros activos.
+    Las categorías salen de la base: no se inventa ninguna, y solo
+    se ofrecen las que tienen recursos publicados (o la que llega
+    en la URL). La fila sigue ORDEN_CATEGORIAS y las demás van
+    después, por nombre.
+
+    Dos juegos de contadores: `facetas` cuenta cada grupo con los
+    demás filtros activos; `base`, el catálogo publicado entero,
+    decide qué opciones existen de verdad. Sin filtros son el mismo.
   */
-  const [categoriasCrudas, facetas, destacadosBusqueda, etiquetaTag] =
+  const hayFiltrosPanel = hayFiltros(parametros) || Boolean(parametros.sin);
+
+  const [categoriasCrudas, facetas, base, destacadosBusqueda, etiquetaTag] =
     await Promise.all([
       prisma.category.findMany({
         where: { isActive: true },
@@ -177,6 +184,8 @@ export default async function Store({ searchParams }: StoreProps) {
       }),
 
       facetasTienda(parametros),
+
+      hayFiltrosPanel ? facetasTienda({}) : null,
 
       /* Frases del buscador que se escribe solo: los mismos
          términos de «Populares ahora». Sin ellos, no se anima. */
@@ -196,12 +205,19 @@ export default async function Store({ searchParams }: StoreProps) {
     return i === -1 ? ORDEN_CATEGORIAS.length : i;
   };
 
-  const categorias = [...categoriasCrudas].sort(
-    (a, b) =>
-      posicion(a.slug) - posicion(b.slug) || a.name.localeCompare(b.name)
-  );
-
+  const conteoBase = base ?? facetas;
   const categoriasMarcadas = lista(parametros.categoria);
+
+  const categorias = categoriasCrudas
+    .filter(
+      (c) =>
+        (conteoBase.categorias[c.slug] ?? 0) > 0 ||
+        categoriasMarcadas.includes(c.slug)
+    )
+    .sort(
+      (a, b) =>
+        posicion(a.slug) - posicion(b.slug) || a.name.localeCompare(b.name)
+    );
 
   /*
     Filtros aplicados: una píldora por VALOR, cada una con la URL
@@ -343,6 +359,7 @@ export default async function Store({ searchParams }: StoreProps) {
             <PanelFiltros
               parametros={parametros}
               facetas={facetas}
+              base={conteoBase}
               categorias={categorias}
             />
           </CajonFiltros>
