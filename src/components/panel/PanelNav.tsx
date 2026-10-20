@@ -268,7 +268,10 @@ function PanelNavInterno({
 
       {/* ══════════ COLUMNA DE ESCRITORIO ══════════ */}
       <aside className="rk-panel-lateral sticky top-16 hidden h-[calc(100svh-4rem)] w-60 shrink-0 flex-col overflow-y-auto p-4 lg:flex">
-        <p className="rk-kicker px-1 pb-3">{titulo}</p>
+        {/* «Mi cuenta» con un solo grupo; «Mi espacio» con varios. */}
+        <p className="rk-kicker px-1 pb-3">
+          {grupos.length === 1 ? "Mi cuenta" : "Mi espacio"}
+        </p>
 
         <div className="flex-1">{lista}</div>
 

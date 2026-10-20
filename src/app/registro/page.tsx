@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { IconoUsuario } from "@/components/iconos";
 import Isotipo from "@/components/layout/Isotipo";
+import { CLAVE_BIENVENIDA } from "@/components/cuenta/BienvenidaCuenta";
 
 export default function RegistroPage() {
   const router = useRouter();
@@ -42,6 +43,15 @@ export default function RegistroPage() {
         setError(data.error || "No se pudo crear la cuenta.");
         return;
       }
+
+      /*
+        Marca de «recién registrado»: /mi-cuenta enseña un saludo
+        de bienvenida mientras exista y lo borra al cerrarlo. Si el
+        navegador bloquea el almacenamiento, simplemente no sale.
+      */
+      try {
+        localStorage.setItem(CLAVE_BIENVENIDA, "1");
+      } catch {}
 
       router.push(data.redirect);
       router.refresh();

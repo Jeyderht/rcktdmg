@@ -8,6 +8,7 @@ import AnilloAdmin from "@/components/admin/AnilloAdmin";
 import CifraAnimada from "@/components/admin/CifraAnimada";
 import ListaAdmin from "@/components/admin/ListaAdmin";
 import RevelarAlScroll from "@/components/admin/RevelarAlScroll";
+import BienvenidaCuenta from "@/components/cuenta/BienvenidaCuenta";
 import QuickAccess from "@/components/cuenta/QuickAccess";
 import RecomendadosCliente from "@/components/cuenta/RecomendadosCliente";
 import ThemeToggle from "@/components/layout/ThemeToggle";
@@ -167,6 +168,9 @@ export default function Account() {
               {user ? ` · ${ROLE_LABEL[user.role] || user.role}` : ""}
             </p>
           </header>
+
+          {/* Solo justo después de registrarse; se puede cerrar. */}
+          <BienvenidaCuenta nombre={displayName} />
 
           {error && (
             <div role="alert" className="rk-upload-error rk-fade mt-4">
