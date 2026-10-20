@@ -12,11 +12,6 @@ import PanelShell from "@/components/panel/PanelShell";
 */
 export const metadata: Metadata = paginaPrivada("Mi cuenta");
 
-/*
-  Secciones del área de cliente. Todas existen ya como página;
-  no se añade ningún acceso a algo sin implementar.
-*/
-
 export default function MiCuentaLayout({
   children,
 }: {

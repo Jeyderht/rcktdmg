@@ -40,7 +40,22 @@ const W = 300;
 const soles = (x: number) => `S/ ${x.toFixed(2)}`;
 const clave = (a: number, m: number) => `${a}-${String(m + 1).padStart(2, "0")}`;
 
-export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoMes> }) {
+export default function BalanceAdmin({
+  datos,
+  etiquetas,
+}: {
+  datos: Record<string, IngresoMes>;
+  /**
+   * Nombres de las tres series, si no son los del admin. El panel
+   * del creador las llama «Ventas / Comisión / Para ti»: ahí
+   * «Creadores» es solo su parte.
+   */
+  etiquetas?: readonly [string, string, string];
+}) {
+  const series = etiquetas
+    ? SERIES.map((s, i) => ({ ...s, n: etiquetas[i] }))
+    : SERIES;
+
   /* Mes de referencia: el actual al cargar (en el reloj del navegador). */
   const [hoy] = useState(() => new Date());
   const [ref, setRef] = useState({ a: hoy.getFullYear(), m: hoy.getMonth() });
@@ -76,7 +91,7 @@ export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoM
     return lista;
   }, [ref]);
   const n = meses.length;
-  const valores = SERIES.map((_, i) => meses.map((x) => datos[x.clave]?.[i] ?? 0));
+  const valores = series.map((_, i) => meses.map((x) => datos[x.clave]?.[i] ?? 0));
   const totalAno = (i: number) => {
     let t = 0;
     for (let mm = 0; mm <= ref.m; mm++) t += datos[clave(ref.a, mm)]?.[i] ?? 0;
@@ -289,7 +304,7 @@ export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoM
             aria-label="Cambiar vista de ingresos"
             onClick={() => setIsla(true)}
           >
-            <span>{SERIES[vista].n}</span>
+            <span>{series[vista].n}</span>
             <svg viewBox="0 0 24 24" aria-hidden="true" style={isla ? { transform: "rotate(180deg)" } : undefined}>
               <path d="m6 9 6 6 6-6" />
             </svg>
@@ -300,7 +315,7 @@ export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoM
               aria-hidden="true"
               style={indicador ? { left: `${indicador.left}px`, width: `${indicador.width}px` } : undefined}
             />
-            {SERIES.map((s, k) => (
+            {series.map((s, k) => (
               <button
                 key={s.n}
                 ref={(el) => {
@@ -325,7 +340,7 @@ export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoM
 
         <div className="rk-ing-info">
           <div style={{ minWidth: 0 }}>
-            <h3>{SERIES[vista].n}</h3>
+            <h3>{series[vista].n}</h3>
             <p className="rk-ing-desc rk-muted">
               <span>{meses[n - 1].nom}</span>
               <span className="rk-ing-sep" aria-hidden="true">
@@ -395,14 +410,14 @@ export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoM
           >
             <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
               <defs>
-                {SERIES.map((s, k) => (
+                {series.map((s, k) => (
                   <linearGradient key={s.n} id={`rk-ing-r${k}`} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0" stopColor={s.c} stopOpacity={k === 0 ? ".42" : ".45"} />
                     <stop offset="1" stopColor={s.c} stopOpacity="0" />
                   </linearGradient>
                 ))}
               </defs>
-              {SERIES.map((s, k) => (
+              {series.map((s, k) => (
                 <path
                   key={`a${k}`}
                   className="rk-ing-area"
@@ -412,12 +427,12 @@ export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoM
                   d={`${trazo(pts[k])} L${W},${H} L0,${H} Z`}
                 />
               ))}
-              {SERIES.map((s, k) => (
+              {series.map((s, k) => (
                 <path key={`l${k}`} className="rk-ing-linea" data-s={k} data-activa={k === vista} stroke={s.c} d={trazo(pts[k])} />
               ))}
             </svg>
 
-            {SERIES.map((s, k) => (
+            {series.map((s, k) => (
               <span
                 key={s.n}
                 className="rk-ing-punto"
@@ -450,7 +465,7 @@ export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoM
               data-oculta={oculta}
               style={{ left: `${Math.min(Math.max(x, 28), 70)}%` }}
             >
-              {SERIES.map((s, k) => (
+              {series.map((s, k) => (
                 <p key={s.n} data-activa={k === vista}>
                   <i style={{ ["--c" as string]: s.c }} />
                   {s.n}
@@ -481,7 +496,7 @@ export default function BalanceAdmin({ datos }: { datos: Record<string, IngresoM
         </div>
 
         <div className="rk-ing-leyenda" aria-live="polite">
-          {SERIES.map((s, k) => (
+          {series.map((s, k) => (
             <div key={s.n} className="rk-ing-ley" data-activa={k === vista}>
               <span>
                 <i style={{ ["--c" as string]: s.c }} />

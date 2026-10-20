@@ -42,8 +42,8 @@ export type UsuarioPanel = {
  * un bloque de identidad abajo. Tenerlo tres veces garantiza
  * que acaben pareciéndose cada vez menos.
  *
- * Lo que cambia entre paneles son los enlaces, y esos llegan
- * por props desde cada layout, que es quien sabe cuáles tiene.
+ * Los enlaces llegan agrupados desde PanelShell, ya filtrados por
+ * el rol (lib/menu-cuenta): con un solo grupo no se rotula.
  */
 function PanelNavInterno({
   grupos,

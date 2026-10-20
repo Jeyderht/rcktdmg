@@ -345,7 +345,10 @@ export default function CreatorDashboard() {
 
           {/* INGRESOS: el mismo gráfico del admin */}
           <div id="ganancias" className="mt-4 scroll-mt-24">
-            <BalanceAdmin datos={ingresos} />
+            <BalanceAdmin
+              datos={ingresos}
+              etiquetas={["Ventas", "Comisión", "Para ti"]}
+            />
           </div>
 
           <div className="rk-db">
@@ -394,8 +397,11 @@ export default function CreatorDashboard() {
                 </div>
 
                 <div className="rk-pl-ret">
+                  {/* Lo ganado desde el principio. El saldo que se puede
+                      retirar (menos lo ya retirado o pedido) lo calcula
+                      la página de retiros. */}
                   <div>
-                    <span className="rk-db-mut">Saldo para retirar</span>
+                    <span className="rk-db-mut">Ganado en total</span>
                     <b><CifraAnimada texto={solesMoneda(tuyo)} /></b>
                   </div>
                   <Link className="rk-btn rk-btn-ink rk-btn-compact" href="/creadores/panel/retiros">

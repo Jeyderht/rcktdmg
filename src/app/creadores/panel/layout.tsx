@@ -11,12 +11,6 @@ import PanelShell from "@/components/panel/PanelShell";
 */
 export const metadata: Metadata = paginaPrivada("Creator Studio");
 
-/*
-  Secciones del panel. Son las mismas que ya ofrecía la
-  navegación horizontal anterior: ninguna ruta nueva, ningún
-  acceso a algo que no exista todavía.
-*/
-
 export default function CreatorPanelLayout({
   children,
 }: {

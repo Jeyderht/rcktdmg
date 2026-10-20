@@ -82,9 +82,9 @@ const CREATOR_LINKS: QuickLink[] = [
     icon: Layers,
   },
   {
-    // Ganancias y estadísticas se muestran en el panel:
-    // no existe una página independiente.
-    href: "/creadores/panel",
+    // Ganancias y estadísticas se muestran en el panel, en el
+    // gráfico de ingresos (id="ganancias"): no hay página propia.
+    href: "/creadores/panel#ganancias",
     label: "Ganancias",
     icon: BarChart3,
   },
@@ -386,7 +386,14 @@ export default function QuickAccess({
         )}
 
         <div className={isAdmin || isCreator ? "mt-3" : ""}>
-          <FeatureGrid links={CLIENT_LINKS} />
+          {/* «Únete como creador» solo para quien todavía no lo es. */}
+          <FeatureGrid
+            links={
+              isCreator
+                ? CLIENT_LINKS.filter((l) => l.href !== "/creadores/unete")
+                : CLIENT_LINKS
+            }
+          />
         </div>
       </div>
     </section>
