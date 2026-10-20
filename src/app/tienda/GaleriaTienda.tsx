@@ -5,19 +5,21 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react";
 
+import FavoriteButton from "@/components/tienda/FavoriteButton";
 import ProductCard, { type ProductCardData } from "@/components/tienda/ProductCard";
 
 /**
  * Resultados de la tienda en modo galería.
  *
- * Solo las portadas, en una rejilla de 3 columnas en móvil (más en
- * pantallas grandes), como un muro de diseños. Al tocar una se abre
+ * Solo las portadas (4/5), en una rejilla de 2 columnas en móvil,
+ * 3 en tablet y 4 en escritorio, con el corazón de guardar arriba a
+ * la derecha. Sin nombre, precio ni insignias. Al tocar una se abre
  * la tarjeta del recurso (nombre, creador, precio y formato; sobre
  * la imagen solo favorito arriba a la izquierda y cerrar a la
  * derecha) en una hoja encima, con flechas para pasar al anterior
  * o al siguiente y un botón para ir a la ficha.
  *
- * La paginación (20 por página) la sigue dando StoreResults.
+ * La paginación (12 por página) la sigue dando StoreResults.
  */
 export default function GaleriaTienda({
   productos,
@@ -58,15 +60,15 @@ export default function GaleriaTienda({
 
   return (
     <>
-      <ul className="rk-galeria" aria-label="Recursos">
+      <ul className="rk-ex-rejilla" aria-label="Recursos">
         {productos.map((p, i) => {
           const imagen = p.coverUrl || p.image?.url || null;
 
           return (
-            <li key={p.id}>
+            <li key={p.id} className="rk-ex-item">
               <button
                 type="button"
-                className="rk-galeria-item"
+                className="rk-ex-tarjeta"
                 onClick={() => setAbierto(i)}
                 aria-label={`${p.name}: ver precio e información`}
               >
@@ -76,12 +78,17 @@ export default function GaleriaTienda({
                     alt={p.image?.alt || p.name}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 22vw"
                   />
                 ) : (
                   <span className="rk-galeria-vacio">RcktX</span>
                 )}
               </button>
+
+              {/* Fuera del botón: un botón no puede ir dentro de otro. */}
+              <span className="rk-ex-guardar">
+                <FavoriteButton productId={p.id} size="sm" onImage />
+              </span>
             </li>
           );
         })}
