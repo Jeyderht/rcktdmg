@@ -10,17 +10,12 @@ import {
   type ParametrosTienda,
 } from "@/lib/catalogo";
 
-type StoreResultsProps = {
-  parametros: ParametrosTienda;
-  activeCategoryName: string | null;
-};
-
 /**
- * Resultados de la tienda.
+ * Resultados de Explorar: rejilla de portadas y paginación.
  *
  * Va dentro de un <Suspense> en la página para que la
  * cabecera y los filtros se pinten de inmediato mientras se
- * resuelve la consulta.
+ * resuelve la consulta. El contador vive en la cabecera.
  *
  * El límite de carga vive AQUÍ y no en un `loading.tsx` de
  * segmento: un loading.tsx en /tienda también envolvería a
@@ -30,8 +25,9 @@ type StoreResultsProps = {
  */
 export default async function StoreResults({
   parametros,
-  activeCategoryName,
-}: StoreResultsProps) {
+}: {
+  parametros: ParametrosTienda;
+}) {
   /*
     Solo se muestran recursos PUBLISHED: los estados DRAFT,
     PENDING_REVIEW, REJECTED y ARCHIVED nunca deben aparecer
@@ -39,120 +35,61 @@ export default async function StoreResults({
     consultarCatalogo, que además pagina: aquí nunca llegan
     más de POR_PAGINA recursos.
   */
-  const { productos, total, pagina, totalPaginas } =
+  const { productos, pagina, totalPaginas } =
     await consultarCatalogo(parametros);
 
-  const query = parametros.q ?? "";
   const conFiltros = hayFiltros(parametros);
+
+  if (productos.length === 0) {
+    return (
+      <div className="rk-fade-up rk-tile mt-5 px-6 py-16 text-center">
+        <div className="rk-empty-icon mx-auto">
+          <SearchX size={26} />
+        </div>
+
+        <h2 className="rk-title mt-5 text-xl">
+          {conFiltros
+            ? "Sin resultados"
+            : "Todavía no hay recursos publicados"}
+        </h2>
+
+        <p className="mx-auto mt-2.5 max-w-md text-sm leading-6 text-ink/60">
+          {conFiltros
+            ? "No encontramos recursos que coincidan con tu búsqueda."
+            : "Vuelve pronto: los creadores están preparando sus recursos."}
+        </p>
+
+        {conFiltros && (
+          <Link href="/tienda" className="rk-btn rk-btn-ink mt-7">
+            <X size={15} />
+            Limpiar filtros
+          </Link>
+        )}
+      </div>
+    );
+  }
 
   return (
     <>
-      {/* CONTADOR Y CONTEXTO */}
-      <section className="rk-fade-up mt-6 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-        <div className="min-w-0">
-          {query ? (
-            <p className="text-[15px] text-ink/60">
-              Resultados para{" "}
-              <span className="font-semibold text-ink">“{query}”</span>
+      {/*
+        Solo portadas. Al tocar una se abre su tarjeta con precio
+        e información. aTarjeta ya entrega datos planos (números
+        y textos), así que pasan tal cual al componente de cliente.
+      */}
+      <div className="rk-fade-up mt-5">
+        <GaleriaTienda productos={productos} />
+      </div>
 
-              {activeCategoryName && (
-                <>
-                  {" en "}
-                  <span className="font-semibold text-ink">
-                    {activeCategoryName}
-                  </span>
-                </>
-              )}
-            </p>
-          ) : activeCategoryName ? (
-            <p className="text-[15px] text-ink/60">
-              Categoría{" "}
-              <span className="font-semibold text-ink">
-                {activeCategoryName}
-              </span>
-            </p>
-          ) : (
-            <p className="text-[15px] text-ink/60">
-              Todos los recursos
-            </p>
-          )}
-        </div>
-
-        <div className="flex shrink-0 items-center gap-3">
-          {/*
-            Contador real, nunca estimado, y del catálogo
-            filtrado entero: no de la página que se está
-            viendo.
-          */}
-          <span className="text-sm font-medium tabular-nums text-ink/60">
-            {total} {total === 1 ? "recurso" : "recursos"}
-          </span>
-
-          {conFiltros && (
-            <Link
-              href="/tienda"
-              className="rk-press rk-hit-44-y inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-4 transition-opacity hover:opacity-60"
-            >
-              <X size={14} />
-              Limpiar filtros
-            </Link>
-          )}
-        </div>
-      </section>
-
-      <div className="rk-divider mt-4" />
-
-      {/* RESULTADOS */}
-      {productos.length > 0 ? (
-        <>
-          {/*
-            Galería: solo portadas, 3 columnas en móvil. Al tocar
-            una se abre su tarjeta con precio e información.
-            aTarjeta ya entrega datos planos (números y textos),
-            así que pasan tal cual al componente de cliente.
-          */}
-          <div className="rk-fade-up rk-enter-1 mt-6">
-            <GaleriaTienda productos={productos} />
-          </div>
-
-          <Paginacion
-            pagina={pagina}
-            totalPaginas={totalPaginas}
-            href={(numero) =>
-              urlTienda(parametros, {
-                // La página 1 es la URL limpia, sin ?page=1.
-                page: numero <= 1 ? undefined : String(numero),
-              })
-            }
-          />
-        </>
-      ) : (
-        /* SIN RESULTADOS */
-        <div className="rk-fade-up rk-tile mt-6 px-6 py-16 text-center">
-          <div className="rk-empty-icon mx-auto">
-            <SearchX size={26} />
-          </div>
-
-          <h2 className="rk-title mt-5 text-xl">
-            {conFiltros
-              ? "Sin resultados"
-              : "Todavía no hay recursos publicados"}
-          </h2>
-
-          <p className="mx-auto mt-2.5 max-w-md text-sm leading-6 text-ink/60">
-            {conFiltros
-              ? "No encontramos recursos que coincidan con tu búsqueda."
-              : "Vuelve pronto: los creadores están preparando sus recursos."}
-          </p>
-
-          {conFiltros && (
-            <Link href="/tienda" className="rk-btn rk-btn-ink mt-7">
-              <X size={15} />
-              Limpiar filtros
-            </Link>
-          )}
-        </div>
-      )}
+      <Paginacion
+        pagina={pagina}
+        totalPaginas={totalPaginas}
+        href={(numero) =>
+          urlTienda(parametros, {
+            // La página 1 es la URL limpia, sin ?page=1.
+            page: numero <= 1 ? undefined : String(numero),
+          })
+        }
+      />
     </>
   );
 }
@@ -160,20 +97,10 @@ export default async function StoreResults({
 /** Skeleton mostrado mientras se resuelven los resultados. */
 export function StoreResultsSkeleton() {
   return (
-    <div aria-busy="true" aria-label="Cargando recursos">
-      <div className="mt-6 flex items-baseline justify-between gap-4">
-        <div className="h-4 w-40 animate-pulse rounded-full bg-ink/[0.06]" />
-        <div className="h-4 w-20 animate-pulse rounded-full bg-ink/[0.06]" />
-      </div>
-
-      <div className="rk-divider mt-4" />
-
-      <div className="mt-6 rk-galeria">
+    <div aria-busy="true" aria-label="Cargando recursos" className="mt-5">
+      <div className="rk-ex-rejilla">
         {Array.from({ length: 12 }).map((_, index) => (
-          <div
-            key={index}
-            className="aspect-[4/5] w-full animate-pulse rounded-[14px] bg-ink/[0.06]"
-          />
+          <div key={index} className="rk-ex-hueco animate-pulse" />
         ))}
       </div>
     </div>

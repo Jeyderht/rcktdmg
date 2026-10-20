@@ -91,7 +91,7 @@
     §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17175–20014
     §71  BB. INICIO (encargo de la home)                                  20015–20843
     §72  Inicio · vender más                                              20844–21721
-    §73  Explorar (tienda)                                                21722–21742
+    §73  Explorar (tienda)                                                21722–22309
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -21738,4 +21738,571 @@ html[data-theme] .rk-footer-marca::before {
 
 .rk-explorar .rk-halo-marca {
   opacity: 0.55;
+}
+
+/* ── Explorar al estilo DesignBR: cabecera compacta, fila de
+   categorías con ícono, filtros a la izquierda (cajón en móvil)
+   y rejilla de portadas. Solo tokens: --rk-foreground,
+   --rk-background, --rk-muted, --rk-card, --rk-border-color y
+   --rk-border-strong. ── */
+
+/* Cabecera: «Explorar» y el contador a la derecha */
+.rk-ex-cab {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rk-ex-cab h1 {
+  margin: 0;
+  color: rgb(var(--rk-foreground));
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.rk-ex-cab p {
+  margin: 0;
+  color: rgb(var(--rk-muted));
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .rk-ex-cab h1 {
+    font-size: 2rem;
+  }
+}
+
+/* Fila de categorías: botones verticales de 76 px; scroll
+   horizontal en móvil, a todo el ancho de la pantalla */
+.rk-ex-categorias {
+  display: flex;
+  gap: 8px;
+  margin: 16px -16px 0;
+  padding: 0 16px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+
+.rk-ex-categorias::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .rk-ex-categorias {
+    margin: 18px 0 0;
+    padding: 0 0 4px;
+  }
+}
+
+.rk-ex-cat {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 76px;
+  padding: 12px 4px 10px;
+  border: 1px solid var(--rk-border-color);
+  border-radius: 16px;
+  background: rgb(var(--rk-card) / var(--rk-card-alpha));
+  color: rgb(var(--rk-muted));
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  scroll-snap-align: start;
+  transition:
+    background-color var(--rx-t-micro) var(--rx-curva),
+    border-color var(--rx-t-micro) var(--rx-curva),
+    color var(--rx-t-micro) var(--rx-curva);
+}
+
+.rk-ex-cat svg {
+  flex: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-ex-cat:hover {
+    border-color: var(--rk-border-strong);
+    color: rgb(var(--rk-foreground));
+  }
+}
+
+/* la elegida, en tinta sólida como el chip activo */
+.rk-ex-cat[aria-current],
+.rk-ex-cat[aria-current]:hover {
+  border-color: rgb(var(--rk-foreground));
+  background: rgb(var(--rk-foreground));
+  color: rgb(var(--rk-background));
+}
+
+.rk-ex-cat:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: 2px;
+}
+
+/* Cuerpo: una columna en móvil; filtros de 15rem + resultados
+   desde 1024 px */
+.rk-ex-cuerpo {
+  margin-top: 20px;
+}
+
+@media (min-width: 1024px) {
+  .rk-ex-cuerpo {
+    display: grid;
+    grid-template-columns: 15rem minmax(0, 1fr);
+    align-items: start;
+    gap: 32px;
+  }
+}
+
+/* Panel de filtros */
+.rk-ex-panel {
+  color: rgb(var(--rk-foreground));
+}
+
+@media (min-width: 1024px) {
+  .rk-ex-panel {
+    position: sticky;
+    top: 88px;
+    max-height: calc(100vh - 104px);
+    overflow-y: auto;
+    padding: 16px;
+    border: 1px solid var(--rk-border-color);
+    border-radius: 20px;
+    background: rgb(var(--rk-card) / var(--rk-card-alpha));
+    scrollbar-width: thin;
+  }
+
+  .rk-ex-velo,
+  .rk-ex-cerrar,
+  .rk-ex-cajon-pie {
+    display: none;
+  }
+}
+
+/* Por debajo de 1024 px: cajón que entra desde la izquierda */
+@media (max-width: 1023px) {
+  .rk-ex-velo {
+    position: fixed;
+    inset: 0;
+    z-index: 69;
+    padding: 0;
+    border: 0;
+    background: rgb(var(--pal-negro) / 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s var(--rx-curva);
+  }
+
+  .rk-ex-panel {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 70;
+    display: flex;
+    flex-direction: column;
+    width: min(86vw, 320px);
+    padding: 18px 16px 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: rgb(var(--rk-background));
+    box-shadow: 0 0 40px rgb(var(--pal-negro) / 0.3);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.3s var(--rx-curva),
+      visibility 0.3s;
+  }
+
+  .rk-ex-cajon[data-abierto] .rk-ex-velo {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .rk-ex-cajon[data-abierto] .rk-ex-panel {
+    transform: none;
+    visibility: visible;
+  }
+
+  .rk-ex-cerrar {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--rk-border-color);
+    border-radius: 50%;
+    background: transparent;
+    color: rgb(var(--rk-foreground));
+    cursor: pointer;
+  }
+
+  /* la cabecera deja sitio a la ✕ */
+  .rk-ex-panel .rk-ex-filtros-cab {
+    min-height: 40px;
+    padding-right: 52px;
+  }
+
+  .rk-ex-filtros {
+    flex: 1;
+  }
+
+  .rk-ex-cajon-pie {
+    position: sticky;
+    bottom: 0;
+    margin: 0 -16px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--rk-border-color);
+    background: rgb(var(--rk-background));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-ex-velo,
+  .rk-ex-panel {
+    transition: none;
+  }
+}
+
+.rk-ex-filtros-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rk-border-color);
+}
+
+.rk-ex-filtros-cab h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.rk-ex-limpiar {
+  color: rgb(var(--rk-muted));
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-ex-limpiar:hover {
+    color: rgb(var(--rk-foreground));
+  }
+}
+
+/* Grupos plegables */
+.rk-ex-grupo {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rk-border-color);
+}
+
+.rk-ex-grupo:last-child {
+  border-bottom: 0;
+}
+
+.rk-ex-grupo > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+  font-size: 13px;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.rk-ex-grupo > summary::-webkit-details-marker {
+  display: none;
+}
+
+.rk-ex-grupo > summary svg {
+  color: rgb(var(--rk-muted));
+  transition: transform 0.2s var(--rx-curva);
+}
+
+.rk-ex-grupo:not([open]) > summary svg {
+  transform: rotate(-90deg);
+}
+
+.rk-ex-grupo ul {
+  display: grid;
+  gap: 2px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Casilla con su texto y su contador */
+.rk-ex-opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  color: rgb(var(--rk-foreground) / 0.85);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+@media (pointer: coarse) {
+  .rk-ex-opcion {
+    min-height: 44px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a.rk-ex-opcion:hover {
+    background: rgb(var(--rk-foreground) / 0.05);
+    color: rgb(var(--rk-foreground));
+  }
+}
+
+.rk-ex-opcion:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: 1px;
+}
+
+.rk-ex-opcion[aria-disabled] {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.rk-ex-casilla {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgb(var(--rk-foreground) / 0.35);
+  border-radius: 5px;
+  color: rgb(var(--rk-background));
+}
+
+.rk-ex-opcion[data-marcado] {
+  color: rgb(var(--rk-foreground));
+  font-weight: 500;
+}
+
+.rk-ex-opcion[data-marcado] .rk-ex-casilla {
+  border-color: rgb(var(--rk-foreground));
+  background: rgb(var(--rk-foreground));
+}
+
+.rk-ex-opcion-texto {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rk-ex-opcion-conteo {
+  color: rgb(var(--rk-muted));
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Color: círculos de 26 px (la muestra es la de COLORES) */
+.rk-ex-grupo ul.rk-ex-colores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.rk-ex-color {
+  display: block;
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgb(var(--rk-foreground) / 0.18);
+  border-radius: 50%;
+}
+
+.rk-ex-color[data-marcado] {
+  box-shadow:
+    0 0 0 2px rgb(var(--rk-background)),
+    0 0 0 4px rgb(var(--rk-foreground));
+}
+
+.rk-ex-color[aria-disabled] {
+  opacity: 0.35;
+}
+
+.rk-ex-color:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: 3px;
+}
+
+/* Barra encima de la rejilla: buscador, orden y «Filtros» */
+.rk-ex-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.rk-ex-buscador {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.rk-ex-barra-acciones {
+  display: flex;
+  flex: 1 1 100%;
+  gap: 8px;
+}
+
+@media (min-width: 640px) {
+  .rk-ex-buscador {
+    flex-basis: 0;
+  }
+
+  .rk-ex-barra-acciones {
+    flex: none;
+  }
+}
+
+.rk-ex-orden {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.rk-ex-orden select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 38px 0 16px;
+  border: 1px solid var(--rk-border-color);
+  border-radius: 999px;
+  background: rgb(var(--rk-card) / var(--rk-card-alpha));
+  color: rgb(var(--rk-foreground));
+  font-size: 13px;
+  font-weight: 500;
+  appearance: none;
+  cursor: pointer;
+}
+
+.rk-ex-orden select:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: 2px;
+}
+
+.rk-ex-orden svg {
+  position: absolute;
+  right: 14px;
+  color: rgb(var(--rk-muted));
+  pointer-events: none;
+}
+
+.rk-ex-boton-filtros {
+  flex: none;
+  min-height: 44px;
+}
+
+@media (min-width: 1024px) {
+  .rk-ex-boton-filtros {
+    display: none;
+  }
+}
+
+/* Filtros aplicados */
+.rk-ex-aplicados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Rejilla: 2 columnas en móvil, 3 en tablet, 4 en escritorio */
+.rk-ex-rejilla {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .rk-ex-rejilla {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rk-ex-rejilla {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+.rk-ex-item {
+  position: relative;
+}
+
+/* Tarjeta: SOLO la portada, 4/5, con zoom suave al pasar */
+.rk-ex-tarjeta,
+.rk-ex-hueco {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgb(var(--rk-foreground) / 0.06);
+}
+
+.rk-ex-tarjeta {
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+.rk-ex-tarjeta img {
+  transition: transform 0.5s var(--rx-curva);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-ex-tarjeta:hover img {
+    transform: scale(1.05);
+  }
+}
+
+.rk-ex-tarjeta:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-ex-tarjeta img {
+    transition: none;
+  }
+}
+
+/* Guardar: el corazón, arriba a la derecha */
+.rk-ex-guardar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
 }
