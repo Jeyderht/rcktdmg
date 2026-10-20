@@ -8,6 +8,7 @@ import { Menu, X, LogOut } from "lucide-react";
 import * as Iconos from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Isotipo from "@/components/layout/Isotipo";
+import { grupoDeRuta, type GrupoMenu } from "@/lib/menu-cuenta";
 
 export type ElementoPanel = {
   href: string;
@@ -41,15 +42,15 @@ export type UsuarioPanel = {
  * un bloque de identidad abajo. Tenerlo tres veces garantiza
  * que acaben pareciéndose cada vez menos.
  *
- * Lo que cambia entre paneles son los enlaces, y esos llegan
- * por props desde cada layout, que es quien sabe cuáles tiene.
+ * Los enlaces llegan agrupados desde PanelShell, ya filtrados por
+ * el rol (lib/menu-cuenta): con un solo grupo no se rotula.
  */
 function PanelNavInterno({
-  elementos,
+  grupos,
   usuario,
   titulo,
 }: {
-  elementos: ElementoPanel[];
+  grupos: GrupoMenu[];
   usuario: UsuarioPanel;
   titulo: string;
 }) {
@@ -94,6 +95,12 @@ function PanelNavInterno({
 
   const cadenaBusqueda = busqueda.toString();
 
+  /* Todas las entradas visibles, para resolver cuál está activa. */
+  const elementos: ElementoPanel[] = grupos.flatMap((g) => g.items);
+  const grupoActual = grupoDeRuta(pathname);
+  const tituloActual =
+    grupos.find((g) => g.id === grupoActual)?.titulo ?? titulo;
+
   /* ¿Hay alguna entrada filtrada encendida para esta ruta? */
   const hayFiltradaActiva = elementos.some(
     (e) =>
@@ -123,30 +130,41 @@ function PanelNavInterno({
   };
 
   const lista = (
-    <nav className="flex flex-col gap-0.5" aria-label={titulo}>
-      {elementos.map((el) => {
-        const Icono =
-          ((Iconos as unknown as Record<string, LucideIcon>)[el.icono] ??
-            Iconos.Circle) as LucideIcon;
+    <nav className="flex flex-col gap-4" aria-label={titulo}>
+      {grupos.map((grupo) => (
+        <div key={grupo.id} className="flex flex-col gap-0.5">
+          {/* Con un solo grupo (cliente) no hace falta rotular. */}
+          {grupos.length > 1 && (
+            <p className="rk-kicker px-3 pb-1.5 text-[10px] uppercase tracking-wider text-ink/55">
+              {grupo.titulo}
+            </p>
+          )}
 
-        const esActivo = activo(el);
+          {grupo.items.map((el) => {
+            const Icono =
+              ((Iconos as unknown as Record<string, LucideIcon>)[el.icono] ??
+                Iconos.Circle) as LucideIcon;
 
-        return (
-          <Link
-            key={el.href}
-            href={el.href}
-            aria-current={esActivo ? "page" : undefined}
-            className={`rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors duration-fast ease-rk ${
-              esActivo
-                ? "rk-panel-activo text-ink"
-                : "text-ink/65 hover:bg-ink/[0.06] hover:text-ink"
-            }`}
-          >
-            <Icono size={16} aria-hidden className="shrink-0" />
-            <span className="truncate">{el.label}</span>
-          </Link>
-        );
-      })}
+            const esActivo = activo(el);
+
+            return (
+              <Link
+                key={el.href}
+                href={el.href}
+                aria-current={esActivo ? "page" : undefined}
+                className={`rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors duration-fast ease-rk ${
+                  esActivo
+                    ? "rk-panel-activo text-ink"
+                    : "text-ink/65 hover:bg-ink/[0.06] hover:text-ink"
+                }`}
+              >
+                <Icono size={16} aria-hidden className="shrink-0" />
+                <span className="truncate">{el.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      ))}
     </nav>
   );
 
@@ -206,7 +224,7 @@ function PanelNavInterno({
           <Menu size={18} aria-hidden />
         </button>
 
-        <span className="truncate text-sm font-semibold">{titulo}</span>
+        <span className="truncate text-sm font-semibold">{tituloActual}</span>
       </div>
 
       {/* ══════════ CAJÓN MÓVIL ══════════ */}
@@ -250,7 +268,10 @@ function PanelNavInterno({
 
       {/* ══════════ COLUMNA DE ESCRITORIO ══════════ */}
       <aside className="rk-panel-lateral sticky top-16 hidden h-[calc(100svh-4rem)] w-60 shrink-0 flex-col overflow-y-auto p-4 lg:flex">
-        <p className="rk-kicker px-1 pb-3">{titulo}</p>
+        {/* «Mi cuenta» con un solo grupo; «Mi espacio» con varios. */}
+        <p className="rk-kicker px-1 pb-3">
+          {grupos.length === 1 ? "Mi cuenta" : "Mi espacio"}
+        </p>
 
         <div className="flex-1">{lista}</div>
 
@@ -267,7 +288,7 @@ function PanelNavInterno({
  * ya viaja en el HTML del servidor y aparece en cuanto hidrata.
  */
 export default function PanelNav(props: {
-  elementos: ElementoPanel[];
+  grupos: GrupoMenu[];
   usuario: UsuarioPanel;
   titulo: string;
 }) {

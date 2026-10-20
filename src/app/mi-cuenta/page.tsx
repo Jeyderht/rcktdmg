@@ -1,23 +1,19 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-  ArrowRight,
-  BadgeCheck,
-  Download as DownloadIcon,
-  Receipt,
-} from "lucide-react";
 
-import EmptyState from "@/components/ui/EmptyState";
 import Footer from "@/components/layout/Footer";
+import AnilloAdmin from "@/components/admin/AnilloAdmin";
+import CifraAnimada from "@/components/admin/CifraAnimada";
+import ListaAdmin from "@/components/admin/ListaAdmin";
+import RevelarAlScroll from "@/components/admin/RevelarAlScroll";
+import BienvenidaCuenta from "@/components/cuenta/BienvenidaCuenta";
 import QuickAccess from "@/components/cuenta/QuickAccess";
 import RecomendadosCliente from "@/components/cuenta/RecomendadosCliente";
 import ThemeToggle from "@/components/layout/ThemeToggle";
 import { useSessionUser } from "@/components/hooks/useSessionUser";
-import { claseProporcion } from "@/lib/tipos-publicacion";
-import { fechaMedia } from "@/lib/formato";
+import { fechaMedia, solesMoneda } from "@/lib/formato";
 
 type Download = {
   id: string;
@@ -122,266 +118,193 @@ export default function Account() {
     loadAccount();
   }, []);
 
-  const paidOrders = orders.filter(
-    (order) => order.status === "PAID"
-  );
+  const paidOrders = orders.filter((order) => order.status === "PAID");
 
   const activeDownloads = downloads.filter(
     (download) =>
-      download.status === "ACTIVE" &&
-      download.order.status === "PAID"
+      download.status === "ACTIVE" && download.order.status === "PAID"
   );
 
   const displayName = user?.publicName || user?.name || "";
 
-  const initial = (displayName || user?.email || "R")
-    .charAt(0)
-    .toUpperCase();
+  const ahora = new Date();
+  const mes = new Intl.DateTimeFormat("es-PE", { month: "long" }).format(ahora);
+  const mesActual = `${mes.charAt(0).toUpperCase()}${mes.slice(1)} ${ahora.getFullYear()}`;
 
-  // Contadores reales: salen de los mismos registros que
-  // luego se listan. No hay metricas estimadas.
-  const stats = [
-    {
-      href: "/mi-cuenta/compras",
-      label: "Compras",
-      value: paidOrders.length,
-      hint: "Pedidos pagados",
-      icon: Receipt,
-    },
-    {
-      href: "/mi-cuenta/descargas",
-      label: "Descargas",
-      value: activeDownloads.length,
-      hint: "Recursos disponibles",
-      icon: DownloadIcon,
-    },
+  /* Todo sale de los mismos registros que se listan debajo:
+     no hay métricas estimadas. */
+  const totalGastado = paidOrders.reduce(
+    (suma, order) => suma + Number(order.total),
+    0
+  );
+
+  const contar = (estado: string) =>
+    orders.filter((order) => order.status === estado).length;
+
+  const pedidos = [
+    { label: "Pagados", valor: contar("PAID") },
+    { label: "Pendientes", valor: contar("PENDING") },
+    { label: "Cancelados", valor: contar("CANCELED") },
+    { label: "Reembolsados", valor: contar("REFUNDED") },
   ];
+
+  const totalDescargas = activeDownloads.reduce(
+    (suma, d) => suma + d.downloadCount,
+    0
+  );
 
   return (
     <>
+      {/* rk-dash: mismo contenedor y mismas tarjetas que el Dashboard
+          de administración; su CSS va limitado a este contenedor. */}
+      <div className="rk-dash">
+        <RevelarAlScroll />
 
-      <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
+        <div data-vista="Dashboard">
+          <header className="rk-vh">
+            <h1 className="rk-title">Mi cuenta</h1>
+            <p>
+              Bienvenido{displayName ? `, ${displayName}` : ""} · {mesActual}
+              {user ? ` · ${ROLE_LABEL[user.role] || user.role}` : ""}
+            </p>
+          </header>
 
-        {/* ========== PERFIL ========== */}
-        <section className="rk-fade-up">
-          <p className="rk-eyebrow mb-5">Mi cuenta</p>
+          {/* Avisos a todo el ancho. La bienvenida, solo justo
+              después de registrarse; se puede cerrar. */}
+          <div className="rk-db-ancho">
+            <BienvenidaCuenta nombre={displayName} />
 
-          <div className="rk-profile">
-            <div className="rk-profile-avatar">
-              <span
-                className="rk-profile-initials"
-                style={{ position: "relative", overflow: "hidden" }}
-              >
-                {user?.avatarUrl ? (
-                  <Image
-                    src={user.avatarUrl}
-                    alt={displayName || "Avatar"}
-                    fill
-                    className="object-cover"
-                    sizes="92px"
-                  />
-                ) : (
-                  initial
-                )}
-              </span>
-            </div>
-
-            <div className="min-w-0">
-              {/* Solo datos reales de la sesión. */}
-              <h1 className="rk-profile-name">{displayName || "Mi cuenta"}</h1>
-
-              <div className="rk-profile-meta">
-                {user && (
-                  <span className="rk-badge rk-badge-accent rk-badge-dot">
-                    {ROLE_LABEL[user.role] || user.role}
-                  </span>
-                )}
-
-                {user?.isVerified && (
-                  <span className="rk-badge rk-badge-success">
-                    <BadgeCheck size={13} />
-                    Verificado
-                  </span>
-                )}
-
-                {user?.email && (
-                  <span className="min-w-0 truncate">{user.email}</span>
-                )}
+            {error && (
+              <div role="alert" className="rk-upload-error rk-fade mt-4">
+                {error}
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ========== ERROR ========== */}
-        {error && (
-          <div
-            role="alert"
-            className="rk-upload-error rk-fade mt-6"
-          >
-            {error}
-          </div>
-        )}
-
-        {/* ========== RESUMEN REAL ========== */}
-        <section className="rk-fade-up rk-enter-2 rk-stats mt-8">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-
-            return (
-              <Link
-                key={stat.href}
-                href={stat.href}
-                className="rk-stat rk-stat-iris"
-                style={{ color: "inherit", textDecoration: "none" }}
-              >
-                <div className="rk-stat-main">
-                  <div className="rk-stat-head">
-                    <p className="rk-stat-label">{stat.label}</p>
-
-                    <p className="rk-stat-value">
-                      {loading ? (
-                        <span
-                          className="rk-skeleton"
-                          style={{ display: "inline-block", width: 40, height: 28, borderRadius: 999 }}
-                        />
-                      ) : (
-                        stat.value
-                      )}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="rk-stat-foot">
-                  <span>{stat.hint}</span>
-
-                  <span aria-hidden className="rk-stat-chip">
-                    <Icon size={15} />
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
-        </section>
-
-        {/* ========== ACCESOS RAPIDOS (POR ROL) ========== */}
-        <QuickAccess user={user} />
-
-        {/* Recomendaciones: personales si hay historial real. */}
-        <RecomendadosCliente />
-
-        {/* ========== ACTIVIDAD ========== */}
-        <section className="rk-fade-up rk-enter-4 mt-10 sm:mt-12">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="rk-eyebrow">Tu actividad</p>
-
-              <h2 className="rk-title mt-2 text-2xl">
-                Últimas compras
-              </h2>
-            </div>
-
-            {paidOrders.length > 0 && (
-              <Link
-                href="/mi-cuenta/compras"
-                className="rk-btn rk-btn-line"
-              >
-                Ver todas
-                <ArrowRight size={15} />
-              </Link>
             )}
           </div>
 
-          <div className="rk-divider mt-4" />
-
-          {loading ? (
-            <div className="mt-5 grid gap-2.5" aria-busy="true">
-              {[0, 1, 2].map((index) => (
-                <div key={index} className="rk-skeleton" style={{ height: 76, borderRadius: 22 }} />
-              ))}
-            </div>
-          ) : paidOrders.length === 0 ? (
-            <div className="mt-5">
-              <EmptyState
-                icon={Receipt}
-                title="Todavía no tienes compras"
-                description="Explora el marketplace y descarga tu primer recurso."
-                action={{ href: "/tienda", label: "Explorar recursos" }}
-              />
-            </div>
-          ) : (
-            <ul className="rk-row-list mt-5">
-              {paidOrders.slice(0, 4).map((order) => {
-                const cover = order.items[0]?.product.coverUrl;
-
-                return (
-                  <li key={order.id}>
-                    <Link href="/mi-cuenta/compras" className="rk-row-card">
-                      <div className="rk-row-card-head" style={{ alignItems: "center" }}>
-                        {/* Miniatura con la proporción real del recurso */}
-                        <span
-                          className={`rk-media ${claseProporcion({
-                            categoriaSlug: order.items[0]?.product.category?.slug,
-                            pieceType: order.items[0]?.product.pieceType as never,
-                          })} rk-row-card-thumb`}
-                        >
-                          {cover && (
-                            <Image
-                              src={cover}
-                              alt={order.items[0].product.name}
-                              fill
-                              className="object-cover"
-                              sizes="44px"
-                            />
-                          )}
-                        </span>
-
-                        <div className="min-w-0 flex-1">
-                          <p className="rk-row-card-title">
-                            {order.items[0]?.product.name || "Pedido"}
-                          </p>
-
-                          <p className="rk-row-card-sub">
-                            {fechaMedia(order.createdAt)}
-                            {order.items.length > 1 &&
-                              ` · y ${order.items.length - 1} más`}
-                          </p>
-                        </div>
-
-                        <div className="rk-row-card-side">
-                          <p className="rk-row-card-amount">
-                            S/ {Number(order.total).toFixed(2)}
-                          </p>
-
-                          <span className="rk-badge rk-badge-success">
-                            Pagado
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
-
-        {/* ========== APARIENCIA ========== */}
-        <section className="rk-fade-up mt-10 sm:mt-12">
-          <div className="rk-card p-4 sm:p-5">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="rk-eyebrow">Apariencia</p>
-
-                <p className="mt-1.5 text-sm text-ink/60">
-                  Elige el tema de la interfaz.
+          <div className="rk-db">
+            {/* MI CUENTA · lo invertido y sus accesos */}
+            <section className="rk-card rk-pl" aria-label="Mis compras">
+              <div className="rk-pl-top">
+                <div className="rk-pl-h">
+                  <h3>Mis compras</h3>
+                </div>
+                <p className="rk-db-mut" style={{ margin: "14px 0 0" }}>
+                  Total invertido
                 </p>
+                <p className="rk-pl-monto">
+                  <CifraAnimada texto={loading ? "—" : solesMoneda(totalGastado)} />
+                </p>
+                <div className="rk-pl-tarjeta" aria-hidden="true">
+                  <span className="rk-isotipo rk-pl-iso" />
+                  <span className="rk-pl-num">
+                    •••• {loading ? "—" : paidOrders.length} compras
+                  </span>
+                </div>
               </div>
 
-              <ThemeToggle conSistema />
+              <div className="rk-pl-hoja">
+                <div className="rk-pl-acc">
+                  <div className="rk-pl-it">
+                    <span className="rk-pl-ic">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0" />
+                      </svg>
+                    </span>
+                    <span className="rk-pl-et">Compras</span>
+                    <b><CifraAnimada texto={loading ? "—" : String(paidOrders.length)} /></b>
+                  </div>
+
+                  <div className="rk-pl-it">
+                    <span className="rk-pl-ic">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                      </svg>
+                    </span>
+                    <span className="rk-pl-et">Descargas</span>
+                    <b><CifraAnimada texto={loading ? "—" : String(activeDownloads.length)} /></b>
+                  </div>
+                </div>
+
+                <div className="rk-pl-ret">
+                  <div>
+                    <span className="rk-db-mut">Descargas realizadas</span>
+                    <b><CifraAnimada texto={loading ? "—" : String(totalDescargas)} /></b>
+                  </div>
+                  <Link className="rk-btn rk-btn-ink rk-btn-compact" href="/mi-cuenta/descargas">
+                    Ver
+                  </Link>
+                </div>
+              </div>
+            </section>
+
+            {/* PEDIDOS · anillo por estado, igual que en administración */}
+            <AnilloAdmin
+              titulo="Pedidos"
+              unidad="pedidos"
+              partes={pedidos}
+              vacio="Sin pedidos"
+              cargando={loading}
+            />
+
+            {/* LISTAS · datos reales; vacías, el estado del encargo */}
+            <ListaAdmin
+              titulo="Últimas compras"
+              icono="venta"
+              filas={paidOrders.slice(0, 5).map((order) => ({
+                id: order.id,
+                titulo: order.items[0]?.product.name || "Pedido",
+                subtitulo:
+                  fechaMedia(order.createdAt) +
+                  (order.items.length > 1
+                    ? ` · y ${order.items.length - 1} más`
+                    : ""),
+                valor: solesMoneda(Number(order.total)),
+                href: "/mi-cuenta/compras",
+              }))}
+            />
+
+            <ListaAdmin
+              titulo="Mis descargas"
+              icono="recurso"
+              filas={activeDownloads.slice(0, 5).map((d) => ({
+                id: d.id,
+                titulo: d.product.name,
+                subtitulo: fechaMedia(d.order.createdAt),
+                valor: String(d.downloadCount),
+                href: "/mi-cuenta/descargas",
+              }))}
+            />
+          </div>
+        </div>
+
+        {/* Accesos por rol y recomendaciones, bajo las tarjetas y
+            fuera de su rejilla: van a todo el ancho. */}
+        <div>
+          <div className="mt-6">
+            <QuickAccess user={user} />
+          </div>
+
+          <div className="mt-6">
+            <RecomendadosCliente />
+          </div>
+
+          {/* APARIENCIA */}
+          <div className="mt-6">
+            <div className="rk-card p-4 sm:p-5">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="rk-eyebrow">Apariencia</p>
+                  <p className="mt-1.5 text-sm text-ink/60">
+                    Elige el tema de la interfaz.
+                  </p>
+                </div>
+
+                <ThemeToggle conSistema />
+              </div>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </div>
 
       <Footer />
     </>
