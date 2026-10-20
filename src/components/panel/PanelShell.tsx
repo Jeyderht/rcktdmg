@@ -1,7 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 
-import PanelNav, { type ElementoPanel } from "./PanelNav";
+import { gruposParaRol } from "@/lib/menu-cuenta";
+
+import PanelNav from "./PanelNav";
 
 /**
  * Armazón de los tableros.
@@ -10,6 +12,10 @@ import PanelNav, { type ElementoPanel } from "./PanelNav";
  * a la derecha, y resuelve por su cuenta quién ha iniciado
  * sesión para el bloque de identidad: así cada panel se limita
  * a declarar sus enlaces y a pintar su contenido.
+ *
+ * El menú sale de `lib/menu-cuenta`, filtrado por el rol del
+ * usuario: cliente, creador y administrador comparten el mismo
+ * armazón y cada uno ve solo lo suyo.
  *
  * No comprueba permisos. De eso ya se encargan el middleware y
  * cada página; duplicar la comprobación aquí crearía un
@@ -22,12 +28,10 @@ const NOMBRE_ROL: Record<string, string> = {
 };
 
 export default async function PanelShell({
-  elementos,
-  titulo,
+  titulo = "Mi espacio",
   children,
 }: {
-  elementos: ElementoPanel[];
-  titulo: string;
+  titulo?: string;
   children: React.ReactNode;
 }) {
   const session = await getSession();
@@ -54,7 +58,7 @@ export default async function PanelShell({
 
       <div className="mx-auto flex w-full max-w-[110rem] flex-col lg:flex-row">
         <PanelNav
-          elementos={elementos}
+          grupos={gruposParaRol(usuario?.role ?? session?.role)}
           titulo={titulo}
           usuario={{
             nombre:

@@ -4,7 +4,6 @@ import { paginaPrivada } from "@/lib/seo";
 
 import Navbar from "@/components/layout/Navbar";
 import PanelShell from "@/components/panel/PanelShell";
-import type { ElementoPanel } from "@/components/panel/PanelNav";
 
 /*
   Todo lo que cuelga de /mi-cuenta es privado: compras,
@@ -17,15 +16,6 @@ export const metadata: Metadata = paginaPrivada("Mi cuenta");
   Secciones del área de cliente. Todas existen ya como página;
   no se añade ningún acceso a algo sin implementar.
 */
-const SECCIONES: ElementoPanel[] = [
-  { href: "/mi-cuenta", label: "Resumen", icono: "LayoutDashboard", exacto: true },
-  { href: "/mi-cuenta/compras", label: "Compras", icono: "Receipt" },
-  { href: "/mi-cuenta/descargas", label: "Descargas", icono: "Download" },
-  { href: "/mi-cuenta/licencias", label: "Licencias", icono: "BadgeCheck" },
-  { href: "/mi-cuenta/colecciones", label: "Colecciones", icono: "Library" },
-  { href: "/mi-cuenta/favoritos", label: "Favoritos", icono: "Heart" },
-  { href: "/mi-cuenta/siguiendo", label: "Siguiendo", icono: "Users" },
-];
 
 export default function MiCuentaLayout({
   children,
@@ -47,7 +37,7 @@ export default function MiCuentaLayout({
     <>
       <Navbar />
 
-      <PanelShell elementos={SECCIONES} titulo="Mi cuenta">
+      <PanelShell titulo="Mi cuenta">
         {children}
       </PanelShell>
     </>
