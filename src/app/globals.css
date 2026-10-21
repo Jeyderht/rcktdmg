@@ -92,8 +92,8 @@
     §71  BB. INICIO (encargo de la home)                                  20025–20853
     §72  Inicio · vender más                                              20854–21731
     §73  Explorar (tienda)                                                21732–21954
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                21955–22423
-    §75  Inicios con imágenes (rk-cx-*)                                   22424–23747
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                21955–22444
+    §75  Inicios con imágenes (rk-cx-*)                                   22445–23768
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -22145,6 +22145,27 @@ html[data-theme] .rk-footer-marca::before {
 .rk-app-item:focus-visible {
   outline: 2px solid rgb(var(--rk-foreground));
   outline-offset: -2px;
+}
+
+/* «Cambiar de área»: el inicio de las otras áreas del rol, bajo el
+   menú del área actual, separado por una línea. */
+.rk-app-areas {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rk-border-color);
+}
+
+.rk-app-areas-titulo {
+  margin: 0;
+  padding: 0 12px 4px;
+  color: rgb(var(--rk-foreground) / 0.6);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .rk-app-identidad {
