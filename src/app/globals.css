@@ -92,7 +92,7 @@
     §71  BB. INICIO (encargo de la home)                                  20024–20852
     §72  Inicio · vender más                                              20853–21730
     §73  Explorar (tienda)                                                21731–21953
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                21954–22364
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                21954–22422
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -22021,7 +22021,7 @@ html[data-theme] .rk-footer-marca::before {
 .rk-app-nav {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 6px;
 }
 
 .rk-app-grupo {
@@ -22030,14 +22030,72 @@ html[data-theme] .rk-footer-marca::before {
   gap: 2px;
 }
 
-.rk-app-grupo-titulo {
-  margin: 0;
-  padding: 0 12px 4px;
+/* Grupos desplegables (Mi cuenta, Creator Studio, Administración):
+   cabecera botón con chevron; el cuerpo se abre con una transición
+   corta de la fila de la rejilla (0fr → 1fr). */
+.rk-app-grupo-boton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
   color: rgb(var(--rk-foreground) / 0.6);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.12em;
+  text-align: left;
   text-transform: uppercase;
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-app-grupo-boton:hover {
+    background: rgb(var(--rk-foreground) / 0.04);
+    color: rgb(var(--rk-foreground));
+  }
+}
+
+.rk-app-grupo-boton:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: -2px;
+}
+
+.rk-app-grupo-chevron {
+  flex: none;
+  transition: transform 0.18s var(--rx-curva);
+}
+
+.rk-app-grupo-boton[aria-expanded="false"] .rk-app-grupo-chevron {
+  transform: rotate(-90deg);
+}
+
+.rk-app-grupo-cuerpo {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.18s var(--rx-curva);
+}
+
+.rk-app-grupo-cuerpo[data-abierto] {
+  grid-template-rows: 1fr;
+}
+
+.rk-app-grupo-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-app-grupo-chevron,
+  .rk-app-grupo-cuerpo {
+    transition: none;
+  }
 }
 
 .rk-app-item {

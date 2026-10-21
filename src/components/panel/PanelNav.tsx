@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { Compass, Menu, X, LogOut } from "lucide-react";
+import { ChevronDown, Compass, Menu, X, LogOut } from "lucide-react";
 import * as Iconos from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Isotipo from "@/components/layout/Isotipo";
@@ -28,6 +28,15 @@ export type ElementoPanel = {
    */
   consulta?: { ruta: string; query: string };
 };
+
+/*
+  Grupos desplegados mientras se navega por los paneles. Mi cuenta,
+  Creator Studio y Administración tienen cada uno su layout, así que
+  el menú se vuelve a montar al pasar de uno a otro: sin esta copia
+  en memoria, lo que se abrió a mano se cerraría. Vive solo en la
+  pestaña (una recarga empieza de cero); no se guarda en ningún sitio.
+*/
+let desplegadosEnMemoria: string[] = [];
 
 export type UsuarioPanel = {
   nombre: string;
@@ -61,6 +70,37 @@ function PanelNavInterno({
   const pathname = usePathname();
   const busqueda = useSearchParams();
   const [abierto, setAbierto] = useState(false);
+
+  /*
+    Grupos desplegados. Al cargar la página, solo el de la ruta
+    actual; al navegar a otro grupo, ese se abre solo (sin cerrar
+    los demás). Sin persistencia: cada visita empieza igual.
+  */
+  const [desplegados, setDesplegados] = useState<Set<string>>(
+    () => new Set([...desplegadosEnMemoria, grupoDeRuta(pathname)])
+  );
+
+  useEffect(() => {
+    desplegadosEnMemoria = [...desplegados];
+  }, [desplegados]);
+
+  useEffect(() => {
+    const grupo = grupoDeRuta(pathname);
+
+    setDesplegados((previos) =>
+      previos.has(grupo) ? previos : new Set(previos).add(grupo)
+    );
+  }, [pathname]);
+
+  const alternarGrupo = (id: string) =>
+    setDesplegados((previos) => {
+      const siguientes = new Set(previos);
+
+      if (siguientes.has(id)) siguientes.delete(id);
+      else siguientes.add(id);
+
+      return siguientes;
+    });
 
   /*
     El cajón se cierra al cambiar de ruta. Sin esto quedaría
@@ -137,36 +177,76 @@ function PanelNavInterno({
      (p. ej. una ficha interna), el grupo. */
   const tituloSeccion = elementos.find(activo)?.label ?? tituloGrupo;
 
-  const lista = (
+  /* Un solo grupo (cliente): sin cabecera ni acordeón. */
+  const conAcordeon = grupos.length > 1;
+
+  const enlaces = (grupo: GrupoMenu) =>
+    grupo.items.map((el) => {
+      const Icono =
+        ((Iconos as unknown as Record<string, LucideIcon>)[el.icono] ??
+          Iconos.Circle) as LucideIcon;
+
+      const esActivo = activo(el);
+
+      return (
+        <Link
+          key={el.href}
+          href={el.href}
+          aria-current={esActivo ? "page" : undefined}
+          className="rk-app-item rk-press"
+        >
+          <Icono size={18} aria-hidden className="shrink-0" />
+          <span className="truncate">{el.label}</span>
+        </Link>
+      );
+    });
+
+  /*
+    La lista se pinta en la columna y en el cajón móvil: el
+    prefijo mantiene únicos los id de aria-controls.
+  */
+  const lista = (prefijo: string) => (
     <nav className="rk-app-nav" aria-label={titulo}>
-      {grupos.map((grupo) => (
-        <div key={grupo.id} className="rk-app-grupo">
-          {/* Con un solo grupo (cliente) no hace falta rotular. */}
-          {grupos.length > 1 && (
-            <p className="rk-app-grupo-titulo">{grupo.titulo}</p>
-          )}
+      {grupos.map((grupo) => {
+        if (!conAcordeon) {
+          return (
+            <div key={grupo.id} className="rk-app-grupo">
+              {enlaces(grupo)}
+            </div>
+          );
+        }
 
-          {grupo.items.map((el) => {
-            const Icono =
-              ((Iconos as unknown as Record<string, LucideIcon>)[el.icono] ??
-                Iconos.Circle) as LucideIcon;
+        // El grupo con la página activa nunca queda cerrado.
+        const tieneActiva = grupo.items.some(activo);
+        const desplegado = tieneActiva || desplegados.has(grupo.id);
+        const idCuerpo = `${prefijo}-grupo-${grupo.id}`;
 
-            const esActivo = activo(el);
+        return (
+          <div key={grupo.id} className="rk-app-grupo">
+            <button
+              type="button"
+              className="rk-app-grupo-boton"
+              aria-expanded={desplegado}
+              aria-controls={idCuerpo}
+              onClick={() => {
+                if (!tieneActiva) alternarGrupo(grupo.id);
+              }}
+            >
+              <span>{grupo.titulo}</span>
+              <ChevronDown size={16} aria-hidden className="rk-app-grupo-chevron" />
+            </button>
 
-            return (
-              <Link
-                key={el.href}
-                href={el.href}
-                aria-current={esActivo ? "page" : undefined}
-                className="rk-app-item rk-press"
-              >
-                <Icono size={18} aria-hidden className="shrink-0" />
-                <span className="truncate">{el.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      ))}
+            <div
+              id={idCuerpo}
+              className="rk-app-grupo-cuerpo"
+              data-abierto={desplegado || undefined}
+              inert={!desplegado}
+            >
+              <div className="rk-app-grupo-lista">{enlaces(grupo)}</div>
+            </div>
+          </div>
+        );
+      })}
     </nav>
   );
 
@@ -230,7 +310,7 @@ function PanelNavInterno({
           {grupos.length === 1 ? "Mi cuenta" : "Mi espacio"}
         </p>
 
-        <div className="flex-1">{lista}</div>
+        <div className="flex-1">{lista("columna")}</div>
 
         {identidad}
       </aside>
@@ -259,7 +339,7 @@ function PanelNavInterno({
               </button>
             </div>
 
-            <div className="mt-5 flex-1">{lista}</div>
+            <div className="mt-5 flex-1">{lista("cajon")}</div>
 
             {identidad}
           </div>
