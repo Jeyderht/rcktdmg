@@ -93,7 +93,7 @@
     §72  Inicio · vender más                                              20854–21731
     §73  Explorar (tienda)                                                21732–21954
     §74  Marco de app de la cuenta (PanelShell / PanelNav)                21955–22423
-    §75  Inicios con imágenes (rk-cx-*)                                   22424–23744
+    §75  Inicios con imágenes (rk-cx-*)                                   22424–23747
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -23666,13 +23666,17 @@ a.rk-cx-badge:focus-visible,
   background: rgb(var(--rk-foreground) / 0.04);
 }
 
+/* miniatura de la cola: alto fijo y el ancho que pida su proporción
+   (en línea); la portada entera, en contain */
 .rk-cx-qi {
   position: relative;
-  width: 64px;
-  height: 48px;
+  justify-self: start;
+  width: auto;
+  height: 64px;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: 10px;
-  background: rgb(var(--rk-foreground) / 0.08);
+  background: rgb(var(--rk-surface));
 }
 
 .rk-cx-qr b {
@@ -23707,7 +23711,6 @@ a.rk-cx-badge:focus-visible,
   .rk-cx-qi {
     grid-row: span 4;
     align-self: start;
-    width: 56px;
   }
 }
 

@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import HeroAdminCx from "@/components/admin/HeroAdminCx";
 import KpiCx from "@/components/cuenta/KpiCx";
 import TarjetaCx from "@/components/cuenta/TarjetaCx";
+import { medidaCx, type CategoriaRecurso } from "@/components/cuenta/medidaCx";
 import type { AdminStats, IngresoMes } from "@/lib/admin-stats";
 import { portadasActivas } from "@/lib/portadas";
 import { prisma } from "@/lib/prisma";
@@ -63,6 +64,10 @@ export default async function InicioAdminCx({
             coverUrl: true,
             images: { orderBy: { sortOrder: "asc" }, take: 1, select: { url: true } },
             creator: { select: { name: true, publicName: true } },
+            pieceType: true,
+            coverWidth: true,
+            coverHeight: true,
+            category: { select: { slug: true } },
           },
         })
       : [],
@@ -85,6 +90,10 @@ export default async function InicioAdminCx({
         coverUrl: true,
         images: { orderBy: { sortOrder: "asc" }, take: 1, select: { url: true } },
         creator: { select: { name: true, publicName: true } },
+        pieceType: true,
+        coverWidth: true,
+        coverHeight: true,
+        category: { select: { slug: true } },
       },
     }),
   ]);
@@ -96,6 +105,18 @@ export default async function InicioAdminCx({
     const c = datos.get(id)?.creator;
     return c ? c.publicName || c.name || "Creador" : null;
   };
+  /* Categoría, pieza y medidas reales de la portada: marco y etiqueta. */
+  const categoriaDe = (r: {
+    pieceType: CategoriaRecurso["pieza"];
+    coverWidth: number | null;
+    coverHeight: number | null;
+    category: { slug: string } | null;
+  }): CategoriaRecurso => ({
+    slug: r.category?.slug ?? null,
+    pieza: r.pieceType,
+    ancho: r.coverWidth,
+    alto: r.coverHeight,
+  });
   const portadaDe = (id: string) => {
     const r = datos.get(id);
     return r?.coverUrl || r?.images[0]?.url || null;
@@ -168,6 +189,7 @@ export default async function InicioAdminCx({
                     imagen={portadaDe(p.id)}
                     alt={p.name}
                     titulo={p.name}
+                    categoria={datos.has(p.id) ? categoriaDe(datos.get(p.id)!) : undefined}
                     meta={[creadorDe(p.id), ventas(p.sales)].filter(Boolean).join(" · ")}
                     pie={soles(p.revenue)}
                     esquina={<span className="rk-cx-rk">#{i + 1}</span>}
@@ -251,14 +273,20 @@ export default async function InicioAdminCx({
               </div>
               {cola.map((r) => {
                 const imagen = r.coverUrl || r.images[0]?.url;
+                const m = medidaCx(categoriaDe(r));
                 return (
                   <div key={r.id} className="rk-cx-qr" role="row">
-                    <span className="rk-cx-qi" role="cell">
-                      {imagen && <Image src={imagen} alt="" fill className="object-cover" sizes="64px" />}
+                    {/* miniatura entera, con la proporción del recurso */}
+                    <span className="rk-cx-qi" role="cell" style={{ aspectRatio: m.proporcion ?? "4 / 5" }}>
+                      {imagen && <Image src={imagen} alt="" fill className="object-contain" sizes="64px" />}
                     </span>
                     <span role="cell">
                       <b>{r.name}</b>
-                      <small>{[r.fileFormat?.toUpperCase(), soles(Number(r.price))].filter(Boolean).join(" · ")}</small>
+                      <small>
+                        {[`${m.nombre} · ${m.medida}`, r.fileFormat?.toUpperCase(), soles(Number(r.price))]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </small>
                     </span>
                     <span role="cell">{r.creator.publicName || r.creator.name || "Creador"}</span>
                     <span role="cell">{hace(r.updatedAt)}</span>

@@ -5,8 +5,11 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import HeroCx from "@/components/cuenta/HeroCx";
 import KpiCx from "@/components/cuenta/KpiCx";
+import FilasCategoriaCx from "@/components/cuenta/FilasCategoriaCx";
 import TarjetaCx from "@/components/cuenta/TarjetaCx";
+import type { CategoriaRecurso } from "@/components/cuenta/medidaCx";
 import { solesMoneda } from "@/lib/formato";
+import type { TipoPieza } from "@/lib/tipos-publicacion";
 
 type RecursoReciente = {
   id: string;
@@ -15,6 +18,9 @@ type RecursoReciente = {
   status: string;
   price: number;
   coverUrl: string | null;
+  /** Ya llegan de /api/creadores/dashboard: deciden marco y etiqueta. */
+  pieceType?: string | null;
+  categorySlug?: string | null;
   createdAt: string;
 };
 
@@ -47,6 +53,11 @@ function hace(iso: string) {
 }
 
 const editar = (id: string) => `/creadores/productos/${id}/editar`;
+
+const categoriaDe = (p: RecursoReciente): CategoriaRecurso => ({
+  slug: p.categorySlug ?? null,
+  pieza: (p.pieceType ?? null) as TipoPieza | null,
+});
 
 /**
  * Inicio del Creator Studio con imágenes (como la vista previa):
@@ -87,7 +98,7 @@ export default function InicioCreadorCx({
   }, []);
 
   const ultimos = recientes.slice(0, 4);
-  const portada = new Map(recientes.map((p) => [p.id, p.coverUrl]));
+  const deRecientes = new Map(recientes.map((p) => [p.id, p]));
   const top = masVendidos.slice(0, 4);
 
   const hoy = new Date();
@@ -163,29 +174,37 @@ export default function InicioCreadorCx({
                 Ver todos mis recursos
               </Link>
             </div>
-            <ul className="rk-cx-g4">
-              {ultimos.map((p) => {
+            <FilasCategoriaCx
+              elementos={recientes.map((p) => {
                 const [rotulo, tono] = ESTADO[p.status] ?? [p.status, ""];
-                return (
-                  <li key={p.id}>
+                const categoria = categoriaDe(p);
+                return {
+                  id: p.id,
+                  categoria,
+                  tarjeta: (
                     <TarjetaCx
                       href={p.status === "PUBLISHED" ? `/tienda/${p.slug}` : editar(p.id)}
                       imagen={p.coverUrl}
                       alt={p.name}
                       titulo={p.name}
+                      categoria={categoria}
                       meta={hace(p.createdAt)}
                       pie={solesMoneda(p.price)}
                       esquina={<span className={`rk-cx-st ${tono}`.trim()}>{rotulo}</span>}
                       accion={
-                        <Link href={editar(p.id)} className="rk-cx-badge rk-cx-badge-l">
+                        <Link
+                          href={editar(p.id)}
+                          className="rk-cx-badge rk-cx-badge-l"
+                          aria-label={`Editar ${p.name}`}
+                        >
                           Editar
                         </Link>
                       }
                     />
-                  </li>
-                );
+                  ),
+                };
               })}
-            </ul>
+            />
           </section>
         )}
 
@@ -203,9 +222,10 @@ export default function InicioCreadorCx({
                 <li key={p.productId}>
                   <TarjetaCx
                     href={`/tienda/${p.productSlug}`}
-                    imagen={portada.get(p.productId) ?? null}
+                    imagen={deRecientes.get(p.productId)?.coverUrl ?? null}
                     alt={p.productName}
                     titulo={p.productName}
+                    categoria={deRecientes.has(p.productId) ? categoriaDe(deRecientes.get(p.productId)!) : undefined}
                     meta={ventas(p.sales)}
                     pie={solesMoneda(p.revenue)}
                     esquina={<span className="rk-cx-rk">#{i + 1}</span>}
