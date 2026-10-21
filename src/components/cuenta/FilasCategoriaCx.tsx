@@ -71,7 +71,7 @@ export default function FilasCategoriaCx({
       )}
 
       <p className="sr-only" aria-live="polite">
-        {visibles} {unidad}
+        {visibles} {visibles === 1 ? unidad.replace(/s$/, "") : unidad}
         {activa !== null ? ` en ${nombreCategoria(activa || null)}` : ""}
       </p>
 
