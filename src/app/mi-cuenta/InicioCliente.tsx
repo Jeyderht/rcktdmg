@@ -15,15 +15,33 @@ import RecomendadosCliente from "@/components/cuenta/RecomendadosCliente";
 import TarjetaCx from "@/components/cuenta/TarjetaCx";
 import ThemeToggle from "@/components/layout/ThemeToggle";
 import { useSessionUser } from "@/components/hooks/useSessionUser";
+import FilasCategoriaCx from "@/components/cuenta/FilasCategoriaCx";
+import { medidaCx } from "@/components/cuenta/medidaCx";
 import { fechaMedia, solesMoneda } from "@/lib/formato";
+import type { TipoPieza } from "@/lib/tipos-publicacion";
 
 type Download = {
   id: string;
   downloadCount: number;
   status: string;
-  product: { id: string; name: string; slug: string; coverUrl: string | null };
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    coverUrl: string | null;
+    /* Ya llegan de /api/downloads: deciden marco y etiqueta. */
+    pieceType?: TipoPieza | null;
+    category?: { slug: string } | null;
+  };
   order: { id: string; createdAt: string; status: string };
 };
+
+/** Marco de la miniatura de una categoría: su medida o, si es libre, 4:5. */
+const marcoCategoria = (slug: string) => medidaCx({ slug }).proporcion ?? "4 / 5";
+
+/** «9 oct»: fecha corta del pie de las tarjetas pequeñas. */
+const fechaCorta = (iso: string) =>
+  new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "short" }).format(new Date(iso)).replace(".", "");
 
 type Order = {
   id: string;
@@ -156,9 +174,10 @@ export default function InicioCliente({
 
   const displayName = user?.publicName || user?.name || "";
   const cifra = (n: number) => (loading ? "—" : String(n));
-  const recientes = [...activeDownloads]
-    .sort((a, b) => +new Date(b.order.createdAt) - +new Date(a.order.createdAt))
-    .slice(0, 4);
+  // Toda la biblioteca, más recientes primero; se agrupa por categoría.
+  const recientes = [...activeDownloads].sort(
+    (a, b) => +new Date(b.order.createdAt) - +new Date(a.order.createdAt)
+  );
   const [destacada, ...otrasCategorias] = categorias;
 
   return (
@@ -223,24 +242,34 @@ export default function InicioCliente({
               </div>
             </div>
 
-            <ul className="rk-cx-g4">
-              {recientes.map((d) => (
-                <li key={d.id}>
-                  <TarjetaCx
-                    href={`/tienda/${d.product.slug}`}
-                    imagen={d.product.coverUrl}
-                    alt={d.product.name}
-                    titulo={d.product.name}
-                    pie={`Adquirido · ${fechaMedia(d.order.createdAt)}`}
-                    accion={
-                      <Link href="/mi-cuenta/descargas" className="rk-btn rk-btn-primary rk-btn-compact">
-                        Descargar
-                      </Link>
-                    }
-                  />
-                </li>
-              ))}
-            </ul>
+            <FilasCategoriaCx
+              elementos={recientes.map((d) => {
+                const categoria = { slug: d.product.category?.slug ?? null, pieza: d.product.pieceType ?? null };
+                return {
+                  id: d.id,
+                  categoria,
+                  tarjeta: (
+                    <TarjetaCx
+                      href={`/tienda/${d.product.slug}`}
+                      imagen={d.product.coverUrl}
+                      alt={d.product.name}
+                      titulo={d.product.name}
+                      categoria={categoria}
+                      pie={<time dateTime={d.order.createdAt}>{fechaCorta(d.order.createdAt)}</time>}
+                      accion={
+                        <Link
+                          href="/mi-cuenta/descargas"
+                          className="rk-cx-badge"
+                          aria-label={`Descargar ${d.product.name}`}
+                        >
+                          Descargar
+                        </Link>
+                      }
+                    />
+                  ),
+                };
+              })}
+            />
           </section>
         )}
 
@@ -303,9 +332,17 @@ export default function InicioCliente({
 
             <div className={`rk-cx-cat${otrasCategorias.length ? "" : " rk-cx-cat-sola"}`}>
               <Link href={`/tienda?categoria=${encodeURIComponent(destacada.slug)}`} className="rk-cx-big">
-                {destacada.imagen && <Image src={destacada.imagen} alt="" fill className="object-cover" sizes="(max-width: 1000px) 100vw, 50vw" />}
+                {/* Fondo: la misma imagen desenfocada; el flyer va entero a la derecha. */}
+                {destacada.imagen && (
+                  <Image src={destacada.imagen} alt="" fill className="rk-cx-big-fondo" sizes="(max-width: 1000px) 100vw, 50vw" />
+                )}
+                {destacada.imagen && (
+                  <span className="rk-cx-big-flyer" style={{ aspectRatio: marcoCategoria(destacada.slug) }}>
+                    <Image src={destacada.imagen} alt="" fill className="object-contain" sizes="240px" />
+                  </span>
+                )}
                 <span className="rk-cx-big-tx">
-                  <em>{destacada.nombre}</em>
+                  <em>{medidaCx({ slug: destacada.slug }).medida}</em>
                   <span className="rk-cx-big-t">{destacada.nombre}</span>
                   <small>
                     {destacada.recursos} {destacada.recursos === 1 ? "recurso" : "recursos"}
@@ -319,11 +356,11 @@ export default function InicioCliente({
                   {otrasCategorias.slice(0, 3).map((c) => (
                     <li key={c.slug}>
                       <Link href={`/tienda?categoria=${encodeURIComponent(c.slug)}`} className="rk-cx-row">
-                        <span className="rk-cx-row-i">
-                          {c.imagen && <Image src={c.imagen} alt="" fill className="object-cover" sizes="140px" />}
+                        <span className="rk-cx-row-i" style={{ aspectRatio: marcoCategoria(c.slug) }}>
+                          {c.imagen && <Image src={c.imagen} alt="" fill className="object-contain" sizes="140px" />}
                         </span>
                         <span className="rk-cx-row-tx">
-                          <em>{c.nombre}</em>
+                          <em>{medidaCx({ slug: c.slug }).medida}</em>
                           <b>{c.nombre}</b>
                           <small>
                             {c.recursos} {c.recursos === 1 ? "recurso" : "recursos"}

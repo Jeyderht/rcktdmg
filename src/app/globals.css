@@ -93,7 +93,7 @@
     §72  Inicio · vender más                                              20854–21731
     §73  Explorar (tienda)                                                21732–21954
     §74  Marco de app de la cuenta (PanelShell / PanelNav)                21955–22423
-    §75  Inicios con imágenes (rk-cx-*)                                   22424–23261
+    §75  Inicios con imágenes (rk-cx-*)                                   22424–23564
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -22845,12 +22845,61 @@ html[data-theme] .rk-footer-marca::before {
   border-radius: 22px;
 }
 
+/*
+  Portada COMPLETA: el marco toma la proporción del recurso (estilo
+  en línea: 9:16, 4:5 o sus medidas reales) y la imagen va en
+  contain sobre la superficie; nunca se recorta el flyer. Sin
+  proporción conocida y sin imagen, el marco del catálogo (4:5).
+*/
 .rk-cx-im {
   position: relative;
   display: block;
-  aspect-ratio: 16 / 11;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
-  background: rgb(var(--rk-foreground) / 0.08);
+  background: rgb(var(--rk-surface));
+}
+
+/* medida libre: el marco es el de la propia imagen */
+.rk-cx-im-libre {
+  aspect-ratio: auto;
+}
+
+.rk-cx-im-natural {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* «Eventos · 1080 × 1920»: chip de vidrio sobre la imagen */
+.rk-cx-md {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  z-index: 2;
+  max-width: calc(100% - 16px);
+  overflow: hidden;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgb(var(--pal-negro) / 0.62);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: rgb(var(--pal-blanco) / 0.85);
+  font-size: 0.6rem;
+  letter-spacing: 0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rk-cx-md b {
+  color: rgb(var(--pal-blanco));
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .rk-cx-md {
+    padding: 3px 8px;
+    font-size: 0.56rem;
+  }
 }
 
 .rk-cx-im-vacia {
@@ -23038,11 +23087,15 @@ html[data-theme] .rk-footer-marca::before {
   }
 }
 
+/*
+  Categoría destacada: el flyer va ENTERO a la derecha, en su marco
+  (9:16, 4:5…); detrás, la misma imagen desenfocada hace de fondo.
+*/
 .rk-cx-big {
   position: relative;
   display: flex;
   align-items: flex-end;
-  min-height: 300px;
+  height: 300px;
   overflow: hidden;
   isolation: isolate;
   border-radius: 24px;
@@ -23053,12 +23106,16 @@ html[data-theme] .rk-footer-marca::before {
 
 @media (min-width: 1000px) {
   .rk-cx-big {
-    min-height: 400px;
+    height: 400px;
   }
 }
 
-.rk-cx-big img {
+.rk-cx-big .rk-cx-big-fondo {
   z-index: -2;
+  object-fit: cover;
+  opacity: 0.55;
+  filter: blur(24px) saturate(1.2);
+  transform: scale(1.15);
 }
 
 .rk-cx-big::before {
@@ -23066,14 +23123,32 @@ html[data-theme] .rk-footer-marca::before {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(0deg, rgb(var(--pal-negro) / 0.85), transparent 60%);
+  background:
+    linear-gradient(90deg, rgb(var(--pal-negro) / 0.7), transparent 70%),
+    linear-gradient(0deg, rgb(var(--pal-negro) / 0.6), transparent 60%);
+}
+
+.rk-cx-big-flyer {
+  position: relative;
+  z-index: 0;
+  flex: none;
+  order: 2;
+  align-self: center;
+  height: calc(100% - 32px);
+  margin-right: 16px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: rgb(var(--rk-surface));
+  box-shadow: 0 18px 40px -18px rgb(var(--pal-negro) / 0.8);
 }
 
 .rk-cx-big-tx {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
+  min-width: 0;
   padding: 24px;
 }
 
@@ -23099,6 +23174,10 @@ html[data-theme] .rk-footer-marca::before {
 .rk-cx-big small {
   color: rgb(var(--pal-blanco) / 0.75);
   font-size: 0.76rem;
+}
+
+.rk-cx-big .rk-btn {
+  align-self: flex-start;
 }
 
 .rk-cx-big .rk-btn-paper {
@@ -23140,14 +23219,16 @@ html[data-theme] .rk-footer-marca::before {
   text-decoration: none;
 }
 
+/* miniatura con la proporción de su categoría (en línea), sin recorte */
 .rk-cx-row-i {
   position: relative;
   flex: none;
-  width: 34%;
-  aspect-ratio: 1;
+  width: 26%;
+  max-width: 120px;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
-  border-radius: 16px;
-  background: rgb(var(--rk-foreground) / 0.08);
+  border-radius: 14px;
+  background: rgb(var(--rk-surface));
 }
 
 .rk-cx-row-tx {
@@ -23245,6 +23326,228 @@ html[data-theme] .rk-footer-marca::before {
 .rk-cx-w > section.rk-card,
 .rk-cx-w > .rk-fade-up {
   margin-top: 32px;
+}
+
+/* ── Por categoría: chips, filas y rejilla filtrada ── */
+.rk-cx-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -4px 0 16px;
+}
+
+.rk-cx-rowcat {
+  margin-top: 24px;
+}
+
+.rk-cx-rowcat:first-of-type {
+  margin-top: 8px;
+}
+
+.rk-cx-rh {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.rk-cx-rh h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.rk-cx-rh-md {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgb(var(--rk-foreground) / 0.08);
+  color: rgb(var(--rk-foreground));
+  font-size: 0.66rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-cx-rc {
+  color: rgb(var(--rk-muted));
+  font-size: 0.76rem;
+}
+
+.rk-cx-rh .rk-cx-sel {
+  margin-left: auto;
+}
+
+/* fila deslizable: tarjetas de 176 px (140 en móvil), snap y barra fina */
+.rk-cx-hs,
+.rk-cx-gs {
+  --rk-cx-ancho: 176px;
+  margin: 0;
+  list-style: none;
+}
+
+/* stretch: tarjetas de una fila con la misma altura y el pie abajo */
+.rk-cx-hs {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  padding: 2px 2px 12px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  -webkit-mask-image: linear-gradient(90deg, rgb(var(--pal-negro)) calc(100% - 28px), transparent);
+  mask-image: linear-gradient(90deg, rgb(var(--pal-negro)) calc(100% - 28px), transparent);
+}
+
+.rk-cx-hs > li {
+  display: flex;
+  flex: 0 0 var(--rk-cx-ancho);
+  scroll-snap-align: start;
+}
+
+.rk-cx-gs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--rk-cx-ancho), 1fr));
+  align-items: stretch;
+  gap: 14px;
+  padding: 0;
+}
+
+.rk-cx-gs > li {
+  display: flex;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .rk-cx-hs,
+  .rk-cx-gs {
+    --rk-cx-ancho: 140px;
+  }
+
+  .rk-cx-gs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* tarjetas compactas dentro de filas y rejilla filtrada */
+.rk-cx-hs .rk-cx-card,
+.rk-cx-gs .rk-cx-card {
+  border-radius: 16px;
+  background: rgb(var(--rk-surface));
+}
+
+.rk-cx-hs .rk-cx-card-enlace:focus-visible,
+.rk-cx-gs .rk-cx-card-enlace:focus-visible {
+  border-radius: 16px;
+}
+
+.rk-cx-hs .rk-cx-im::after,
+.rk-cx-gs .rk-cx-im::after {
+  display: none;
+}
+
+.rk-cx-hs .rk-cx-bd,
+.rk-cx-gs .rk-cx-bd {
+  gap: 6px;
+  padding: 10px 12px 6px;
+}
+
+.rk-cx-hs .rk-cx-bd b,
+.rk-cx-gs .rk-cx-bd b {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.rk-cx-hs .rk-cx-cr,
+.rk-cx-gs .rk-cx-cr {
+  gap: 6px;
+  font-size: 0.66rem;
+}
+
+.rk-cx-hs .rk-cx-cr i,
+.rk-cx-gs .rk-cx-cr i {
+  width: 18px;
+  height: 18px;
+  font-size: 0.52rem;
+}
+
+.rk-cx-hs .rk-cx-ft,
+.rk-cx-gs .rk-cx-ft {
+  /* 12 px abajo: la zona tocable de 44 px del botón no se recorta */
+  padding: 8px 12px 12px;
+  border-top: 0;
+  font-size: 0.66rem;
+}
+
+.rk-cx-hs .rk-cx-ft > span,
+.rk-cx-gs .rk-cx-ft > span {
+  white-space: nowrap;
+}
+
+.rk-cx-hs .rk-cx-badge,
+.rk-cx-gs .rk-cx-badge {
+  padding: 5px 11px;
+  font-size: 0.64rem;
+}
+
+/* enlace de la cabecera de sección o de fila («Ver todos»…) */
+.rk-cx-sel {
+  flex: none;
+  padding: 8px 14px;
+  border: 1px solid var(--rk-border-color);
+  border-radius: 10px;
+  background: rgb(var(--rk-surface) / 0.7);
+  color: rgb(var(--rk-muted));
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.rk-cx-sel:hover {
+  border-color: var(--rk-border-strong);
+  color: rgb(var(--rk-foreground));
+}
+
+.rk-cx-rh .rk-cx-sel {
+  padding: 6px 12px;
+}
+
+/* acciones del pie como píldoras (enlaces): se ven pequeñas, pero
+   la zona tocable mide al menos 44 px */
+a.rk-cx-badge {
+  position: relative;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+a.rk-cx-badge::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+a.rk-cx-badge:hover {
+  opacity: 0.85;
+}
+
+a.rk-cx-badge:focus-visible,
+.rk-cx-sel:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
