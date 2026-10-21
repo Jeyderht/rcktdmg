@@ -77,12 +77,10 @@ export default function RecomendadosCliente({
                 imagen={producto.coverUrl || producto.image?.url || null}
                 alt={producto.image?.alt || producto.name}
                 titulo={producto.name}
-                meta={[producto.creator?.name, producto.category?.name]
-                  .filter(Boolean)
-                  .join(" · ")}
-                pie={[producto.category?.name, producto.fileFormat?.toUpperCase()]
-                  .filter(Boolean)
-                  .join(" · ")}
+                categoria={{ slug: producto.category?.slug ?? null, pieza: producto.pieceType ?? null }}
+                meta={producto.creator?.name}
+                inicial={producto.creator?.name.charAt(0).toUpperCase()}
+                pie={producto.fileFormat?.toUpperCase()}
                 accion={<span className="rk-cx-badge">{formatPrice(producto.price)}</span>}
               />
             </li>
