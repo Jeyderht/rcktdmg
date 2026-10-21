@@ -91,8 +91,8 @@
     §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17176–20023
     §71  BB. INICIO (encargo de la home)                                  20024–20852
     §72  Inicio · vender más                                              20853–21730
-    §73  Explorar (tienda)                                                21731–21953
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                21954–22422
+    §73  Explorar (tienda)                                                21731–22095
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22096–22564
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -21891,39 +21891,121 @@ html[data-theme] .rk-footer-marca::before {
   outline: 2px solid rgb(var(--rk-foreground));
 }
 
-/* Rejilla: 2 columnas en móvil, 3 en tablet y 4 en escritorio;
-   portadas 4/5 con esquinas de 16 px y zoom suave. */
-.rk-explorar .rk-galeria {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+/* Margen lateral único de /tienda: 16 px en móvil, 24 en tableta
+   y 32 en escritorio, sin bajar de la zona segura del dispositivo.
+   Lo usan la página entera (chips, buscador, Filtros/Orden,
+   contador y rejilla) y la fila de chips para desbordar. */
+.rk-explorar {
+  --rk-explorar-gutter: 16px;
+  padding-right: max(var(--rk-explorar-gutter), env(safe-area-inset-right));
+  padding-left: max(var(--rk-explorar-gutter), env(safe-area-inset-left));
+}
+
+@media (min-width: 768px) {
+  .rk-explorar {
+    --rk-explorar-gutter: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rk-explorar {
+    --rk-explorar-gutter: 32px;
+  }
+}
+
+/* Chips de categoría: se deslizan de borde a borde en móvil, pero
+   el primero y el último quedan alineados con el margen. */
+.rk-explorar-chips {
+  margin-right: calc(-1 * max(var(--rk-explorar-gutter), env(safe-area-inset-right)));
+  margin-left: calc(-1 * max(var(--rk-explorar-gutter), env(safe-area-inset-left)));
+  padding-right: max(var(--rk-explorar-gutter), env(safe-area-inset-right));
+  padding-left: max(var(--rk-explorar-gutter), env(safe-area-inset-left));
+  scroll-padding-inline: var(--rk-explorar-gutter);
 }
 
 @media (min-width: 640px) {
+  .rk-explorar-chips {
+    margin-right: 0;
+    margin-left: 0;
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+/* Rejilla: 3 columnas en móvil (2 por debajo de 360 px), 4 desde
+   tableta y en escritorio junto a la columna de filtros. Portadas
+   pequeñas de esquinas de 12 px, alineadas arriba: cada una con su
+   proporción, sin estirarse ni recortarse. */
+.rk-explorar .rk-galeria {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 8px;
+}
+
+@media (max-width: 359px) {
   .rk-explorar .rk-galeria {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 480px) {
+  .rk-explorar .rk-galeria {
+    gap: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .rk-explorar .rk-galeria {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
   }
 }
 
 @media (min-width: 1024px) {
   .rk-explorar .rk-galeria {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
+    gap: 14px;
   }
 }
 
 .rk-explorar .rk-galeria-item,
 .rk-explorar .rk-galeria > div {
-  border-radius: 16px;
+  border-radius: 12px;
 }
 
+/* Flyer COMPLETO: el marco lo pone el recurso (en línea: 9:16, 4:5)
+   y la imagen va en contain sobre la superficie. Sin proporción
+   fija (medida libre), el marco es el de la propia imagen. */
+.rk-explorar .rk-galeria-item {
+  background: rgb(var(--rk-surface));
+}
+
+.rk-explorar .rk-galeria-libre {
+  aspect-ratio: auto;
+}
+
+.rk-galeria-natural {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Sin zoom al pasar: ampliar la portada recortaría sus bordes.
+   La tarjeta se eleva un poco, sin tocar la imagen. */
 .rk-explorar .rk-galeria-item img {
-  transition: transform 0.5s var(--rx-curva);
+  transform: none;
+}
+
+.rk-explorar .rk-galeria-item {
+  transition: transform 0.2s var(--rx-curva);
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .rk-explorar .rk-galeria-item:hover {
+    transform: translateY(-2px);
+  }
+
   .rk-explorar .rk-galeria-item:hover img {
-    transform: scale(1.05);
+    transform: none;
   }
 }
 
@@ -21933,22 +22015,82 @@ html[data-theme] .rk-footer-marca::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .rk-explorar .rk-galeria-item,
   .rk-explorar .rk-galeria-item img,
   .rk-filter-chevron {
     transition: none;
   }
 }
 
-/* Corazón de guardar arriba a la derecha, fuera del botón */
+/* Nada encima de la portada. El corazón de guardar (fuera del
+   botón de la portada, así no abre la tarjeta) solo aparece al
+   pasar el cursor por la tarjeta o al enfocarlo con el teclado, en
+   pantallas con cursor. En pantallas táctiles no se dibuja: el
+   favorito está en la tarjeta emergente que se abre al tocar. */
 .rk-galeria-celda {
   position: relative;
 }
 
 .rk-galeria-guardar {
   position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  display: none;
+}
+
+/* zona tocable de 44 px alrededor del botón de 36 */
+.rk-galeria-guardar button {
+  position: relative;
+}
+
+.rk-galeria-guardar button::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-galeria-guardar {
+    display: block;
+    opacity: 0;
+    transition: opacity 150ms ease;
+  }
+
+  .rk-galeria-celda:hover .rk-galeria-guardar,
+  .rk-galeria-celda:focus-within .rk-galeria-guardar {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-galeria-guardar {
+    transition: none;
+  }
+}
+
+/* Favorito ya guardado: un punto discreto en la esquina, con el
+   estado que el propio botón ya conoce (aria-pressed). Se oculta
+   cuando el corazón está a la vista. */
+.rk-galeria-celda:has(.rk-galeria-guardar [aria-pressed="true"])::after {
+  content: "";
+  position: absolute;
   top: 8px;
   right: 8px;
-  z-index: 2;
+  z-index: 1;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgb(var(--pal-blanco));
+  box-shadow: 0 0 0 2px rgb(var(--pal-negro) / 0.45);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-galeria-celda:hover::after,
+  .rk-galeria-celda:focus-within::after {
+    opacity: 0;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════

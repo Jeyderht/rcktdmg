@@ -7,12 +7,17 @@ import { ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 import FavoriteButton from "@/components/tienda/FavoriteButton";
 import ProductCard, { type ProductCardData } from "@/components/tienda/ProductCard";
+import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 
 /**
  * Resultados de la tienda en modo galería.
  *
  * Solo las portadas, en una rejilla de 3 columnas en móvil (más en
- * pantallas grandes), como un muro de diseños. Al tocar una se abre
+ * pantallas grandes), como un muro de diseños. Cada portada se ve
+ * ENTERA con la proporción de su recurso (la misma regla que la
+ * tarjeta: 9:16 en Eventos, 4:5 en el resto; con medida libre, la
+ * de la imagen) y sin nada encima: el favorito solo aparece al
+ * pasar el cursor o enfocarlo. Al tocar una se abre
  * la tarjeta del recurso (nombre, creador, precio y formato; sobre
  * la imagen solo favorito arriba a la izquierda y cerrar a la
  * derecha) en una hoja encima, con flechas para pasar al anterior
@@ -62,21 +67,33 @@ export default function GaleriaTienda({
       <ul className="rk-galeria" aria-label="Recursos">
         {productos.map((p, i) => {
           const imagen = p.coverUrl || p.image?.url || null;
+          const proporcion = proporcionDeRecurso(p.category?.slug, p.pieceType);
+          const libre = Boolean(imagen) && !proporcion;
 
           return (
             <li key={p.id} className="rk-galeria-celda">
               <button
                 type="button"
-                className="rk-galeria-item"
+                className={`rk-galeria-item${libre ? " rk-galeria-libre" : ""}`}
+                style={proporcion ? { aspectRatio: proporcion } : undefined}
                 onClick={() => setAbierto(i)}
                 aria-label={`${p.name}: ver precio e información`}
               >
-                {imagen ? (
+                {imagen && libre ? (
+                  <Image
+                    src={imagen}
+                    alt={p.image?.alt || p.name}
+                    width={0}
+                    height={0}
+                    className="rk-galeria-natural"
+                    sizes="(max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                  />
+                ) : imagen ? (
                   <Image
                     src={imagen}
                     alt={p.image?.alt || p.name}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     sizes="(max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                   />
                 ) : (

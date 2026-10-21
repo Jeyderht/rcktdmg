@@ -309,7 +309,8 @@ export default async function Store({ searchParams }: StoreProps) {
     <>
       <Navbar />
 
-      <main className="rk-explorar mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
+      {/* El margen lateral (16/24/32 px + zona segura) lo pone .rk-explorar en el CSS. */}
+      <main className="rk-explorar mx-auto w-full max-w-7xl pb-16 pt-6 lg:pb-20 lg:pt-10">
 
         {/* ══════════ CABECERA ══════════ */}
         {/* Compacta y sin halo decorativo. */}
@@ -343,7 +344,7 @@ export default async function Store({ searchParams }: StoreProps) {
               <div
                 role="group"
                 aria-label="Filtrar por categoría"
-                className="-mx-4 flex flex-1 gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+                className="rk-explorar-chips flex flex-1 gap-2 overflow-x-auto pb-1"
               >
                 <Link
                   href={urlTienda(parametros, { categoria: undefined })}
@@ -379,7 +380,7 @@ export default async function Store({ searchParams }: StoreProps) {
         )}
 
         {/* ══════════ FILTROS Y RESULTADOS ══════════ */}
-        <div className="mt-6 flex gap-8">
+        <div className="mt-4 flex gap-8">
           <FiltrosSidebar
             actuales={parametros}
             formatos={formatos}
