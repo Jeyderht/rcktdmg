@@ -6,7 +6,6 @@ import { useCallback, useEffect, useState } from "react";
 import { BadgeCheck, ChevronLeft, ChevronRight, Users } from "lucide-react";
 
 import EmptyState from "@/components/ui/EmptyState";
-import Footer from "@/components/layout/Footer";
 
 type Seguidor = {
   id: string;
@@ -220,8 +219,6 @@ export default function SeguidoresPage() {
           </>
         )}
       </main>
-
-      <Footer />
     </>
   );
 }

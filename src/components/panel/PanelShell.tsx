@@ -48,28 +48,20 @@ export default async function PanelShell({
       })
     : null;
 
+  /* Marco de app: sin el Navbar ni el pie del sitio; la
+     columna, la barra y el contenido los pinta PanelNav. */
   return (
-    <>
-      {/* Separador bajo la barra superior, igual que en el inicio:
-          sin él, la barra del panel quedaba pegada al menú. */}
-      <div aria-hidden className="rk-separador rk-separador-arriba">
-        <span className="rk-separador-linea" />
-      </div>
-
-      <div className="mx-auto flex w-full max-w-[110rem] flex-col lg:flex-row">
-        <PanelNav
-          grupos={gruposParaRol(usuario?.role ?? session?.role)}
-          titulo={titulo}
-          usuario={{
-            nombre:
-              usuario?.publicName || usuario?.name || "Mi cuenta",
-            rol: NOMBRE_ROL[usuario?.role ?? ""] ?? "Cuenta",
-            avatarUrl: usuario?.avatarUrl ?? null,
-          }}
-        />
-
-        <div className="min-w-0 flex-1">{children}</div>
-      </div>
-    </>
+    <PanelNav
+      grupos={gruposParaRol(usuario?.role ?? session?.role)}
+      titulo={titulo}
+      usuario={{
+        nombre:
+          usuario?.publicName || usuario?.name || "Mi cuenta",
+        rol: NOMBRE_ROL[usuario?.role ?? ""] ?? "Cuenta",
+        avatarUrl: usuario?.avatarUrl ?? null,
+      }}
+    >
+      {children}
+    </PanelNav>
   );
 }

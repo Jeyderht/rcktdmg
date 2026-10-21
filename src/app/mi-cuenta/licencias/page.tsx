@@ -7,7 +7,6 @@ import { Check, Copy, ScrollText, ShieldOff } from "lucide-react";
 
 import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
 import EmptyState from "@/components/ui/EmptyState";
-import Footer from "@/components/layout/Footer";
 import {
   LICENCIAS,
   type LicenciaVista,
@@ -265,8 +264,6 @@ export default function LicenciasPage() {
           </ul>
         )}
       </main>
-
-      <Footer />
     </>
   );
 }

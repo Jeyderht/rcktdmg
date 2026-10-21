@@ -3,11 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Download as DownloadIcon, Receipt } from "lucide-react";
+import { CheckCircle2, Download as DownloadIcon, Package, Receipt } from "lucide-react";
 
 import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
 import EmptyState from "@/components/ui/EmptyState";
-import Footer from "@/components/layout/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { formatPrice } from "@/lib/pricing";
 
@@ -112,6 +111,22 @@ export default function MisComprasPage() {
         loadOrders();
     }, []);
 
+    /* Cifras de arriba: se cuentan sobre los mismos pedidos que
+       se listan debajo, sin pedir nada más. */
+    const cifras = [
+        { icono: Receipt, etiqueta: "Pedidos", valor: orders.length },
+        {
+            icono: Package,
+            etiqueta: "Recursos",
+            valor: orders.reduce((suma, o) => suma + o.items.length, 0),
+        },
+        {
+            icono: CheckCircle2,
+            etiqueta: "Pagados",
+            valor: orders.filter((o) => o.status === "PAID").length,
+        },
+    ];
+
     return (
         <>
 
@@ -130,6 +145,27 @@ export default function MisComprasPage() {
                         </Link>
                     )}
                 </AccountPageHeader>
+
+                {/* CIFRAS */}
+                {!error && (
+                    <ul className="rk-compras-cifras" aria-label="Resumen de compras">
+                        {cifras.map((c) => {
+                            const Icono = c.icono;
+
+                            return (
+                                <li key={c.etiqueta} className="rk-compras-cifra">
+                                    <span className="rk-compras-cifra-ic" aria-hidden>
+                                        <Icono size={20} />
+                                    </span>
+                                    <span>
+                                        <b>{loading ? "—" : c.valor}</b>
+                                        <small>{c.etiqueta}</small>
+                                    </span>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
 
                 {/* CARGANDO */}
                 {loading && (
@@ -203,17 +239,17 @@ export default function MisComprasPage() {
                                     </div>
                                 </div>
 
-                                {/* RECURSOS DEL PEDIDO */}
-                                <ul className="rk-row-card-box rk-row-items">
+                                {/* RECURSOS DEL PEDIDO: tarjetas con la portada grande */}
+                                <ul className="rk-compras-rejilla">
                                     {order.items.map((item) => (
-                                        <li key={item.id}>
+                                        <li key={item.id} className="rk-compras-tarjeta">
                                             <Link
                                                 href={`/tienda/${item.product.slug}`}
                                                 aria-label={item.product.name}
                                                 className={`rk-media ${claseProporcion({
                                                     categoriaSlug: item.product.category?.slug,
                                                     pieceType: item.product.pieceType as never,
-                                                })} rk-row-card-thumb`}
+                                                })} rk-compras-portada`}
                                             >
                                                 {item.product.coverUrl && (
                                                     <Image
@@ -221,12 +257,12 @@ export default function MisComprasPage() {
                                                         alt={item.product.name}
                                                         fill
                                                         className="object-cover"
-                                                        sizes="52px"
+                                                        sizes="(max-width: 640px) 50vw, 260px"
                                                     />
                                                 )}
                                             </Link>
 
-                                            <div className="min-w-0 flex-1">
+                                            <div className="rk-compras-info">
                                                 <Link
                                                     href={`/tienda/${item.product.slug}`}
                                                     className="rk-row-item-name"
@@ -275,8 +311,6 @@ export default function MisComprasPage() {
                     </section>
                 )}
             </main>
-
-            <Footer />
         </>
     );
 }

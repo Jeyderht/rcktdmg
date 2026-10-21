@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { paginaPrivada } from "@/lib/seo";
 
-import Navbar from "@/components/layout/Navbar";
 import PanelShell from "@/components/panel/PanelShell";
 
 /*
@@ -18,23 +17,8 @@ export default function MiCuentaLayout({
   children: React.ReactNode;
 }) {
   /*
-    El navbar va FUERA del armazón, y por eso se pinta aquí en
-    lugar de dentro de cada página.
-
-    Antes lo incluía cada página, y al envolverlas en el panel
-    la barra quedaba dentro de la columna de contenido: a
-    1280 px medía 1025 en vez de ocupar el ancho entero, y sus
-    botones de la derecha se salían. Arriba del todo recupera
-    el ancho completo y se comporta igual que en el resto del
-    sitio.
+    Marco de app: sin el Navbar ni el pie del sitio. La barra
+    superior y el menú los pinta PanelShell para todo el panel.
   */
-  return (
-    <>
-      <Navbar />
-
-      <PanelShell titulo="Mi cuenta">
-        {children}
-      </PanelShell>
-    </>
-  );
+  return <PanelShell titulo="Mi cuenta">{children}</PanelShell>;
 }

@@ -8,7 +8,6 @@ import { Download as DownloadIcon, Inbox } from "lucide-react";
 import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
 import BotonDescargarColeccion from "@/components/cuenta/BotonDescargarColeccion";
 import EmptyState from "@/components/ui/EmptyState";
-import Footer from "@/components/layout/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { fechaMedia } from "@/lib/formato";
 
@@ -483,8 +482,6 @@ export default function MisDescargasPage() {
                     </>
                 )}
             </main>
-
-            <Footer />
         </>
     );
 }
