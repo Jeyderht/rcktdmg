@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { ChevronDown, Compass, Menu, X, LogOut } from "lucide-react";
+import { ArrowLeftRight, ChevronDown, Compass, Menu, X, LogOut } from "lucide-react";
 import * as Iconos from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Isotipo from "@/components/layout/Isotipo";
@@ -180,6 +180,16 @@ function PanelNavInterno({
   /* Un solo grupo (cliente): sin cabecera ni acordeón. */
   const conAcordeon = grupos.length > 1;
 
+  /*
+    Cada área (Mi cuenta, Creator Studio, Administración) es su
+    propia página: la columna enseña solo el grupo del área actual
+    y, debajo, «Cambiar de área» con el inicio de las otras áreas a
+    las que el rol tiene acceso. Los grupos y quién ve qué siguen
+    saliendo de lib/menu-cuenta; aquí solo se elige qué se pinta.
+  */
+  const grupoVisible = grupos.find((g) => g.id === grupoActual) ?? grupos[0];
+  const otrasAreas = grupos.filter((g) => g.id !== grupoVisible?.id);
+
   const enlaces = (grupo: GrupoMenu) =>
     grupo.items.map((el) => {
       const Icono =
@@ -207,7 +217,7 @@ function PanelNavInterno({
   */
   const lista = (prefijo: string) => (
     <nav className="rk-app-nav" aria-label={titulo}>
-      {grupos.map((grupo) => {
+      {(grupoVisible ? [grupoVisible] : []).map((grupo) => {
         if (!conAcordeon) {
           return (
             <div key={grupo.id} className="rk-app-grupo">
@@ -249,6 +259,26 @@ function PanelNavInterno({
       })}
     </nav>
   );
+
+  /* Inicio de cada otra área: su primera entrada (/mi-cuenta,
+     /creadores/panel o /admin). */
+  const cambiarDeArea =
+    otrasAreas.length > 0 ? (
+      <nav className="rk-app-areas" aria-label="Cambiar de área">
+        <p className="rk-app-areas-titulo">Cambiar de área</p>
+
+        {otrasAreas.map((area) => (
+          <Link
+            key={area.id}
+            href={area.items[0].href}
+            className="rk-app-item rk-press"
+          >
+            <ArrowLeftRight size={16} aria-hidden className="shrink-0" />
+            <span className="truncate">{area.titulo}</span>
+          </Link>
+        ))}
+      </nav>
+    ) : null;
 
   const marca = (
     <Link href="/" aria-label="RcktX, ir al inicio" className="rk-app-marca">
@@ -310,7 +340,10 @@ function PanelNavInterno({
           {grupos.length === 1 ? "Mi cuenta" : "Mi espacio"}
         </p>
 
-        <div className="flex-1">{lista("columna")}</div>
+        <div className="flex-1">
+          {lista("columna")}
+          {cambiarDeArea}
+        </div>
 
         {identidad}
       </aside>
@@ -339,7 +372,10 @@ function PanelNavInterno({
               </button>
             </div>
 
-            <div className="mt-5 flex-1">{lista("cajon")}</div>
+            <div className="mt-5 flex-1">
+              {lista("cajon")}
+              {cambiarDeArea}
+            </div>
 
             {identidad}
           </div>
@@ -397,9 +433,12 @@ function PanelNavInterno({
             <ThemeToggle compacto />
           </div>
 
+          {/* En pestaña nueva, para no perder el panel. */}
           <Link
             href="/tienda"
-            aria-label="Explorar la tienda"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Explorar la tienda (se abre en una pestaña nueva)"
             className="rk-btn rk-btn-ink rk-btn-compact rk-app-explorar"
           >
             <Compass size={15} aria-hidden />
