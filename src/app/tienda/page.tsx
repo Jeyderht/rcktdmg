@@ -31,6 +31,9 @@ import { esTagProtegido } from "@/lib/tags-comun";
 
 export const dynamic = "force-dynamic";
 
+/** Categorías que van primero en la tienda (y la primera, por defecto). */
+const CATEGORIAS_PRIMERO = ["eventos", "general"];
+
 type StoreProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
@@ -66,9 +69,17 @@ export async function generateMetadata({
     return paginaPrivada("Buscar recursos");
   }
 
+  /*
+    Una categoría sin recursos publicados no se enseña: la página
+    cae en la categoría por defecto, así que tampoco tiene título
+    ni canónica propios (los de /tienda).
+  */
   const categoria = parametros.categoria
-    ? await prisma.category.findUnique({
-        where: { slug: parametros.categoria },
+    ? await prisma.category.findFirst({
+        where: {
+          slug: parametros.categoria,
+          products: { some: { status: "PUBLISHED" } },
+        },
         select: { name: true, slug: true },
       })
     : null;
@@ -128,13 +139,17 @@ export default async function Store({ searchParams }: StoreProps) {
     totalPacks,
     destacadosBusqueda,
   ] = await Promise.all([
+      /*
+        Las categorías con recursos publicados, como siempre, y
+        además Eventos y General aunque hoy estén vacías: sus
+        chips salen siempre (desactivados si no tienen nada).
+      */
       prisma.category.findMany({
         where: {
-          products: {
-            some: {
-              status: "PUBLISHED",
-            },
-          },
+          OR: [
+            { products: { some: { status: "PUBLISHED" } } },
+            { slug: { in: CATEGORIAS_PRIMERO } },
+          ],
         },
         orderBy: {
           name: "asc",
@@ -143,6 +158,7 @@ export default async function Store({ searchParams }: StoreProps) {
           id: true,
           name: true,
           slug: true,
+          _count: { select: { products: { where: { status: "PUBLISHED" } } } },
         },
       }),
 
@@ -235,20 +251,38 @@ export default async function Store({ searchParams }: StoreProps) {
       conteo: fila._count.products,
     }));
 
-  const activeCategory = categories.find(
-    (category) => category.slug === categorySlug
+  /*
+    SIEMPRE HAY UNA CATEGORÍA ACTIVA (no existe «Todos»).
+    Orden de los chips: Eventos, General y después el resto por
+    nombre. Activa: la de la URL si existe y tiene recursos; si
+    no (sin categoría, «todos», un slug viejo o una categoría
+    vacía), la primera con recursos: Eventos.
+  */
+  const rango = (slug: string) => {
+    const i = CATEGORIAS_PRIMERO.indexOf(slug);
+    return i === -1 ? CATEGORIAS_PRIMERO.length : i;
+  };
+  const categorias = [...categories].sort(
+    (a, b) => rango(a.slug) - rango(b.slug) || a.name.localeCompare(b.name, "es")
   );
+  const conRecursos = (c: (typeof categorias)[number]) => c._count.products > 0;
 
-  /* Filtros aplicados, cada uno con su propia forma de quitarse. */
+  const activeCategory =
+    categorias.find((c) => c.slug === categorySlug && conRecursos(c)) ??
+    categorias.find(conRecursos) ??
+    null;
+
+  /* Los parámetros con los que se consulta y se construyen los
+     enlaces: los de la URL, con la categoría activa ya puesta. */
+  const parametrosActivos: ParametrosTienda = {
+    ...parametros,
+    categoria: activeCategory?.slug,
+  };
+
+  /* Filtros aplicados, cada uno con su propia forma de quitarse.
+     La categoría no va aquí: se cambia con sus chips. */
   const aplicados: { clave: keyof ParametrosTienda; etiqueta: string }[] =
     [];
-
-  if (activeCategory) {
-    aplicados.push({
-      clave: "categoria",
-      etiqueta: activeCategory.name,
-    });
-  }
 
   if (parametros.precio) {
     const rango = RANGOS_PRECIO.find(
@@ -328,8 +362,8 @@ export default async function Store({ searchParams }: StoreProps) {
         </section>
 
         {/* ══════════ CATEGORÍAS ══════════ */}
-        {categories.length > 0 && (
-          <section className="rk-fade-up rk-enter-2 mt-4">
+        {categorias.length > 0 && (
+          <section className="rk-fade-up rk-enter-2 rk-explorar-cats">
             <div className="flex items-center gap-2.5">
               <SlidersHorizontal
                 size={15}
@@ -346,24 +380,29 @@ export default async function Store({ searchParams }: StoreProps) {
                 aria-label="Filtrar por categoría"
                 className="rk-explorar-chips flex flex-1 gap-2 overflow-x-auto pb-1"
               >
-                <Link
-                  href={urlTienda(parametros, { categoria: undefined })}
-                  aria-current={!categorySlug ? "true" : undefined}
-                  className={`rk-chip shrink-0 ${
-                    categorySlug ? "" : "rk-chip-active"
-                  }`}
-                >
-                  Todos
-                </Link>
+                {/* Sin «Todos»: siempre hay una categoría activa. */}
+                {categorias.map((category) => {
+                  const active = category.slug === activeCategory?.slug;
 
-                {categories.map((category) => {
-                  const active = category.slug === categorySlug;
+                  // Sin recursos publicados: el chip se ve, pero no lleva a ningún sitio.
+                  if (!conRecursos(category)) {
+                    return (
+                      <span
+                        key={category.id}
+                        aria-disabled="true"
+                        title="Todavía no hay recursos en esta categoría"
+                        className="rk-chip rk-chip-vacio shrink-0"
+                      >
+                        {category.name}
+                      </span>
+                    );
+                  }
 
                   return (
                     <Link
                       key={category.id}
-                      href={urlTienda(parametros, {
-                        categoria: active ? undefined : category.slug,
+                      href={urlTienda(parametrosActivos, {
+                        categoria: category.slug,
                       })}
                       aria-current={active ? "true" : undefined}
                       className={`rk-chip shrink-0 ${
@@ -380,9 +419,10 @@ export default async function Store({ searchParams }: StoreProps) {
         )}
 
         {/* ══════════ FILTROS Y RESULTADOS ══════════ */}
-        <div className="mt-4 flex gap-8">
+        {/* Ritmo vertical de la cabecera (16/12/16/16 en móvil): en el CSS. */}
+        <div className="rk-explorar-cuerpo flex gap-8">
           <FiltrosSidebar
-            actuales={parametros}
+            actuales={parametrosActivos}
             formatos={formatos}
             colores={colores}
             etiquetas={etiquetas}
@@ -410,7 +450,7 @@ export default async function Store({ searchParams }: StoreProps) {
                 frasesAnimadas={destacadosBusqueda.map((d) => d.etiqueta)}
                 className="rk-explorar-buscador"
                 ocultos={{
-                  categoria: parametros.categoria,
+                  categoria: parametrosActivos.categoria,
                   tag: parametros.tag,
                   formato: parametros.formato,
                   color: parametros.color,
@@ -423,7 +463,7 @@ export default async function Store({ searchParams }: StoreProps) {
 
             {/* En móvil, los filtros viven en una hoja inferior. */}
             <FiltrosMoviles
-              actuales={parametros}
+              actuales={parametrosActivos}
               formatos={formatos}
               colores={colores}
               etiquetas={etiquetas}
@@ -436,7 +476,7 @@ export default async function Store({ searchParams }: StoreProps) {
                 {aplicados.map((filtro) => (
                   <Link
                     key={filtro.clave}
-                    href={urlTienda(parametros, {
+                    href={urlTienda(parametrosActivos, {
                       [filtro.clave]: undefined,
                     })}
                     className="rk-chip rk-chip-active rk-hit-44-y"
@@ -464,11 +504,11 @@ export default async function Store({ searchParams }: StoreProps) {
               poder devolver un 404 real.
             */}
             <Suspense
-              key={JSON.stringify(parametros)}
+              key={JSON.stringify(parametrosActivos)}
               fallback={<StoreResultsSkeleton />}
             >
               <StoreResults
-                parametros={parametros}
+                parametros={parametrosActivos}
                 activeCategoryName={activeCategory?.name ?? null}
               />
             </Suspense>
