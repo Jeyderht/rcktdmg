@@ -3,85 +3,33 @@ import type { Metadata } from "next";
 
 import { paginaPrivada, paginaPublica } from "@/lib/seo";
 import { Suspense } from "react";
-import {
-  Briefcase,
-  FileImage,
-  Folder,
-  Gem,
-  LayoutGrid,
-  LayoutTemplate,
-  type LucideIcon,
-  MessageCircleHeart,
-  PartyPopper,
-  Shapes,
-  Smartphone,
-  X,
-} from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import BuscadorSugerencias from "@/components/layout/BuscadorSugerencias";
 import { ID_BUSCADOR_TIENDA } from "@/lib/busqueda-ui";
 import { terminosDestacados } from "@/lib/busqueda";
-import CajonFiltros, { BotonFiltros } from "./CajonFiltros";
-import OrdenExplorar from "./OrdenExplorar";
-import PanelFiltros from "./PanelFiltros";
+import FiltrosMoviles from "./FiltrosMoviles";
+import FiltrosSidebar from "./FiltrosSidebar";
 import StoreResults, {
   StoreResultsSkeleton,
 } from "./StoreResults";
 import { prisma } from "@/lib/prisma";
-import { facetasTienda } from "@/lib/catalogo-consulta";
 import {
   COLORES,
-  LICENCIAS,
-  ORDENES,
-  ORIENTACIONES,
   RANGOS_PRECIO,
-  alternar,
-  hayFiltros,
+  TAG_PACK,
   leerParametros,
-  lista,
   ordenPorDefecto,
   paginaActual,
+  ordenesDisponibles,
   urlTienda,
-  type OrdenCatalogo,
+  type ParametrosTienda,
 } from "@/lib/catalogo";
+import { esTagProtegido } from "@/lib/tags-comun";
 
 export const dynamic = "force-dynamic";
-
-/** Orden de la fila de categorías; las que no están, después. */
-const ORDEN_CATEGORIAS = [
-  "flyers",
-  "eventos",
-  "corporativos",
-  "social-media",
-  "redes",
-  "marca",
-  "mockups",
-  "plantillas",
-  "general",
-];
-
-/** Ícono de cada categoría por su slug; las demás, una carpeta. */
-const ICONO_CATEGORIA: Record<string, LucideIcon> = {
-  flyers: FileImage,
-  eventos: PartyPopper,
-  corporativos: Briefcase,
-  "social-media": MessageCircleHeart,
-  redes: MessageCircleHeart,
-  marca: Gem,
-  mockups: Smartphone,
-  plantillas: LayoutTemplate,
-  general: Shapes,
-};
-
-/** Órdenes de Explorar (relevancia solo al buscar). Sin precio. */
-const ORDENES_EXPLORAR: OrdenCatalogo[] = [
-  "relevancia",
-  "recientes",
-  "populares",
-  "descargas",
-];
 
 type StoreProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -163,269 +111,350 @@ export async function generateMetadata({
 export default async function Store({ searchParams }: StoreProps) {
   const parametros = leerParametros(await searchParams);
 
+  const query = parametros.q ?? "";
+  const categorySlug = parametros.categoria ?? "";
+
   /*
-    Las categorías salen de la base: no se inventa ninguna, y solo
-    se ofrecen las que tienen recursos publicados (o la que llega
-    en la URL). La fila sigue ORDEN_CATEGORIAS y las demás van
-    después, por nombre.
-
-    Dos juegos de contadores: `facetas` cuenta cada grupo con los
-    demás filtros activos; `base`, el catálogo publicado entero,
-    decide qué opciones existen de verdad. Sin filtros son el mismo.
+    Las opciones de filtro salen del catálogo real: solo se
+    ofrecen formatos y colores que de verdad tienen recursos
+    publicados detrás, para que ningún filtro lleve a una
+    lista vacía.
   */
-  const hayFiltrosPanel = hayFiltros(parametros) || Boolean(parametros.sin);
-
-  const [categoriasCrudas, facetas, base, destacadosBusqueda, etiquetaTag] =
-    await Promise.all([
+  const [
+    categories,
+    formatosCrudos,
+    coloresCrudos,
+    etiquetasCrudas,
+    totalPacks,
+    destacadosBusqueda,
+  ] = await Promise.all([
       prisma.category.findMany({
-        where: { isActive: true },
-        orderBy: { name: "asc" },
-        select: { name: true, slug: true },
+        where: {
+          products: {
+            some: {
+              status: "PUBLISHED",
+            },
+          },
+        },
+        orderBy: {
+          name: "asc",
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
       }),
 
-      facetasTienda(parametros),
+      prisma.product.groupBy({
+        by: ["fileFormat"],
+        where: {
+          status: "PUBLISHED",
+          fileFormat: { not: null },
+        },
+        _count: { _all: true },
+      }),
 
-      hayFiltrosPanel ? facetasTienda({}) : null,
+      prisma.product.groupBy({
+        by: ["color"],
+        where: {
+          status: "PUBLISHED",
+          color: { not: null },
+        },
+        _count: { _all: true },
+      }),
+
+      /*
+        Etiquetas con recursos publicados detrás, las más
+        usadas primero. Igual que formatos y colores: ninguna
+        opción del panel puede llevar a una lista vacía.
+      */
+      prisma.tag.findMany({
+        where: { products: { some: { product: { status: "PUBLISHED" } } } },
+        orderBy: [{ products: { _count: "desc" } }, { name: "asc" }],
+        take: 12,
+        select: {
+          name: true,
+          slug: true,
+          _count: {
+            select: {
+              products: { where: { product: { status: "PUBLISHED" } } },
+            },
+          },
+        },
+      }),
+
+      prisma.product.count({
+        where: {
+          status: "PUBLISHED",
+          tags: { some: { tag: { slug: TAG_PACK } } },
+        },
+      }),
 
       /* Frases del buscador que se escribe solo: los mismos
          términos de «Populares ahora». Sin ellos, no se anima. */
       terminosDestacados(6).catch(() => []),
-
-      // Nombre de la etiqueta de la URL (?tag=, enlaces de /tags).
-      parametros.tag
-        ? prisma.tag.findUnique({
-            where: { slug: parametros.tag },
-            select: { name: true },
-          })
-        : null,
     ]);
 
-  const posicion = (slug: string) => {
-    const i = ORDEN_CATEGORIAS.indexOf(slug);
-    return i === -1 ? ORDEN_CATEGORIAS.length : i;
-  };
+  const formatos = formatosCrudos
+    .filter((fila) => Boolean(fila.fileFormat))
+    .map((fila) => ({
+      valor: fila.fileFormat as string,
+      etiqueta: (fila.fileFormat as string).toUpperCase(),
+      conteo: fila._count._all,
+    }))
+    .sort((a, b) => b.conteo - a.conteo || a.valor.localeCompare(b.valor));
 
-  const conteoBase = base ?? facetas;
-  const categoriasMarcadas = lista(parametros.categoria);
-
-  const categorias = categoriasCrudas
-    .filter(
-      (c) =>
-        (conteoBase.categorias[c.slug] ?? 0) > 0 ||
-        categoriasMarcadas.includes(c.slug)
-    )
-    .sort(
-      (a, b) =>
-        posicion(a.slug) - posicion(b.slug) || a.name.localeCompare(b.name)
+  // Se respeta el orden de la paleta, no el alfabético.
+  const colores = COLORES.flatMap((definicion) => {
+    const fila = coloresCrudos.find(
+      (c) => c.color === definicion.valor
     );
 
+    if (!fila) return [];
+
+    return [
+      {
+        valor: definicion.valor,
+        etiqueta: definicion.etiqueta,
+        conteo: fila._count._all,
+      },
+    ];
+  });
+
   /*
-    Filtros aplicados: una píldora por VALOR, cada una con la URL
-    sin ese valor. Incluye lo que llega de otros sitios (búsqueda,
-    etiqueta de /tags, packs, tramo de precio) aunque el panel no
-    lo ofrezca: un filtro activo siempre se ve y se puede quitar.
+    La etiqueta "pack" no se ofrece aquí como una etiqueta
+    más: ya tiene su propio interruptor ("Solo packs") y
+    verla dos veces con nombres distintos confundiría.
   */
-  const aplicados: { clave: string; etiqueta: string; href: string }[] = [];
+  const etiquetas = etiquetasCrudas
+    .filter((fila) => !esTagProtegido(fila.slug))
+    .map((fila) => ({
+      valor: fila.slug,
+      etiqueta: fila.name,
+      conteo: fila._count.products,
+    }));
 
-  const porValor = (
-    clave: "categoria" | "licencia" | "formato" | "color" | "orientacion",
-    nombre: (valor: string) => string
-  ) => {
-    for (const valor of lista(parametros[clave])) {
-      aplicados.push({
-        clave: `${clave}-${valor}`,
-        etiqueta: nombre(valor),
-        href: urlTienda(parametros, {
-          [clave]: alternar(parametros[clave], valor),
-        }),
-      });
-    }
-  };
+  const activeCategory = categories.find(
+    (category) => category.slug === categorySlug
+  );
 
-  if (parametros.q) {
+  /* Filtros aplicados, cada uno con su propia forma de quitarse. */
+  const aplicados: { clave: keyof ParametrosTienda; etiqueta: string }[] =
+    [];
+
+  if (activeCategory) {
     aplicados.push({
-      clave: "q",
-      etiqueta: `«${parametros.q}»`,
-      href: urlTienda(parametros, { q: undefined }),
+      clave: "categoria",
+      etiqueta: activeCategory.name,
     });
   }
 
-  porValor("categoria", (v) => categorias.find((c) => c.slug === v)?.name ?? v);
-  porValor("licencia", (v) => LICENCIAS.find((l) => l.valor === v)?.etiqueta ?? v);
-  porValor("formato", (v) => v.toUpperCase());
-  porValor("color", (v) => COLORES.find((c) => c.valor === v)?.etiqueta ?? v);
-  porValor(
-    "orientacion",
-    (v) => ORIENTACIONES.find((o) => o.valor === v)?.etiqueta ?? v
-  );
+  if (parametros.precio) {
+    const rango = RANGOS_PRECIO.find(
+      (r) => r.valor === parametros.precio
+    );
+
+    if (rango) {
+      aplicados.push({ clave: "precio", etiqueta: rango.etiqueta });
+    }
+  }
 
   if (parametros.tag) {
+    /*
+      El nombre bonito sale de la lista ya consultada; si la
+      etiqueta de la URL no existe, se enseña el slug tal cual
+      en vez de esconder el filtro y dejar los resultados sin
+      explicación.
+    */
+    const etiqueta = etiquetas.find((e) => e.valor === parametros.tag);
+
     aplicados.push({
       clave: "tag",
-      etiqueta: etiquetaTag?.name ?? parametros.tag,
-      href: urlTienda(parametros, { tag: undefined }),
+      etiqueta: etiqueta?.etiqueta ?? parametros.tag,
     });
+  }
+
+  if (parametros.formato) {
+    aplicados.push({
+      clave: "formato",
+      etiqueta: parametros.formato.toUpperCase(),
+    });
+  }
+
+  if (parametros.color) {
+    const color = COLORES.find((c) => c.valor === parametros.color);
+
+    if (color) {
+      aplicados.push({ clave: "color", etiqueta: color.etiqueta });
+    }
   }
 
   if (parametros.pack === "true") {
-    aplicados.push({
-      clave: "pack",
-      etiqueta: "Solo packs",
-      href: urlTienda(parametros, { pack: undefined }),
-    });
-  }
-
-  const rango = RANGOS_PRECIO.find((r) => r.valor === parametros.precio);
-
-  if (rango) {
-    aplicados.push({
-      clave: "precio",
-      etiqueta: rango.etiqueta,
-      href: urlTienda(parametros, { precio: undefined }),
-    });
+    aplicados.push({ clave: "pack", etiqueta: "Solo packs" });
   }
 
   const hayBusqueda = Boolean(parametros.q);
-  const ordenes = ORDENES.filter(
-    (o) =>
-      ORDENES_EXPLORAR.includes(o.valor) &&
-      (!o.soloConBusqueda || hayBusqueda)
-  );
-  // Un orden de la URL que Explorar no ofrece (p. ej. por precio)
-  // sigue funcionando, pero el selector enseña el de por defecto.
-  const ordenActual =
-    ordenes.find((o) => o.valor === parametros.sort)?.valor ??
-    ordenPorDefecto(hayBusqueda);
 
-  const activosPanel = aplicados.filter((a) => a.clave !== "q").length;
-  const total = facetas.total;
+  const disponibles = ordenesDisponibles(hayBusqueda);
+
+  const ordenActual =
+    disponibles.find((o) => o.valor === parametros.sort) ??
+    disponibles.find(
+      (o) => o.valor === ordenPorDefecto(hayBusqueda)
+    ) ??
+    disponibles[0];
 
   return (
     <>
       <Navbar />
 
-      <main className="rk-explorar mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-8">
+      <main className="rk-explorar mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-5 lg:px-8 lg:pb-20 lg:pt-10">
 
         {/* ══════════ CABECERA ══════════ */}
-        <section className="rk-ex-cab">
-          <h1>Explorar</h1>
+        {/* Compacta y sin halo decorativo. */}
+        <section className="rk-fade-up">
+          <p className="rk-kicker">RcktX Store</p>
 
-          {/* Total real del catálogo filtrado, no de la página. */}
-          <p>
-            {total} {total === 1 ? "recurso" : "recursos"}
+          <h1 className="rk-title mt-2 text-[1.75rem] sm:text-[2rem]">
+            Explora recursos digitales
+          </h1>
+
+          <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
+            Plantillas y packs creados por diseñadores, listos
+            para descargar y usar en tus proyectos.
           </p>
         </section>
 
         {/* ══════════ CATEGORÍAS ══════════ */}
-        <nav aria-label="Categorías" className="rk-ex-categorias">
-          <Link
-            href={urlTienda(parametros, { categoria: undefined })}
-            className="rk-ex-cat"
-            aria-current={categoriasMarcadas.length === 0 ? "true" : undefined}
-            scroll={false}
-          >
-            <LayoutGrid size={22} aria-hidden />
-            Todos
-          </Link>
+        {categories.length > 0 && (
+          <section className="rk-fade-up rk-enter-2 mt-4">
+            <div className="flex items-center gap-2.5">
+              <SlidersHorizontal
+                size={15}
+                className="hidden shrink-0 text-ink/60 sm:block"
+                aria-hidden
+              />
 
-          {categorias.map((categoria) => {
-            const Icono = ICONO_CATEGORIA[categoria.slug] ?? Folder;
-            const activa = categoriasMarcadas.includes(categoria.slug);
-
-            return (
-              <Link
-                key={categoria.slug}
-                href={urlTienda(parametros, {
-                  // La fila elige UNA categoría; varias, en el panel.
-                  categoria:
-                    activa && categoriasMarcadas.length === 1
-                      ? undefined
-                      : categoria.slug,
-                })}
-                className="rk-ex-cat"
-                aria-current={activa ? "true" : undefined}
-                scroll={false}
+              {/*
+                Scroll horizontal: los filtros nunca ganan alto
+                ni desbordan la página, por muchos que haya.
+              */}
+              <div
+                role="group"
+                aria-label="Filtrar por categoría"
+                className="-mx-4 flex flex-1 gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
               >
-                <Icono size={22} aria-hidden />
-                {categoria.name}
-              </Link>
-            );
-          })}
-        </nav>
+                <Link
+                  href={urlTienda(parametros, { categoria: undefined })}
+                  aria-current={!categorySlug ? "true" : undefined}
+                  className={`rk-chip shrink-0 ${
+                    categorySlug ? "" : "rk-chip-active"
+                  }`}
+                >
+                  Todos
+                </Link>
+
+                {categories.map((category) => {
+                  const active = category.slug === categorySlug;
+
+                  return (
+                    <Link
+                      key={category.id}
+                      href={urlTienda(parametros, {
+                        categoria: active ? undefined : category.slug,
+                      })}
+                      aria-current={active ? "true" : undefined}
+                      className={`rk-chip shrink-0 ${
+                        active ? "rk-chip-active" : ""
+                      }`}
+                    >
+                      {category.name}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ══════════ FILTROS Y RESULTADOS ══════════ */}
-        <div className="rk-ex-cuerpo">
-          <CajonFiltros total={total}>
-            <PanelFiltros
-              parametros={parametros}
-              facetas={facetas}
-              base={conteoBase}
-              categorias={categorias}
-            />
-          </CajonFiltros>
+        <div className="mt-6 flex gap-8">
+          <FiltrosSidebar
+            actuales={parametros}
+            formatos={formatos}
+            colores={colores}
+            etiquetas={etiquetas}
+            totalPacks={totalPacks}
+          />
 
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
+            {/* ══════════ BUSCADOR ══════════ */}
             {/*
-              relative z-20: las sugerencias del buscador se pintan
-              encima de la rejilla. Por debajo del Navbar (40) y del
-              menú inferior (50).
+              relative z-20: la animación de entrada deja un transform
+              en la sección y la convierte en contexto de apilamiento,
+              así que el z-50 de las sugerencias no salía de ella y los
+              chips y botones de abajo se pintaban encima. Por debajo
+              del Navbar (40) y del menú inferior (50).
             */}
-            <div className="rk-ex-barra relative z-20">
+            <section className="rk-fade-up rk-enter-1 relative z-20">
               {/*
-                Una búsqueda nueva no tira los filtros que ya
-                estaban puestos: viajan como campos ocultos.
+                Una búsqueda nueva no debe tirar los filtros que ya
+                estaban puestos: viajan como campos ocultos dentro
+                del formulario.
               */}
               <BuscadorSugerencias
-                valorInicial={parametros.q ?? ""}
+                valorInicial={query}
                 idInput={ID_BUSCADOR_TIENDA}
                 frasesAnimadas={destacadosBusqueda.map((d) => d.etiqueta)}
-                className="rk-ex-buscador"
+                className="rk-explorar-buscador"
                 ocultos={{
                   categoria: parametros.categoria,
-                  licencia: parametros.licencia,
+                  tag: parametros.tag,
                   formato: parametros.formato,
                   color: parametros.color,
-                  orientacion: parametros.orientacion,
-                  tag: parametros.tag,
                   precio: parametros.precio,
                   pack: parametros.pack,
                   sort: parametros.sort,
                 }}
               />
+            </section>
 
-              <div className="rk-ex-barra-acciones">
-                <OrdenExplorar
-                  actual={ordenActual}
-                  opciones={ordenes.map((o) => ({
-                    valor: o.valor,
-                    etiqueta: o.etiqueta,
-                    href: urlTienda(parametros, { sort: o.valor }),
-                  }))}
-                />
+            {/* En móvil, los filtros viven en una hoja inferior. */}
+            <FiltrosMoviles
+              actuales={parametros}
+              formatos={formatos}
+              colores={colores}
+              etiquetas={etiquetas}
+              totalPacks={totalPacks}
+            />
 
-                <BotonFiltros activos={activosPanel} />
-              </div>
-            </div>
-
-            {/* Lo que está aplicado, y cómo quitarlo uno a uno. */}
+            {/* Lo que está aplicado, y cómo quitarlo. */}
             {aplicados.length > 0 && (
-              <ul className="rk-ex-aplicados" aria-label="Filtros aplicados">
+              <div className="mt-3 flex flex-wrap items-center gap-2">
                 {aplicados.map((filtro) => (
-                  <li key={filtro.clave}>
-                    <Link
-                      href={filtro.href}
-                      className="rk-chip rk-hit-44-y"
-                      scroll={false}
-                    >
-                      {filtro.etiqueta}
-                      <X size={12} aria-hidden />
-                      <span className="sr-only">
-                        Quitar filtro {filtro.etiqueta}
-                      </span>
-                    </Link>
-                  </li>
+                  <Link
+                    key={filtro.clave}
+                    href={urlTienda(parametros, {
+                      [filtro.clave]: undefined,
+                    })}
+                    className="rk-chip rk-chip-active rk-hit-44-y"
+                  >
+                    {filtro.etiqueta}
+                    <X size={12} aria-hidden />
+                    <span className="sr-only">
+                      Quitar filtro {filtro.etiqueta}
+                    </span>
+                  </Link>
                 ))}
-              </ul>
+              </div>
+            )}
+
+            {/* El orden activo también se ve en escritorio. */}
+            {parametros.sort && (
+              <p className="mt-3 hidden text-xs text-ink/45 lg:block">
+                Orden: {ordenActual.etiqueta}
+              </p>
             )}
 
             {/*
@@ -437,7 +466,10 @@ export default async function Store({ searchParams }: StoreProps) {
               key={JSON.stringify(parametros)}
               fallback={<StoreResultsSkeleton />}
             >
-              <StoreResults parametros={parametros} />
+              <StoreResults
+                parametros={parametros}
+                activeCategoryName={activeCategory?.name ?? null}
+              />
             </Suspense>
           </div>
         </div>

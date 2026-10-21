@@ -157,50 +157,6 @@ export const COLORES: { valor: string; etiqueta: string; muestra: string }[] = [
   { valor: "multicolor", etiqueta: "Multicolor", muestra: "" },
 ];
 
-/**
- * Licencia en Explorar. No hay un campo propio: «gratis» es
- * precio 0 y «premium» cualquier precio mayor. La licencia de uso
- * (licenseType) es otra cosa y se ve en la ficha.
- */
-export const LICENCIAS: { valor: string; etiqueta: string }[] = [
-  { valor: "gratis", etiqueta: "Gratis" },
-  { valor: "premium", etiqueta: "Premium" },
-];
-
-/**
- * Orientación de la portada, leída de coverWidth × coverHeight.
- * Un recurso sin medidas no entra en ninguna.
- */
-export const ORIENTACIONES: { valor: string; etiqueta: string }[] = [
-  { valor: "vertical", etiqueta: "Vertical" },
-  { valor: "horizontal", etiqueta: "Horizontal" },
-  { valor: "cuadrado", etiqueta: "Cuadrado" },
-];
-
-/**
- * Valores de un filtro que admite varios a la vez. En la URL van
- * separados por comas (?formato=jpg,zip); un solo valor se escribe
- * igual que antes, así los enlaces viejos siguen valiendo.
- */
-export function lista(valor: string | undefined): string[] {
-  return valor
-    ? [...new Set(valor.split(",").map((v) => v.trim()).filter(Boolean))]
-    : [];
-}
-
-/** Añade la opción si no estaba y la quita si estaba. */
-export function alternar(
-  valor: string | undefined,
-  opcion: string
-): string | undefined {
-  const actuales = lista(valor);
-  const siguientes = actuales.includes(opcion)
-    ? actuales.filter((v) => v !== opcion)
-    : [...actuales, opcion];
-
-  return siguientes.length > 0 ? siguientes.join(",") : undefined;
-}
-
 export function esColor(valor: unknown): valor is string {
   return (
     typeof valor === "string" &&
@@ -216,8 +172,6 @@ export type FiltrosCatalogo = {
   formato?: string;
   color?: string;
   precio?: string;
-  /** "gratis", "premium" o ambas, separadas por comas. */
-  licencia?: string;
   soloPacks?: boolean;
   /**
    * Categoría que se EXCLUYE del listado.
@@ -241,31 +195,20 @@ export function construirWhere(
 ): Prisma.ProductWhereInput {
   const where: Prisma.ProductWhereInput = { status: "PUBLISHED" };
 
-  /*
-    Categoría, formato y color admiten varios valores (Explorar
-    los marca con casillas). Con uno solo, la condición es la
-    misma de siempre.
-  */
-  const categorias = lista(filtros.categoria);
-  const formatos = lista(filtros.formato).map((f) => f.toLowerCase());
-  const colores = lista(filtros.color);
-
-  if (categorias.length > 0) {
-    where.category = {
-      slug: categorias.length === 1 ? categorias[0] : { in: categorias },
-    };
+  if (filtros.categoria) {
+    where.category = { slug: filtros.categoria };
   } else if (filtros.sinCategoria) {
     // Excluir e incluir a la vez no tiene sentido: si se pide
     // una categoría concreta, esa manda.
     where.category = { slug: { not: filtros.sinCategoria } };
   }
 
-  if (formatos.length > 0) {
-    where.fileFormat = formatos.length === 1 ? formatos[0] : { in: formatos };
+  if (filtros.formato) {
+    where.fileFormat = filtros.formato.toLowerCase();
   }
 
-  if (colores.length > 0) {
-    where.color = colores.length === 1 ? colores[0] : { in: colores };
+  if (filtros.color) {
+    where.color = filtros.color;
   }
 
   /*
@@ -285,19 +228,6 @@ export function construirWhere(
     condicionesTags.push({
       tags: { some: { tag: { slug: filtros.tag } } },
     });
-  }
-
-  /*
-    Licencia: gratis = precio 0, premium = precio mayor que 0. Con
-    las dos marcadas no recorta nada. Va en AND para convivir con
-    el tramo de precio (?precio=) de los enlaces antiguos.
-  */
-  const licencias = lista(filtros.licencia);
-
-  if (licencias.length === 1 && licencias[0] === "gratis") {
-    condicionesTags.push({ price: { equals: 0 } });
-  } else if (licencias.length === 1 && licencias[0] === "premium") {
-    condicionesTags.push({ price: { gt: 0 } });
   }
 
   if (condicionesTags.length > 0) {
@@ -436,10 +366,6 @@ export type ParametrosTienda = {
   formato?: string;
   color?: string;
   precio?: string;
-  /** "gratis", "premium" (o las dos, separadas por comas). */
-  licencia?: string;
-  /** "vertical", "horizontal", "cuadrado" (separadas por comas). */
-  orientacion?: string;
   /** "true" cuando se piden únicamente packs. */
   pack?: string;
   /** Slug de la categoría que se deja fuera del listado. */
@@ -457,8 +383,6 @@ const CLAVES_FILTRO = [
   "formato",
   "color",
   "precio",
-  "licencia",
-  "orientacion",
   "pack",
 ] as const;
 
@@ -486,14 +410,7 @@ export function leerParametros(
     tag: texto(crudos.tag)?.toLowerCase(),
     // El formato se guarda siempre en minúsculas.
     formato: (texto(crudos.formato) ?? texto(crudos.format))?.toLowerCase(),
-    // Solo los colores, licencias y orientaciones que existen.
-    color: soloValidos(texto(crudos.color), (v) => esColor(v)),
-    licencia: soloValidos(texto(crudos.licencia), (v) =>
-      LICENCIAS.some((l) => l.valor === v)
-    ),
-    orientacion: soloValidos(texto(crudos.orientacion), (v) =>
-      ORIENTACIONES.some((o) => o.valor === v)
-    ),
+    color: esColor(texto(crudos.color)) ? texto(crudos.color) : undefined,
     precio: RANGOS_PRECIO.some((r) => r.valor === precio)
       ? precio
       : undefined,
@@ -506,16 +423,6 @@ export function leerParametros(
         ? String(Math.floor(pagina))
         : undefined,
   };
-}
-
-/** Lista de la URL sin los valores que no se reconocen. */
-function soloValidos(
-  valor: string | undefined,
-  valido: (v: string) => boolean
-): string | undefined {
-  const buenos = lista(valor?.toLowerCase()).filter(valido);
-
-  return buenos.length > 0 ? buenos.join(",") : undefined;
 }
 
 /** Número de página, siempre 1 o mayor. */
@@ -536,7 +443,6 @@ export function filtrosDesde(
     formato: parametros.formato,
     color: parametros.color,
     precio: parametros.precio,
-    licencia: parametros.licencia,
     soloPacks: parametros.pack === "true",
     sinCategoria: parametros.sin,
   };
