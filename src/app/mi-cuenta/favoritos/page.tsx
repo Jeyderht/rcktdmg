@@ -5,7 +5,6 @@ import { Heart, X } from "lucide-react";
 
 import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
 import EmptyState from "@/components/ui/EmptyState";
-import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/tienda/ProductCard";
 
 type Favorite = {
@@ -226,8 +225,6 @@ export default function FavoritosPage() {
           </>
         )}
       </main>
-
-      <Footer />
     </>
   );
 }

@@ -7,7 +7,6 @@ import { BadgeCheck, UserRound } from "lucide-react";
 
 import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
 import EmptyState from "@/components/ui/EmptyState";
-import Footer from "@/components/layout/Footer";
 
 type Creador = {
   id: string;
@@ -175,8 +174,6 @@ export default function SiguiendoPage() {
           </ul>
         )}
       </main>
-
-      <Footer />
     </>
   );
 }

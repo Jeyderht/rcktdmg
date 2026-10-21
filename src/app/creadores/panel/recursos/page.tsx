@@ -11,7 +11,6 @@ import {
 } from "@/lib/tipos-publicacion";
 
 import EmptyState from "@/components/ui/EmptyState";
-import Footer from "@/components/layout/Footer";
 import { fechaMedia } from "@/lib/formato";
 
 type Product = {
@@ -451,8 +450,6 @@ export default function RecursosPage() {
           </section>
         )}
       </main>
-
-      <Footer />
     </>
   );
 }

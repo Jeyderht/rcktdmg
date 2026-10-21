@@ -18,80 +18,81 @@
    constante en la PALETA y un token que la use.
 
    ÍNDICE (sección y rango de líneas)
-    §0   PALETA · única fuente de los colores                             104–427
-    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 428–472
-    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           473–775
-    §3   BASE  ·  body, selección, utilidades sueltas                     776–861
-    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 862–1603
-    §5   UTILIDADES  ·  @layer utilities                                  1604–1722
-    §6   PIEZAS SUELTAS  ·  @layer components                             1723–1797
-    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1798–1839
-    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1840–1892
-    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1893–2016
-    §10  LA TARJETA DE RECURSO                                            2017–2081
-    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            2082–2983
-    §12  SISTEMA DE INTERACCIÓN                                           2984–3766
-    §13  A. BOTONES                                                       3767–4273
-    §14  B · C · D                                                        4274–4606
-    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4607–4792
-    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4793–4812
-    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4813–5064
-    §18  C2. TARJETA DE RECURSO · versión refinada                        5065–5237
-    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5238–5432
-    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5433–5484
-    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5485–5704
-    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5705–6012
-    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         6013–6389
-    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6390–6529
-    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6530–6609
-    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6610–6730
-    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6731–6962
-    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6963–7148
-    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          7149–7484
-    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7485–7979
-    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7980–8220
-    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8221–8403
-    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8404–8712
-    §34  W. TABLAS  ·  rk-table · rk-pagination                           8713–8960
-    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8961–9201
-    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9202–9568
-    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9569–9971
-    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9972–10339
-    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10340–10662
-    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10663–10947
-    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10948–11184
-    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11185–11308
-    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11309–11520
-    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11521–11955
-    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11956–12213
-    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12214–12422
-    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12423–12799
-    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12800–13281
-    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13282–13550
-    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13551–13629
-    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13630–13787
-    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13788–13905
-    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13906–13954
-    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13955–13990
-    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13991–14326
-    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14327–14380
-    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14381–14736
-    §58  AV · CTA final con la modelo (estilo hero)                       14737–14790
-    §59  AW · Ecosistema: fila con núcleo hexagonal                       14791–15053
-    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          15054–15128
-    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      15129–15146
-    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15147–15203
-    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15204–15334
-    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15335–15654
-    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15655–16010
-    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        16011–16266
-    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16267–16480
-    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16481–16853
-    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16854–17174
-    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17175–20022
-    §71  BB. INICIO (encargo de la home)                                  20023–20851
-    §72  Inicio · vender más                                              20852–21729
-    §73  Explorar (tienda)                                                21730–22318
+    §0   PALETA · única fuente de los colores                             105–428
+    §1   AJUSTES DE TAMAÑO DE TAILWIND  ·  .text-[..] un 12 % más compact 429–473
+    §2   DESIGN SYSTEM: TOKENS DE TEMA  ·  :root / [data-theme]           474–776
+    §3   BASE  ·  body, selección, utilidades sueltas                     777–862
+    §4   COMPONENTES (sistema anterior)  ·  @layer components, banda ónic 863–1604
+    §5   UTILIDADES  ·  @layer utilities                                  1605–1723
+    §6   PIEZAS SUELTAS  ·  @layer components                             1724–1798
+    §7   APARICIÓN AL ENTRAR EN PANTALLA                                  1799–1840
+    §8   TABLEROS — SIDEBAR, CAJÓN Y BARRA                                1841–1893
+    §9   TIRA DE SUGERENCIAS — DESFILE DE FLYERS                          1894–2017
+    §10  LA TARJETA DE RECURSO                                            2018–2082
+    §11  RESKIN — SISTEMA VISUAL DE REFERENCIA                            2083–2984
+    §12  SISTEMA DE INTERACCIÓN                                           2985–3767
+    §13  A. BOTONES                                                       3768–4274
+    §14  B · C · D                                                        4275–4607
+    §15  TARJETA DE RECURSO  ·  .rk-tarjeta  (estilo web3)                4608–4793
+    §16  VIDRIO SOBRE IMAGEN  ·  tokens --rk-gv-*                         4794–4813
+    §17  E. CANTIDAD Y BOTÓN DE ICONO  ·  rk-stepper · rk-icon-button     4814–5065
+    §18  C2. TARJETA DE RECURSO · versión refinada                        5066–5238
+    §19  F. ARTÍCULO DEL CARRITO  ·  rk-cart-item                         5239–5433
+    §20  G. LÍNEAS DE SEPARACIÓN  ·  rk-divider                           5434–5485
+    §21  H. CHIPS Y BADGES  ·  rk-chip · rk-badge                         5486–5705
+    §22  I. MENÚ INFERIOR  ·  rk-dock (solo iconos, vidrio)               5706–6013
+    §23  J. BARRA SUPERIOR Y BUSCADOR  ·  rk-topbar · rk-buscador         6014–6390
+    §24  K. SELECTOR DE TEMA  ·  rk-theme-toggle  (ThemeToggle.tsx)       6391–6530
+    §25  L. TARJETAS DE INFORMACIÓN  ·  rk-card                           6531–6610
+    §26  M. PASOS  ·  rk-step (pasos, ofertas)                            6611–6731
+    §27  N. RESUMEN DEL PEDIDO  ·  rk-receipt                             6732–6963
+    §28  Q. TARJETAS DE PLANES  ·  rk-plan                                6964–7149
+    §29  R. COMPARACIÓN DE PLANES  ·  rk-compare                          7150–7485
+    §30  S. PREGUNTAS FRECUENTES  ·  rk-faq                               7486–7980
+    §31  T. PESTAÑAS Y PANEL LATERAL  ·  rk-tabs · rk-panel-*             7981–8221
+    §32  U. CARGA Y VACÍOS  ·  rk-skeleton · rk-empty                     8222–8404
+    §33  V. SUBIDA DE ARCHIVOS  ·  rk-upload · rk-progress                8405–8713
+    §34  W. TABLAS  ·  rk-table · rk-pagination                           8714–8961
+    §35  X. PERFIL Y MÉTRICAS  ·  rk-profile · rk-tabs-track · rk-stat    8962–9202
+    §36  Y. MENÚ DE CUENTA  ·  rk-avatar-btn · rk-menu                    9203–9569
+    §37  Z. RESEÑAS  ·  rk-rating · rk-stars · rk-review                  9570–9972
+    §38  AA. NOTIFICACIONES  ·  rk-notif-*                                9973–10340
+    §39  AB. DETALLE DEL RECURSO  ·  rk-buy · rk-creator · rk-specs · rk- 10341–10663
+    §40  AC. FILTROS DE TIENDA  ·  rk-filter-* · rk-swatch · rk-sheet-*   10664–10948
+    §41  AD. ACCESO (login · registro)  ·  rk-auth-*                      10949–11185
+    §42  AF. CHECKOUT  ·  rk-steps-line · rk-pay-safe (+ rk-receipt)      11186–11309
+    §43  AG. CONFIRMACIÓN DEL PEDIDO  ·  rk-done-*                        11310–11521
+    §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11522–11956
+    §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11957–12214
+    §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12215–12423
+    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12424–12800
+    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12801–13282
+    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13283–13551
+    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13552–13630
+    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13631–13788
+    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13789–13906
+    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13907–13955
+    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13956–13991
+    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      13992–14327
+    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14328–14381
+    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14382–14737
+    §58  AV · CTA final con la modelo (estilo hero)                       14738–14791
+    §59  AW · Ecosistema: fila con núcleo hexagonal                       14792–15054
+    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          15055–15129
+    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      15130–15147
+    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15148–15204
+    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15205–15335
+    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15336–15655
+    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15656–16011
+    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        16012–16267
+    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16268–16481
+    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16482–16854
+    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16855–17175
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17176–20023
+    §71  BB. INICIO (encargo de la home)                                  20024–20852
+    §72  Inicio · vender más                                              20853–21730
+    §73  Explorar (tienda)                                                21731–21953
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                21954–22422
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -21749,569 +21750,672 @@ html[data-theme] .rk-footer-marca::before {
   opacity: 0.55;
 }
 
-/* ── Explorar al estilo DesignBR: cabecera compacta, fila de
-   categorías con ícono, filtros a la izquierda (cajón en móvil)
-   y rejilla de portadas. Solo tokens: --rk-foreground,
-   --rk-background, --rk-muted, --rk-card, --rk-border-color y
-   --rk-border-strong. ── */
+/* ── Explorar, capa visual (estilo DesignBR) sobre la tienda de
+   siempre: misma lógica, mismos filtros y misma tarjeta emergente.
+   Solo tokens. ── */
 
-/* Cabecera: «Explorar» y el contador a la derecha */
-.rk-ex-cab {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
+/* Buscador a todo el ancho de la columna de resultados */
+.rk-explorar-buscador {
+  width: 100%;
 }
 
-.rk-ex-cab h1 {
-  margin: 0;
-  color: rgb(var(--rk-foreground));
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-}
-
-.rk-ex-cab p {
-  margin: 0;
-  color: rgb(var(--rk-muted));
-  font-size: 14px;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-@media (min-width: 1024px) {
-  .rk-ex-cab h1 {
-    font-size: 2rem;
-  }
-}
-
-/* Fila de categorías: botones verticales de 76 px; scroll
-   horizontal en móvil, a todo el ancho de la pantalla */
-.rk-ex-categorias {
-  display: flex;
-  gap: 8px;
-  margin: 16px -16px 0;
-  padding: 0 16px 4px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  scroll-snap-type: x proximity;
-}
-
-.rk-ex-categorias::-webkit-scrollbar {
-  display: none;
-}
-
-@media (min-width: 640px) {
-  .rk-ex-categorias {
-    margin: 18px 0 0;
-    padding: 0 0 4px;
-  }
-}
-
-.rk-ex-cat {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  width: 76px;
-  padding: 12px 4px 10px;
+/* Panel de filtros de escritorio: una sola columna con borde,
+   grupos separados por línea y plegables (<details>). */
+.rk-filtros-escritorio {
+  max-height: calc(100vh - 104px);
+  overflow-y: auto;
+  padding: 6px 12px;
   border: 1px solid var(--rk-border-color);
-  border-radius: 16px;
+  border-radius: 20px;
   background: rgb(var(--rk-card) / var(--rk-card-alpha));
-  color: rgb(var(--rk-muted));
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.2;
-  text-align: center;
-  text-decoration: none;
-  scroll-snap-align: start;
-  transition:
-    background-color var(--rx-t-micro) var(--rx-curva),
-    border-color var(--rx-t-micro) var(--rx-curva),
-    color var(--rx-t-micro) var(--rx-curva);
+  scrollbar-width: thin;
 }
 
-.rk-ex-cat svg {
-  flex: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rk-ex-cat:hover {
-    border-color: var(--rk-border-strong);
-    color: rgb(var(--rk-foreground));
-  }
-}
-
-/* la elegida, en tinta sólida como el chip activo */
-.rk-ex-cat[aria-current],
-.rk-ex-cat[aria-current]:hover {
-  border-color: rgb(var(--rk-foreground));
-  background: rgb(var(--rk-foreground));
-  color: rgb(var(--rk-background));
-}
-
-.rk-ex-cat:focus-visible {
-  outline: 2px solid rgb(var(--rk-foreground));
-  outline-offset: 2px;
-}
-
-/* Cuerpo: una columna en móvil; filtros de 15rem + resultados
-   desde 1024 px */
-.rk-ex-cuerpo {
-  margin-top: 20px;
-}
-
-@media (min-width: 1024px) {
-  .rk-ex-cuerpo {
-    display: grid;
-    grid-template-columns: 15rem minmax(0, 1fr);
-    align-items: start;
-    gap: 32px;
-  }
-}
-
-/* Panel de filtros */
-.rk-ex-panel {
-  color: rgb(var(--rk-foreground));
-}
-
-@media (min-width: 1024px) {
-  .rk-ex-panel {
-    position: sticky;
-    top: 88px;
-    max-height: calc(100vh - 104px);
-    overflow-y: auto;
-    padding: 16px;
-    border: 1px solid var(--rk-border-color);
-    border-radius: 20px;
-    background: rgb(var(--rk-card) / var(--rk-card-alpha));
-    scrollbar-width: thin;
-  }
-
-  .rk-ex-velo,
-  .rk-ex-cerrar,
-  .rk-ex-cajon-pie {
-    display: none;
-  }
-}
-
-/* Por debajo de 1024 px: cajón que entra desde la izquierda */
-@media (max-width: 1023px) {
-  .rk-ex-velo {
-    position: fixed;
-    inset: 0;
-    z-index: 69;
-    padding: 0;
-    border: 0;
-    background: rgb(var(--pal-negro) / 0.5);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s var(--rx-curva);
-  }
-
-  .rk-ex-panel {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 70;
-    display: flex;
-    flex-direction: column;
-    width: min(86vw, 320px);
-    padding: 18px 16px 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    background: rgb(var(--rk-background));
-    box-shadow: 0 0 40px rgb(var(--pal-negro) / 0.3);
-    transform: translateX(-100%);
-    visibility: hidden;
-    transition:
-      transform 0.3s var(--rx-curva),
-      visibility 0.3s;
-  }
-
-  .rk-ex-cajon[data-abierto] .rk-ex-velo {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .rk-ex-cajon[data-abierto] .rk-ex-panel {
-    transform: none;
-    visibility: visible;
-  }
-
-  .rk-ex-cerrar {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    display: grid;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border: 1px solid var(--rk-border-color);
-    border-radius: 50%;
-    background: transparent;
-    color: rgb(var(--rk-foreground));
-    cursor: pointer;
-  }
-
-  /* la cabecera deja sitio a la ✕ */
-  .rk-ex-panel .rk-ex-filtros-cab {
-    min-height: 40px;
-    padding-right: 52px;
-  }
-
-  .rk-ex-filtros {
-    flex: 1;
-  }
-
-  .rk-ex-cajon-pie {
-    position: sticky;
-    bottom: 0;
-    margin: 0 -16px;
-    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-    border-top: 1px solid var(--rk-border-color);
-    background: rgb(var(--rk-background));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rk-ex-velo,
-  .rk-ex-panel {
-    transition: none;
-  }
-}
-
-.rk-ex-filtros-cab {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 12px;
+.rk-filtros-escritorio .rk-filter-group,
+[data-theme="light"] .rk-filtros-escritorio .rk-filter-group {
+  padding: 10px 0;
+  border: 0;
   border-bottom: 1px solid var(--rk-border-color);
+  border-radius: 0;
+  background: none;
 }
 
-.rk-ex-filtros-cab h2 {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.rk-ex-limpiar {
-  color: rgb(var(--rk-muted));
-  font-size: 12px;
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .rk-ex-limpiar:hover {
-    color: rgb(var(--rk-foreground));
-  }
-}
-
-/* Grupos plegables */
-.rk-ex-grupo {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--rk-border-color);
-}
-
-.rk-ex-grupo:last-child {
+.rk-filtros-escritorio .rk-filter-group:last-child {
   border-bottom: 0;
 }
 
-.rk-ex-grupo > summary {
+.rk-filtros-escritorio .rk-filter-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
   min-height: 32px;
-  font-size: 13px;
-  font-weight: 600;
+  margin: 0 2px;
+  color: rgb(var(--rk-foreground));
+  letter-spacing: 0.08em;
   list-style: none;
   cursor: pointer;
 }
 
-.rk-ex-grupo > summary::-webkit-details-marker {
+.rk-filtros-escritorio .rk-filter-title::-webkit-details-marker {
   display: none;
 }
 
-.rk-ex-grupo > summary svg {
+.rk-filtros-escritorio .rk-filter-title:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.rk-filter-chevron {
+  width: 16px;
+  height: 16px;
   color: rgb(var(--rk-muted));
   transition: transform 0.2s var(--rx-curva);
 }
 
-.rk-ex-grupo:not([open]) > summary svg {
+.rk-filter-group:not([open]) .rk-filter-chevron {
   transform: rotate(-90deg);
 }
 
-.rk-ex-grupo ul {
-  display: grid;
-  gap: 2px;
-  margin: 6px 0 0;
-  padding: 0;
-  list-style: none;
+.rk-filtros-escritorio .rk-filter-options {
+  margin-top: 4px;
 }
 
-/* Casilla con su texto y su contador */
-.rk-ex-opcion {
-  display: flex;
-  align-items: center;
+/* contador legible (AA) sobre el panel claro */
+.rk-filtros-escritorio .rk-filter-count {
+  color: rgb(var(--rk-foreground) / 0.62);
+  opacity: 1;
+}
+
+/* Opción: casilla a la izquierda (círculo en «Orden», que es
+   una sola elección); elegida = tinta sólida. Sin el cristal ni
+   la lengüeta del estilo anterior. */
+.rk-filtros-escritorio .rk-filter-option {
   gap: 10px;
-  min-height: 36px;
-  padding: 4px 6px;
-  border-radius: 10px;
-  color: rgb(var(--rk-foreground) / 0.85);
-  font-size: 13px;
-  text-decoration: none;
+  padding: 0 6px;
+  color: rgb(var(--rk-foreground) / 0.8);
+  font-size: 0.75rem;
 }
 
-@media (pointer: coarse) {
-  .rk-ex-opcion {
-    min-height: 44px;
-  }
+.rk-filtros-escritorio .rk-filter-option::before,
+.rk-filtros-escritorio .rk-filter-option[aria-current="true"]::before,
+[data-theme="light"] .rk-filtros-escritorio .rk-filter-option[aria-current="true"]::before {
+  content: "";
+  position: static;
+  inset: auto;
+  z-index: auto;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid rgb(var(--rk-foreground) / 0.35);
+  border-radius: 5px;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.rk-filtros-escritorio [data-clave="sort"] .rk-filter-option::before {
+  border-radius: 50%;
+}
+
+.rk-filtros-escritorio .rk-filter-option[aria-current="true"],
+[data-theme="light"] .rk-filtros-escritorio .rk-filter-option[aria-current="true"] {
+  color: rgb(var(--rk-foreground));
+}
+
+.rk-filtros-escritorio .rk-filter-option[aria-current="true"]::before,
+[data-theme="light"] .rk-filtros-escritorio .rk-filter-option[aria-current="true"]::before {
+  border-color: rgb(var(--rk-foreground));
+  background: rgb(var(--rk-foreground));
+  box-shadow: inset 0 0 0 3px rgb(var(--rk-card));
+}
+
+.rk-filtros-escritorio .rk-filter-option[aria-current="true"]::after,
+[data-theme="light"] .rk-filtros-escritorio .rk-filter-option[aria-current="true"]::after {
+  display: none;
+}
+
+/* la casilla ya dice que está elegida */
+.rk-filtros-escritorio .rk-filter-option > svg {
+  display: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  a.rk-ex-opcion:hover {
+  .rk-filtros-escritorio .rk-filter-option:not([aria-current="true"]):hover {
     background: rgb(var(--rk-foreground) / 0.05);
     color: rgb(var(--rk-foreground));
   }
 }
 
-.rk-ex-opcion:focus-visible {
+.rk-filtros-escritorio .rk-filter-option:focus-visible {
   outline: 2px solid rgb(var(--rk-foreground));
-  outline-offset: 1px;
 }
 
-.rk-ex-opcion[aria-disabled] {
-  opacity: 0.45;
-  cursor: default;
-}
-
-.rk-ex-casilla {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  border: 1.5px solid rgb(var(--rk-foreground) / 0.35);
-  border-radius: 5px;
-  color: rgb(var(--rk-background));
-}
-
-.rk-ex-opcion[data-marcado] {
-  color: rgb(var(--rk-foreground));
-  font-weight: 500;
-}
-
-.rk-ex-opcion[data-marcado] .rk-ex-casilla {
-  border-color: rgb(var(--rk-foreground));
-  background: rgb(var(--rk-foreground));
-}
-
-.rk-ex-opcion-texto {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.rk-ex-opcion-conteo {
-  color: rgb(var(--rk-muted));
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Color: círculos de 26 px (la muestra es la de COLORES) */
-.rk-ex-grupo ul.rk-ex-colores {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 4px 2px;
-}
-
-.rk-ex-color {
-  display: block;
-  width: 26px;
-  height: 26px;
-  border: 1px solid rgb(var(--rk-foreground) / 0.18);
-  border-radius: 50%;
-}
-
-.rk-ex-color[data-marcado] {
-  box-shadow:
-    0 0 0 2px rgb(var(--rk-background)),
-    0 0 0 4px rgb(var(--rk-foreground));
-}
-
-.rk-ex-color[aria-disabled] {
-  opacity: 0.35;
-}
-
-.rk-ex-color:focus-visible {
-  outline: 2px solid rgb(var(--rk-foreground));
-  outline-offset: 3px;
-}
-
-/* Barra encima de la rejilla: buscador, orden y «Filtros» */
-.rk-ex-barra {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-
-.rk-ex-buscador {
-  flex: 1 1 100%;
-  min-width: 0;
-}
-
-.rk-ex-barra-acciones {
-  display: flex;
-  flex: 1 1 100%;
-  gap: 8px;
-}
-
-@media (min-width: 640px) {
-  .rk-ex-buscador {
-    flex-basis: 0;
-  }
-
-  .rk-ex-barra-acciones {
-    flex: none;
-  }
-}
-
-.rk-ex-orden {
-  position: relative;
-  display: flex;
-  flex: 1;
-  align-items: center;
-}
-
-.rk-ex-orden select {
-  width: 100%;
-  min-height: 44px;
-  padding: 0 38px 0 16px;
-  border: 1px solid var(--rk-border-color);
-  border-radius: 999px;
-  background: rgb(var(--rk-card) / var(--rk-card-alpha));
-  color: rgb(var(--rk-foreground));
-  font-size: 13px;
-  font-weight: 500;
-  appearance: none;
-  cursor: pointer;
-}
-
-.rk-ex-orden select:focus-visible {
-  outline: 2px solid rgb(var(--rk-foreground));
-  outline-offset: 2px;
-}
-
-.rk-ex-orden svg {
-  position: absolute;
-  right: 14px;
-  color: rgb(var(--rk-muted));
-  pointer-events: none;
-}
-
-.rk-ex-boton-filtros {
-  flex: none;
-  min-height: 44px;
-}
-
-@media (min-width: 1024px) {
-  .rk-ex-boton-filtros {
-    display: none;
-  }
-}
-
-/* Filtros aplicados */
-.rk-ex-aplicados {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 12px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* Rejilla: 2 columnas en móvil, 3 en tablet, 4 en escritorio */
-.rk-ex-rejilla {
-  display: grid;
+/* Rejilla: 2 columnas en móvil, 3 en tablet y 4 en escritorio;
+   portadas 4/5 con esquinas de 16 px y zoom suave. */
+.rk-explorar .rk-galeria {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 @media (min-width: 640px) {
-  .rk-ex-rejilla {
+  .rk-explorar .rk-galeria {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
   }
 }
 
 @media (min-width: 1024px) {
-  .rk-ex-rejilla {
+  .rk-explorar .rk-galeria {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
   }
 }
 
-.rk-ex-item {
-  position: relative;
-}
-
-/* Tarjeta: SOLO la portada, 4/5, con zoom suave al pasar */
-.rk-ex-tarjeta,
-.rk-ex-hueco {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
+.rk-explorar .rk-galeria-item,
+.rk-explorar .rk-galeria > div {
   border-radius: 16px;
-  background: rgb(var(--rk-foreground) / 0.06);
 }
 
-.rk-ex-tarjeta {
-  padding: 0;
-  border: 0;
-  cursor: pointer;
-}
-
-.rk-ex-tarjeta img {
+.rk-explorar .rk-galeria-item img {
   transition: transform 0.5s var(--rx-curva);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .rk-ex-tarjeta:hover img {
+  .rk-explorar .rk-galeria-item:hover img {
     transform: scale(1.05);
   }
 }
 
-.rk-ex-tarjeta:focus-visible {
+.rk-explorar .rk-galeria-item:focus-visible {
   outline: 2px solid rgb(var(--rk-foreground));
   outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rk-ex-tarjeta img {
+  .rk-explorar .rk-galeria-item img,
+  .rk-filter-chevron {
     transition: none;
   }
 }
 
-/* Guardar: el corazón, arriba a la derecha */
-.rk-ex-guardar {
+/* Corazón de guardar arriba a la derecha, fuera del botón */
+.rk-galeria-celda {
+  position: relative;
+}
+
+.rk-galeria-guardar {
   position: absolute;
   top: 8px;
   right: 8px;
   z-index: 2;
+}
+
+/* ══════════════════════════════════════════════════════════
+   §74 · Marco de app de la cuenta (PanelShell / PanelNav)
+   /mi-cuenta, /creadores/panel y /admin, sin el Navbar ni el
+   pie del sitio: columna con la marca, el menú por rol y la
+   identidad; barra superior propia; contenido de cada página.
+   Solo tokens.
+   ══════════════════════════════════════════════════════════ */
+.rk-app {
+  display: flex;
+  min-height: 100svh;
+  background: rgb(var(--rk-background));
+}
+
+/* ── Columna (escritorio) ── */
+.rk-app-lateral {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .rk-app-lateral {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    width: 260px;
+    height: 100svh;
+    padding: 20px 14px 16px;
+    overflow-y: auto;
+    border-right: 1px solid var(--rk-border-color);
+    background: rgb(var(--rk-card) / var(--rk-card-alpha));
+    scrollbar-width: thin;
+  }
+}
+
+.rk-app-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 18px;
+  color: rgb(var(--rk-foreground));
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+}
+
+.rk-app-marca-iso {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: rgb(var(--rk-foreground));
+  color: rgb(var(--rk-background));
+}
+
+.rk-app-marca:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+.rk-app-rotulo {
+  padding: 0 10px 8px;
+}
+
+.rk-app-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rk-app-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Grupos desplegables (Mi cuenta, Creator Studio, Administración):
+   cabecera botón con chevron; el cuerpo se abre con una transición
+   corta de la fila de la rejilla (0fr → 1fr). */
+.rk-app-grupo-boton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: rgb(var(--rk-foreground) / 0.6);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-app-grupo-boton:hover {
+    background: rgb(var(--rk-foreground) / 0.04);
+    color: rgb(var(--rk-foreground));
+  }
+}
+
+.rk-app-grupo-boton:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: -2px;
+}
+
+.rk-app-grupo-chevron {
+  flex: none;
+  transition: transform 0.18s var(--rx-curva);
+}
+
+.rk-app-grupo-boton[aria-expanded="false"] .rk-app-grupo-chevron {
+  transform: rotate(-90deg);
+}
+
+.rk-app-grupo-cuerpo {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.18s var(--rx-curva);
+}
+
+.rk-app-grupo-cuerpo[data-abierto] {
+  grid-template-rows: 1fr;
+}
+
+.rk-app-grupo-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-app-grupo-chevron,
+  .rk-app-grupo-cuerpo {
+    transition: none;
+  }
+}
+
+.rk-app-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  color: rgb(var(--rk-foreground) / 0.7);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background-color var(--rx-t-micro) var(--rx-curva),
+    color var(--rx-t-micro) var(--rx-curva);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-app-item:hover {
+    background: rgb(var(--rk-foreground) / 0.05);
+    color: rgb(var(--rk-foreground));
+  }
+}
+
+/* sección activa: fondo y una barra fina a la derecha */
+.rk-app-item[aria-current="page"] {
+  background: rgb(var(--rk-foreground) / 0.07);
+  color: rgb(var(--rk-foreground));
+  font-weight: 600;
+}
+
+.rk-app-item[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 3px;
+  height: 20px;
+  border-radius: 3px 0 0 3px;
+  background: rgb(var(--rk-foreground));
+  transform: translateY(-50%);
+}
+
+.rk-app-item:focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: -2px;
+}
+
+.rk-app-identidad {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rk-border-color);
+}
+
+/* ── Columna principal y barra superior ── */
+.rk-app-principal {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rk-app-barra {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 68px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rk-border-color);
+  background: rgb(var(--rk-background) / 0.86);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+}
+
+@media (min-width: 1024px) {
+  .rk-app-barra {
+    gap: 10px;
+    min-height: 76px;
+    padding: 12px 28px;
+  }
+}
+
+.rk-app-barra-grupo {
+  display: none;
+  margin: 0;
+  color: rgb(var(--rk-foreground) / 0.6);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 640px) {
+  .rk-app-barra-grupo {
+    display: block;
+  }
+}
+
+.rk-app-barra-titulo {
+  margin: 0;
+  overflow: hidden;
+  color: rgb(var(--rk-foreground));
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .rk-app-barra-titulo {
+    font-size: 21px;
+  }
+}
+
+.rk-app-redondo {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--rk-border-color);
+  border-radius: 50%;
+  background: rgb(var(--rk-card) / var(--rk-card-alpha));
+  color: rgb(var(--rk-foreground));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rk-app-redondo:hover {
+    background: rgb(var(--rk-foreground) / 0.05);
+  }
+}
+
+.rk-app-redondo:focus-visible,
+.rk-app-buscar:focus-within {
+  outline: 2px solid rgb(var(--rk-foreground));
+  outline-offset: 2px;
+}
+
+/* Búsqueda: caja en escritorio, icono en móvil */
+.rk-app-buscar {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .rk-app-buscar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: clamp(180px, 22vw, 280px);
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--rk-border-color);
+    border-radius: 999px;
+    background: rgb(var(--rk-card) / var(--rk-card-alpha));
+    color: rgb(var(--rk-muted));
+  }
+
+  .rk-app-solo-movil {
+    display: none;
+  }
+}
+
+.rk-app-buscar input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: rgb(var(--rk-foreground));
+  font-size: 13px;
+  outline: none;
+}
+
+.rk-app-buscar input::placeholder {
+  color: rgb(var(--rk-muted));
+}
+
+/* «Explorar la tienda»: solo el icono en móvil */
+@media (max-width: 639px) {
+  .rk-app-explorar {
+    width: 40px;
+    min-width: 40px;
+    padding: 0;
+  }
+
+  .rk-app-explorar span {
+    display: none;
+  }
+}
+
+.rk-app-contenido {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Rótulos pequeños sobre el fondo liso del marco: más tinta para
+   llegar a AA (sobre el fondo con textura del sitio no se medían). */
+.rk-app .rk-eyebrow {
+  color: rgb(var(--rk-foreground) / 0.62);
+}
+
+/* ── «Mis compras» (/mi-cuenta/compras): cifras arriba y, por
+   pedido, tarjetas con la portada grande. Mismos datos y mismas
+   acciones que la lista anterior. ── */
+.rk-compras-cifras {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 24px 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.rk-compras-cifra {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px;
+  border-radius: 20px;
+  background: rgb(var(--rk-foreground) / 0.05);
+}
+
+@media (min-width: 640px) {
+  .rk-compras-cifras {
+    gap: 14px;
+  }
+
+  .rk-compras-cifra {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 24px;
+  }
+}
+
+.rk-compras-cifra-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: rgb(var(--rk-card) / var(--rk-card-alpha));
+  color: rgb(var(--rk-foreground));
+}
+
+.rk-compras-cifra b {
+  display: block;
+  color: rgb(var(--rk-foreground));
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.rk-compras-cifra small {
+  color: rgb(var(--rk-foreground) / 0.65);
+  font-size: 12px;
+}
+
+.rk-compras-rejilla {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .rk-compras-rejilla {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+}
+
+.rk-compras-tarjeta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--rk-border-color);
+  border-radius: 22px;
+  background: rgb(var(--rk-card) / var(--rk-card-alpha));
+}
+
+.rk-compras-portada {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.rk-compras-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 4px 6px;
+  min-width: 0;
+}
+
+.rk-compras-info .rk-row-item-name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rk-compras-tarjeta > .rk-btn {
+  width: 100%;
+  margin-top: 4px;
 }

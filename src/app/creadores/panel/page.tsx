@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import Footer from "@/components/layout/Footer";
 import AnilloAdmin from "@/components/admin/AnilloAdmin";
 import BalanceAdmin from "@/components/admin/BalanceAdmin";
 import CifraAnimada from "@/components/admin/CifraAnimada";
@@ -482,8 +481,6 @@ export default function CreatorDashboard() {
           </div>
         </div>
       </div>
-
-      <Footer />
     </>
   );
 }

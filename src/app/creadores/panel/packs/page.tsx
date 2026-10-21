@@ -1,6 +1,5 @@
 "use client";
 
-import Footer from "@/components/layout/Footer";
 import PacksManager from "./PacksManager";
 
 /**
@@ -33,8 +32,6 @@ export default function PacksPage() {
           <PacksManager />
         </div>
       </main>
-
-      <Footer />
     </>
   );
 }

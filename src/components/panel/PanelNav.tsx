@@ -4,10 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { Menu, X, LogOut } from "lucide-react";
+import { ChevronDown, Compass, Menu, X, LogOut } from "lucide-react";
 import * as Iconos from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Isotipo from "@/components/layout/Isotipo";
+import ThemeToggle from "@/components/layout/ThemeToggle";
+import { IconoBuscar, IconoCampana } from "@/components/iconos";
 import { grupoDeRuta, type GrupoMenu } from "@/lib/menu-cuenta";
 
 export type ElementoPanel = {
@@ -27,6 +29,15 @@ export type ElementoPanel = {
   consulta?: { ruta: string; query: string };
 };
 
+/*
+  Grupos desplegados mientras se navega por los paneles. Mi cuenta,
+  Creator Studio y Administración tienen cada uno su layout, así que
+  el menú se vuelve a montar al pasar de uno a otro: sin esta copia
+  en memoria, lo que se abrió a mano se cerraría. Vive solo en la
+  pestaña (una recarga empieza de cero); no se guarda en ningún sitio.
+*/
+let desplegadosEnMemoria: string[] = [];
+
 export type UsuarioPanel = {
   nombre: string;
   rol: string;
@@ -34,13 +45,13 @@ export type UsuarioPanel = {
 };
 
 /**
- * Navegación de los tableros.
+ * Marco de app de los tableros (cliente, creador y administración).
  *
- * Un solo componente para los tres —cliente, creador y
- * administración— porque los tres necesitan exactamente lo
- * mismo: una columna fija en escritorio, un cajón en móvil y
- * un bloque de identidad abajo. Tenerlo tres veces garantiza
- * que acaben pareciéndose cada vez menos.
+ * Columna lateral con la marca, los grupos del menú por rol y la
+ * identidad abajo; barra superior propia con el título de la
+ * sección, búsqueda, notificaciones, tema y «Explorar la tienda»;
+ * en móvil, la columna es un cajón. El contenido de cada página
+ * llega como `children` y no se toca.
  *
  * Los enlaces llegan agrupados desde PanelShell, ya filtrados por
  * el rol (lib/menu-cuenta): con un solo grupo no se rotula.
@@ -49,14 +60,47 @@ function PanelNavInterno({
   grupos,
   usuario,
   titulo,
+  children,
 }: {
   grupos: GrupoMenu[];
   usuario: UsuarioPanel;
   titulo: string;
+  children: React.ReactNode;
 }) {
   const pathname = usePathname();
   const busqueda = useSearchParams();
   const [abierto, setAbierto] = useState(false);
+
+  /*
+    Grupos desplegados. Al cargar la página, solo el de la ruta
+    actual; al navegar a otro grupo, ese se abre solo (sin cerrar
+    los demás). Sin persistencia: cada visita empieza igual.
+  */
+  const [desplegados, setDesplegados] = useState<Set<string>>(
+    () => new Set([...desplegadosEnMemoria, grupoDeRuta(pathname)])
+  );
+
+  useEffect(() => {
+    desplegadosEnMemoria = [...desplegados];
+  }, [desplegados]);
+
+  useEffect(() => {
+    const grupo = grupoDeRuta(pathname);
+
+    setDesplegados((previos) =>
+      previos.has(grupo) ? previos : new Set(previos).add(grupo)
+    );
+  }, [pathname]);
+
+  const alternarGrupo = (id: string) =>
+    setDesplegados((previos) => {
+      const siguientes = new Set(previos);
+
+      if (siguientes.has(id)) siguientes.delete(id);
+      else siguientes.add(id);
+
+      return siguientes;
+    });
 
   /*
     El cajón se cierra al cambiar de ruta. Sin esto quedaría
@@ -98,7 +142,7 @@ function PanelNavInterno({
   /* Todas las entradas visibles, para resolver cuál está activa. */
   const elementos: ElementoPanel[] = grupos.flatMap((g) => g.items);
   const grupoActual = grupoDeRuta(pathname);
-  const tituloActual =
+  const tituloGrupo =
     grupos.find((g) => g.id === grupoActual)?.titulo ?? titulo;
 
   /* ¿Hay alguna entrada filtrada encendida para esta ruta? */
@@ -129,47 +173,94 @@ function PanelNavInterno({
       : pathname === el.href || pathname.startsWith(el.href + "/");
   };
 
-  const lista = (
-    <nav className="flex flex-col gap-4" aria-label={titulo}>
-      {grupos.map((grupo) => (
-        <div key={grupo.id} className="flex flex-col gap-0.5">
-          {/* Con un solo grupo (cliente) no hace falta rotular. */}
-          {grupos.length > 1 && (
-            <p className="rk-kicker px-3 pb-1.5 text-[10px] uppercase tracking-wider text-ink/55">
-              {grupo.titulo}
-            </p>
-          )}
+  /* Título de la barra: la sección activa; si ninguna lo está
+     (p. ej. una ficha interna), el grupo. */
+  const tituloSeccion = elementos.find(activo)?.label ?? tituloGrupo;
 
-          {grupo.items.map((el) => {
-            const Icono =
-              ((Iconos as unknown as Record<string, LucideIcon>)[el.icono] ??
-                Iconos.Circle) as LucideIcon;
+  /* Un solo grupo (cliente): sin cabecera ni acordeón. */
+  const conAcordeon = grupos.length > 1;
 
-            const esActivo = activo(el);
+  const enlaces = (grupo: GrupoMenu) =>
+    grupo.items.map((el) => {
+      const Icono =
+        ((Iconos as unknown as Record<string, LucideIcon>)[el.icono] ??
+          Iconos.Circle) as LucideIcon;
 
-            return (
-              <Link
-                key={el.href}
-                href={el.href}
-                aria-current={esActivo ? "page" : undefined}
-                className={`rk-press flex items-center gap-2.5 rounded-rk-sm px-3 py-2.5 text-[13px] font-medium transition-colors duration-fast ease-rk ${
-                  esActivo
-                    ? "rk-panel-activo text-ink"
-                    : "text-ink/65 hover:bg-ink/[0.06] hover:text-ink"
-                }`}
-              >
-                <Icono size={16} aria-hidden className="shrink-0" />
-                <span className="truncate">{el.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      ))}
+      const esActivo = activo(el);
+
+      return (
+        <Link
+          key={el.href}
+          href={el.href}
+          aria-current={esActivo ? "page" : undefined}
+          className="rk-app-item rk-press"
+        >
+          <Icono size={18} aria-hidden className="shrink-0" />
+          <span className="truncate">{el.label}</span>
+        </Link>
+      );
+    });
+
+  /*
+    La lista se pinta en la columna y en el cajón móvil: el
+    prefijo mantiene únicos los id de aria-controls.
+  */
+  const lista = (prefijo: string) => (
+    <nav className="rk-app-nav" aria-label={titulo}>
+      {grupos.map((grupo) => {
+        if (!conAcordeon) {
+          return (
+            <div key={grupo.id} className="rk-app-grupo">
+              {enlaces(grupo)}
+            </div>
+          );
+        }
+
+        // El grupo con la página activa nunca queda cerrado.
+        const tieneActiva = grupo.items.some(activo);
+        const desplegado = tieneActiva || desplegados.has(grupo.id);
+        const idCuerpo = `${prefijo}-grupo-${grupo.id}`;
+
+        return (
+          <div key={grupo.id} className="rk-app-grupo">
+            <button
+              type="button"
+              className="rk-app-grupo-boton"
+              aria-expanded={desplegado}
+              aria-controls={idCuerpo}
+              onClick={() => {
+                if (!tieneActiva) alternarGrupo(grupo.id);
+              }}
+            >
+              <span>{grupo.titulo}</span>
+              <ChevronDown size={16} aria-hidden className="rk-app-grupo-chevron" />
+            </button>
+
+            <div
+              id={idCuerpo}
+              className="rk-app-grupo-cuerpo"
+              data-abierto={desplegado || undefined}
+              inert={!desplegado}
+            >
+              <div className="rk-app-grupo-lista">{enlaces(grupo)}</div>
+            </div>
+          </div>
+        );
+      })}
     </nav>
   );
 
+  const marca = (
+    <Link href="/" aria-label="RcktX, ir al inicio" className="rk-app-marca">
+      <span className="rk-app-marca-iso">
+        <Isotipo className="h-5 w-5" />
+      </span>
+      <span>RcktX</span>
+    </Link>
+  );
+
   const identidad = (
-    <div className="rk-divider-t mt-4 pt-4">
+    <div className="rk-app-identidad">
       <div className="flex items-center gap-2.5 px-1">
         <span className="rk-avatar-anillo relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-[11px] font-semibold">
           {usuario.avatarUrl ? (
@@ -190,7 +281,7 @@ function PanelNavInterno({
             {usuario.nombre}
           </span>
 
-          <span className="block truncate text-[11px] text-ink/50">
+          <span className="block truncate text-[11px] text-ink/60">
             {usuario.rol}
           </span>
         </span>
@@ -209,23 +300,20 @@ function PanelNavInterno({
   );
 
   return (
-    <>
-      {/* ══════════ CABECERA MÓVIL ══════════ */}
-      {/* Se pega bajo el Navbar, no en top-0: allí quedaba detrás
-          de sus botones (top en .rk-panel-barra, globals.css). */}
-      <div className="rk-panel-barra sticky z-30 flex items-center gap-3 px-4 py-3 lg:hidden">
-        <button
-          type="button"
-          onClick={() => setAbierto(true)}
-          aria-label="Abrir el menú del panel"
-          aria-expanded={abierto}
-          className="rk-hero-round rk-flecha shrink-0"
-        >
-          <Menu size={18} aria-hidden />
-        </button>
+    <div className="rk-app">
+      {/* ══════════ COLUMNA DE ESCRITORIO ══════════ */}
+      <aside className="rk-app-lateral" aria-label="Menú del panel">
+        {marca}
 
-        <span className="truncate text-sm font-semibold">{tituloActual}</span>
-      </div>
+        <p className="rk-kicker rk-app-rotulo">
+          {/* «Mi cuenta» con un solo grupo; «Mi espacio» con varios. */}
+          {grupos.length === 1 ? "Mi cuenta" : "Mi espacio"}
+        </p>
+
+        <div className="flex-1">{lista("columna")}</div>
+
+        {identidad}
+      </aside>
 
       {/* ══════════ CAJÓN MÓVIL ══════════ */}
       {abierto && (
@@ -239,15 +327,7 @@ function PanelNavInterno({
 
           <div className="rk-panel-cajon rk-fade-up absolute inset-y-0 left-0 flex w-[17rem] max-w-[86vw] flex-col overflow-y-auto p-4">
             <div className="flex items-center justify-between gap-2">
-              <Link
-                href="/"
-                aria-label="RcktX"
-                className="rk-press-sm flex items-center rounded-full p-1"
-              >
-                <span className="flex h-8 w-8 items-center justify-center">
-                  <Isotipo className="h-7 w-7" />
-                </span>
-              </Link>
+              {marca}
 
               <button
                 type="button"
@@ -259,41 +339,94 @@ function PanelNavInterno({
               </button>
             </div>
 
-            <div className="mt-5 flex-1">{lista}</div>
+            <div className="mt-5 flex-1">{lista("cajon")}</div>
 
             {identidad}
           </div>
         </div>
       )}
 
-      {/* ══════════ COLUMNA DE ESCRITORIO ══════════ */}
-      <aside className="rk-panel-lateral sticky top-16 hidden h-[calc(100svh-4rem)] w-60 shrink-0 flex-col overflow-y-auto p-4 lg:flex">
-        {/* «Mi cuenta» con un solo grupo; «Mi espacio» con varios. */}
-        <p className="rk-kicker px-1 pb-3">
-          {grupos.length === 1 ? "Mi cuenta" : "Mi espacio"}
-        </p>
+      {/* ══════════ CONTENIDO ══════════ */}
+      <div className="rk-app-principal">
+        <header className="rk-app-barra">
+          <button
+            type="button"
+            onClick={() => setAbierto(true)}
+            aria-label="Abrir el menú del panel"
+            aria-expanded={abierto}
+            className="rk-app-redondo lg:hidden"
+          >
+            <Menu size={18} aria-hidden />
+          </button>
 
-        <div className="flex-1">{lista}</div>
+          <div className="min-w-0 flex-1">
+            <p className="rk-app-barra-grupo">{tituloGrupo}</p>
+            {/* No es <h1>: cada página ya lleva el suyo. */}
+            <p className="rk-app-barra-titulo">{tituloSeccion}</p>
+          </div>
 
-        {identidad}
-      </aside>
-    </>
+          {/* Búsqueda: lleva a la tienda con lo escrito (?q=). */}
+          <form action="/tienda" method="GET" role="search" className="rk-app-buscar">
+            <IconoBuscar size={16} aria-hidden />
+            <input
+              type="search"
+              name="q"
+              placeholder="Buscar en la tienda"
+              aria-label="Buscar en la tienda"
+              autoComplete="off"
+            />
+          </form>
+
+          <Link
+            href="/tienda"
+            aria-label="Buscar en la tienda"
+            className="rk-app-redondo rk-app-solo-movil"
+          >
+            <IconoBuscar size={17} aria-hidden />
+          </Link>
+
+          <Link
+            href="/notificaciones"
+            aria-label="Notificaciones"
+            className="rk-app-redondo"
+          >
+            <IconoCampana size={17} aria-hidden />
+          </Link>
+
+          <div className="rk-app-tema">
+            <ThemeToggle compacto />
+          </div>
+
+          <Link
+            href="/tienda"
+            aria-label="Explorar la tienda"
+            className="rk-btn rk-btn-ink rk-btn-compact rk-app-explorar"
+          >
+            <Compass size={15} aria-hidden />
+            <span>Explorar la tienda</span>
+          </Link>
+        </header>
+
+        <div className="rk-app-contenido">{children}</div>
+      </div>
+    </div>
   );
 }
 
 /**
  * `useSearchParams` obliga a un límite de Suspense: sin él,
  * Next no puede prerenderizar las páginas que usen este
- * componente. El respaldo no pinta nada porque la navegación
- * ya viaja en el HTML del servidor y aparece en cuanto hidrata.
+ * componente. El respaldo pinta el contenido sin el marco, para
+ * no dejar la página en blanco mientras hidrata.
  */
 export default function PanelNav(props: {
   grupos: GrupoMenu[];
   usuario: UsuarioPanel;
   titulo: string;
+  children: React.ReactNode;
 }) {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div className="rk-app-contenido">{props.children}</div>}>
       <PanelNavInterno {...props} />
     </Suspense>
   );

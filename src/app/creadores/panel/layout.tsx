@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { paginaPrivada } from "@/lib/seo";
 
-import Navbar from "@/components/layout/Navbar";
 import PanelShell from "@/components/panel/PanelShell";
 
 /*
@@ -16,13 +15,5 @@ export default function CreatorPanelLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <Navbar />
-
-      <PanelShell titulo="Creator Studio">
-        {children}
-      </PanelShell>
-    </>
-  );
+  return <PanelShell titulo="Creator Studio">{children}</PanelShell>;
 }

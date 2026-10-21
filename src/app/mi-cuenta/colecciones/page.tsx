@@ -14,7 +14,6 @@ import {
 
 import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
 import EmptyState from "@/components/ui/EmptyState";
-import Footer from "@/components/layout/Footer";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { IconoBasura } from "@/components/iconos";
 import { fechaMedia } from "@/lib/formato";
@@ -513,8 +512,6 @@ export default function ColeccionesPage() {
           </>
         )}
       </main>
-
-      <Footer />
     </>
   );
 }

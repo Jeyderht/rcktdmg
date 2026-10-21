@@ -1,4 +1,3 @@
-import Footer from "@/components/layout/Footer";
 
 /**
  * La navegación y el pie viven en el layout para que también
@@ -12,7 +11,6 @@ export default function CollectionDetailLayout({
   return (
     <>
       {children}
-      <Footer />
     </>
   );
 }

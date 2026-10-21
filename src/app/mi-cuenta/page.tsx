@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import Footer from "@/components/layout/Footer";
 import AnilloAdmin from "@/components/admin/AnilloAdmin";
 import CifraAnimada from "@/components/admin/CifraAnimada";
 import ListaAdmin from "@/components/admin/ListaAdmin";
@@ -305,8 +304,6 @@ export default function Account() {
           </div>
         </div>
       </div>
-
-      <Footer />
     </>
   );
 }

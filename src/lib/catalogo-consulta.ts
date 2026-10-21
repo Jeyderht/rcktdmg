@@ -1,5 +1,3 @@
-import type { Prisma } from "@prisma/client";
-
 import { prisma } from "@/lib/prisma";
 import { LIMITE_RELEVANCIA, ordenarPorRelevancia } from "@/lib/busqueda";
 import {
@@ -8,8 +6,6 @@ import {
   aTarjeta,
   construirWhere,
   filtrosDesde,
-  lista,
-  ORIENTACIONES,
   ordenEfectivo,
   ordenPrisma,
   paginaActual,
@@ -49,7 +45,7 @@ export async function consultarCatalogo(
   porPagina: number = POR_PAGINA
 ): Promise<ResultadoCatalogo> {
   const filtros = filtrosDesde(parametros);
-  const where = whereTienda(parametros);
+  const where = construirWhere(filtros);
 
   const texto = filtros.query?.trim() ?? "";
   const hayBusqueda = texto.length > 0;
@@ -164,127 +160,5 @@ async function porRelevancia({
     pagina,
     totalPaginas,
     paginaCorregida: pagina !== pedida,
-  };
-}
-
-/*
-  Orientación de la portada. Compara dos columnas del mismo
-  recurso (alto frente a ancho), así que necesita referencias de
-  campo del cliente de Prisma: por eso vive aquí, en el servidor,
-  y no en lib/catalogo, que también se usa en el navegador.
-  Un recurso sin medidas no cumple ninguna (null nunca compara).
-*/
-function condicionOrientacion(valor: string): Prisma.ProductWhereInput {
-  const ancho = prisma.product.fields.coverWidth;
-
-  if (valor === "vertical") return { coverHeight: { gt: ancho } };
-  if (valor === "horizontal") return { coverHeight: { lt: ancho } };
-
-  return { coverHeight: { equals: ancho } };
-}
-
-/** El `where` completo de la tienda: catálogo + orientación. */
-export function whereTienda(
-  parametros: ParametrosTienda
-): Prisma.ProductWhereInput {
-  const where = construirWhere(filtrosDesde(parametros));
-  const orientaciones = lista(parametros.orientacion);
-
-  // Las tres marcadas equivalen a «con medidas»; ninguna, a todo.
-  if (orientaciones.length === 0) return where;
-
-  return {
-    AND: [where, { OR: orientaciones.map(condicionOrientacion) }],
-  };
-}
-
-export type FacetasTienda = {
-  /** Recursos con TODOS los filtros aplicados. */
-  total: number;
-  categorias: Record<string, number>;
-  formatos: Record<string, number>;
-  colores: Record<string, number>;
-  licencias: Record<string, number>;
-  orientaciones: Record<string, number>;
-};
-
-/**
- * Contadores del panel de filtros.
- *
- * Cada grupo se cuenta con el resto de filtros activos pero sin el
- * suyo: así «JPG (3)» dice cuántos habría al marcar JPG, aunque ya
- * esté marcado PSD. Son consultas de conteo y groupBy, nunca filas.
- */
-export async function facetasTienda(
-  parametros: ParametrosTienda
-): Promise<FacetasTienda> {
-  const sin = (clave: keyof ParametrosTienda) =>
-    whereTienda({ ...parametros, [clave]: undefined });
-
-  const enMapa = <T extends { _count: { _all: number } }>(
-    filas: T[],
-    clave: (fila: T) => string | null
-  ) =>
-    Object.fromEntries(
-      filas.flatMap((fila) => {
-        const valor = clave(fila);
-        return valor ? [[valor, fila._count._all]] : [];
-      })
-    );
-
-  const sinLicencia = sin("licencia");
-  const sinOrientacion = sin("orientacion");
-
-  const [
-    total,
-    porCategoria,
-    categorias,
-    porFormato,
-    porColor,
-    gratis,
-    premium,
-    ...orientaciones
-  ] = await Promise.all([
-    prisma.product.count({ where: whereTienda(parametros) }),
-    prisma.product.groupBy({
-      by: ["categoryId"],
-      where: sin("categoria"),
-      _count: { _all: true },
-    }),
-    prisma.category.findMany({ select: { id: true, slug: true } }),
-    prisma.product.groupBy({
-      by: ["fileFormat"],
-      where: sin("formato"),
-      _count: { _all: true },
-    }),
-    prisma.product.groupBy({
-      by: ["color"],
-      where: sin("color"),
-      _count: { _all: true },
-    }),
-    prisma.product.count({
-      where: { AND: [sinLicencia, { price: { equals: 0 } }] },
-    }),
-    prisma.product.count({
-      where: { AND: [sinLicencia, { price: { gt: 0 } }] },
-    }),
-    ...ORIENTACIONES.map((o) =>
-      prisma.product.count({
-        where: { AND: [sinOrientacion, condicionOrientacion(o.valor)] },
-      })
-    ),
-  ]);
-
-  const slugDe = new Map(categorias.map((c) => [c.id, c.slug]));
-
-  return {
-    total,
-    categorias: enMapa(porCategoria, (f) => slugDe.get(f.categoryId) ?? null),
-    formatos: enMapa(porFormato, (f) => f.fileFormat?.toLowerCase() ?? null),
-    colores: enMapa(porColor, (f) => f.color),
-    licencias: { gratis, premium },
-    orientaciones: Object.fromEntries(
-      ORIENTACIONES.map((o, i) => [o.valor, orientaciones[i] ?? 0])
-    ),
   };
 }
