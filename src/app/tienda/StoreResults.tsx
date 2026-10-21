@@ -48,7 +48,7 @@ export default async function StoreResults({
   return (
     <>
       {/* CONTADOR Y CONTEXTO */}
-      <section className="rk-fade-up mt-6 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+      <section className="rk-fade-up mt-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
         <div className="min-w-0">
           {query ? (
             <p className="text-[15px] text-ink/60">
@@ -161,7 +161,7 @@ export default async function StoreResults({
 export function StoreResultsSkeleton() {
   return (
     <div aria-busy="true" aria-label="Cargando recursos">
-      <div className="mt-6 flex items-baseline justify-between gap-4">
+      <div className="mt-4 flex items-baseline justify-between gap-4">
         <div className="h-4 w-40 animate-pulse rounded-full bg-ink/[0.06]" />
         <div className="h-4 w-20 animate-pulse rounded-full bg-ink/[0.06]" />
       </div>
