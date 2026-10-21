@@ -8,6 +8,7 @@ import BalanceAdmin from "@/components/admin/BalanceAdmin";
 import CifraAnimada from "@/components/admin/CifraAnimada";
 import ListaAdmin from "@/components/admin/ListaAdmin";
 import RevelarAlScroll from "@/components/admin/RevelarAlScroll";
+import InicioCreadorCx from "@/components/creador/InicioCreadorCx";
 import { useSessionUser } from "@/components/hooks/useSessionUser";
 import { solesMoneda, fechaMesCorto } from "@/lib/formato";
 import type { IngresoMes } from "@/lib/admin-stats";
@@ -298,14 +299,22 @@ export default function CreatorDashboard() {
   ];
 
   return (
-    <>
+    // Arriba, el inicio con imágenes; debajo, el panel de siempre.
+    <InicioCreadorCx
+      nombre={displayName}
+      stats={stats}
+      ventasPorMes={data.monthlyStats}
+      recientes={data.recentProducts}
+      masVendidos={data.topProducts}
+    >
       {/* rk-dash: mismo contenedor y mismas tarjetas que el Dashboard
           de administración; su CSS va limitado a este contenedor. */}
-      <div className="rk-dash">
+      <div className="rk-dash rk-cx-panel">
         <RevelarAlScroll />
 
         <div data-vista="Dashboard">
-          <header className="rk-vh">
+          {/* El banner hace de cabecera visible; el h1 queda para lectores de pantalla. */}
+          <header className="rk-vh sr-only">
             <h1 className="rk-title">Creator Studio</h1>
             <p>
               Bienvenido, {displayName} · {mesActual}
@@ -481,6 +490,6 @@ export default function CreatorDashboard() {
           </div>
         </div>
       </div>
-    </>
+    </InicioCreadorCx>
   );
 }

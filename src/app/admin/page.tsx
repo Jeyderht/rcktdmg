@@ -10,6 +10,7 @@ import ComunidadAdmin from "@/components/admin/ComunidadAdmin";
 import ListaAdmin from "@/components/admin/ListaAdmin";
 import CifraAnimada from "@/components/admin/CifraAnimada";
 import RevelarAlScroll from "@/components/admin/RevelarAlScroll";
+import InicioAdminCx from "@/components/admin/InicioAdminCx";
 import { COLORES_ADMIN } from "@/lib/admin-colores";
 
 export const metadata: Metadata = {
@@ -138,12 +139,15 @@ export default async function Admin() {
   ];
 
   return (
-    // rk-dash: contenedor del Dashboard; todo su CSS va limitado a él.
-    <div className="rk-dash">
+    // Arriba, el inicio con imágenes; debajo, el panel de siempre.
+    <InicioAdminCx stats={stats} ingresos={ingresos}>
+    {/* rk-dash: contenedor del Dashboard; todo su CSS va limitado a él. */}
+    <div className="rk-dash rk-cx-panel">
       <RevelarAlScroll />
 
       <div data-vista="Dashboard">
-        <header className="rk-vh">
+        {/* El banner hace de cabecera visible; el h1 queda para lectores de pantalla. */}
+        <header className="rk-vh sr-only">
           <h1 className="rk-title">Dashboard</h1>
           <p>
             Bienvenido, {adminName} · {mesActual}
@@ -371,5 +375,6 @@ export default async function Admin() {
       </div>
 
     </div>
+    </InicioAdminCx>
   );
 }
