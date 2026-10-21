@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import TarjetaCx from "@/components/cuenta/TarjetaCx";
 import ProductCard from "@/components/tienda/ProductCard";
+import { formatPrice } from "@/lib/pricing";
 import type { BloqueRecomendaciones } from "@/lib/recomendaciones-tipos";
 
 /**
@@ -13,8 +15,15 @@ import type { BloqueRecomendaciones } from "@/lib/recomendaciones-tipos";
  * puntuación y las señales se quedan en el servidor. Si no hay
  * nada que mostrar, no se pinta nada: ni esqueleto permanente
  * ni sección vacía.
+ *
+ * `variante="cx"` solo cambia el aspecto (inicio del cliente):
+ * mismo fetch, mismos datos y los mismos enlaces a cada ficha.
  */
-export default function RecomendadosCliente() {
+export default function RecomendadosCliente({
+  variante,
+}: {
+  variante?: "cx";
+} = {}) {
   const [bloque, setBloque] = useState<BloqueRecomendaciones | null>(
     null
   );
@@ -48,6 +57,39 @@ export default function RecomendadosCliente() {
 
   if (cargando || !bloque || bloque.productos.length === 0) {
     return null;
+  }
+
+  if (variante === "cx") {
+    return (
+      <section className="rk-cx-sec" aria-labelledby="rk-cx-recomendados">
+        <div className="rk-cx-sh">
+          <div>
+            <h3 id="rk-cx-recomendados">Recomendados para ti</h3>
+            {bloque.subtitulo && <p>{bloque.subtitulo}</p>}
+          </div>
+        </div>
+
+        <ul className="rk-cx-g4">
+          {bloque.productos.slice(0, 4).map((producto) => (
+            <li key={producto.id}>
+              <TarjetaCx
+                href={`/tienda/${producto.slug}`}
+                imagen={producto.coverUrl || producto.image?.url || null}
+                alt={producto.image?.alt || producto.name}
+                titulo={producto.name}
+                meta={[producto.creator?.name, producto.category?.name]
+                  .filter(Boolean)
+                  .join(" · ")}
+                pie={[producto.category?.name, producto.fileFormat?.toUpperCase()]
+                  .filter(Boolean)
+                  .join(" · ")}
+                accion={<span className="rk-cx-badge">{formatPrice(producto.price)}</span>}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
   }
 
   return (
