@@ -93,7 +93,7 @@
     §72  Inicio · vender más                                              20854–21731
     §73  Explorar (tienda)                                                21732–21954
     §74  Marco de app de la cuenta (PanelShell / PanelNav)                21955–22444
-    §75  Inicios con imágenes (rk-cx-*)                                   22445–23585
+    §75  Inicios con imágenes (rk-cx-*)                                   22445–23768
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -22728,9 +22728,22 @@ html[data-theme] .rk-footer-marca::before {
 }
 
 .rk-cx-k em {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: rgb(var(--rk-muted));
   font-size: 0.72rem;
   font-style: normal;
+}
+
+.rk-cx-k em i {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: rgb(var(--rk-foreground) / 0.1);
+  color: rgb(var(--rk-foreground));
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
 }
 
 .rk-cx-k svg {
@@ -23571,6 +23584,173 @@ a.rk-cx-badge:focus-visible,
   outline-offset: 3px;
 }
 
+/* ── Inicios de creador y admin: insignias y botones pequeños ── */
+/* puesto #1–#4 sobre la portada; el #1 en tinta sólida */
+.rk-cx-rk {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 12px;
+  background: rgb(var(--pal-negro) / 0.7);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: rgb(var(--pal-blanco));
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.rk-cx-g4 > li:first-child .rk-cx-rk {
+  background: rgb(var(--rk-foreground));
+  color: rgb(var(--rk-background));
+}
+
+/* estado del recurso sobre la portada */
+.rk-cx-st {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgb(var(--pal-negro) / 0.7);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: rgb(var(--pal-blanco));
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.rk-cx-st-ok {
+  background: rgb(var(--pal-blanco) / 0.92);
+  color: rgb(var(--pal-negro));
+}
+
+.rk-cx-st-w {
+  background: rgb(var(--rk-foreground));
+  color: rgb(var(--rk-background));
+}
+
+.rk-cx-badge-l {
+  background: rgb(var(--rk-foreground) / 0.1);
+  color: rgb(var(--rk-foreground));
+  font-weight: 600;
+}
+
+/* enlace de la cabecera de sección («Ir a Revisiones», «Ver todos…») */
+@media (min-width: 1000px) {
+  .rk-cx-sel {
+    padding: 11px 18px;
+    border-radius: 14px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ── Cola de revisión (tabla) ── */
+.rk-cx-q {
+  overflow: hidden;
+  border: 1px solid var(--rk-border-color);
+  border-radius: 18px;
+  background: rgb(var(--rk-surface) / 0.6);
+}
+
+.rk-cx-qh,
+.rk-cx-qr {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 2.2fr) minmax(0, 1.2fr) minmax(0, 0.9fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 18px;
+}
+
+.rk-cx-qh {
+  padding-block: 10px;
+  background: rgb(var(--rk-foreground) / 0.04);
+  color: rgb(var(--rk-muted));
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rk-cx-qr {
+  border-top: 1px solid var(--rk-border-color);
+  font-size: 0.84rem;
+  transition: background 0.2s;
+}
+
+.rk-cx-qr:hover {
+  background: rgb(var(--rk-foreground) / 0.04);
+}
+
+/* miniatura de la cola: alto fijo y el ancho que pida su proporción
+   (en línea); la portada entera, en contain */
+.rk-cx-qi {
+  position: relative;
+  justify-self: start;
+  width: auto;
+  height: 64px;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgb(var(--rk-surface));
+}
+
+.rk-cx-qr b {
+  display: block;
+  font-weight: 600;
+}
+
+.rk-cx-qr small {
+  color: rgb(var(--rk-muted));
+  font-size: 0.72rem;
+}
+
+.rk-cx-qa {
+  display: flex;
+  gap: 6px;
+}
+
+@media (max-width: 1000px) {
+  .rk-cx-qh {
+    display: none;
+  }
+
+  .rk-cx-qr {
+    grid-template-columns: 56px minmax(0, 1fr);
+    row-gap: 4px;
+  }
+
+  .rk-cx-qr > :nth-child(n + 3) {
+    grid-column: 2;
+  }
+
+  .rk-cx-qi {
+    grid-row: span 4;
+    align-self: start;
+  }
+}
+
+.rk-cx-q-vacia {
+  margin: 0;
+  padding: 18px;
+  border: 1px dashed var(--rk-border-color);
+  border-radius: 18px;
+  color: rgb(var(--rk-muted));
+  font-size: 0.84rem;
+}
+
+/* el panel de siempre, dentro del inicio: sin su caja propia */
+.rk-dash.rk-cx-panel {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rk-cx-t[aria-pressed="true"]::after {
     animation: none;
@@ -23578,7 +23758,10 @@ a.rk-cx-badge:focus-visible,
 
   .rk-cx-card,
   .rk-cx-im::after,
-  .rk-cx-t {
+  .rk-cx-t,
+  .rk-cx-qr,
+  .rk-cx-sel,
+  a.rk-cx-badge {
     transition: none;
   }
 }

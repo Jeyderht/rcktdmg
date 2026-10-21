@@ -7,18 +7,24 @@ export default function KpiCx({
   rotulo,
   valor,
   contexto,
+  chip,
   serie,
 }: {
   rotulo: string;
   valor: string;
   contexto: string;
+  /** Cifra destacada antes del contexto (variación, %, recuento). */
+  chip?: string;
   serie?: number[] | null;
 }) {
   return (
     <div className="rk-cx-k">
       <span>{rotulo}</span>
       <b>{valor}</b>
-      <em>{contexto}</em>
+      <em>
+        {chip && <i>{chip}</i>}
+        {contexto}
+      </em>
       {serie && serie.length > 1 && <MiniGrafico serie={serie} />}
     </div>
   );
