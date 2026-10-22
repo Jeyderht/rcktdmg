@@ -101,7 +101,7 @@ export const GRUPOS_MENU: GrupoMenu[] = [
         seccion: "Comunidad",
       },
       { href: "/admin/resenas", label: "Valoraciones", icono: "Star", seccion: "Comunidad" },
-      { href: "/admin/usuarios/nuevo", label: "Crear creador", icono: "UserPlus", seccion: "Comunidad" },
+      { href: "/admin/usuarios/nuevo", label: "Crear creador", icono: "UserPlus", exacto: true, seccion: "Comunidad" },
       { href: "/admin/requisitos", label: "Requisitos", icono: "BookOpen", seccion: "Configuración" },
     ],
   },
