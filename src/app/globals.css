@@ -91,9 +91,9 @@
     §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17177–20024
     §71  BB. INICIO (encargo de la home)                                  20025–20853
     §72  Inicio · vender más                                              20854–21731
-    §73  Explorar (tienda)                                                21732–22096
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22097–22586
-    §75  Inicios con imágenes (rk-cx-*)                                   22587–23910
+    §73  Explorar (tienda)                                                21732–22199
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22200–22689
+    §75  Inicios con imágenes (rk-cx-*)                                   22690–24013
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -22092,6 +22092,109 @@ html[data-theme] .rk-footer-marca::before {
   .rk-galeria-celda:focus-within::after {
     opacity: 0;
   }
+}
+
+/* ── Ritmo vertical de la cabecera de /tienda ──
+   Móvil: encabezado→chips 16, chips→buscador 16, buscador→
+   Filtros/Orden 12, Filtros/Orden→contador 16, contador→rejilla
+   16 (la línea, a 12 px del texto). Tableta 20/16 y escritorio
+   24/16, múltiplos de 4. */
+.rk-explorar {
+  --rk-explorar-ritmo: 16px;
+  --rk-explorar-ritmo-corto: 12px;
+}
+
+@media (min-width: 768px) {
+  .rk-explorar {
+    --rk-explorar-ritmo: 20px;
+    --rk-explorar-ritmo-corto: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rk-explorar {
+    --rk-explorar-ritmo: 24px;
+  }
+}
+
+.rk-explorar-cats,
+.rk-explorar-cuerpo,
+.rk-explorar-rejilla {
+  margin-top: var(--rk-explorar-ritmo);
+}
+
+/* Filtros / Orden: separados del buscador (antes lo tocaban y la
+   sombra del buscador, que va por encima, se comía su borde). */
+.rk-explorar .rk-filter-bar {
+  margin-top: var(--rk-explorar-ritmo-corto);
+}
+
+.rk-explorar .rk-filter-bar .rk-btn {
+  min-height: 44px;
+}
+
+/* contador con aire propio; la línea, a 12 px del texto */
+.rk-explorar-contador {
+  margin-top: var(--rk-explorar-ritmo);
+  padding-block: 4px;
+}
+
+.rk-explorar-contador + .rk-divider {
+  margin-top: 8px;
+}
+
+/* categoría sin recursos: se ve, pero no se puede elegir */
+.rk-chip.rk-chip-vacio {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* ── Tarjeta emergente SIEMPRE centrada y completa ──
+   Se monta en <body> (portal). Fondo fijo a toda la pantalla,
+   tarjeta centrada en vertical y horizontal con la zona segura;
+   alto dinámico del visor (dvh: en Safari iOS vh cuenta la barra
+   del navegador). Si no cabe, se desplaza su contenido, nunca la
+   tarjeta fuera de la pantalla. */
+.rk-galeria-modal {
+  padding:
+    max(16px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+}
+
+.rk-galeria-hoja {
+  width: min(420px, 100%);
+  max-height: calc(100svh - 32px);
+  max-height: calc(100dvh - max(16px, env(safe-area-inset-top)) - max(16px, env(safe-area-inset-bottom)));
+  overscroll-behavior: contain;
+}
+
+/* la imagen, entera y con su proporción, como mucho 60 dvh */
+.rk-galeria-hoja .rk-frame {
+  max-height: 60svh;
+  max-height: 60dvh;
+}
+
+.rk-galeria-hoja .rk-frame img {
+  object-fit: contain;
+}
+
+/* cerrar y favorito: 32 px a la vista, 44 px tocables */
+.rk-galeria-cerrar::after,
+.rk-galeria-hoja .rk-tarjeta > .absolute button::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+
+.rk-galeria-hoja .rk-tarjeta > .absolute button {
+  position: relative;
+}
+
+/* mientras la tarjeta está abierta, el menú inferior no la tapa */
+body:has(.rk-galeria-modal) .rk-dock {
+  visibility: hidden;
 }
 
 /* ══════════════════════════════════════════════════════════
