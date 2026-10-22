@@ -190,26 +190,53 @@ function PanelNavInterno({
   const grupoVisible = grupos.find((g) => g.id === grupoActual) ?? grupos[0];
   const otrasAreas = grupos.filter((g) => g.id !== grupoVisible?.id);
 
-  const enlaces = (grupo: GrupoMenu) =>
-    grupo.items.map((el) => {
-      const Icono =
-        ((Iconos as unknown as Record<string, LucideIcon>)[el.icono] ??
-          Iconos.Circle) as LucideIcon;
+  const enlace = (el: ElementoPanel) => {
+    const Icono =
+      ((Iconos as unknown as Record<string, LucideIcon>)[el.icono] ??
+        Iconos.Circle) as LucideIcon;
 
-      const esActivo = activo(el);
+    const esActivo = activo(el);
 
+    return (
+      <Link
+        key={el.href}
+        href={el.href}
+        aria-current={esActivo ? "page" : undefined}
+        className="rk-app-item rk-press"
+      >
+        <Icono size={18} aria-hidden className="shrink-0" />
+        <span className="truncate">{el.label}</span>
+      </Link>
+    );
+  };
+
+  /*
+    Entradas del área. Si traen sección (Administración), las que
+    van seguidas con la misma sección se pintan juntas bajo su
+    rótulo, como un grupo con nombre; si no, en una sola lista.
+  */
+  const enlaces = (grupo: GrupoMenu, prefijo: string) => {
+    if (!grupo.items.some((el) => el.seccion)) return grupo.items.map(enlace);
+
+    const secciones: { nombre: string; items: ElementoPanel[] }[] = [];
+    for (const el of grupo.items) {
+      const ultima = secciones[secciones.length - 1];
+      if (ultima && ultima.nombre === el.seccion) ultima.items.push(el);
+      else secciones.push({ nombre: el.seccion ?? "", items: [el] });
+    }
+
+    return secciones.map((sec, i) => {
+      const id = `${prefijo}-${grupo.id}-seccion-${i}`;
       return (
-        <Link
-          key={el.href}
-          href={el.href}
-          aria-current={esActivo ? "page" : undefined}
-          className="rk-app-item rk-press"
-        >
-          <Icono size={18} aria-hidden className="shrink-0" />
-          <span className="truncate">{el.label}</span>
-        </Link>
+        <div key={id} role="group" aria-labelledby={id} className="rk-app-seccion">
+          <p id={id} className="rk-app-seccion-titulo">
+            {sec.nombre}
+          </p>
+          {sec.items.map(enlace)}
+        </div>
       );
     });
+  };
 
   /*
     La lista se pinta en la columna y en el cajón móvil: el
@@ -221,7 +248,7 @@ function PanelNavInterno({
         if (!conAcordeon) {
           return (
             <div key={grupo.id} className="rk-app-grupo">
-              {enlaces(grupo)}
+              {enlaces(grupo, prefijo)}
             </div>
           );
         }
@@ -252,7 +279,7 @@ function PanelNavInterno({
               data-abierto={desplegado || undefined}
               inert={!desplegado}
             >
-              <div className="rk-app-grupo-lista">{enlaces(grupo)}</div>
+              <div className="rk-app-grupo-lista">{enlaces(grupo, prefijo)}</div>
             </div>
           </div>
         );
