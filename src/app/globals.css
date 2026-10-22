@@ -91,9 +91,9 @@
     §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17217–20064
     §71  BB. INICIO (encargo de la home)                                  20065–20893
     §72  Inicio · vender más                                              20894–21771
-    §73  Explorar (tienda)                                                21772–22239
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22240–22752
-    §75  Inicios con imágenes (rk-cx-*)                                   22753–24076
+    §73  Explorar (tienda)                                                21772–22247
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22248–22760
+    §75  Inicios con imágenes (rk-cx-*)                                   22761–24084
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -22171,6 +22171,14 @@ html[data-theme] .rk-footer-marca::before {
 
 .rk-explorar .rk-filter-bar .rk-btn {
   min-height: 44px;
+}
+
+/* iOS Safari compone aparte el cristal del botón «line» (::before con
+   backdrop-filter y z-index -1) y, con inset -1px, lo pintaba sobre el
+   borde inferior: los botones se veían cortados por abajo. Aquí el
+   cristal se queda dentro del borde, así nunca lo tapa. */
+.rk-explorar .rk-filter-bar .rk-btn.rk-btn-line::before {
+  inset: 0;
 }
 
 /* contador con aire propio; la línea, a 12 px del texto */
