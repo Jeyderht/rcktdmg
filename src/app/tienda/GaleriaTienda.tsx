@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 import FavoriteButton from "@/components/tienda/FavoriteButton";
@@ -110,7 +111,15 @@ export default function GaleriaTienda({
         })}
       </ul>
 
-      {actual && (
+      {/*
+        La hoja se monta en <body> (portal), no dentro de la
+        rejilla: la animación de entrada de los resultados deja un
+        transform en sus contenedores y, con él, position: fixed se
+        medía contra la rejilla en vez de contra la pantalla, así
+        que la tarjeta salía desplazada y cortada. Mismo estado y
+        mismos controles.
+      */}
+      {actual && createPortal(
         <div
           className="rk-galeria-modal"
           role="dialog"
@@ -168,7 +177,8 @@ export default function GaleriaTienda({
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
