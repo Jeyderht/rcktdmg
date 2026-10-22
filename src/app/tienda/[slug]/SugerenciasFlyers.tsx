@@ -37,10 +37,14 @@ import ProductCard, {
  *
  * La lista se pinta dos veces y, al llegar al final de la
  * primera, se resta un periodo exacto a `scrollLeft`. El salto
- * cae sobre contenido idéntico, así que no se ve. La copia va
- * con `inert`: no la lee un lector de pantalla y no recibe foco,
- * porque son los mismos recursos y tabular dos veces por lo
- * mismo es un error, no una función.
+ * cae sobre contenido idéntico, así que no se ve.
+ *
+ * La copia va con `aria-hidden` y sus enlaces fuera del orden de
+ * tabulación: no la lee un lector de pantalla ni se tabula dos
+ * veces por lo mismo. Pero NO es `inert`: un elemento inerte no
+ * recibe el toque, y durante un tercio de cada vuelta lo que se
+ * ve en la tira es la copia, así que tocar un flyer no hacía
+ * nada. Sus enlaces llevan a la misma ficha que el original.
  */
 
 /**
@@ -67,6 +71,7 @@ export default function SugerenciasFlyers({
 }) {
   const contenedor = useRef<HTMLDivElement | null>(null);
   const lista = useRef<HTMLUListElement | null>(null);
+  const copia = useRef<HTMLUListElement | null>(null);
 
   /*
     Arranca quieto y solo desfila si de verdad hay más flyers
@@ -123,6 +128,18 @@ export default function SugerenciasFlyers({
       menosMovimiento.removeEventListener("change", medir);
     };
   }, []);
+
+  /*
+    La copia se puede tocar, pero no tabular: sus enlaces salen
+    del orden del teclado (los originales ya están en él).
+  */
+  useEffect(() => {
+    if (!desfilando) return;
+
+    copia.current
+      ?.querySelectorAll<HTMLElement>("a, button")
+      .forEach((el) => el.setAttribute("tabindex", "-1"));
+  }, [desfilando]);
 
   /* El desfile. Solo existe mientras haga falta. */
   useEffect(() => {
@@ -308,7 +325,7 @@ export default function SugerenciasFlyers({
           </ul>
 
           {desfilando && (
-            <ul className="rk-desfile-lista" aria-hidden="true" inert>
+            <ul ref={copia} className="rk-desfile-lista" aria-hidden="true">
               {piezas(true)}
             </ul>
           )}
