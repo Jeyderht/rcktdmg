@@ -153,6 +153,12 @@ function PanelNavInterno({
       cadenaBusqueda.includes(e.consulta.query)
   );
 
+  /* ¿La ruta es la de la entrada (o, sin `exacto`, una subpágina)? */
+  const coincideRuta = (el: ElementoPanel) =>
+    el.exacto
+      ? pathname === el.href
+      : pathname === el.href || pathname.startsWith(el.href + "/");
+
   const activo = (el: ElementoPanel) => {
     if (el.consulta) {
       return (
@@ -168,9 +174,21 @@ function PanelNavInterno({
     */
     if (hayFiltradaActiva && pathname === el.href) return false;
 
-    return el.exacto
-      ? pathname === el.href
-      : pathname === el.href || pathname.startsWith(el.href + "/");
+    /*
+      Lo mismo con las subpáginas: si una entrada más concreta
+      coincide con la ruta, la general no se enciende. Si no,
+      «Usuarios» y «Crear creador» (/admin/usuarios/nuevo)
+      aparecerían activas a la vez.
+    */
+    const hayMasConcreta = elementos.some(
+      (otro) =>
+        !otro.consulta &&
+        otro.href.startsWith(el.href + "/") &&
+        coincideRuta(otro)
+    );
+    if (hayMasConcreta) return false;
+
+    return coincideRuta(el);
   };
 
   /* Título de la barra: la sección activa; si ninguna lo está
@@ -190,26 +208,53 @@ function PanelNavInterno({
   const grupoVisible = grupos.find((g) => g.id === grupoActual) ?? grupos[0];
   const otrasAreas = grupos.filter((g) => g.id !== grupoVisible?.id);
 
-  const enlaces = (grupo: GrupoMenu) =>
-    grupo.items.map((el) => {
-      const Icono =
-        ((Iconos as unknown as Record<string, LucideIcon>)[el.icono] ??
-          Iconos.Circle) as LucideIcon;
+  const enlace = (el: ElementoPanel) => {
+    const Icono =
+      ((Iconos as unknown as Record<string, LucideIcon>)[el.icono] ??
+        Iconos.Circle) as LucideIcon;
 
-      const esActivo = activo(el);
+    const esActivo = activo(el);
 
+    return (
+      <Link
+        key={el.href}
+        href={el.href}
+        aria-current={esActivo ? "page" : undefined}
+        className="rk-app-item rk-press"
+      >
+        <Icono size={18} aria-hidden className="shrink-0" />
+        <span className="truncate">{el.label}</span>
+      </Link>
+    );
+  };
+
+  /*
+    Entradas del área. Si traen sección (Administración), las que
+    van seguidas con la misma sección se pintan juntas bajo su
+    rótulo, como un grupo con nombre; si no, en una sola lista.
+  */
+  const enlaces = (grupo: GrupoMenu, prefijo: string) => {
+    if (!grupo.items.some((el) => el.seccion)) return grupo.items.map(enlace);
+
+    const secciones: { nombre: string; items: ElementoPanel[] }[] = [];
+    for (const el of grupo.items) {
+      const ultima = secciones[secciones.length - 1];
+      if (ultima && ultima.nombre === el.seccion) ultima.items.push(el);
+      else secciones.push({ nombre: el.seccion ?? "", items: [el] });
+    }
+
+    return secciones.map((sec, i) => {
+      const id = `${prefijo}-${grupo.id}-seccion-${i}`;
       return (
-        <Link
-          key={el.href}
-          href={el.href}
-          aria-current={esActivo ? "page" : undefined}
-          className="rk-app-item rk-press"
-        >
-          <Icono size={18} aria-hidden className="shrink-0" />
-          <span className="truncate">{el.label}</span>
-        </Link>
+        <div key={id} role="group" aria-labelledby={id} className="rk-app-seccion">
+          <p id={id} className="rk-app-seccion-titulo">
+            {sec.nombre}
+          </p>
+          {sec.items.map(enlace)}
+        </div>
       );
     });
+  };
 
   /*
     La lista se pinta en la columna y en el cajón móvil: el
@@ -221,7 +266,7 @@ function PanelNavInterno({
         if (!conAcordeon) {
           return (
             <div key={grupo.id} className="rk-app-grupo">
-              {enlaces(grupo)}
+              {enlaces(grupo, prefijo)}
             </div>
           );
         }
@@ -252,7 +297,7 @@ function PanelNavInterno({
               data-abierto={desplegado || undefined}
               inert={!desplegado}
             >
-              <div className="rk-app-grupo-lista">{enlaces(grupo)}</div>
+              <div className="rk-app-grupo-lista">{enlaces(grupo, prefijo)}</div>
             </div>
           </div>
         );

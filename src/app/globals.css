@@ -92,8 +92,8 @@
     §71  BB. INICIO (encargo de la home)                                  20025–20853
     §72  Inicio · vender más                                              20854–21731
     §73  Explorar (tienda)                                                21732–22199
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22200–22689
-    §75  Inicios con imágenes (rk-cx-*)                                   22690–24013
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22200–22712
+    §75  Inicios con imágenes (rk-cx-*)                                   22713–24036
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -22404,6 +22404,29 @@ body:has(.rk-galeria-modal) .rk-dock {
 }
 
 .rk-app-areas-titulo {
+  margin: 0;
+  padding: 0 12px 4px;
+  color: rgb(var(--rk-foreground) / 0.6);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Secciones del menú de Administración (Principal, Pendientes,
+   Catálogo, Comunidad, Configuración): rótulo como el de «Cambiar
+   de área» y 12 px entre una sección y la siguiente. */
+.rk-app-seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rk-app-seccion + .rk-app-seccion {
+  margin-top: 12px;
+}
+
+.rk-app-seccion-titulo {
   margin: 0;
   padding: 0 12px 4px;
   color: rgb(var(--rk-foreground) / 0.6);
