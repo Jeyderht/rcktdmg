@@ -91,9 +91,9 @@
     §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17217–20064
     §71  BB. INICIO (encargo de la home)                                  20065–20893
     §72  Inicio · vender más                                              20894–21771
-    §73  Explorar (tienda)                                                21772–22239
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22240–22752
-    §75  Inicios con imágenes (rk-cx-*)                                   22753–24076
+    §73  Explorar (tienda)                                                21772–22245
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22246–22758
+    §75  Inicios con imágenes (rk-cx-*)                                   22759–24082
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -22171,6 +22171,12 @@ html[data-theme] .rk-footer-marca::before {
 
 .rk-explorar .rk-filter-bar .rk-btn {
   min-height: 44px;
+}
+
+/* DIAGNÓSTICO (iOS): sin la lengüeta en «Filtros» y «Más recientes»,
+   para ver si es su sombra la que tapa el borde inferior. */
+.rk-explorar .rk-filter-bar .rk-btn.rk-btn-line::after {
+  display: none;
 }
 
 /* contador con aire propio; la línea, a 12 px del texto */
