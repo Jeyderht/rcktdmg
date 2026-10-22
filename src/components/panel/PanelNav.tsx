@@ -153,6 +153,12 @@ function PanelNavInterno({
       cadenaBusqueda.includes(e.consulta.query)
   );
 
+  /* ¿La ruta es la de la entrada (o, sin `exacto`, una subpágina)? */
+  const coincideRuta = (el: ElementoPanel) =>
+    el.exacto
+      ? pathname === el.href
+      : pathname === el.href || pathname.startsWith(el.href + "/");
+
   const activo = (el: ElementoPanel) => {
     if (el.consulta) {
       return (
@@ -168,9 +174,21 @@ function PanelNavInterno({
     */
     if (hayFiltradaActiva && pathname === el.href) return false;
 
-    return el.exacto
-      ? pathname === el.href
-      : pathname === el.href || pathname.startsWith(el.href + "/");
+    /*
+      Lo mismo con las subpáginas: si una entrada más concreta
+      coincide con la ruta, la general no se enciende. Si no,
+      «Usuarios» y «Crear creador» (/admin/usuarios/nuevo)
+      aparecerían activas a la vez.
+    */
+    const hayMasConcreta = elementos.some(
+      (otro) =>
+        !otro.consulta &&
+        otro.href.startsWith(el.href + "/") &&
+        coincideRuta(otro)
+    );
+    if (hayMasConcreta) return false;
+
+    return coincideRuta(el);
   };
 
   /* Título de la barra: la sección activa; si ninguna lo está
