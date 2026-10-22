@@ -91,9 +91,9 @@
     §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17217–20064
     §71  BB. INICIO (encargo de la home)                                  20065–20893
     §72  Inicio · vender más                                              20894–21771
-    §73  Explorar (tienda)                                                21772–22245
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22246–22758
-    §75  Inicios con imágenes (rk-cx-*)                                   22759–24082
+    §73  Explorar (tienda)                                                21772–22250
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22251–22763
+    §75  Inicios con imágenes (rk-cx-*)                                   22764–24087
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -22173,10 +22173,15 @@ html[data-theme] .rk-footer-marca::before {
   min-height: 44px;
 }
 
-/* DIAGNÓSTICO (iOS): sin la lengüeta en «Filtros» y «Más recientes»,
-   para ver si es su sombra la que tapa el borde inferior. */
+/* iOS Safari pinta la lengüeta del botón «line» (::after) por encima
+   del borde, y su sombra hacia arriba tapaba el centro del borde
+   inferior de «Filtros» y «Más recientes». Se recorta solo la franja
+   de 2 px donde va ese borde, con su antialias (justo encima de la
+   lengüeta, que empieza al ras del botón); el resto de la sombra y
+   la lengüeta quedan igual. */
 .rk-explorar .rk-filter-bar .rk-btn.rk-btn-line::after {
-  display: none;
+  -webkit-clip-path: polygon(evenodd, -40px -40px, calc(100% + 40px) -40px, calc(100% + 40px) calc(100% + 40px), -40px calc(100% + 40px), -40px -40px, -40px -2px, calc(100% + 40px) -2px, calc(100% + 40px) 0, -40px 0, -40px -2px);
+  clip-path: polygon(evenodd, -40px -40px, calc(100% + 40px) -40px, calc(100% + 40px) calc(100% + 40px), -40px calc(100% + 40px), -40px -40px, -40px -2px, calc(100% + 40px) -2px, calc(100% + 40px) 0, -40px 0, -40px -2px);
 }
 
 /* contador con aire propio; la línea, a 12 px del texto */
