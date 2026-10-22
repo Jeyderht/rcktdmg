@@ -43,12 +43,16 @@ export default async function StoreResults({
     await consultarCatalogo(parametros);
 
   const query = parametros.q ?? "";
-  const conFiltros = hayFiltros(parametros);
+  // La categoría siempre está puesta: no cuenta como filtro que limpiar.
+  const conFiltros = hayFiltros({ ...parametros, categoria: undefined });
+  const recursos = `${total} ${total === 1 ? "recurso" : "recursos"}`;
 
   return (
     <>
       {/* CONTADOR Y CONTEXTO */}
-      <section className="rk-fade-up mt-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+      {/* «Eventos · N recursos»: la categoría activa y el contador
+          real del catálogo filtrado entero (no de la página). */}
+      <section className="rk-fade-up rk-explorar-contador flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <div className="min-w-0">
           {query ? (
             <p className="text-[15px] text-ink/60">
@@ -63,34 +67,22 @@ export default async function StoreResults({
                   </span>
                 </>
               )}
-            </p>
-          ) : activeCategoryName ? (
-            <p className="text-[15px] text-ink/60">
-              Categoría{" "}
-              <span className="font-semibold text-ink">
-                {activeCategoryName}
-              </span>
+              <span className="tabular-nums"> · {recursos}</span>
             </p>
           ) : (
             <p className="text-[15px] text-ink/60">
-              Todos los recursos
+              <span className="font-semibold text-ink">
+                {activeCategoryName ?? "Recursos"}
+              </span>
+              <span className="tabular-nums"> · {recursos}</span>
             </p>
           )}
         </div>
 
         <div className="flex shrink-0 items-center gap-3">
-          {/*
-            Contador real, nunca estimado, y del catálogo
-            filtrado entero: no de la página que se está
-            viendo.
-          */}
-          <span className="text-sm font-medium tabular-nums text-ink/60">
-            {total} {total === 1 ? "recurso" : "recursos"}
-          </span>
-
           {conFiltros && (
             <Link
-              href="/tienda"
+              href={urlTienda({}, { categoria: parametros.categoria })}
               className="rk-press rk-hit-44-y inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-4 transition-opacity hover:opacity-60"
             >
               <X size={14} />
@@ -100,7 +92,7 @@ export default async function StoreResults({
         </div>
       </section>
 
-      <div className="rk-divider mt-4" />
+      <div className="rk-divider" />
 
       {/* RESULTADOS */}
       {productos.length > 0 ? (
@@ -111,7 +103,7 @@ export default async function StoreResults({
             aTarjeta ya entrega datos planos (números y textos),
             así que pasan tal cual al componente de cliente.
           */}
-          <div className="rk-fade-up rk-enter-1 mt-6">
+          <div className="rk-fade-up rk-enter-1 rk-explorar-rejilla">
             <GaleriaTienda productos={productos} />
           </div>
 
@@ -146,7 +138,7 @@ export default async function StoreResults({
           </p>
 
           {conFiltros && (
-            <Link href="/tienda" className="rk-btn rk-btn-ink mt-7">
+            <Link href={urlTienda({}, { categoria: parametros.categoria })} className="rk-btn rk-btn-ink mt-7">
               <X size={15} />
               Limpiar filtros
             </Link>
@@ -161,14 +153,14 @@ export default async function StoreResults({
 export function StoreResultsSkeleton() {
   return (
     <div aria-busy="true" aria-label="Cargando recursos">
-      <div className="mt-4 flex items-baseline justify-between gap-4">
+      <div className="rk-explorar-contador flex items-baseline justify-between gap-4">
         <div className="h-4 w-40 animate-pulse rounded-full bg-ink/[0.06]" />
         <div className="h-4 w-20 animate-pulse rounded-full bg-ink/[0.06]" />
       </div>
 
-      <div className="rk-divider mt-4" />
+      <div className="rk-divider" />
 
-      <div className="mt-6 rk-galeria">
+      <div className="rk-explorar-rejilla rk-galeria">
         {Array.from({ length: 12 }).map((_, index) => (
           <div
             key={index}
