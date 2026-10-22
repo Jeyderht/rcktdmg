@@ -91,9 +91,9 @@
     §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17217–20064
     §71  BB. INICIO (encargo de la home)                                  20065–20893
     §72  Inicio · vender más                                              20894–21771
-    §73  Explorar (tienda)                                                21772–22250
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22251–22763
-    §75  Inicios con imágenes (rk-cx-*)                                   22764–24087
+    §73  Explorar (tienda)                                                21772–22251
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22252–22764
+    §75  Inicios con imágenes (rk-cx-*)                                   22765–24088
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -22136,12 +22136,12 @@ html[data-theme] .rk-footer-marca::before {
 
 /* ── Ritmo vertical de la cabecera de /tienda ──
    Móvil: encabezado→chips 16, chips→buscador 16, buscador→
-   Filtros/Orden 12, Filtros/Orden→contador 16, contador→rejilla
-   16 (la línea, a 12 px del texto). Tableta 20/16 y escritorio
-   24/16, múltiplos de 4. */
+   Filtros/Orden 16, Filtros/Orden→contador 16, texto del contador→
+   línea 16 y línea→rejilla 16. Tableta 20/16 y escritorio 24/16,
+   múltiplos de 4. */
 .rk-explorar {
   --rk-explorar-ritmo: 16px;
-  --rk-explorar-ritmo-corto: 12px;
+  --rk-explorar-ritmo-corto: 16px;
 }
 
 @media (min-width: 768px) {
@@ -22184,14 +22184,15 @@ html[data-theme] .rk-footer-marca::before {
   clip-path: polygon(evenodd, -40px -40px, calc(100% + 40px) -40px, calc(100% + 40px) calc(100% + 40px), -40px calc(100% + 40px), -40px -40px, -40px -2px, calc(100% + 40px) -2px, calc(100% + 40px) 0, -40px 0, -40px -2px);
 }
 
-/* contador con aire propio; la línea, a 12 px del texto */
+/* contador con aire propio; la línea, a 16 px del texto (4 de
+   relleno del contador + 12 de margen) */
 .rk-explorar-contador {
   margin-top: var(--rk-explorar-ritmo);
   padding-block: 4px;
 }
 
 .rk-explorar-contador + .rk-divider {
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 /* categoría sin recursos: se ve, pero no se puede elegir */
