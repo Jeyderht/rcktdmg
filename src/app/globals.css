@@ -90,10 +90,10 @@
     §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16896–17216
     §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17217–20064
     §71  BB. INICIO (encargo de la home)                                  20065–20893
-    §72  Inicio · vender más                                              20894–21771
-    §73  Explorar (tienda)                                                21772–22251
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22252–22764
-    §75  Inicios con imágenes (rk-cx-*)                                   22765–24088
+    §72  Inicio · vender más                                              20894–21778
+    §73  Explorar (tienda)                                                21779–22258
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22259–22771
+    §75  Inicios con imágenes (rk-cx-*)                                   22772–24095
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -21719,6 +21719,13 @@ html[data-theme] .rk-footer-marca::before {
 .rk-inicio > section.rk-cc {
   padding-top: var(--rk-sec-y) !important;
   padding-bottom: var(--rk-sec-y) !important;
+}
+
+/* «¿Qué estás buscando?» va pegado al hero, sin separador: el aire de
+   abajo del hero y el de arriba de esta sección se sumaban (128 px
+   vacíos en móvil). Basta con uno. */
+.rk-inicio > section + section.rk-qb {
+  padding-top: 0 !important;
 }
 
 /* títulos de sección: mismo tamaño en todo el inicio */
