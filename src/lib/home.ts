@@ -24,6 +24,9 @@ import { ALTO_VERTICAL, ANCHO_VERTICAL } from "@/lib/dimensiones";
 
 /** Slugs de las categorías que tienen sección propia en la portada. */
 export const CATEGORIA_EVENTOS = "eventos";
+
+/** Categoría a la que lleva «Diseños generales» en el inicio. */
+export const CATEGORIA_SOCIAL_MEDIA = "social-media";
 export const CATEGORIA_GENERAL = "general";
 
 /**
@@ -183,7 +186,8 @@ export type OpcionQueBuscas = {
  * Mismo filtro que los listados a los que lleva cada opción
  * (construirWhere de la tienda): Eventos es
  * /tienda?categoria=eventos y Diseños generales es
- * /tienda?sin=eventos, así que las cifras son las del listado.
+ * /tienda?categoria=social-media, así que las cifras son las del
+ * listado al que lleva.
  * Solo lectura; con cifra 0 la fila no se pinta.
  */
 export async function datosQueBuscas(): Promise<{
@@ -242,7 +246,7 @@ export async function datosQueBuscas(): Promise<{
 
   const [eventos, generales] = await Promise.all([
     opcion(construirWhere({ categoria: CATEGORIA_EVENTOS }), 9),
-    opcion(construirWhere({ sinCategoria: CATEGORIA_EVENTOS }), 6),
+    opcion(construirWhere({ categoria: CATEGORIA_SOCIAL_MEDIA }), 6),
   ]);
 
   return { eventos, generales };

@@ -28,6 +28,7 @@ import {
   type ParametrosTienda,
 } from "@/lib/catalogo";
 import { esTagProtegido } from "@/lib/tags-comun";
+import { CATEGORIA_SOCIAL_MEDIA } from "@/lib/home";
 
 export const dynamic = "force-dynamic";
 
@@ -383,6 +384,29 @@ export default async function Store({ searchParams }: StoreProps) {
                 {/* Sin «Todos»: siempre hay una categoría activa. */}
                 {categorias.map((category) => {
                   const active = category.slug === activeCategory?.slug;
+
+                  /*
+                    «Diseño general» lleva a Social Media, igual que
+                    «Diseños generales» en el inicio (si Social Media
+                    tiene recursos). Al llegar, el chip activo es el
+                    de Social Media.
+                  */
+                  const socialMedia = categorias.find(
+                    (c) => c.slug === CATEGORIA_SOCIAL_MEDIA && conRecursos(c)
+                  );
+                  if (category.slug === "general" && socialMedia) {
+                    return (
+                      <Link
+                        key={category.id}
+                        href={urlTienda(parametrosActivos, {
+                          categoria: socialMedia.slug,
+                        })}
+                        className="rk-chip shrink-0"
+                      >
+                        {category.name}
+                      </Link>
+                    );
+                  }
 
                   // Sin recursos publicados: el chip se ve, pero no lleva a ningún sitio.
                   if (!conRecursos(category)) {

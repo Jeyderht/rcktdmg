@@ -1,5 +1,5 @@
 import QueBuscas, { type OpcionQueBuscasVista } from "@/components/home/QueBuscas";
-import { CATEGORIA_EVENTOS, type OpcionQueBuscas } from "@/lib/home";
+import { CATEGORIA_EVENTOS, CATEGORIA_SOCIAL_MEDIA, type OpcionQueBuscas } from "@/lib/home";
 
 /**
  * "¿Qué estás buscando?"
@@ -14,11 +14,11 @@ import { CATEGORIA_EVENTOS, type OpcionQueBuscas } from "@/lib/home";
   DESTINOS
 
     "Eventos"           → /tienda?categoria=eventos
-    "Diseños generales" → /tienda?sin=eventos
+    "Diseños generales" → /tienda?categoria=social-media
 
-  Cada opción lleva a lo que dice su etiqueta: `categoria`
-  filtra POR esa categoría y `sin` la EXCLUYE, así que los dos
-  caminos se reparten el catálogo entero sin solaparse.
+  Las dos abren una categoría de la tienda con su parámetro de
+  siempre (`categoria`). Corporativos, General y el resto siguen
+  en sus chips de /tienda.
 */
 const OPCIONES = [
   {
@@ -33,11 +33,11 @@ const OPCIONES = [
   {
     clave: "generales",
     titulo: "Diseños generales",
-    texto:
-      "Todo lo demás: corporativos, social media, plantillas y colecciones.",
-    href: `/tienda?sin=${CATEGORIA_EVENTOS}`,
+    // La descripción de Social Media de los tipos de publicación.
+    texto: "Contenido para redes, sin atarse a un evento concreto.",
+    href: `/tienda?categoria=${CATEGORIA_SOCIAL_MEDIA}`,
     vertical: false,
-    sufijo: "en total",
+    sufijo: "de social media",
   },
 ] as const;
 

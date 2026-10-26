@@ -21,7 +21,7 @@ export type OpcionQueBuscasVista = {
   portadas: { id: string; nombre: string; imagen: string }[];
   /** Recursos publicados en la opción (dato real). */
   total: number;
-  /** «de eventos» / «en total». */
+  /** «de eventos» / «de social media». */
   sufijo: string;
   /** Creadores y Formato: solo las que tienen dato. */
   columnas: { etiqueta: string; valor: string }[];
