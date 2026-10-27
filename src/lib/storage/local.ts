@@ -15,7 +15,9 @@ import type {
  * archivos subidos antes de la migración sigan funcionando.
  *
  *  - Público : public/<carpeta>/<archivo>  -> /<carpeta>/<archivo>
- *  - Privado : storage/products/<archivo>  -> /storage/products/<archivo>
+ *  - Privado : storage/<carpeta>/<archivo> -> /storage/<carpeta>/<archivo>
+ *    (`products` para los archivos que se venden,
+ *    `product-originals` para los originales de las imágenes)
  *
  * `storage/` queda fuera de `public/`, así que Next no lo
  * sirve: solo se lee desde el endpoint de descarga.
@@ -61,6 +63,29 @@ export function nombreDeArchivoLocal(ref: string): string | null {
   return fileName;
 }
 
+/** Carpetas privadas que se pueden leer o borrar por ruta. */
+const CARPETAS_PRIVADAS = ["products", "product-originals"];
+
+/**
+ * Ruta en disco de `<carpeta>/<archivo>` dentro de storage/, o
+ * null si la carpeta no es privada o el nombre intenta salir.
+ */
+function rutaPrivadaEnDisco(pathname: string): string | null {
+  const [carpeta, archivo, ...resto] = pathname.split("/");
+
+  if (
+    resto.length > 0 ||
+    !CARPETAS_PRIVADAS.includes(carpeta) ||
+    !archivo ||
+    archivo.includes("..") ||
+    archivo.includes("\\")
+  ) {
+    return null;
+  }
+
+  return path.join(process.cwd(), "storage", carpeta, archivo);
+}
+
 export const localStorage: StorageAdapter = {
   driver: "local",
 
@@ -81,21 +106,18 @@ export const localStorage: StorageAdapter = {
   },
 
   async putPrivate({
+    folder = "products",
     fileName,
     data,
   }: PutPrivateInput): Promise<PutResult> {
-    const directorio = path.join(
-      process.cwd(),
-      "storage",
-      "products"
-    );
+    const directorio = path.join(process.cwd(), "storage", folder);
 
     await mkdir(directorio, { recursive: true });
     await writeFile(path.join(directorio, fileName), data);
 
     return {
-      url: `${PRIVATE_PREFIX}${fileName}`,
-      pathname: `products/${fileName}`,
+      url: `/storage/${folder}/${fileName}`,
+      pathname: `${folder}/${fileName}`,
     };
   },
 
@@ -127,6 +149,40 @@ export const localStorage: StorageAdapter = {
       };
     } catch {
       return null;
+    }
+  },
+
+  async getPrivateByPath(pathname: string): Promise<PrivateObject | null> {
+    const filePath = rutaPrivadaEnDisco(pathname);
+
+    if (!filePath) {
+      return null;
+    }
+
+    try {
+      const info = await stat(filePath);
+
+      return {
+        body: await readFile(filePath),
+        size: info.size,
+        contentType: null,
+      };
+    } catch {
+      return null;
+    }
+  },
+
+  async deletePrivateByPath(pathname: string): Promise<void> {
+    const filePath = rutaPrivadaEnDisco(pathname);
+
+    if (!filePath) {
+      return;
+    }
+
+    try {
+      await unlink(filePath);
+    } catch {
+      // Si ya no existe, no hay nada que hacer.
     }
   },
 
