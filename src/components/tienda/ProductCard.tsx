@@ -9,7 +9,9 @@ import Link from "next/link";
 import AgregarTarjeta from "@/components/tienda/AgregarTarjeta";
 import FavoriteButton from "@/components/tienda/FavoriteButton";
 import { getPriceDisplay, formatPrice } from "@/lib/pricing";
-import { ArrowUpRight } from "lucide-react";
+import { conDestino } from "@/lib/redireccion";
+import type { BloqueoTarjeta } from "@/lib/vista-recurso";
+import { ArrowUpRight, Lock } from "lucide-react";
 
 export type ProductCardData = {
   id: string;
@@ -41,6 +43,14 @@ export type ProductCardData = {
   /** Media de las reseñas publicadas. null si no tiene. */
   avgRating?: number | null;
   reviewCount?: number;
+  /**
+   * Solo para registrados y visto sin sesión: la tarjeta va
+   * bloqueada, sin imagen real (coverUrl e image llegan a null).
+   * Lo decide el servidor (src/lib/vista-recurso.ts).
+   */
+  bloqueo?: BloqueoTarjeta | null;
+  /** Etiqueta «Solo registrados»: solo para el creador dueño y la administración. */
+  soloRegistrados?: boolean;
 };
 
 /**
@@ -71,6 +81,16 @@ export default function ProductCard({
   const image = product.coverUrl || product.image?.url || null;
   const imageAlt = product.image?.alt || product.name;
 
+  /*
+    Bloqueada: solo para registrados y vista sin sesión. No hay
+    imagen real (el servidor no la envía): la miniatura
+    desenfocada o, sin ella, el fondo neutro del marco. Entonces
+    el marco no enlaza a la ficha; el botón lleva al registro y
+    vuelve a ella.
+  */
+  const bloqueo = product.bloqueo ?? null;
+  const ficha = `/tienda/${product.slug}`;
+
   const pricing = getPriceDisplay(
     product.price,
     product.compareAtPrice
@@ -85,12 +105,8 @@ export default function ProductCard({
     <div className="rx-pestana rx-pestana-bloque">
       <article className="rk-tarjeta group relative">
 
-      {/* CONTENIDO VISUAL 9:16 */}
-      <Link
-        href={`/tienda/${product.slug}`}
-        className="relative block"
-        aria-label={product.name}
-      >
+      {/* CONTENIDO VISUAL 9:16 (sin enlace si va bloqueada) */}
+      <MarcoEnlazado href={ficha} label={product.name} enlazar={!bloqueo}>
         {/*
           EL MARCO LO DECIDE EL RECURSO, no una proporción
           fija. Antes todas las tarjetas eran 9:16, así que una
@@ -116,7 +132,40 @@ export default function ProductCard({
               ) ?? "1080 / 1350",
           }}
         >
-          {image ? (
+          {bloqueo ? (
+            <>
+              {bloqueo.miniatura && (
+                <Image
+                  src={bloqueo.miniatura}
+                  alt=""
+                  aria-hidden
+                  fill
+                  unoptimized
+                  className="object-cover"
+                />
+              )}
+
+              {/*
+                AVISO: candado, texto y registro (vuelve a la ficha). Es
+                un <p> y no un <span>: la hoja de la galería oculta los
+                span.rk-glass-on-image (categoría, pack) y este aviso
+                tiene que verse también ahí.
+              */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-3 text-center">
+                <p className="rk-glass-on-image inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium">
+                  <Lock size={12} aria-hidden />
+                  Vista previa para miembros
+                </p>
+
+                <Link
+                  href={conDestino("/registro", ficha)}
+                  className="rk-btn rk-btn-primary rk-btn-compact"
+                >
+                  Regístrate gratis
+                </Link>
+              </div>
+            </>
+          ) : image ? (
             <Image
               src={image}
               alt={imageAlt}
@@ -144,10 +193,25 @@ export default function ProductCard({
             </span>
           )}
 
-          {/* PACK: distintivo en blanco y negro, solo si lo es. */}
-          {product.esPack && (
-            <span className="rk-glass-on-image pointer-events-none absolute bottom-2 left-2 rounded-full px-2 py-1 text-[9px] font-bold uppercase tracking-[0.18em]">
-              Pack
+          {/*
+            PACK y SOLO REGISTRADOS: distintivos abajo a la izquierda.
+            «Solo registrados» solo llega al creador dueño y a la
+            administración (lo decide el servidor).
+          */}
+          {(product.esPack || product.soloRegistrados) && (
+            <span className="pointer-events-none absolute bottom-2 left-2 flex gap-1">
+              {product.esPack && (
+                <span className="rk-glass-on-image rounded-full px-2 py-1 text-[9px] font-bold uppercase tracking-[0.18em]">
+                  Pack
+                </span>
+              )}
+
+              {product.soloRegistrados && (
+                <span className="rk-glass-on-image inline-flex items-center gap-1 rounded-full px-2 py-1 text-[9px] font-bold uppercase tracking-[0.12em]">
+                  <Lock size={10} aria-hidden />
+                  Solo registrados
+                </span>
+              )}
             </span>
           )}
 
@@ -159,11 +223,13 @@ export default function ProductCard({
           )}
 
           {/* FLECHA: aparece al pasar el mouse (rk-card-action) */}
-          <span className="rk-card-action" aria-hidden="true">
-            <ArrowUpRight />
-          </span>
+          {!bloqueo && (
+            <span className="rk-card-action" aria-hidden="true">
+              <ArrowUpRight />
+            </span>
+          )}
         </div>
-      </Link>
+      </MarcoEnlazado>
 
       {/* FAVORITO: control de vidrio flotante */}
       {showFavorite && (
@@ -247,5 +313,32 @@ export default function ProductCard({
       </div>
     </article>
     </div>
+  );
+}
+
+/**
+ * El marco de la imagen: enlaza a la ficha, salvo si la tarjeta va
+ * bloqueada. Entonces es un bloque sin enlace, porque dentro va el
+ * botón de registro y un enlace no puede contener otro.
+ */
+function MarcoEnlazado({
+  href,
+  label,
+  enlazar,
+  children,
+}: {
+  href: string;
+  label: string;
+  enlazar: boolean;
+  children: React.ReactNode;
+}) {
+  if (!enlazar) {
+    return <div className="relative block">{children}</div>;
+  }
+
+  return (
+    <Link href={href} className="relative block" aria-label={label}>
+      {children}
+    </Link>
   );
 }

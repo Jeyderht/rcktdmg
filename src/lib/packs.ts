@@ -1,6 +1,13 @@
 import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import {
+  SELECCION_VISTA_PREVIA,
+  VISOR_ANONIMO,
+  VISOR_CON_SESION,
+  imagenesDeTarjeta,
+  type Visor,
+} from "@/lib/vista-recurso";
 import { crearNotificaciones } from "@/lib/notificaciones";
 import {
   LARGO_DESCRIPCION_PACK,
@@ -471,6 +478,7 @@ const SELECCION = {
           price: true,
           coverUrl: true,
           status: true,
+          ...SELECCION_VISTA_PREVIA,
           category: { select: { name: true, slug: true } },
           images: {
             orderBy: { sortOrder: "asc" as const },
@@ -485,14 +493,19 @@ const SELECCION = {
 
 type FilaPack = Prisma.PackGetPayload<{ select: typeof SELECCION }>;
 
-function aVista(fila: FilaPack): PackVista {
+function aVista(fila: FilaPack, visor: Visor): PackVista {
   const productos = fila.items.map((i) => ({
     id: i.product.id,
     name: i.product.name,
     slug: i.product.slug,
     price: Number(i.product.price),
-    coverUrl: i.product.coverUrl,
-    image: i.product.images[0] ?? null,
+    // Bloqueado si es solo para registrados y no hay sesión.
+    ...imagenesDeTarjeta(
+      i.product,
+      i.product.coverUrl,
+      i.product.images[0] ?? null,
+      visor
+    ),
     category: i.product.category,
   }));
 
@@ -527,7 +540,9 @@ function aVista(fila: FilaPack): PackVista {
 
 /** Packs publicados, para el catálogo público. */
 export async function listarPacksPublicos(
-  limite = 24
+  limite = 24,
+  /** Quién mira; sin él, el visitante (se oculta en lugar de enseñar de más). */
+  visor: Visor = VISOR_ANONIMO
 ): Promise<PackVista[]> {
   const filas = await prisma.pack.findMany({
     where: { status: "PUBLISHED" },
@@ -536,19 +551,20 @@ export async function listarPacksPublicos(
     select: SELECCION,
   });
 
-  return filas.map(aVista);
+  return filas.map((fila) => aVista(fila, visor));
 }
 
 /** Un pack por slug. Solo publicado si no es su creador. */
 export async function obtenerPackPublico(
-  slug: string
+  slug: string,
+  visor: Visor = VISOR_ANONIMO
 ): Promise<PackVista | null> {
   const fila = await prisma.pack.findFirst({
     where: { slug, status: "PUBLISHED" },
     select: SELECCION,
   });
 
-  return fila ? aVista(fila) : null;
+  return fila ? aVista(fila, visor) : null;
 }
 
 /** Packs de un creador, en cualquier estado. */
@@ -561,12 +577,13 @@ export async function listarPacksDe(
     select: SELECCION,
   });
 
-  return filas.map(aVista);
+  return filas.map((fila) => aVista(fila, VISOR_CON_SESION));
 }
 
 /** Varios packs por id, en una sola consulta. */
 export async function packsPorIds(
-  ids: string[]
+  ids: string[],
+  visor: Visor = VISOR_ANONIMO
 ): Promise<PackVista[]> {
   if (ids.length === 0) return [];
 
@@ -575,7 +592,7 @@ export async function packsPorIds(
     select: SELECCION,
   });
 
-  return filas.map(aVista);
+  return filas.map((fila) => aVista(fila, visor));
 }
 
 export async function obtenerPack(
@@ -586,7 +603,7 @@ export async function obtenerPack(
     select: SELECCION,
   });
 
-  return fila ? aVista(fila) : null;
+  return fila ? aVista(fila, VISOR_CON_SESION) : null;
 }
 
 /* ══════════════ COMPRA ══════════════ */

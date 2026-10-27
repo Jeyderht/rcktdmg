@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getSession } from "@/lib/session";
 import { paraUsuario } from "@/lib/recomendaciones";
+import { visorDe } from "@/lib/visor";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,8 @@ export async function GET() {
   try {
     const session = await getSession();
 
-    const bloque = await paraUsuario(session?.userId ?? null, 5);
+    // Sin sesión, las tarjetas de recursos solo para registrados van bloqueadas.
+    const bloque = await paraUsuario(visorDe(session), 5);
 
     return NextResponse.json({ bloque });
   } catch (error) {

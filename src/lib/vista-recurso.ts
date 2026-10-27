@@ -19,6 +19,39 @@
  * tendría que dejar de usar esto o dejar de ser estática.
  */
 
+/**
+ * Quién mira. Lo único que decide si se ve todo es `haySesion`;
+ * `userId` y `esAdmin` solo sirven para la etiqueta «Solo
+ * registrados», que ven el creador (en lo suyo) y la administración.
+ */
+export type Visor = {
+  haySesion: boolean;
+  userId: string | null;
+  esAdmin: boolean;
+};
+
+/**
+ * El visitante sin sesión. Es el valor por defecto de todo lo que
+ * acepta un visor opcional: si alguien olvida pasarlo, se oculta
+ * en lugar de enseñar de más.
+ */
+export const VISOR_ANONIMO: Visor = {
+  haySesion: false,
+  userId: null,
+  esAdmin: false,
+};
+
+/**
+ * Visor de los paneles (creador y administración), que siempre van
+ * con sesión: ven todo. Sin etiqueta «Solo registrados», que es
+ * cosa de las tarjetas públicas.
+ */
+export const VISOR_CON_SESION: Visor = {
+  haySesion: true,
+  userId: null,
+  esAdmin: false,
+};
+
 /** Lo mínimo que hace falta saber del recurso para decidir. */
 export type RecursoConVistaPrevia = {
   previewLibre: boolean;
@@ -27,6 +60,7 @@ export type RecursoConVistaPrevia = {
 
 /** Campos que hay que pedir a Prisma para poder decidir. */
 export const SELECCION_VISTA_PREVIA = {
+  creatorId: true,
   previewLibre: true,
   miniaturaBloqueada: true,
 } as const;
@@ -88,4 +122,40 @@ function esMiniaturaValida(valor: string | null): valor is string {
     valor.length <= TOPE_MINIATURA &&
     /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(valor)
   );
+}
+
+/** Lo que una tarjeta necesita saber para pintarse bloqueada. */
+export type BloqueoTarjeta = {
+  /** Data URI desenfocado, o null: entonces, fondo neutro. */
+  miniatura: string | null;
+};
+
+/**
+ * Portada y primera imagen de una tarjeta, ya filtradas para este
+ * visor. Si está bloqueada, las dos van a null y solo viaja
+ * `bloqueo`; `soloRegistrados` es la etiqueta para el creador
+ * dueño y la administración.
+ */
+export function imagenesDeTarjeta<I extends { url: string }>(
+  recurso: RecursoConVistaPrevia & { creatorId: string },
+  coverUrl: string | null,
+  image: I | null,
+  visor: Visor
+): {
+  coverUrl: string | null;
+  image: I | null;
+  bloqueo: BloqueoTarjeta | null;
+  soloRegistrados: boolean;
+} {
+  const visible = imagenVisible(recurso, coverUrl, visor.haySesion);
+
+  return {
+    coverUrl: visible.url,
+    image: visible.bloqueada ? null : image,
+    bloqueo: visible.bloqueada ? { miniatura: visible.miniatura } : null,
+    soloRegistrados:
+      !recurso.previewLibre &&
+      (visor.esAdmin ||
+        (visor.userId !== null && visor.userId === recurso.creatorId)),
+  };
 }

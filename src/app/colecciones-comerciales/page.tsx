@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import EmptyState from "@/components/ui/EmptyState";
 import ColeccionCard from "@/components/tienda/ColeccionCard";
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
+import { visorActual } from "@/lib/visor";
 import { paginaPublica } from "@/lib/seo";
 
 export const metadata: Metadata = paginaPublica({
@@ -24,7 +25,7 @@ export const dynamic = "force-dynamic";
  * aparecen aquí ni se pueden abrir por su URL.
  */
 export default async function ColeccionesComercialesPage() {
-  const colecciones = await listarColeccionesPublicas();
+  const colecciones = await listarColeccionesPublicas(24, await visorActual());
 
   return (
     <>

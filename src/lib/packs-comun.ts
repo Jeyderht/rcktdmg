@@ -1,5 +1,7 @@
 import type { $Enums } from "@prisma/client";
 
+import type { BloqueoTarjeta } from "@/lib/vista-recurso";
+
 /**
  * Packs: parte compartida con el navegador.
  *
@@ -102,6 +104,9 @@ export type PackVista = {
     coverUrl: string | null;
     image: { url: string; alt: string | null } | null;
     category: { name: string; slug: string } | null;
+    /** Bloqueado (solo para registrados y sin sesión): sin imagen real. */
+    bloqueo: BloqueoTarjeta | null;
+    soloRegistrados: boolean;
   }[];
   /** Suma de los precios individuales. Referencia, no cobro. */
   sumaIndividual: number;

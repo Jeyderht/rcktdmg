@@ -8,6 +8,7 @@ import Footer from "@/components/layout/Footer";
 import EmptyState from "@/components/ui/EmptyState";
 import PackCard from "@/components/tienda/PackCard";
 import { listarPacksPublicos } from "@/lib/packs";
+import { visorActual } from "@/lib/visor";
 
 export const metadata: Metadata = paginaPublica({
   titulo: "Packs",
@@ -25,7 +26,7 @@ export const dynamic = "force-dynamic";
  * aparecen aquí ni se pueden abrir por su URL.
  */
 export default async function PacksPage() {
-  const packs = await listarPacksPublicos();
+  const packs = await listarPacksPublicos(24, await visorActual());
 
   return (
     <>

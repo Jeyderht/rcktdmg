@@ -2,6 +2,13 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import {
+  SELECCION_VISTA_PREVIA,
+  VISOR_ANONIMO,
+  VISOR_CON_SESION,
+  imagenesDeTarjeta,
+  type Visor,
+} from "@/lib/vista-recurso";
+import {
   crearNotificaciones,
   notificarAdmins,
 } from "@/lib/notificaciones";
@@ -719,6 +726,7 @@ const SELECCION = {
           price: true,
           coverUrl: true,
           status: true,
+          ...SELECCION_VISTA_PREVIA,
           category: { select: { name: true, slug: true } },
           images: {
             orderBy: { sortOrder: "asc" as const },
@@ -735,14 +743,19 @@ type FilaColeccion = Prisma.CommercialCollectionGetPayload<{
   select: typeof SELECCION;
 }>;
 
-function aVista(fila: FilaColeccion): ColeccionVista {
+function aVista(fila: FilaColeccion, visor: Visor): ColeccionVista {
   const productos = fila.items.map((i) => ({
     id: i.product.id,
     name: i.product.name,
     slug: i.product.slug,
     price: Number(i.product.price),
-    coverUrl: i.product.coverUrl,
-    image: i.product.images[0] ?? null,
+    // Bloqueado si es solo para registrados y no hay sesión.
+    ...imagenesDeTarjeta(
+      i.product,
+      i.product.coverUrl,
+      i.product.images[0] ?? null,
+      visor
+    ),
     category: i.product.category,
   }));
 
@@ -804,14 +817,16 @@ function sinArchivoPrivado(vista: ColeccionVista): ColeccionVista {
 
 /** Ficha pública. Solo si está publicada. */
 export async function obtenerColeccionPublica(
-  slug: string
+  slug: string,
+  /** Quién mira; sin él, el visitante (se oculta en lugar de enseñar de más). */
+  visor: Visor = VISOR_ANONIMO
 ): Promise<ColeccionVista | null> {
   const fila = await prisma.commercialCollection.findFirst({
     where: { slug, status: "PUBLISHED" },
     select: SELECCION,
   });
 
-  return fila ? sinArchivoPrivado(aVista(fila)) : null;
+  return fila ? sinArchivoPrivado(aVista(fila, visor)) : null;
 }
 
 /** Una colección concreta para su dueño o para administración. */
@@ -823,7 +838,7 @@ export async function obtenerColeccion(
     select: SELECCION,
   });
 
-  return fila ? aVista(fila) : null;
+  return fila ? aVista(fila, VISOR_CON_SESION) : null;
 }
 
 /** Colecciones de un creador, en cualquier estado. */
@@ -836,12 +851,13 @@ export async function listarColeccionesDe(
     select: SELECCION,
   });
 
-  return filas.map(aVista);
+  return filas.map((fila) => aVista(fila, VISOR_CON_SESION));
 }
 
 /** Catálogo público de colecciones. */
 export async function listarColeccionesPublicas(
-  tope = 24
+  tope = 24,
+  visor: Visor = VISOR_ANONIMO
 ): Promise<ColeccionVista[]> {
   const filas = await prisma.commercialCollection.findMany({
     where: { status: "PUBLISHED" },
@@ -850,7 +866,7 @@ export async function listarColeccionesPublicas(
     select: SELECCION,
   });
 
-  return filas.map((fila) => sinArchivoPrivado(aVista(fila)));
+  return filas.map((fila) => sinArchivoPrivado(aVista(fila, visor)));
 }
 
 /** Todas las colecciones, para administración. */
@@ -863,7 +879,7 @@ export async function listarTodasLasColecciones(
     select: SELECCION,
   });
 
-  return filas.map(aVista);
+  return filas.map((fila) => aVista(fila, VISOR_CON_SESION));
 }
 
 /* ══════════════ COMPRA ══════════════ */

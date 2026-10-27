@@ -4,6 +4,7 @@ import { SearchX, X } from "lucide-react";
 import GaleriaTienda from "./GaleriaTienda";
 import Paginacion from "@/components/ui/Paginacion";
 import { consultarCatalogo } from "@/lib/catalogo-consulta";
+import { visorActual } from "@/lib/visor";
 import {
   hayFiltros,
   urlTienda,
@@ -40,7 +41,7 @@ export default async function StoreResults({
     más de POR_PAGINA recursos.
   */
   const { productos, total, pagina, totalPaginas } =
-    await consultarCatalogo(parametros);
+    await consultarCatalogo(parametros, await visorActual());
 
   const query = parametros.q ?? "";
   // La categoría siempre está puesta: no cuenta como filtro que limpiar.

@@ -12,6 +12,7 @@ import YaAdquirido from "@/components/tienda/YaAdquirido";
 import { getSession } from "@/lib/session";
 import { tieneColeccion } from "@/lib/adquisiciones";
 import { obtenerColeccionPublica } from "@/lib/colecciones-comerciales";
+import { visorActual } from "@/lib/visor";
 import { formatPrice } from "@/lib/pricing";
 import {
   absoluta,
@@ -68,7 +69,7 @@ export default async function ColeccionComercialPage({
 }: PageProps) {
   const { slug } = await params;
 
-  const coleccion = await obtenerColeccionPublica(slug);
+  const coleccion = await obtenerColeccionPublica(slug, await visorActual());
 
   if (!coleccion) {
     notFound();
