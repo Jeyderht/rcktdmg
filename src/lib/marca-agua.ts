@@ -11,13 +11,13 @@
  * El diseño es una sola marca centrada, no un patrón repetido:
  *
  *   - Dos líneas blancas en X, de esquina a esquina, que se
- *     cortan en el borde del círculo.
+ *     cortan en el borde del círculo. Líneas y aro tienen el
+ *     mismo grosor: se leen como un solo trazo.
  *   - Un círculo en el centro con la propia imagen desenfocada
- *     detrás, el isotipo en blanco encima y un borde blanco.
- *   - Toda la parte blanca al 28 % de opacidad. Debajo, una
- *     sombra oscura propia (no comparte ese 28 %): un contorno
- *     suave que hace legible la marca sobre fondos blancos y que
- *     sobre fondos oscuros apenas se distingue del fondo.
+ *     detrás, un velo blanco suave encima (para que una zona negra
+ *     no deje manchas oscuras) y el isotipo en blanco, centrado.
+ *   - Toda la parte blanca al 18 % de opacidad. Sin sombras,
+ *     brillos ni degradados: solo blanco.
  *
  * Todas las medidas son proporciones del ancho de la copia, así
  * que la marca se ve igual en un flyer vertical que en uno
@@ -46,23 +46,19 @@ const MAX_PIXELES_ENTRADA = 60_000_000;
 
 /* Proporciones del diseño aprobado, sobre el ancho de la copia. */
 const MARCA = {
-  /** Grosor de las líneas en X. */
-  linea: 0.006,
-  lineaMinima: 2,
+  /** Grosor del trazo: líneas en X y aro, el mismo. */
+  trazo: 0.007,
+  trazoMinimo: 1,
   /** Diámetro del círculo central. */
   circulo: 0.26,
   /** Desenfoque gaussiano de la imagen dentro del círculo (sigma). */
   desenfoque: 0.014,
+  /** Velo blanco sobre la imagen desenfocada del círculo. */
+  velo: 0.28,
   /** Isotipo, sobre el diámetro del círculo. */
-  isotipo: 0.58,
-  /** Grosor del borde del círculo. */
-  borde: 0.012,
+  isotipo: 0.42,
   /** Opacidad de toda la parte blanca. */
-  opacidad: 0.28,
-  /** Sombra: cuánto se ensancha la silueta, su desenfoque y su opacidad. */
-  sombraEnsanche: 0.0015,
-  sombraDesenfoque: 0.003,
-  sombraOpacidad: 0.4,
+  opacidad: 0.18,
 } as const;
 
 /**
@@ -157,12 +153,11 @@ export async function generarCopiaConMarca(
   const ancho = info.width;
   const alto = info.height;
 
-  const linea = Math.max(MARCA.lineaMinima, ancho * MARCA.linea);
-  const borde = Math.max(MARCA.lineaMinima, ancho * MARCA.borde);
+  const trazo = Math.max(MARCA.trazoMinimo, ancho * MARCA.trazo);
 
   // En una imagen muy apaisada el círculo no puede ser más alto que ella.
   const diametro = Math.round(
-    Math.min(ancho * MARCA.circulo, alto - 2 * borde)
+    Math.min(ancho * MARCA.circulo, alto - 2 * trazo)
   );
   const radio = diametro / 2;
   const cx = ancho / 2;
@@ -170,23 +165,26 @@ export async function generarCopiaConMarca(
   const izquierda = Math.round(cx - radio);
   const arriba = Math.round(cy - radio);
 
-  // 2. Disco: la propia imagen desenfocada, recortada en círculo.
-  const mascaraCirculo = Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${diametro}" height="${diametro}">` +
-      `<circle cx="${radio}" cy="${radio}" r="${radio}" fill="#fff"/></svg>`
-  );
+  // 2. Disco: la propia imagen desenfocada, con un velo blanco
+  //    encima, recortada en círculo.
+  const circulo = (relleno: string) =>
+    Buffer.from(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${diametro}" height="${diametro}">` +
+        `<circle cx="${radio}" cy="${radio}" r="${radio}" ${relleno}/></svg>`
+    );
 
   const disco = await sharp(base)
     .extract({ left: izquierda, top: arriba, width: diametro, height: diametro })
     .blur(Math.max(0.3, ancho * MARCA.desenfoque))
-    .composite([{ input: mascaraCirculo, blend: "dest-in" }])
+    .composite([
+      { input: circulo(`fill="#fff" fill-opacity="${MARCA.velo}"`) },
+      { input: circulo('fill="#fff"'), blend: "dest-in" },
+    ])
     .png()
     .toBuffer();
 
-  // 3. Líneas, borde e isotipo: primero su sombra, luego en blanco al 28 %.
+  // 3. Líneas, aro e isotipo, solo en blanco y al 18 %.
   const lado = diametro * MARCA.isotipo;
-  const ensanche = Math.max(1, ancho * MARCA.sombraEnsanche);
-  const desenfoque = Math.max(1, ancho * MARCA.sombraDesenfoque);
 
   const marca = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${ancho}" height="${alto}">` +
@@ -196,26 +194,17 @@ export async function generarCopiaConMarca(
       `<rect width="${ancho}" height="${alto}" fill="#fff"/>` +
       `<circle cx="${cx}" cy="${cy}" r="${radio}" fill="#000"/>` +
       "</mask>" +
-      // Sombra: la silueta en negro, algo ensanchada y desenfocada, y
-      // recortada por la propia silueta: queda solo como contorno, sin
-      // oscurecer el blanco de las líneas, el aro y el cohete.
-      `<filter id="sombra" filterUnits="userSpaceOnUse" x="0" y="0" width="${ancho}" height="${alto}">` +
-      `<feMorphology in="SourceAlpha" operator="dilate" radius="${ensanche}"/>` +
-      `<feGaussianBlur stdDeviation="${desenfoque}"/>` +
-      '<feComposite in2="SourceAlpha" operator="out"/>' +
-      "</filter>" +
-      '<g id="formas">' +
-      `<g mask="url(#fuera)" stroke="#fff" stroke-width="${linea}">` +
+      "</defs>" +
+      // Un solo grupo con la opacidad: donde se tocan no se suma.
+      `<g opacity="${MARCA.opacidad}">` +
+      `<g mask="url(#fuera)" stroke="#fff" stroke-width="${trazo}">` +
       `<line x1="0" y1="0" x2="${ancho}" y2="${alto}"/>` +
       `<line x1="${ancho}" y1="0" x2="0" y2="${alto}"/>` +
       "</g>" +
-      `<circle cx="${cx}" cy="${cy}" r="${radio - borde / 2}" fill="none" stroke="#fff" stroke-width="${borde}"/>` +
+      // El aro, por dentro del círculo: su borde exterior es donde se cortan las líneas.
+      `<circle cx="${cx}" cy="${cy}" r="${radio - trazo / 2}" fill="none" stroke="#fff" stroke-width="${trazo}"/>` +
       `<image href="${await isotipoBase64()}" x="${cx - lado / 2}" y="${cy - lado / 2}" width="${lado}" height="${lado}"/>` +
-      "</g>" +
-      "</defs>" +
-      `<g opacity="${MARCA.sombraOpacidad}" filter="url(#sombra)"><use href="#formas"/></g>` +
-      `<g opacity="${MARCA.opacidad}"><use href="#formas"/></g>` +
-      "</svg>"
+      "</g></svg>"
   );
 
   // 4. Todo junto, en JPEG y sin metadatos.
