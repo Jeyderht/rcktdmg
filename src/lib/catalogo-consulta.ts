@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { Visor } from "@/lib/vista-recurso";
 import { LIMITE_RELEVANCIA, ordenarPorRelevancia } from "@/lib/busqueda";
 import {
   POR_PAGINA,
@@ -37,6 +38,8 @@ function vacio(): Omit<ResultadoCatalogo, "paginaCorregida"> {
 
 export async function consultarCatalogo(
   parametros: ParametrosTienda,
+  /** Quién mira: decide qué tarjetas van bloqueadas (vista-recurso.ts). */
+  visor: Visor,
   /**
    * Tamaño de página. La tienda usa el de por defecto; poder
    * cambiarlo permite comprobar el paginado con el catálogo
@@ -60,7 +63,7 @@ export async function consultarCatalogo(
   }
 
   if (orden === "relevancia") {
-    return porRelevancia({ where, texto, total, pedida, porPagina });
+    return porRelevancia({ where, texto, total, pedida, porPagina, visor });
   }
 
   const totalPaginas = Math.max(1, Math.ceil(total / porPagina));
@@ -81,7 +84,7 @@ export async function consultarCatalogo(
   });
 
   return {
-    productos: filas.map(aTarjeta),
+    productos: filas.map((fila) => aTarjeta(fila, visor)),
     total,
     pagina,
     totalPaginas,
@@ -105,12 +108,14 @@ async function porRelevancia({
   total,
   pedida,
   porPagina,
+  visor,
 }: {
   where: ReturnType<typeof construirWhere>;
   texto: string;
   total: number;
   pedida: number;
   porPagina: number;
+  visor: Visor;
 }): Promise<ResultadoCatalogo> {
   const candidatos = await prisma.product.findMany({
     where,
@@ -151,7 +156,7 @@ async function porRelevancia({
   const productos = idsPagina.flatMap((id) => {
     const fila = porId.get(id);
 
-    return fila ? [aTarjeta(fila)] : [];
+    return fila ? [aTarjeta(fila, visor)] : [];
   });
 
   return {

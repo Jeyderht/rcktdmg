@@ -58,7 +58,9 @@ export function revisarMedidasSlider(
 
 export async function portadasActivas(): Promise<PortadaHome[]> {
   const recursos = await prisma.product.findMany({
-    where: { status: "PUBLISHED", sliderUrl: { not: null } },
+    // Solo vista previa libre: el slider es un escaparate para todos,
+    // y un recurso solo para registrados no se anuncia con su imagen.
+    where: { status: "PUBLISHED", sliderUrl: { not: null }, previewLibre: true },
     orderBy: { createdAt: "desc" },
     take: MAX_PORTADAS_HOME,
     select: {

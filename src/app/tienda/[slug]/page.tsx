@@ -43,6 +43,7 @@ import {
 import PackCard from "@/components/tienda/PackCard";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 import { getSession } from "@/lib/session";
+import { visorDe } from "@/lib/visor";
 import { tieneProducto } from "@/lib/adquisiciones";
 import YaAdquirido from "@/components/tienda/YaAdquirido";
 
@@ -221,7 +222,7 @@ export default async function ProductPage({
         */
         listarVersiones(product.id),
 
-        packsQueIncluyen(product.id),
+        packsQueIncluyen(product.id, visorDe(session)),
 
         /*
           ¿Ya es suyo?
@@ -254,11 +255,11 @@ export default async function ProductPage({
                     categoriaNombre: product.category.name,
                     creadorNombre: creatorName,
                 },
-                session?.userId ?? null
+                visorDe(session)
             ),
             sugerenciasDeFicha(
                 { ...referenciaReco, categoriaSlug: product.category.slug },
-                session?.userId ?? null
+                visorDe(session)
             ),
         ]),
     ]);
