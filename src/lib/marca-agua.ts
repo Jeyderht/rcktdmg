@@ -14,8 +14,10 @@
  *     cortan en el borde del círculo.
  *   - Un círculo en el centro con la propia imagen desenfocada
  *     detrás, el isotipo en blanco encima y un borde blanco.
- *   - Toda la parte blanca al 28 % de opacidad, con una sombra
- *     oscura muy leve para que se lea sobre fondos claros.
+ *   - Toda la parte blanca al 28 % de opacidad. Debajo, una
+ *     sombra oscura propia (no comparte ese 28 %): un contorno
+ *     suave que hace legible la marca sobre fondos blancos y que
+ *     sobre fondos oscuros apenas se distingue del fondo.
  *
  * Todas las medidas son proporciones del ancho de la copia, así
  * que la marca se ve igual en un flyer vertical que en uno
@@ -57,9 +59,10 @@ const MARCA = {
   borde: 0.012,
   /** Opacidad de toda la parte blanca. */
   opacidad: 0.28,
-  /** Sombra oscura: desenfoque y opacidad, muy leves. */
-  sombra: 0.004,
-  sombraOpacidad: 0.35,
+  /** Sombra: cuánto se ensancha la silueta, su desenfoque y su opacidad. */
+  sombraEnsanche: 0.0015,
+  sombraDesenfoque: 0.003,
+  sombraOpacidad: 0.4,
 } as const;
 
 let isotipo: Promise<string> | null = null;
@@ -131,9 +134,10 @@ export async function generarCopiaConMarca(
     .png()
     .toBuffer();
 
-  // 3. Líneas, borde e isotipo en blanco, con su sombra, al 28 %.
+  // 3. Líneas, borde e isotipo: primero su sombra, luego en blanco al 28 %.
   const lado = diametro * MARCA.isotipo;
-  const sombra = Math.max(1, ancho * MARCA.sombra);
+  const ensanche = Math.max(1, ancho * MARCA.sombraEnsanche);
+  const desenfoque = Math.max(1, ancho * MARCA.sombraDesenfoque);
 
   const marca = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${ancho}" height="${alto}">` +
@@ -143,21 +147,26 @@ export async function generarCopiaConMarca(
       `<rect width="${ancho}" height="${alto}" fill="#fff"/>` +
       `<circle cx="${cx}" cy="${cy}" r="${radio}" fill="#000"/>` +
       "</mask>" +
+      // Sombra: la silueta en negro, algo ensanchada y desenfocada, y
+      // recortada por la propia silueta: queda solo como contorno, sin
+      // oscurecer el blanco de las líneas, el aro y el cohete.
       `<filter id="sombra" filterUnits="userSpaceOnUse" x="0" y="0" width="${ancho}" height="${alto}">` +
-      `<feGaussianBlur in="SourceAlpha" stdDeviation="${sombra}"/>` +
-      `<feOffset dy="${sombra / 2}" result="desplazada"/>` +
-      `<feComponentTransfer><feFuncA type="linear" slope="${MARCA.sombraOpacidad}"/></feComponentTransfer>` +
-      '<feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>' +
+      `<feMorphology in="SourceAlpha" operator="dilate" radius="${ensanche}"/>` +
+      `<feGaussianBlur stdDeviation="${desenfoque}"/>` +
+      '<feComposite in2="SourceAlpha" operator="out"/>' +
       "</filter>" +
-      "</defs>" +
-      `<g opacity="${MARCA.opacidad}" filter="url(#sombra)">` +
+      '<g id="formas">' +
       `<g mask="url(#fuera)" stroke="#fff" stroke-width="${linea}">` +
       `<line x1="0" y1="0" x2="${ancho}" y2="${alto}"/>` +
       `<line x1="${ancho}" y1="0" x2="0" y2="${alto}"/>` +
       "</g>" +
       `<circle cx="${cx}" cy="${cy}" r="${radio - borde / 2}" fill="none" stroke="#fff" stroke-width="${borde}"/>` +
       `<image href="${await isotipoBase64()}" x="${cx - lado / 2}" y="${cy - lado / 2}" width="${lado}" height="${lado}"/>` +
-      "</g></svg>"
+      "</g>" +
+      "</defs>" +
+      `<g opacity="${MARCA.sombraOpacidad}" filter="url(#sombra)"><use href="#formas"/></g>` +
+      `<g opacity="${MARCA.opacidad}"><use href="#formas"/></g>` +
+      "</svg>"
   );
 
   // 4. Todo junto, en JPEG y sin metadatos.
