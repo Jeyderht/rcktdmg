@@ -13,8 +13,8 @@
  *   - Dos líneas blancas en X, de esquina a esquina, que se
  *     cortan en el borde del círculo. Líneas y aro tienen el
  *     mismo grosor: se leen como un solo trazo.
- *   - Un círculo en el centro, solo con su aro: dentro, la imagen
- *     tal cual, sin desenfoque ni velo.
+ *   - Un círculo en el centro con su aro: dentro, la propia imagen
+ *     desenfocada, sin velo.
  *   - Líneas y aro al 14 % de opacidad; el isotipo en blanco,
  *     centrado, al 30 %. Sin sombras, brillos ni degradados.
  *
@@ -50,6 +50,8 @@ const MARCA = {
   trazoMinimo: 1,
   /** Diámetro del círculo central. */
   circulo: 0.26,
+  /** Desenfoque gaussiano de la imagen dentro del círculo (sigma). */
+  desenfoque: 0.01,
   /** Opacidad del trazo (líneas y aro). */
   opacidadTrazo: 0.14,
   /** Isotipo: tamaño sobre el diámetro del círculo y opacidad. */
@@ -158,8 +160,23 @@ export async function generarCopiaConMarca(
   const radio = diametro / 2;
   const cx = ancho / 2;
   const cy = alto / 2;
+  const izquierda = Math.round(cx - radio);
+  const arriba = Math.round(cy - radio);
 
-  // 2. Líneas y aro al 14 %, e isotipo al 30 %: solo blanco.
+  // 2. Disco: la propia imagen desenfocada, recortada en círculo.
+  const mascaraCirculo = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${diametro}" height="${diametro}">` +
+      `<circle cx="${radio}" cy="${radio}" r="${radio}" fill="#fff"/></svg>`
+  );
+
+  const disco = await sharp(base)
+    .extract({ left: izquierda, top: arriba, width: diametro, height: diametro })
+    .blur(Math.max(0.3, ancho * MARCA.desenfoque))
+    .composite([{ input: mascaraCirculo, blend: "dest-in" }])
+    .png()
+    .toBuffer();
+
+  // 3. Líneas y aro al 14 %, e isotipo al 30 %: solo blanco.
   const lado = diametro * MARCA.isotipo;
 
   const marca = Buffer.from(
@@ -184,9 +201,12 @@ export async function generarCopiaConMarca(
       "</svg>"
   );
 
-  // 3. Todo junto, en JPEG y sin metadatos.
+  // 4. Todo junto, en JPEG y sin metadatos.
   const data = await sharp(base)
-    .composite([{ input: marca, left: 0, top: 0 }])
+    .composite([
+      { input: disco, left: izquierda, top: arriba },
+      { input: marca, left: 0, top: 0 },
+    ])
     .jpeg({ quality: CALIDAD_JPEG, mozjpeg: true })
     .toBuffer();
 
