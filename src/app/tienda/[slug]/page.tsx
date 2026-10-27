@@ -309,7 +309,10 @@ export default async function ProductPage({
             },
             session?.userId ?? null
         ),
-        sugerenciasDeFicha(referenciaReco, session?.userId ?? null),
+        sugerenciasDeFicha(
+            { ...referenciaReco, categoriaSlug: product.category.slug },
+            session?.userId ?? null
+        ),
     ]);
 
 
