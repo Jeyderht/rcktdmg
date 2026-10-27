@@ -1,4 +1,4 @@
-import type { PublicFolder } from "./types";
+import type { PrivateFolder, PublicFolder } from "./types";
 
 /**
  * Reglas de las imágenes públicas, en un solo sitio.
@@ -13,13 +13,24 @@ import type { PublicFolder } from "./types";
  * abriría un hueco en la otra.
  */
 
+/*
+  «resource-image» son la portada, la vista previa y la galería de
+  un recurso. A diferencia del resto, el navegador las sube al
+  almacén PRIVADO: el servidor genera la copia con marca de agua y
+  solo esa copia llega al público (storage/imagenes-recurso.ts).
+  «product-image» sigue siendo la imagen pública de lo demás
+  (portadas de colecciones, portafolio, solicitudes…).
+*/
 export type TipoImagen =
   | "product-image"
+  | "resource-image"
   | "creator-avatar"
   | "creator-cover";
 
 type ReglaImagen = {
-  folder: PublicFolder;
+  folder: PublicFolder | PrivateFolder;
+  /** true si el navegador la sube al almacén privado. */
+  privada: boolean;
   /** Mismo límite que tenía la subida por servidor. */
   maxBytes: number;
   /** MIME permitido -> extensión con la que se guarda. */
@@ -36,6 +47,7 @@ type ReglaImagen = {
 export const REGLAS: Record<TipoImagen, ReglaImagen> = {
   "product-image": {
     folder: "product-images",
+    privada: false,
     maxBytes: 10 * 1024 * 1024,
     tiposMime: {
       "image/jpeg": "jpg",
@@ -46,8 +58,24 @@ export const REGLAS: Record<TipoImagen, ReglaImagen> = {
     etiqueta: "La imagen no puede superar los 10 MB.",
   },
 
+  "resource-image": {
+    folder: "product-uploads",
+    privada: true,
+    maxBytes: 10 * 1024 * 1024,
+    tiposMime: {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+    },
+    // El id del usuario en el nombre: nadie puede pedir que se
+    // convierta la subida de otro.
+    conPrefijoDeUsuario: true,
+    etiqueta: "La imagen no puede superar los 10 MB.",
+  },
+
   "creator-avatar": {
     folder: "creator-avatars",
+    privada: false,
     maxBytes: 8 * 1024 * 1024,
     tiposMime: {
       "image/jpeg": "jpg",
@@ -60,6 +88,7 @@ export const REGLAS: Record<TipoImagen, ReglaImagen> = {
 
   "creator-cover": {
     folder: "creator-covers",
+    privada: false,
     maxBytes: 8 * 1024 * 1024,
     tiposMime: {
       "image/jpeg": "jpg",
@@ -85,6 +114,7 @@ export function extensionesDe(tipo: TipoImagen) {
  * las que este usuario puede escribir.
  *
  *   product-images/<uuid>.<ext>
+ *   product-uploads/<idUsuario>-<uuid>.<ext>
  *   creator-avatars/<idUsuario>-<uuid>.<ext>
  *   creator-covers/<idUsuario>-<uuid>.<ext>
  *
