@@ -20,8 +20,10 @@ import EmptyState from "@/components/ui/EmptyState";
 import ProductCard from "@/components/tienda/ProductCard";
 import Paginacion from "@/components/ui/Paginacion";
 import CompartirPerfil from "@/components/perfil/CompartirPerfil";
+import PestanasPerfil from "@/components/perfil/PestanasPerfil";
 import SeguirButton from "@/components/perfil/SeguirButton";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
+import { CATEGORIA_EVENTOS } from "@/lib/home";
 import { estadoSeguimiento } from "@/lib/seguidores";
 import { getSession } from "@/lib/session";
 import { noEncontrado, paginaPublica } from "@/lib/seo";
@@ -111,7 +113,8 @@ async function getRecursos(
  * Categorías en las que publica este creador.
  *
  * Salen de sus recursos reales, con su recuento: no es una
- * lista de intereses declarada a mano.
+ * lista de intereses declarada a mano. Eventos va primero; el
+ * resto, de más a menos recursos.
  */
 async function getCategorias(creatorId: string) {
   const filas = await prisma.category.findMany({
@@ -129,7 +132,12 @@ async function getCategorias(creatorId: string) {
     },
   });
 
-  return filas.sort((a, b) => b._count.products - a._count.products);
+  return filas.sort(
+    (a, b) =>
+      Number(b.slug === CATEGORIA_EVENTOS) -
+        Number(a.slug === CATEGORIA_EVENTOS) ||
+      b._count.products - a._count.products
+  );
 }
 
 /*
@@ -146,6 +154,20 @@ function categoriaPedida(valor: string | string[] | undefined) {
   return typeof valor === "string" && /^[a-z0-9-]+$/.test(valor)
     ? valor
     : null;
+}
+
+/*
+  No hay vista «Todo»: el perfil siempre enseña una categoría.
+  La pedida si es de las suyas; si no, la de por defecto, que es
+  la primera de getCategorias (Eventos si tiene recursos ahí).
+  Sin categorías devuelve null y el perfil queda como antes.
+*/
+function categoriaActiva<T extends { slug: string }>(
+  categorias: T[],
+  valor: string | string[] | undefined
+) {
+  const pedido = categoriaPedida(valor);
+  return categorias.find((c) => c.slug === pedido) ?? categorias[0] ?? null;
 }
 
 export async function generateMetadata({
@@ -195,14 +217,17 @@ export async function generateMetadata({
 
   const base = `/creadores/${creator.username}`;
 
-  // Con filtro de categoría (de las suyas reales), la canónica lo conserva.
-  const pedido = categoriaPedida(consulta.categoria);
-  const categoria =
-    pedido && (await getCategorias(creator.id)).some((c) => c.slug === pedido)
-      ? pedido
-      : null;
+  /*
+    La canónica sigue a la categoría activa. La de por defecto es
+    la URL limpia del perfil (la que enlazan tarjetas y sitemap);
+    las demás conservan ?categoria=.
+  */
+  const categorias = await getCategorias(creator.id);
+  const categoria = categoriaActiva(categorias, consulta.categoria);
   const filtros = new URLSearchParams();
-  if (categoria) filtros.set("categoria", categoria);
+  if (categoria && categoria !== categorias[0]) {
+    filtros.set("categoria", categoria.slug);
+  }
   if (pagina > 1) filtros.set("page", String(pagina));
   const ruta = filtros.size > 0 ? `${base}?${filtros}` : base;
 
@@ -246,13 +271,13 @@ export default async function CreatorPublicProfile({
     FILTRO DE CATEGORÍA (?categoria=<slug>)
 
     Las pestañas filtran los recursos de este creador sin salir
-    del perfil. Solo vale un slug de sus categorías reales; uno
-    inválido es «Todo». El total y la paginación siguen al
+    del perfil. Solo vale un slug de sus categorías reales; sin
+    él, o con uno inválido, se abre la de por defecto (Eventos o
+    la primera que tenga). El total y la paginación siguen al
     filtro.
   */
-  const filtro =
-    categorias.find((c) => c.slug === categoriaPedida(consulta.categoria)) ??
-    null;
+  const filtro = categoriaActiva(categorias, consulta.categoria);
+  const porDefecto = categorias[0] ?? null;
 
   const totalFiltrado = filtro ? filtro._count.products : totalRecursos;
 
@@ -279,10 +304,12 @@ export default async function CreatorPublicProfile({
 
   const perfilUrl = `/creadores/${creator.username}`;
 
-  /** URL de una vista del portafolio: filtro + página, al ancla. */
+  /** URL de una vista del portafolio: filtro + página, al ancla. La categoría por defecto va sin ?categoria=. */
   const urlRecursos = (categoria: string | null, numero = 1) => {
     const filtros = new URLSearchParams();
-    if (categoria) filtros.set("categoria", categoria);
+    if (categoria && categoria !== porDefecto?.slug) {
+      filtros.set("categoria", categoria);
+    }
     if (numero > 1) filtros.set("page", String(numero));
     return `${perfilUrl}${filtros.size > 0 ? `?${filtros}` : ""}#recursos`;
   };
@@ -438,15 +465,7 @@ export default async function CreatorPublicProfile({
               */}
               {categorias.length > 0 && (
                 <div className="rk-hero-tabs">
-                  <nav className="rk-tabs rk-tabs-track" aria-label="Categorías del creador">
-                    <Link
-                      href={urlRecursos(null)}
-                      className="rk-tab"
-                      aria-current={filtro ? undefined : "page"}
-                    >
-                      Todo
-                    </Link>
-
+                  <PestanasPerfil>
                     {categorias.map((categoria) => (
                       <Link
                         key={categoria.slug}
@@ -462,7 +481,7 @@ export default async function CreatorPublicProfile({
                         </span>
                       </Link>
                     ))}
-                  </nav>
+                  </PestanasPerfil>
                 </div>
               )}
             </div>
