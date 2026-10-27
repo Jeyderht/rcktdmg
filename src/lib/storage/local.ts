@@ -64,7 +64,7 @@ export function nombreDeArchivoLocal(ref: string): string | null {
 }
 
 /** Carpetas privadas que se pueden leer o borrar por ruta. */
-const CARPETAS_PRIVADAS = ["products", "product-originals"];
+const CARPETAS_PRIVADAS = ["products", "product-originals", "product-uploads"];
 
 /**
  * Ruta en disco de `<carpeta>/<archivo>` dentro de storage/, o

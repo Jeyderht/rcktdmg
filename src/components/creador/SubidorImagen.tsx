@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { CheckCircle2, ImageIcon, RefreshCw, X, Upload } from "lucide-react";
 
 import { subirImagen } from "@/lib/storage/client-upload";
+import type { TipoImagen } from "@/lib/storage/imagenes";
 import AvisoRequisitos from "@/components/creador/AvisoRequisitos";
 import {
   revisarMedidas,
@@ -72,6 +73,7 @@ export default function SubidorImagen({
   alCambiar,
   obligatorio = false,
   requisito,
+  tipo = "product-image",
 }: {
   id: string;
   etiqueta: string;
@@ -86,6 +88,12 @@ export default function SubidorImagen({
    * etiqueta aparece un ⓘ con las reglas exactas del campo.
    */
   requisito?: string;
+  /**
+   * `resource-image` en la portada, la vista previa y la galería
+   * de un recurso: se sube al almacén privado y se devuelve la
+   * copia con marca de agua. El resto usa la imagen pública.
+   */
+  tipo?: TipoImagen;
 }) {
   const [subiendo, setSubiendo] = useState(false);
   const [progreso, setProgreso] = useState<number | null>(null);
@@ -129,7 +137,7 @@ export default function SubidorImagen({
     setProgreso(0);
 
     try {
-      const subida = await subirImagen("product-image", file, undefined, {
+      const subida = await subirImagen(tipo, file, undefined, {
         alProgresar: (porcentaje) => setProgreso(porcentaje),
       });
 

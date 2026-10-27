@@ -27,10 +27,15 @@ export type PublicFolder =
   | "creator-covers";
 
 /**
- * Carpetas privadas: `products` para los archivos que se venden
- * y `product-originals` para los originales de las imágenes.
+ * Carpetas privadas: `products` para los archivos que se venden,
+ * `product-originals` para los originales de las imágenes y
+ * `product-uploads` para lo que el navegador acaba de subir y
+ * aún no se ha convertido (se borra al convertirlo).
  */
-export type PrivateFolder = "products" | "product-originals";
+export type PrivateFolder =
+  | "products"
+  | "product-originals"
+  | "product-uploads";
 
 export type PutPublicInput = {
   folder: PublicFolder;
