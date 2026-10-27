@@ -12,13 +12,20 @@
  * arco nace en 0 (largo y opacidad) y crece mientras gira. Arranca con un pequeño retraso para no parpadear
  * en las navegaciones rápidas. Todo es CSS (sección AX de
  * globals.css) y respeta el movimiento reducido.
+ *
+ * Fijo a toda la pantalla y centrado en ella: durante la carga no
+ * hay cabecera ni menú inferior (viven dentro de cada página o
+ * layout, que es justo lo que este fallback sustituye), así que el
+ * centro de la pantalla visible es el centro correcto. Al ser fixed
+ * no depende del padding inferior que el body reserva al menú en
+ * móvil, y en Safari inset: 0 sigue el alto visible real.
  */
 export default function Loading() {
   return (
     <div
       role="status"
       aria-live="polite"
-      className="flex min-h-[70svh] items-center justify-center px-4"
+      className="fixed inset-0 flex items-center justify-center px-4"
     >
       <div aria-hidden className="rk-cargador">
         <span className="rk-cargador-cohete" />
