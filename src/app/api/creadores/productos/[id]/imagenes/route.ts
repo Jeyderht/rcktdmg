@@ -2,7 +2,7 @@
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { olvidarObjeto } from "@/lib/storage";
-import { dimensionesDesdeUrl } from "@/lib/dimensiones";
+import { dimensionesDeImagenDeRecurso } from "@/lib/dimensiones-recurso";
 import { verifySessionToken } from "@/lib/auth";
 
 type RouteContext = {
@@ -201,7 +201,7 @@ export async function POST(
       porque de estos números depende qué recursos entran en la
       sección de Corporativos.
     */
-    const medida = await dimensionesDesdeUrl(url);
+    const medida = await dimensionesDeImagenDeRecurso(url);
 
     const image = await prisma.productImage.create({
       data: {
