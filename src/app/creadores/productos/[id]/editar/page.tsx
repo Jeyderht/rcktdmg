@@ -15,6 +15,7 @@ import {
   subirImagen,
 } from "@/lib/storage/client-upload";
 import Link from "next/link";
+import InterruptorVistaPrevia from "@/components/creador/InterruptorVistaPrevia";
 import { COLORES } from "@/lib/catalogo";
 import {
   medidaExigidaPara,
@@ -40,6 +41,8 @@ type Product = {
   esPack: boolean;
   tags: string[];
   licenseType: TipoLicencia;
+  /** Vista previa libre (true) o solo para registrados (false). */
+  previewLibre: boolean;
   categoryId: string;
   /*
     La API ya los devolvía; hacían falta aquí para saber qué
@@ -442,6 +445,19 @@ export default function EditarRecursoPage() {
               revisión no pueden modificarse en este momento.
             </p>
           </div>
+
+          {/*
+            La vista previa sí se puede cambiar siempre: no toca el
+            contenido revisado, solo quién ve sus imágenes.
+          */}
+          <section className="mt-4 rk-card p-5 sm:p-6">
+            <p className="rk-eyebrow">Visibilidad</p>
+
+            <InterruptorVistaPrevia
+              productId={product.id}
+              inicial={product.previewLibre}
+            />
+          </section>
         </div>
       </main>
     );
@@ -616,6 +632,18 @@ export default function EditarRecursoPage() {
                 </select>
               </div>
             </div>
+
+            {/*
+              Se guarda al pulsarlo, con su propio endpoint: también
+              en recursos publicados, cuyo formulario solo deja
+              cambiar la portada.
+            */}
+            {product && (
+              <InterruptorVistaPrevia
+                productId={product.id}
+                inicial={product.previewLibre}
+              />
+            )}
           </section>
 
           {/* CATEGORÍA */}
