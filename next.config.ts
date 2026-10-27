@@ -26,6 +26,16 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  /*
+    La copia con marca de agua lee el isotipo de
+    public/marca-agua/ en el servidor. En Vercel, public/ no viaja
+    dentro de las funciones salvo que se pida: sin esto la ruta
+    que genera las copias no encontraría el archivo.
+  */
+  outputFileTracingIncludes: {
+    "/api/uploads/resource-image": ["./public/marca-agua/**"],
+  },
+
   // Oculta el indicador flotante de Dev Tools de Next.js.
   // Es la opción oficial en Next 15.5: el propio tipo indica
   // "To disable, set `devIndicators` to `false`".
