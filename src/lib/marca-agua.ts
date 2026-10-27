@@ -29,7 +29,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import sharp from "sharp";
+import sharp, { type Metadata, type OutputInfo } from "sharp";
 
 /** Ancho máximo de la copia pública; las más pequeñas no se agrandan. */
 export const ANCHO_COPIA = 1080;
@@ -65,6 +65,23 @@ const MARCA = {
   sombraOpacidad: 0.4,
 } as const;
 
+/**
+ * La imagen no se puede convertir: es demasiado grande o no es
+ * una imagen legible. Su mensaje está pensado para enseñarlo tal
+ * cual a quien la subió.
+ */
+export class ImagenNoProcesable extends Error {
+  constructor(mensaje: string) {
+    super(mensaje);
+    this.name = "ImagenNoProcesable";
+  }
+}
+
+const MENSAJE_GRANDE =
+  "La imagen es demasiado grande: como máximo 60 megapíxeles (por ejemplo, 6000 × 10000 px).";
+const MENSAJE_ILEGIBLE =
+  "No se pudo leer la imagen. Usa un archivo JPG, PNG o WEBP válido.";
+
 let isotipo: Promise<string> | null = null;
 
 /** Isotipo blanco en PNG, como data URI para el SVG de la marca. */
@@ -90,20 +107,52 @@ export type CopiaConMarca = {
  * sin metadatos (sharp no copia EXIF si no se le pide) y con
  * las transparencias sobre blanco. JPEG y no WebP porque esta
  * copia también es la og:image, y no todas las redes leen WebP.
+ *
+ * Lanza ImagenNoProcesable si la imagen supera el tope de
+ * píxeles o no se puede leer.
  */
 export async function generarCopiaConMarca(
   original: Buffer
 ): Promise<CopiaConMarca> {
+  // 0. Solo la cabecera, sin descomprimir: tamaño y formato legibles.
+  let medida: Metadata;
+
+  try {
+    medida = await sharp(original).metadata();
+  } catch {
+    throw new ImagenNoProcesable(MENSAJE_ILEGIBLE);
+  }
+
+  if (!medida.width || !medida.height) {
+    throw new ImagenNoProcesable(MENSAJE_ILEGIBLE);
+  }
+
+  if (medida.width * medida.height > MAX_PIXELES_ENTRADA) {
+    throw new ImagenNoProcesable(MENSAJE_GRANDE);
+  }
+
   // 1. Base: girada según su EXIF, a lo sumo ANCHO_COPIA de ancho.
-  const { data: base, info } = await sharp(original, {
-    limitInputPixels: MAX_PIXELES_ENTRADA,
-  })
-    .rotate()
-    .resize({ width: ANCHO_COPIA, withoutEnlargement: true })
-    .flatten({ background: "#ffffff" })
-    .toColourspace("srgb")
-    .png()
-    .toBuffer({ resolveWithObject: true });
+  let base: Buffer;
+  let info: OutputInfo;
+
+  try {
+    ({ data: base, info } = await sharp(original, {
+      // Respaldo del tope: si la cabecera mintiera, sharp se niega.
+      limitInputPixels: MAX_PIXELES_ENTRADA,
+    })
+      .rotate()
+      .resize({ width: ANCHO_COPIA, withoutEnlargement: true })
+      .flatten({ background: "#ffffff" })
+      .toColourspace("srgb")
+      .png()
+      .toBuffer({ resolveWithObject: true }));
+  } catch (error) {
+    throw new ImagenNoProcesable(
+      error instanceof Error && /pixel limit/i.test(error.message)
+        ? MENSAJE_GRANDE
+        : MENSAJE_ILEGIBLE
+    );
+  }
 
   const ancho = info.width;
   const alto = info.height;
