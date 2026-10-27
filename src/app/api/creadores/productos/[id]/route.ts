@@ -6,8 +6,12 @@ import {
   medidaExigidaPara,
   revisarMedidas,
 } from "@/lib/tipos-publicacion";
-import { olvidarObjeto } from "@/lib/storage";
 import { asegurarMiniaturasBloqueadas } from "@/lib/miniatura-bloqueada";
+import {
+  MENSAJE_IMAGEN_NO_ACEPTADA,
+  imagenDeRecursoAceptable,
+  olvidarImagenDeRecurso,
+} from "@/lib/storage/imagenes-recurso";
 import {
   aplicarEtiquetaPack,
   colorValido,
@@ -236,6 +240,14 @@ export async function PATCH(
         );
       }
 
+      // Solo una copia con marca (o la misma que ya tenía).
+      if (!imagenDeRecursoAceptable(nuevaPortada, product.coverUrl)) {
+        return NextResponse.json(
+          { error: MENSAJE_IMAGEN_NO_ACEPTADA },
+          { status: 400 }
+        );
+      }
+
       const categoriaActual = await prisma.category.findUnique({
         where: { id: product.categoryId },
         select: { slug: true, name: true },
@@ -278,7 +290,7 @@ export async function PATCH(
 
       /* La portada vieja deja de estar referenciada. */
       if (anterior && anterior !== nuevaPortada) {
-        await olvidarObjeto(anterior, "publico");
+        await olvidarImagenDeRecurso(anterior);
       }
 
       return NextResponse.json({ product: actualizado });
@@ -385,6 +397,22 @@ export async function PATCH(
     */
     const archivoFinal =
       fileUrl !== undefined ? fileUrl || null : product.fileUrl;
+
+    /*
+      Portada y vista previa nuevas: solo copias con marca de agua.
+      Si llegan iguales a las guardadas se aceptan tal cual, para no
+      romper la edición de otros campos de los recursos de antes de
+      la marca.
+    */
+    if (
+      !imagenDeRecursoAceptable(coverUrl, product.coverUrl) ||
+      !imagenDeRecursoAceptable(previewUrl, product.previewUrl)
+    ) {
+      return NextResponse.json(
+        { error: MENSAJE_IMAGEN_NO_ACEPTADA },
+        { status: 400 }
+      );
+    }
 
     /*
       La portada solo se vuelve a medir si de verdad cambia.
@@ -556,7 +584,7 @@ export async function PATCH(
       for (const anterior of candidatas) {
         if (siguenEnUso.has(anterior)) continue;
 
-        await olvidarObjeto(anterior, "publico");
+        await olvidarImagenDeRecurso(anterior);
       }
     }
 
