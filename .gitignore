@@ -12,6 +12,8 @@ tsconfig.tsbuildinfo
 
 # Archivos locales de desarrollo
 /storage/
+# Copias con marca de agua generadas en local (sus originales van en /storage/)
+/public/product-previews/
 
 # Credenciales y copias de la base de datos: nunca al repo.
 # (backup-productos.sql ya estaba subido antes de esta regla;

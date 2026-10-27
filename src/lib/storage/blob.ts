@@ -16,8 +16,9 @@ import type {
  *    en coverUrl / previewUrl / avatarUrl.
  *
  *  - rcktdmg-files : access "private". Los archivos que se
- *    venden. No tienen URL pública: se leen con get() desde el
- *    servidor y solo después de validar la compra.
+ *    venden y los originales sin marca de las imágenes de
+ *    recurso. No tienen URL pública: se leen con get() desde el
+ *    servidor y solo después de validar quién los pide.
  *
  * Cada almacén tiene su propio token. Nunca se escribe un
  * token en el código ni se imprime en los registros.
@@ -82,11 +83,12 @@ export const blobStorage: StorageAdapter = {
   },
 
   async putPrivate({
+    folder = "products",
     fileName,
     data,
     contentType,
   }: PutPrivateInput): Promise<PutResult> {
-    const pathname = `products/${fileName}`;
+    const pathname = `${folder}/${fileName}`;
 
     const resultado = await put(pathname, data, {
       access: "private",
@@ -118,6 +120,28 @@ export const blobStorage: StorageAdapter = {
       size: resultado.blob.size ?? null,
       contentType: resultado.blob.contentType ?? null,
     };
+  },
+
+  async getPrivateByPath(pathname: string): Promise<PrivateObject | null> {
+    // get() acepta la ruta: el almacén lo decide el token privado.
+    const resultado = await get(pathname, {
+      access: "private",
+      token: tokenPrivado(),
+    });
+
+    if (!resultado || resultado.statusCode !== 200) {
+      return null;
+    }
+
+    return {
+      body: resultado.stream,
+      size: resultado.blob.size ?? null,
+      contentType: resultado.blob.contentType ?? null,
+    };
+  },
+
+  async deletePrivateByPath(pathname: string): Promise<void> {
+    await del(pathname, { token: tokenPrivado() });
   },
 
   async deleteObject(url: string): Promise<void> {
