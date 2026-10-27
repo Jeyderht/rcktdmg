@@ -13,11 +13,10 @@
  *   - Dos líneas blancas en X, de esquina a esquina, que se
  *     cortan en el borde del círculo. Líneas y aro tienen el
  *     mismo grosor: se leen como un solo trazo.
- *   - Un círculo en el centro con la propia imagen desenfocada
- *     detrás, un velo blanco suave encima (para que una zona negra
- *     no deje manchas oscuras) y el isotipo en blanco, centrado.
- *   - Toda la parte blanca al 18 % de opacidad. Sin sombras,
- *     brillos ni degradados: solo blanco.
+ *   - Un círculo en el centro, solo con su aro: dentro, la imagen
+ *     tal cual, sin desenfoque ni velo.
+ *   - Líneas y aro al 14 % de opacidad; el isotipo en blanco,
+ *     centrado, al 30 %. Sin sombras, brillos ni degradados.
  *
  * Todas las medidas son proporciones del ancho de la copia, así
  * que la marca se ve igual en un flyer vertical que en uno
@@ -51,14 +50,11 @@ const MARCA = {
   trazoMinimo: 1,
   /** Diámetro del círculo central. */
   circulo: 0.26,
-  /** Desenfoque gaussiano de la imagen dentro del círculo (sigma). */
-  desenfoque: 0.014,
-  /** Velo blanco sobre la imagen desenfocada del círculo. */
-  velo: 0.28,
-  /** Isotipo, sobre el diámetro del círculo. */
-  isotipo: 0.42,
-  /** Opacidad de toda la parte blanca. */
-  opacidad: 0.18,
+  /** Opacidad del trazo (líneas y aro). */
+  opacidadTrazo: 0.14,
+  /** Isotipo: tamaño sobre el diámetro del círculo y opacidad. */
+  isotipo: 0.48,
+  opacidadIsotipo: 0.3,
 } as const;
 
 /**
@@ -162,28 +158,8 @@ export async function generarCopiaConMarca(
   const radio = diametro / 2;
   const cx = ancho / 2;
   const cy = alto / 2;
-  const izquierda = Math.round(cx - radio);
-  const arriba = Math.round(cy - radio);
 
-  // 2. Disco: la propia imagen desenfocada, con un velo blanco
-  //    encima, recortada en círculo.
-  const circulo = (relleno: string) =>
-    Buffer.from(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${diametro}" height="${diametro}">` +
-        `<circle cx="${radio}" cy="${radio}" r="${radio}" ${relleno}/></svg>`
-    );
-
-  const disco = await sharp(base)
-    .extract({ left: izquierda, top: arriba, width: diametro, height: diametro })
-    .blur(Math.max(0.3, ancho * MARCA.desenfoque))
-    .composite([
-      { input: circulo(`fill="#fff" fill-opacity="${MARCA.velo}"`) },
-      { input: circulo('fill="#fff"'), blend: "dest-in" },
-    ])
-    .png()
-    .toBuffer();
-
-  // 3. Líneas, aro e isotipo, solo en blanco y al 18 %.
+  // 2. Líneas y aro al 14 %, e isotipo al 30 %: solo blanco.
   const lado = diametro * MARCA.isotipo;
 
   const marca = Buffer.from(
@@ -195,24 +171,22 @@ export async function generarCopiaConMarca(
       `<circle cx="${cx}" cy="${cy}" r="${radio}" fill="#000"/>` +
       "</mask>" +
       "</defs>" +
-      // Un solo grupo con la opacidad: donde se tocan no se suma.
-      `<g opacity="${MARCA.opacidad}">` +
+      // Líneas y aro en un solo grupo: donde se tocan no se suma.
+      `<g opacity="${MARCA.opacidadTrazo}">` +
       `<g mask="url(#fuera)" stroke="#fff" stroke-width="${trazo}">` +
       `<line x1="0" y1="0" x2="${ancho}" y2="${alto}"/>` +
       `<line x1="${ancho}" y1="0" x2="0" y2="${alto}"/>` +
       "</g>" +
       // El aro, por dentro del círculo: su borde exterior es donde se cortan las líneas.
       `<circle cx="${cx}" cy="${cy}" r="${radio - trazo / 2}" fill="none" stroke="#fff" stroke-width="${trazo}"/>` +
-      `<image href="${await isotipoBase64()}" x="${cx - lado / 2}" y="${cy - lado / 2}" width="${lado}" height="${lado}"/>` +
-      "</g></svg>"
+      "</g>" +
+      `<image opacity="${MARCA.opacidadIsotipo}" href="${await isotipoBase64()}" x="${cx - lado / 2}" y="${cy - lado / 2}" width="${lado}" height="${lado}"/>` +
+      "</svg>"
   );
 
-  // 4. Todo junto, en JPEG y sin metadatos.
+  // 3. Todo junto, en JPEG y sin metadatos.
   const data = await sharp(base)
-    .composite([
-      { input: disco, left: izquierda, top: arriba },
-      { input: marca, left: 0, top: 0 },
-    ])
+    .composite([{ input: marca, left: 0, top: 0 }])
     .jpeg({ quality: CALIDAD_JPEG, mozjpeg: true })
     .toBuffer();
 
