@@ -2,8 +2,16 @@
  * Borra el recurso de prueba de la marca de agua y TODOS sus
  * archivos de los dos almacenes.
  *
- *   node scripts/borrar-recurso-prueba.mjs --slug <slug>            (prueba: solo lista)
- *   node scripts/borrar-recurso-prueba.mjs --slug <slug> --borrar   (borra)
+ *   node scripts/borrar-recurso-prueba.mjs --id <id>              (prueba: solo lista)
+ *   node scripts/borrar-recurso-prueba.mjs --id <id> --borrar     (borra)
+ *
+ * También vale --slug <slug> en lugar de --id. El id es el de la
+ * URL del panel: /creadores/productos/<id>/editar.
+ *
+ * La base de datos y los tokens son los del entorno: si las
+ * variables DATABASE_URL, BLOB_READ_WRITE_TOKEN y
+ * BLOB_FILES_READ_WRITE_TOKEN ya están definidas al lanzarlo,
+ * mandan sobre .env y .env.local.
  *
  * Qué hace y qué NO hace:
  *
@@ -56,7 +64,11 @@ const HOST_PUBLICO = "public.blob.vercel-storage.com";
 const COPIA = /\/product-previews\/([0-9a-f-]{36})\.jpg$/i;
 
 const args = process.argv.slice(2);
-const slug = args[args.indexOf("--slug") + 1];
+const valorDe = (bandera) =>
+  args.includes(bandera) ? args[args.indexOf(bandera) + 1] : undefined;
+const id = valorDe("--id");
+const slug = valorDe("--slug");
+const clave = id ?? slug;
 const borrar = args.includes("--borrar");
 
 const tokenPublico = process.env.BLOB_READ_WRITE_TOKEN;
@@ -66,8 +78,8 @@ console.log(`\nModo: ${borrar ? "BORRAR" : "PRUEBA (no se borra nada)"}`);
 console.log(`  almacén público : ${tokenPublico ? "PRESENTE" : "AUSENTE"}`);
 console.log(`  almacén privado : ${tokenPrivado ? "PRESENTE" : "AUSENTE"}`);
 
-if (!args.includes("--slug") || !slug || slug.startsWith("--")) {
-  console.error("\nFalta --slug <slug del recurso>.");
+if (!clave || clave.startsWith("--")) {
+  console.error("\nFalta --id <id del recurso> (o --slug <slug>).");
   process.exit(1);
 }
 
@@ -90,7 +102,7 @@ async function existe(ref, token) {
 
 try {
   const producto = await prisma.product.findUnique({
-    where: { slug },
+    where: id ? { id } : { slug },
     select: {
       id: true,
       name: true,
@@ -104,7 +116,9 @@ try {
   });
 
   if (!producto) {
-    console.error(`\nNo hay ningún recurso con el slug «${slug}».`);
+    console.error(
+      `\nNo hay ningún recurso con ${id ? "el id" : "el slug"} «${clave}».`
+    );
     process.exit(1);
   }
 
@@ -193,7 +207,7 @@ try {
 
   fs.writeFileSync(
     salida,
-    JSON.stringify({ slug, id: producto.id, objetos: registro }, null, 2)
+    JSON.stringify({ id: producto.id, objetos: registro }, null, 2)
   );
 
   console.log(`\nRegistro guardado en ${path.relative(RAIZ, salida)}`);
