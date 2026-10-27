@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { dimensionesDesdeUrl } from "@/lib/dimensiones";
+import { dimensionesDeImagenDeRecurso } from "@/lib/dimensiones-recurso";
 import { verifySessionToken } from "@/lib/auth";
 import {
   aplicarEtiquetaPack,
@@ -188,7 +188,7 @@ export async function POST(req: NextRequest) {
     }
 
     const medidaPortada = coverUrl
-      ? await dimensionesDesdeUrl(coverUrl)
+      ? await dimensionesDeImagenDeRecurso(coverUrl)
       : null;
 
     /*
@@ -306,7 +306,7 @@ export async function POST(req: NextRequest) {
 
       for (const [indice, url] of urls.entries()) {
         try {
-          const medida = await dimensionesDesdeUrl(url);
+          const medida = await dimensionesDeImagenDeRecurso(url);
 
           await prisma.productImage.create({
             data: {

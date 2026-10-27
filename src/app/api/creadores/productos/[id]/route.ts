@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { dimensionesDesdeUrl } from "@/lib/dimensiones";
+import { dimensionesDeImagenDeRecurso } from "@/lib/dimensiones-recurso";
 import {
   medidaExigidaPara,
   revisarMedidas,
@@ -238,7 +238,7 @@ export async function PATCH(
         select: { slug: true, name: true },
       });
 
-      const medidas = await dimensionesDesdeUrl(nuevaPortada);
+      const medidas = await dimensionesDeImagenDeRecurso(nuevaPortada);
 
       const problema = revisarMedidas(
         medidaExigidaPara(categoriaActual?.slug, product.pieceType),
@@ -383,7 +383,7 @@ export async function PATCH(
     */
     const medidaPortada =
       coverUrl !== undefined && coverUrl
-        ? await dimensionesDesdeUrl(coverUrl)
+        ? await dimensionesDeImagenDeRecurso(coverUrl)
         : null;
 
     /*
