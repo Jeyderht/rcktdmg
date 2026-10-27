@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { generarCopiaConMarca } from "@/lib/marca-agua";
 
 import { blobStorage, esReferenciaBlob } from "./blob";
-import { driverActual } from "./index";
+import { driverActual, olvidarObjeto } from "./index";
 import { localStorage } from "./local";
 import type { PrivateObject, StorageAdapter } from "./types";
 
@@ -49,6 +49,31 @@ export function idDeCopia(url: string | null | undefined): string | null {
 /** true si la URL ya es una copia con marca de agua. */
 export function esCopiaConMarca(url: string | null | undefined): boolean {
   return idDeCopia(url) !== null;
+}
+
+export const MENSAJE_IMAGEN_NO_ACEPTADA =
+  "Esa imagen no se puede usar: súbela desde el formulario del recurso. No se aceptan URLs externas ni imágenes sin la marca de agua.";
+
+/**
+ * ¿Se puede guardar esta URL como portada, vista previa o imagen
+ * de galería?
+ *
+ *   - Vacía: sí (quitar la imagen sigue permitido).
+ *   - Una copia con marca: sí.
+ *   - La que el recurso ya tenía guardada en ese campo: sí, tal
+ *     cual, para no romper la edición de otros campos de los
+ *     recursos de antes de la marca (se convertirán con el
+ *     relleno).
+ *   - Cualquier otra —una URL externa o una imagen sin marca—: no.
+ */
+export function imagenDeRecursoAceptable(
+  nueva: unknown,
+  actual?: string | null
+): boolean {
+  if (nueva === undefined || nueva === null || nueva === "") return true;
+  if (typeof nueva !== "string") return false;
+
+  return esCopiaConMarca(nueva) || (!!actual && nueva === actual);
 }
 
 /*
@@ -121,6 +146,21 @@ export async function leerOriginal(
   return almacenDeLaCopia(urlCopia).getPrivateByPath(
     `${CARPETA_ORIGINALES}/${id}`
   );
+}
+
+/**
+ * Olvida una imagen de recurso que ya no se usa: una copia con su
+ * original, o una URL de antes de la marca como hasta ahora.
+ */
+export async function olvidarImagenDeRecurso(
+  url: string | null | undefined
+): Promise<void> {
+  if (esCopiaConMarca(url)) {
+    await borrarImagenDeRecurso(url);
+    return;
+  }
+
+  await olvidarObjeto(url, "publico");
 }
 
 /**

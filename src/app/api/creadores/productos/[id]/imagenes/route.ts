@@ -1,7 +1,11 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { olvidarObjeto } from "@/lib/storage";
+import {
+  MENSAJE_IMAGEN_NO_ACEPTADA,
+  esCopiaConMarca,
+  olvidarImagenDeRecurso,
+} from "@/lib/storage/imagenes-recurso";
 import { dimensionesDeImagenDeRecurso } from "@/lib/dimensiones-recurso";
 import { verifySessionToken } from "@/lib/auth";
 
@@ -171,6 +175,14 @@ export async function POST(
         {
           status: 400,
         }
+      );
+    }
+
+    // Solo copias con marca de agua: nunca una URL externa ni un original.
+    if (!esCopiaConMarca(url)) {
+      return NextResponse.json(
+        { error: MENSAJE_IMAGEN_NO_ACEPTADA },
+        { status: 400 }
       );
     }
 
@@ -484,7 +496,7 @@ export async function DELETE(
       objeto inexistente. La imagen ya se comprobó que
       pertenece a este producto.
     */
-    await olvidarObjeto(image.url, "publico");
+    await olvidarImagenDeRecurso(image.url);
 
     return NextResponse.json({
       success: true,

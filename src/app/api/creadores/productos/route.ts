@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { dimensionesDeImagenDeRecurso } from "@/lib/dimensiones-recurso";
+import {
+  MENSAJE_IMAGEN_NO_ACEPTADA,
+  imagenDeRecursoAceptable,
+} from "@/lib/storage/imagenes-recurso";
 import { verifySessionToken } from "@/lib/auth";
 import {
   aplicarEtiquetaPack,
@@ -185,6 +189,27 @@ export async function POST(req: NextRequest) {
 
     if (existingProduct) {
       slug = `${baseSlug}-${Date.now()}`;
+    }
+
+    /*
+      SOLO IMÁGENES CON MARCA DE AGUA
+
+      Portada, vista previa y galería tienen que ser copias con
+      marca generadas por /api/uploads/resource-image. Una URL
+      externa o una imagen sin marca se rechaza entera: nunca se
+      guarda el original limpio como vista pública.
+    */
+    const galeriaRecibida: unknown[] = Array.isArray(imagenes) ? imagenes : [];
+
+    if (
+      !imagenDeRecursoAceptable(coverUrl) ||
+      !imagenDeRecursoAceptable(previewUrl) ||
+      galeriaRecibida.some((url) => !imagenDeRecursoAceptable(url))
+    ) {
+      return NextResponse.json(
+        { error: MENSAJE_IMAGEN_NO_ACEPTADA },
+        { status: 400 }
+      );
     }
 
     const medidaPortada = coverUrl
