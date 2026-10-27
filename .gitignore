@@ -14,6 +14,8 @@ tsconfig.tsbuildinfo
 /storage/
 # Copias con marca de agua generadas en local (sus originales van en /storage/)
 /public/product-previews/
+# Registros del script de borrado del recurso de prueba
+/scripts/borrado-prueba-*.json
 
 # Credenciales y copias de la base de datos: nunca al repo.
 # (backup-productos.sql ya estaba subido antes de esta regla;
