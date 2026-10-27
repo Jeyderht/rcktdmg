@@ -352,6 +352,7 @@ export function aTarjeta(producto: ProductoTarjeta, visor: Visor) {
     coverUrl: imagenes.coverUrl,
     image: imagenes.image,
     bloqueo: imagenes.bloqueo,
+    desbloqueo: imagenes.desbloqueo,
     soloRegistrados: imagenes.soloRegistrados,
     category: producto.category,
     pieceType: producto.pieceType,

@@ -89,11 +89,11 @@
     §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16523–16895
     §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16896–17216
     §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17217–20064
-    §71  BB. INICIO (encargo de la home)                                  20065–20893
-    §72  Inicio · vender más                                              20894–21771
-    §73  Explorar (tienda)                                                21772–22239
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22240–22752
-    §75  Inicios con imágenes (rk-cx-*)                                   22753–24076
+    §71  BB. INICIO (encargo de la home)                                  20065–20931
+    §72  Inicio · vender más                                              20932–21809
+    §73  Explorar (tienda)                                                21810–22277
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22278–22790
+    §75  Inicios con imágenes (rk-cx-*)                                   22791–24114
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -20863,6 +20863,44 @@ html[data-theme] .rk-faq-icon::before {
    la banda final del pie más baja. */
 .rk-card-zoom {
   will-change: transform;
+}
+
+/*
+  DESBLOQUEO (vista previa para miembros, ImagenDesbloqueada.tsx).
+  La imagen real de un recurso solo para registrados, ya con sesión,
+  entra desde la miniatura desenfocada que tiene debajo: opacidad y
+  desenfoque en --rx-t-entrada (300 ms). La marca data-cargada la
+  pone el componente al cargar la imagen. Va después de las reglas
+  de .rk-frame img para que su transición no pise el acercamiento:
+  por eso repite el transform.
+*/
+img.rk-desbloqueo {
+  opacity: 0;
+  filter: blur(12px);
+  transition:
+    opacity var(--rx-t-entrada) var(--rx-curva),
+    filter var(--rx-t-entrada) var(--rx-curva),
+    transform var(--rx-t-entrada) var(--rx-curva);
+}
+
+img.rk-desbloqueo[data-cargada] {
+  opacity: 1;
+  filter: none;
+}
+
+/* Sin movimiento: el cambio es directo. */
+@media (prefers-reduced-motion: reduce) {
+  img.rk-desbloqueo {
+    transition: none;
+  }
+}
+
+/* Sin JavaScript no llega la marca de cargada: se ve directamente. */
+@media (scripting: none) {
+  img.rk-desbloqueo {
+    opacity: 1;
+    filter: none;
+  }
 }
 
 html,

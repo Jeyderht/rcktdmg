@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import PreviewProtegido from "@/components/tienda/PreviewProtegido";
 import VisorStory, { type ImagenStory } from "./VisorStory";
+import type { Desbloqueo } from "@/lib/vista-recurso";
 import { useSwipe } from "@/components/hooks/useSwipe";
 
 type ProductImage = {
@@ -36,6 +37,11 @@ type ProductGalleryProps = {
   coverHeight?: number | null;
   previewUrl: string | null;
   images: ProductImage[];
+  /**
+   * Solo para registrados y ya con sesión: la portada entra con la
+   * transición de desbloqueo (lo decide el servidor, vista-recurso.ts).
+   */
+  desbloqueo?: Desbloqueo | null;
   /** Datos para el modo story. Sin ellos el botón no aparece. */
   story?: {
     id: string;
@@ -67,6 +73,7 @@ export default function ProductGallery({
   previewUrl,
   images: additionalImages,
   story,
+  desbloqueo = null,
 }: ProductGalleryProps) {
   /*
     Cada imagen viaja con su tamaño real cuando se conoce. Sin
@@ -200,7 +207,18 @@ export default function ProductGallery({
             contener={Boolean(selectedImage.ancho && selectedImage.alto)}
             priority
             sizes="(max-width: 1024px) 90vw, 45vw"
-            className="animate-scale-in"
+            /*
+              La portada de un recurso recién desbloqueado entra con
+              su propia transición (opacidad y desenfoque), así que
+              no lleva además la de entrada, que también anima la
+              opacidad.
+            */
+            desbloqueo={selectedImage.key === "cover" ? desbloqueo : null}
+            className={
+              desbloqueo && selectedImage.key === "cover"
+                ? ""
+                : "animate-scale-in"
+            }
           />
 
           {/* CONTROLES: vidrio sobre imagen nítida */}

@@ -10,7 +10,8 @@ import AgregarTarjeta from "@/components/tienda/AgregarTarjeta";
 import FavoriteButton from "@/components/tienda/FavoriteButton";
 import { getPriceDisplay, formatPrice } from "@/lib/pricing";
 import { conDestino } from "@/lib/redireccion";
-import type { BloqueoTarjeta } from "@/lib/vista-recurso";
+import type { BloqueoTarjeta, Desbloqueo } from "@/lib/vista-recurso";
+import ImagenDesbloqueada from "@/components/tienda/ImagenDesbloqueada";
 import { ArrowUpRight, Lock } from "lucide-react";
 
 export type ProductCardData = {
@@ -49,6 +50,11 @@ export type ProductCardData = {
    * Lo decide el servidor (src/lib/vista-recurso.ts).
    */
   bloqueo?: BloqueoTarjeta | null;
+  /**
+   * Solo para registrados y ya con sesión: la imagen real entra con la
+   * transición de desbloqueo, desde la miniatura.
+   */
+  desbloqueo?: Desbloqueo | null;
   /** Etiqueta «Solo registrados»: solo para el creador dueño y la administración. */
   soloRegistrados?: boolean;
 };
@@ -165,6 +171,15 @@ export default function ProductCard({
                 </Link>
               </div>
             </>
+          ) : image && product.desbloqueo ? (
+            <ImagenDesbloqueada
+              miniatura={product.desbloqueo.miniatura}
+              src={image}
+              alt={imageAlt}
+              fill
+              className="rk-card-zoom object-cover"
+              sizes="(max-width: 480px) 45vw, (max-width: 768px) 30vw, (max-width: 1280px) 22vw, 15vw"
+            />
           ) : image ? (
             <Image
               src={image}

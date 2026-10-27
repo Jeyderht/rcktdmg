@@ -43,7 +43,7 @@ import PackCard from "@/components/tienda/PackCard";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 import { getSession } from "@/lib/session";
 import { visorDe } from "@/lib/visor";
-import { imagenVisible } from "@/lib/vista-recurso";
+import { desbloqueoDe, imagenVisible } from "@/lib/vista-recurso";
 import FichaBloqueada from "@/components/tienda/FichaBloqueada";
 import { tieneProducto } from "@/lib/adquisiciones";
 import YaAdquirido from "@/components/tienda/YaAdquirido";
@@ -501,6 +501,11 @@ export default async function ProductPage({
                                 )}
                                 name={product.name}
                                 coverUrl={product.coverUrl}
+                                /*
+                                  Solo para registrados y ya con sesión:
+                                  la portada entra desde la miniatura.
+                                */
+                                desbloqueo={desbloqueoDe(product, visor.haySesion)}
                                 coverWidth={product.coverWidth}
                                 coverHeight={product.coverHeight}
                                 previewUrl={product.previewUrl}

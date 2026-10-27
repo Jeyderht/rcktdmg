@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Lock, X } from "lucide-react";
 
 import FavoriteButton from "@/components/tienda/FavoriteButton";
+import ImagenDesbloqueada from "@/components/tienda/ImagenDesbloqueada";
 import ProductCard, { type ProductCardData } from "@/components/tienda/ProductCard";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 
@@ -82,9 +83,9 @@ export default function GaleriaTienda({
             <li key={p.id} className="rk-galeria-celda">
               <button
                 type="button"
-                className={`rk-galeria-item${libre ? " rk-galeria-libre" : ""}`}
+                className={`rk-galeria-item${libre && !p.desbloqueo ? " rk-galeria-libre" : ""}`}
                 style={
-                  proporcion || bloqueo
+                  proporcion || bloqueo || p.desbloqueo
                     ? { aspectRatio: proporcion ?? "1080 / 1350" }
                     : undefined
                 }
@@ -112,6 +113,16 @@ export default function GaleriaTienda({
                       <Lock size={14} aria-hidden />
                     </span>
                   </>
+                ) : imagen && p.desbloqueo ? (
+                  /* Solo para registrados, ya con sesión: entra desde la miniatura. */
+                  <ImagenDesbloqueada
+                    miniatura={p.desbloqueo.miniatura}
+                    src={imagen}
+                    alt={p.image?.alt || p.name}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                  />
                 ) : imagen && libre ? (
                   <Image
                     src={imagen}
