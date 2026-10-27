@@ -1,6 +1,6 @@
 import type { $Enums } from "@prisma/client";
 
-import type { BloqueoTarjeta } from "@/lib/vista-recurso";
+import type { BloqueoTarjeta, Desbloqueo } from "@/lib/vista-recurso";
 
 /**
  * Colecciones comerciales: parte compartida con el navegador.
@@ -126,6 +126,8 @@ export type ColeccionVista = {
     category: { name: string; slug: string } | null;
     /** Bloqueado (solo para registrados y sin sesión): sin imagen real. */
     bloqueo: BloqueoTarjeta | null;
+    /** Solo para registrados y ya con sesión: entra con la transición. */
+    desbloqueo: Desbloqueo | null;
     soloRegistrados: boolean;
   }[];
   /** Suma de los precios individuales. Referencia, no cobro. */

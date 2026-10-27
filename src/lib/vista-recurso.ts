@@ -131,6 +131,29 @@ export type BloqueoTarjeta = {
 };
 
 /**
+ * Recurso solo para registrados que el servidor ya pinta CON sesión:
+ * la imagen real viene, y entra con la transición de desbloqueo
+ * (ImagenDesbloqueada), desde la miniatura si la hay.
+ */
+export type Desbloqueo = {
+  miniatura: string | null;
+};
+
+/** El desbloqueo de un recurso para este visor, o null si no aplica. */
+export function desbloqueoDe(
+  recurso: RecursoConVistaPrevia,
+  haySesion: boolean
+): Desbloqueo | null {
+  if (recurso.previewLibre || !haySesion) return null;
+
+  return {
+    miniatura: esMiniaturaValida(recurso.miniaturaBloqueada)
+      ? recurso.miniaturaBloqueada
+      : null,
+  };
+}
+
+/**
  * Portada y primera imagen de una tarjeta, ya filtradas para este
  * visor. Si está bloqueada, las dos van a null y solo viaja
  * `bloqueo`; `soloRegistrados` es la etiqueta para el creador
@@ -145,6 +168,7 @@ export function imagenesDeTarjeta<I extends { url: string }>(
   coverUrl: string | null;
   image: I | null;
   bloqueo: BloqueoTarjeta | null;
+  desbloqueo: Desbloqueo | null;
   soloRegistrados: boolean;
 } {
   const visible = imagenVisible(recurso, coverUrl, visor.haySesion);
@@ -153,6 +177,7 @@ export function imagenesDeTarjeta<I extends { url: string }>(
     coverUrl: visible.url,
     image: visible.bloqueada ? null : image,
     bloqueo: visible.bloqueada ? { miniatura: visible.miniatura } : null,
+    desbloqueo: desbloqueoDe(recurso, visor.haySesion),
     soloRegistrados:
       !recurso.previewLibre &&
       (visor.esAdmin ||
