@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { notificarAdmins } from "@/lib/notificaciones";
 import { createSession } from "@/lib/auth";
+import { destinoInterno } from "@/lib/redireccion";
 
 export async function POST(request: Request) {
   try {
@@ -87,10 +88,15 @@ export async function POST(request: Request) {
       role: user.role,
     });
 
+    /*
+      Vuelta a la página de la que llegó, si el formulario la trae y
+      es una ruta interna válida; si no, /mi-cuenta como siempre. Se
+      valida aquí otra vez: lo que diga el navegador no basta.
+    */
     return NextResponse.json(
       {
         ok: true,
-        redirect: "/mi-cuenta",
+        redirect: destinoInterno(body.redirect) ?? "/mi-cuenta",
       },
       {
         status: 201,
