@@ -257,8 +257,13 @@ export default function EditarRecursoPage() {
     }
 
     try {
-      // Con Blob activo la imagen va directa al almacén.
-      const subida = await subirImagen("product-image", file);
+      /*
+        Con Blob activo la imagen va directa al almacén privado y
+        vuelve la URL de su copia con marca de agua. Ya no hay campo
+        para pegar una URL: la portada y la vista previa solo pueden
+        ser imágenes subidas aquí.
+      */
+      const subida = await subirImagen("resource-image", file);
 
       const data = { imageUrl: subida.url };
 
@@ -947,25 +952,6 @@ export default function EditarRecursoPage() {
                     </div>
                   );
                 })()}
-
-                <div className="mt-5">
-                  <label
-                    htmlFor="coverUrl"
-                    className="rk-eyebrow mb-2 block"
-                  >
-                    O usa una URL
-                  </label>
-
-                  <input
-                    id="coverUrl"
-                    value={coverUrl}
-                    onChange={(e) =>
-                      setCoverUrl(e.target.value)
-                    }
-                    placeholder="https://..."
-                    className="rk-input w-full"
-                  />
-                </div>
               </div>
 
               <div className="border-t border-line/10" />
@@ -1021,25 +1007,6 @@ export default function EditarRecursoPage() {
                       ? "Cambiar preview"
                       : "Subir preview"}
                 </label>
-
-                <div className="mt-5">
-                  <label
-                    htmlFor="previewUrl"
-                    className="rk-eyebrow mb-2 block"
-                  >
-                    O usa una URL
-                  </label>
-
-                  <input
-                    id="previewUrl"
-                    value={previewUrl}
-                    onChange={(e) =>
-                      setPreviewUrl(e.target.value)
-                    }
-                    placeholder="https://..."
-                    className="rk-input w-full"
-                  />
-                </div>
               </div>
             </div>
           </section>

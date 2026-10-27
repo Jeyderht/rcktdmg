@@ -163,8 +163,8 @@ export default function EditarImagenesPage() {
     setMessage("");
 
     try {
-      // Con Blob activo la imagen va directa al almacén.
-      const subida = await subirImagen("product-image", file);
+      // Con Blob activo va al almacén privado; vuelve la copia con marca.
+      const subida = await subirImagen("resource-image", file);
 
       const data = { imageUrl: subida.url };
 
@@ -235,7 +235,7 @@ export default function EditarImagenesPage() {
 
       for (const file of filesToUpload) {
         const subida = await subirImagen(
-          "product-image",
+          "resource-image",
           file
         );
 
