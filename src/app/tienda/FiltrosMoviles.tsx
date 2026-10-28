@@ -191,7 +191,7 @@ export default function FiltrosMoviles({
         <button
           type="button"
           onClick={() => abrir("filtros")}
-          className="rk-btn rk-btn-line"
+          className="rk-btn rk-btn-line rk-filtro-acceso"
         >
           <SlidersHorizontal size={15} />
           Filtros
@@ -205,7 +205,7 @@ export default function FiltrosMoviles({
         <button
           type="button"
           onClick={() => abrir("orden")}
-          className="rk-btn rk-btn-line"
+          className="rk-btn rk-btn-line rk-filtro-acceso"
         >
           <ArrowUpDown size={15} />
           <span>{ordenActual.etiqueta}</span>
