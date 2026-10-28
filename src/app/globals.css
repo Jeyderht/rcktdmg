@@ -22180,15 +22180,26 @@ html[data-theme] .rk-footer-marca::before {
   min-height: 44px;
 }
 
-/* iOS Safari pinta la lengüeta del botón «line» (::after) por encima
-   del borde, y su sombra hacia arriba tapaba el centro del borde
-   inferior de «Filtros» y «Más recientes». Se recorta solo la franja
-   de 2 px donde va ese borde, con su antialias (justo encima de la
-   lengüeta, que empieza al ras del botón); el resto de la sombra y
-   la lengüeta quedan igual. */
-.rk-explorar .rk-filter-bar .rk-btn.rk-btn-line::after {
-  -webkit-clip-path: polygon(evenodd, -40px -40px, calc(100% + 40px) -40px, calc(100% + 40px) calc(100% + 40px), -40px calc(100% + 40px), -40px -40px, -40px -2px, calc(100% + 40px) -2px, calc(100% + 40px) 0, -40px 0, -40px -2px);
-  clip-path: polygon(evenodd, -40px -40px, calc(100% + 40px) -40px, calc(100% + 40px) calc(100% + 40px), -40px calc(100% + 40px), -40px -40px, -40px -2px, calc(100% + 40px) -2px, calc(100% + 40px) 0, -40px 0, -40px -2px);
+/* «Filtros» y «Más recientes» (rk-filtro-acceso): sin cristal ni
+   lengüeta. En iPhone el borde inferior de estos dos botones salía
+   cortado; aquí van con fondo sólido (el de la página) y su borde de
+   1 px completo. El resto de botones line no cambia. La barra deja
+   2 px de aire debajo y no recorta nada. */
+.rk-explorar .rk-filter-bar {
+  overflow: visible;
+  padding-bottom: 2px;
+}
+
+.rk-explorar .rk-filter-bar .rk-btn.rk-btn-line.rk-filtro-acceso {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 9999px;
+  background: rgb(var(--rk-background));
+}
+
+.rk-explorar .rk-filter-bar .rk-btn.rk-btn-line.rk-filtro-acceso::before,
+.rk-explorar .rk-filter-bar .rk-btn.rk-btn-line.rk-filtro-acceso::after {
+  content: none;
 }
 
 /* contador con aire propio; la línea, a 16 px del texto (4 de
