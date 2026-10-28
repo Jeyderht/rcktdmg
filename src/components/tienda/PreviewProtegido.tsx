@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import ImagenDesbloqueada from "@/components/tienda/ImagenDesbloqueada";
 import type { Desbloqueo } from "@/lib/vista-recurso";
+import { esUrlVersionLimpia } from "@/lib/imagen-limpia-comun";
 
 /**
  * Imagen pública con marca de agua.
@@ -64,6 +65,13 @@ export default function PreviewProtegido({
     "arriba-derecha": "top-2 right-2",
   }[esquina];
 
+  /*
+    La versión limpia se sirve con la sesión de quien la pide; el
+    optimizador de Next la pediría sin cookies y recibiría un 401. Va
+    tal cual, también en la transición de desbloqueo.
+  */
+  const sinOptimizador = esUrlVersionLimpia(src);
+
   return (
     <>
       {/*
@@ -89,6 +97,7 @@ export default function PreviewProtegido({
           fill
           priority={priority}
           sizes={sizes}
+          unoptimized={sinOptimizador}
           className={`${contener ? "object-contain" : "object-cover"} ${className}`}
         />
       ) : (
@@ -98,6 +107,7 @@ export default function PreviewProtegido({
           fill
           priority={priority}
           sizes={sizes}
+          unoptimized={sinOptimizador}
           className={`${contener ? "object-contain" : "object-cover"} ${className}`}
         />
       )}
