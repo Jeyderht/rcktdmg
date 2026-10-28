@@ -531,7 +531,7 @@ function NavbarContent() {
         </div>
 
         {/* NAVEGACIÓN SECUNDARIA EN TABLET */}
-        <nav className="mx-auto mt-2 hidden max-w-7xl items-center gap-1 overflow-x-auto px-1 sm:flex xl:hidden">
+        <nav className="mx-auto mt-2 hidden max-w-7xl items-center gap-1 overflow-x-auto px-[var(--rk-pagina-gutter)] sm:flex xl:hidden">
           <Link
             href="/"
             aria-current={isActive("/") ? "page" : undefined}

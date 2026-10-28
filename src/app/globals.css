@@ -6070,11 +6070,18 @@ table .rk-btn:hover:not(:disabled) {
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── J1. BARRA ──────────────────────────────────────────────────────── */
+/* Margen lateral de la web: el mismo que el contenido de las páginas
+   (px-4 sm:px-5 lg:px-8 dentro de max-w-7xl). Cabecera, separador y pie
+   lo usan para empezar en el mismo borde que el contenido. */
+:root { --rk-pagina-gutter: 16px; }
+@media (min-width: 640px) { :root { --rk-pagina-gutter: 20px; } }
+@media (min-width: 1024px) { :root { --rk-pagina-gutter: 32px; } }
+
 .rk-topbar {
   position: sticky;
   top: 0;
   z-index: 40;
-  padding: 0 12px;
+  padding: 0;
 }
 
 /*
@@ -6156,7 +6163,7 @@ table .rk-btn:hover:not(:disabled) {
   gap: 8px;
   max-width: 80rem;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 var(--rk-pagina-gutter);
   border: 0;
   background: none;
 }
@@ -11573,7 +11580,8 @@ table .rk-btn:hover:not(:disabled) {
 
 .rk-footer {
   margin-top: 64px;
-  padding: 16px 16px 28px;
+  /* el borde (1px) más este relleno = el margen lateral de la web */
+  padding: 16px calc(var(--rk-pagina-gutter) - 1px) 28px;
   border: 1px solid var(--rk-linea);
   border-bottom: 0;
   border-radius: 32px 32px 0 0;
@@ -11588,13 +11596,15 @@ table .rk-btn:hover:not(:disabled) {
 
 @media (min-width: 1024px) {
   .rk-footer {
-    padding: 20px 20px 32px;
+    padding: 20px calc(var(--rk-pagina-gutter) - 1px) 32px;
   }
 }
 
+/* el contenido del pie empieza en el mismo borde que el de las páginas
+   (max-w-7xl menos su margen lateral) */
 .rk-footer-inner {
   width: 100%;
-  max-width: 80rem;
+  max-width: calc(80rem - 2 * var(--rk-pagina-gutter));
   margin: 0 auto;
 }
 
@@ -11899,7 +11909,7 @@ table .rk-btn:hover:not(:disabled) {
   place-items: end center;
   /* banda baja: el logo queda pegado abajo y cortado */
   height: clamp(88px, 13vw, 150px);
-  margin: 28px -16px -28px;
+  margin: 28px calc(1px - var(--rk-pagina-gutter)) -28px;
   padding-top: 26px;
   /* degradado parejo, sin centro blanco */
   background: linear-gradient( 90deg, rgb(var(--rk-banda-ext)) 0%, rgb(var(--rk-banda-centro)) 42%, rgb(var(--rk-banda-centro)) 68%, rgb(var(--rk-banda-ext)) 100% );
@@ -11984,7 +11994,7 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 @media (min-width: 1024px) {
-  .rk-footer-marca { margin: 32px -20px -32px; padding-top: 32px; }
+  .rk-footer-marca { margin: 32px calc(1px - var(--rk-pagina-gutter)) -32px; padding-top: 32px; }
   .rk-footer-marca::before { height: 32px; border-radius: 0 0 32px 32px; }
   .rk-footer-marca-logo { width: clamp(280px, 25vw, 360px); }
 }
@@ -15199,7 +15209,7 @@ div.rk-upload-error > * + * {
   gap: 10px;
   max-width: 80rem;
   margin: 56px auto 0;
-  padding: 0 16px;
+  padding: 0 var(--rk-pagina-gutter);
   color: rgb(var(--rk-foreground) / 0.35);
 }
 
