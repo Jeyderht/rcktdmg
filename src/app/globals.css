@@ -15161,6 +15161,13 @@ div.rk-upload-error > * + * {
   animation: rk-cargador-entrar 0.35s ease-out 0.1s both;
 }
 
+/* el cargador va fixed (loading.tsx): sin el min-height: 100vh del body,
+   que en Safari mide más que la pantalla visible, no queda nada que
+   desplazar mientras carga */
+body:has(.rk-cargador) {
+  min-height: 0;
+}
+
 @keyframes rk-cargador-entrar {
   from { opacity: 0; }
 }
