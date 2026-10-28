@@ -7,7 +7,6 @@ import {
   themeInitScript,
 } from "@/components/layout/ThemeProvider";
 import RevelarAlEntrar from "@/components/ui/RevelarAlEntrar";
-import { SCRIPT_DIAGNOSTICO_HIDRATACION } from "@/lib/diagnostico-hidratacion";
 import { SITIO, absoluta, urlBase } from "@/lib/seo";
 
 /*
@@ -119,11 +118,6 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{ __html: themeInitScript }}
         />
-
-        {/* DIAGNÓSTICO TEMPORAL (#418): solo en vistas previas de Vercel. Se quita antes de unir. */}
-        {process.env.VERCEL_ENV === "preview" && (
-          <script dangerouslySetInnerHTML={{ __html: SCRIPT_DIAGNOSTICO_HIDRATACION }} />
-        )}
       </head>
 
       <body className={`${sora.variable} antialiased`}>
