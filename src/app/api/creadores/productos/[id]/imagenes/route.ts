@@ -1,8 +1,12 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { olvidarObjeto } from "@/lib/storage";
-import { dimensionesDesdeUrl } from "@/lib/dimensiones";
+import {
+  MENSAJE_IMAGEN_NO_ACEPTADA,
+  esCopiaConMarca,
+  olvidarImagenDeRecurso,
+} from "@/lib/storage/imagenes-recurso";
+import { dimensionesDeImagenDeRecurso } from "@/lib/dimensiones-recurso";
 import { verifySessionToken } from "@/lib/auth";
 
 type RouteContext = {
@@ -174,6 +178,14 @@ export async function POST(
       );
     }
 
+    // Solo copias con marca de agua: nunca una URL externa ni un original.
+    if (!esCopiaConMarca(url)) {
+      return NextResponse.json(
+        { error: MENSAJE_IMAGEN_NO_ACEPTADA },
+        { status: 400 }
+      );
+    }
+
     const existingCount = await prisma.productImage.count({
       where: {
         productId: product.id,
@@ -201,7 +213,7 @@ export async function POST(
       porque de estos números depende qué recursos entran en la
       sección de Corporativos.
     */
-    const medida = await dimensionesDesdeUrl(url);
+    const medida = await dimensionesDeImagenDeRecurso(url);
 
     const image = await prisma.productImage.create({
       data: {
@@ -484,7 +496,7 @@ export async function DELETE(
       objeto inexistente. La imagen ya se comprobó que
       pertenece a este producto.
     */
-    await olvidarObjeto(image.url, "publico");
+    await olvidarImagenDeRecurso(image.url);
 
     return NextResponse.json({
       success: true,

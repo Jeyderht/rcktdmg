@@ -716,6 +716,7 @@ export default function NuevoRecursoForm({
             <div className="grid gap-5 sm:grid-cols-2">
               <SubidorImagen
                 id="portada"
+                tipo="resource-image"
                 etiqueta="Portada"
                 /*
                   Qué ficha de requisitos se enseña: la de la
@@ -743,6 +744,7 @@ export default function NuevoRecursoForm({
 
               <SubidorImagen
                 id="preview"
+                tipo="resource-image"
                 etiqueta="Vista previa"
                 requisito="preview"
                 valor={preview}
@@ -834,6 +836,7 @@ export default function NuevoRecursoForm({
 
               <SubidorImagen
                 id="galeria"
+                tipo="resource-image"
                 etiqueta="Imagen de galería"
                 requisito="galeria"
                 valor={null}
