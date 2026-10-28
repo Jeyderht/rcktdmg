@@ -41,9 +41,9 @@ const ICONO_CATEGORIA = {
 
 const ICONO_PESTANA = { recientes: Clock, populares: Heart, packs: Layers } as const;
 
-const SALIDA_MS = 500;
-const HUECO_MS = 80;
-const ENTRADA_MS = 700;
+const SALIDA_MS = 160;
+const HUECO_MS = 0;
+const ENTRADA_MS = 240;
 
 /** Flechas, Inicio y Fin en un tablist: devuelve el índice nuevo o null. */
 function teclaTablist(evento: KeyboardEvent, actual: number, total: number) {
@@ -71,13 +71,15 @@ function teclaTablist(evento: KeyboardEvent, actual: number, total: number) {
  * en el servidor con ProductCard / ColeccionCard.
  *
  * Al cambiar de categoría el ancho de los botones se anima
- * (600 ms) y el panel hace salida (500 ms, opacidad y blur),
- * hueco (80 ms, aquí cambian los datos) y entrada (700 ms). Al
- * cambiar de pestaña, lo mismo solo con descripción y tarjetas;
- * el subrayado se desliza 550 ms. El panel no es una tarjeta: va
- * a todo el ancho, con las pestañas sobre una línea fina.
- * Los clics de en medio se ignoran. Con reducir movimiento,
- * todo es instantáneo. Eventos sale elegida en cada carga.
+ * (300 ms) y el panel hace salida (160 ms, opacidad y blur),
+ * cambia los datos sin hueco y entra (240 ms). Al cambiar de
+ * pestaña, lo mismo solo con descripción y tarjetas; el
+ * subrayado se desliza 280 ms. El panel no es una tarjeta: va a
+ * todo el ancho, con las pestañas sobre una línea fina.
+ * Un toque en mitad de una animación la cancela y salta ya a lo
+ * tocado: no se espera ni se apilan animaciones. Con reducir
+ * movimiento, todo es instantáneo. Eventos sale elegida en cada
+ * carga.
  */
 export default function CatalogoCategorias({ categorias }: { categorias: CategoriaInicio[] }) {
   const [categoria, setCategoria] = useState(0);
@@ -87,6 +89,16 @@ export default function CatalogoCategorias({ categorias }: { categorias: Categor
 
   const ocupado = useRef(false);
   const riel = useRef<HTMLDivElement>(null);
+
+  /*
+    Relevo en curso: sus temporizadores, el cambio que aún no se
+    ha aplicado y adónde va. Un toque nuevo compara con el destino,
+    no con lo que se ve, para poder volver atrás a mitad.
+  */
+  const temporizadores = useRef<number[]>([]);
+  const pendiente = useRef<(() => void) | null>(null);
+  const destinoCategoria = useRef(0);
+  const destinoPestana = useRef(0);
 
   const actual = categorias[categoria];
   const pestanas = actual.pestanas;
@@ -135,25 +147,53 @@ export default function CatalogoCategorias({ categorias }: { categorias: Categor
     };
   }, [medir]);
 
-  function relevo(tipo: "fuera-todo" | "fuera-tarjetas", cambiar: () => void) {
-    if (ocupado.current) return;
-    ocupado.current = true;
+  function programar(fn: () => void, ms: number) {
+    temporizadores.current.push(window.setTimeout(fn, ms));
+  }
 
+  function cancelarRelevo() {
+    temporizadores.current.forEach((t) => window.clearTimeout(t));
+    temporizadores.current = [];
+  }
+
+  // Sin temporizadores sueltos si el catálogo se desmonta a mitad.
+  useEffect(() => cancelarRelevo, []);
+
+  function relevo(tipo: "fuera-todo" | "fuera-tarjetas", cambiar: () => void) {
     const reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (reducido) {
       cambiar();
-      ocupado.current = false;
       return;
     }
 
+    /*
+      Toque a mitad de un relevo: se cancela lo que quedaba, se
+      aplica el cambio que estaba esperando (si aún no se había
+      hecho) y el nuevo, y el panel entra ya. Nada se apila.
+    */
+    if (ocupado.current) {
+      cancelarRelevo();
+      pendiente.current?.();
+      pendiente.current = null;
+      cambiar();
+      setFase("quieto");
+      programar(() => {
+        ocupado.current = false;
+      }, ENTRADA_MS);
+      return;
+    }
+
+    ocupado.current = true;
+    pendiente.current = cambiar;
     setFase(tipo);
 
-    window.setTimeout(() => {
+    programar(() => {
+      pendiente.current = null;
       cambiar();
-      window.setTimeout(() => {
+      programar(() => {
         setFase("quieto");
-        window.setTimeout(() => {
+        programar(() => {
           ocupado.current = false;
         }, ENTRADA_MS);
       }, HUECO_MS);
@@ -161,7 +201,10 @@ export default function CatalogoCategorias({ categorias }: { categorias: Categor
   }
 
   function elegirCategoria(indice: number) {
-    if (indice === categoria || ocupado.current) return;
+    if (indice === destinoCategoria.current) return;
+
+    destinoCategoria.current = indice;
+    destinoPestana.current = 0;
 
     relevo("fuera-todo", () => {
       setCategoria(indice);
@@ -170,7 +213,9 @@ export default function CatalogoCategorias({ categorias }: { categorias: Categor
   }
 
   function elegirPestana(indice: number) {
-    if (indice === pestana || ocupado.current) return;
+    if (indice === destinoPestana.current) return;
+
+    destinoPestana.current = indice;
 
     relevo("fuera-tarjetas", () => setPestana(indice));
   }
