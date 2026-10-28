@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, TAG_PACK, aTarjeta } from "@/lib/catalogo";
 import { packsPorIds, type PackVista } from "@/lib/packs";
+import { tipoPorClave } from "@/lib/tipos-publicacion";
 import type {
   BloqueRecomendaciones,
   Recomendacion,
@@ -309,6 +310,27 @@ function puntuar(
 
 /* ══════════════ CONSULTA ══════════════ */
 
+/*
+  Eventos y el resto del catálogo no se mezclan en las
+  sugerencias de la ficha: quien mira un flyer de una fiesta
+  quiere otros flyers de fiestas, y quien mira contenido para
+  redes o corporativo no los quiere. El slug sale del tipo de
+  publicación, que es quien lo define.
+*/
+const SLUG_EVENTOS = tipoPorClave("EVENTO")?.categoriaSlug ?? null;
+
+type GrupoCategoria = "eventos" | "resto";
+
+function filtroDeGrupo(
+  grupo: GrupoCategoria | undefined
+): Prisma.ProductWhereInput {
+  if (!grupo || !SLUG_EVENTOS) return {};
+
+  return grupo === "eventos"
+    ? { category: { slug: SLUG_EVENTOS } }
+    : { category: { slug: { not: SLUG_EVENTOS } } };
+}
+
 /**
  * Trae el conjunto de candidatos.
  *
@@ -320,14 +342,20 @@ function puntuar(
  * Nunca entran recursos que no sean PUBLISHED: los borradores,
  * los que están en revisión, los rechazados y los archivados
  * quedan fuera por el `where`.
+ *
+ * Con `grupo`, solo entran los de ese grupo (Eventos o el
+ * resto) en las dos consultas, para que el tope de POOL no se
+ * llene de recursos que luego se descartarían.
  */
 async function traerCandidatos(
   excluir: string[],
-  preferirCategoria?: string
+  preferirCategoria?: string,
+  grupo?: GrupoCategoria
 ): Promise<Candidato[]> {
   const where: Prisma.ProductWhereInput = {
     status: "PUBLISHED",
     ...(excluir.length > 0 ? { id: { notIn: excluir } } : {}),
+    ...filtroDeGrupo(grupo),
   };
 
   /*
@@ -514,11 +542,17 @@ export async function paraProducto(
  * ficha ya carga la galería del recurso. Diez es suficiente
  * para que la tira nunca se vea vacía y poco para que no
  * compita con lo que el cliente vino a ver.
+ *
+ * Filtro duro por grupo: de un recurso de Eventos solo se
+ * sugieren otros de Eventos; de cualquier otra categoría, nunca
+ * de Eventos. Si hay pocos se muestran menos, sin rellenar con
+ * el otro grupo.
  */
 export async function sugerenciasDeFicha(
   producto: {
     id: string;
     categoryId: string;
+    categoriaSlug: string;
     creatorId: string;
     fileFormat: string | null;
     color: string | null;
@@ -530,7 +564,11 @@ export async function sugerenciasDeFicha(
 ): Promise<Recomendacion[]> {
   const [usuario, candidatos] = await Promise.all([
     senalesDe(userId),
-    traerCandidatos([producto.id], producto.categoryId),
+    traerCandidatos(
+      [producto.id],
+      producto.categoryId,
+      producto.categoriaSlug === SLUG_EVENTOS ? "eventos" : "resto"
+    ),
   ]);
 
   const referencia: Referencia = {
