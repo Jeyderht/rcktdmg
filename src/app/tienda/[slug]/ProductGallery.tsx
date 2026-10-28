@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import PreviewProtegido from "@/components/tienda/PreviewProtegido";
 import VisorStory, { type ImagenStory } from "./VisorStory";
+import { esUrlVersionLimpia } from "@/lib/imagen-limpia-comun";
 import { useSwipe } from "@/components/hooks/useSwipe";
 
 type ProductImage = {
@@ -292,6 +293,8 @@ export default function ProductGallery({
                   src={image.url}
                   alt={image.label}
                   fill
+                  // Versión limpia: va con la sesión, sin el optimizador.
+                  unoptimized={esUrlVersionLimpia(image.url)}
                   className="object-cover"
                   sizes="80px"
                 />

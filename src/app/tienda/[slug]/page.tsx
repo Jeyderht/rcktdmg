@@ -42,6 +42,7 @@ import {
 import PackCard from "@/components/tienda/PackCard";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 import { getSession } from "@/lib/session";
+import { puedeVerVersionLimpia, urlVersionLimpia } from "@/lib/imagen-limpia";
 import { tieneProducto } from "@/lib/adquisiciones";
 import YaAdquirido from "@/components/tienda/YaAdquirido";
 
@@ -261,6 +262,20 @@ export default async function ProductPage({
      */
     const session = await getSession();
 
+    /*
+      VERSIÓN LIMPIA (sin marca de agua), solo en esta ficha.
+
+      Quien lo compró —mismo criterio que la descarga—, el creador
+      dueño y la administración ven el original del almacén privado
+      en la galería y en el visor Story. Para el resto, la copia
+      con marca de siempre. og:image, JSON-LD, carrito y tarjetas
+      siguen usando la copia pública. La ruta vuelve a comprobar el
+      permiso en cada imagen.
+    */
+    const versionLimpia = await puedeVerVersionLimpia(session, product);
+    const imagenDeGaleria = (url: string | null) =>
+        versionLimpia && url ? urlVersionLimpia(product.id, url) ?? url : url;
+
     const packsConEste = await packsQueIncluyen(product.id);
 
     /*
@@ -460,11 +475,14 @@ export default async function ProductPage({
                                 product.pieceType
                             )}
                             name={product.name}
-                            coverUrl={product.coverUrl}
+                            coverUrl={imagenDeGaleria(product.coverUrl)}
                             coverWidth={product.coverWidth}
                             coverHeight={product.coverHeight}
-                            previewUrl={product.previewUrl}
-                            images={product.images}
+                            previewUrl={imagenDeGaleria(product.previewUrl)}
+                            images={product.images.map((imagen) => ({
+                                ...imagen,
+                                url: imagenDeGaleria(imagen.url) ?? imagen.url,
+                            }))}
                             /*
                               Datos del modo story. El creador
                               solo se enlaza si tiene perfil

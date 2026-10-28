@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { esUrlVersionLimpia } from "@/lib/imagen-limpia-comun";
+
 /**
  * Imagen pública con marca de agua.
  *
@@ -78,6 +80,12 @@ export default function PreviewProtegido({
         fill
         priority={priority}
         sizes={sizes}
+        /*
+          La versión limpia se sirve con la sesión de quien la pide;
+          el optimizador de Next la pediría sin cookies y recibiría un
+          401. Va tal cual.
+        */
+        unoptimized={esUrlVersionLimpia(src)}
         className={`${contener ? "object-contain" : "object-cover"} ${className}`}
       />
 

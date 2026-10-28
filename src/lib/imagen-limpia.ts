@@ -18,6 +18,7 @@
 import { prisma } from "@/lib/prisma";
 import { licenciaRetirada } from "@/lib/licencias";
 import type { SessionData } from "@/lib/session";
+import { RUTA_VERSION_LIMPIA } from "@/lib/imagen-limpia-comun";
 import { idDeCopia } from "@/lib/storage/imagenes-recurso";
 
 /** ¿Puede esta sesión ver el original sin marca de este recurso? */
@@ -56,10 +57,5 @@ export function urlVersionLimpia(
 ): string | null {
   const id = idDeCopia(urlCopia);
 
-  return id ? `/api/imagenes/limpia/${productId}/${id}` : null;
-}
-
-/** true si la URL es de la versión limpia (se sirve sin optimizar). */
-export function esUrlVersionLimpia(url: string): boolean {
-  return url.startsWith("/api/imagenes/limpia/");
+  return id ? `${RUTA_VERSION_LIMPIA}${productId}/${id}` : null;
 }
