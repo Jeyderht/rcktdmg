@@ -12581,6 +12581,9 @@ div.rk-upload-error > * + * {
 /* ── cuerpo centrado ────────────────────────────────────────────────── */
 .rk-hero-body {
   display: grid;
+  /* la columna no crece con su contenido: las pestañas que no caben se
+     desplazan dentro de su barra en vez de ensanchar todo el perfil */
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: 6px;
   padding: 36px 20px 0;
@@ -12656,7 +12659,8 @@ div.rk-upload-error > * + * {
 
 .rk-hero-bio {
   display: -webkit-box;
-  max-width: 44ch;
+  max-width: min(44ch, 100%);
+  overflow-wrap: anywhere;
   margin: 8px 0 0;
   overflow: hidden;
   color: rgb(var(--rk-muted));
