@@ -9,6 +9,7 @@
     "postinstall": "prisma generate",
     "lint": "eslint .",
     "test": "tsx --test src/lib/redireccion.test.ts src/lib/vista-previa-permisos.test.ts",
+    "test:db": "tsx --test --experimental-test-module-mocks src/app/api/creadores/productos/route.test.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
