@@ -65,35 +65,35 @@
     §44  AH. PIE DE PÁGINA  ·  rk-footer-*                                11563–11997
     §45  AI. TABLAS DEL PANEL (admin · creador)  ·  rk-row-card · rk-tabl 11998–12255
     §46  AJ. AJUSTE GENERAL · el resto de páginas toma el estilo nuevo    12256–12464
-    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12465–12845
-    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12846–13327
-    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13328–13596
-    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13597–13675
-    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13676–13833
-    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13834–13951
-    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13952–14000
-    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 14001–14036
-    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      14037–14372
-    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14373–14426
-    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14427–14782
-    §58  AV · CTA final con la modelo (estilo hero)                       14783–14836
-    §59  AW · Ecosistema: fila con núcleo hexagonal                       14837–15099
-    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          15100–15174
-    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      15175–15192
-    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15193–15249
-    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15250–15380
-    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15381–15700
-    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15701–16056
-    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        16057–16312
-    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16313–16526
-    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16527–16899
-    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16900–17220
-    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17221–20068
-    §71  BB. INICIO (encargo de la home)                                  20069–20897
-    §72  Inicio · vender más                                              20898–21775
-    §73  Explorar (tienda)                                                21776–22243
-    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22244–22756
-    §75  Inicios con imágenes (rk-cx-*)                                   22757–24080
+    §47  AK. PERFIL PÚBLICO DEL CREADOR  ·  rk-hero-*                     12465–12841
+    §48  AL. PANEL DEL CREADOR (tablero)  ·  rk-dash-*                    12842–13323
+    §49  AE. COLORES DE MARCA  ·  frío → centro → cálido                  13324–13592
+    §50  AM. PIEZAS FINALES  ·  rk-step-index · rk-toast-mini · rk-check- 13593–13671
+    §51  AN. VISOR DE HISTORIAS  ·  rk-story-*  ·  rk-btn-added           13672–13829
+    §52  AO. BANDA ÓNICE EN TEMA CLARO  ·  .rk-onyx                       13830–13947
+    §53  AP. FAQ (enlaces) Y CERRAR SESIÓN  ·  rk-faq-a a · rk-btn-logout 13948–13996
+    §54  AQ. BOTONES DE ICONO DE LA BARRA SUPERIOR  ·  .rk-topbar-actions 13997–14032
+    §55  AR. CATEGORÍAS COMO CARPETA  ·  rk-folder-*                      14033–14368
+    §56  AS. ETIQUETAS Y BOTONES SOBRE IMÁGENES · .rk-glass-on-image      14369–14422
+    §57  AT. SLIDER DE PORTADAS DEL INICIO  ·  rk-promo-*                 14423–14778
+    §58  AV · CTA final con la modelo (estilo hero)                       14779–14832
+    §59  AW · Ecosistema: fila con núcleo hexagonal                       14833–15095
+    §60  AX. PANTALLA DE CARGA (app/loading.tsx)                          15096–15170
+    §61  AY. ISOTIPO (components/layout/Isotipo.tsx)                      15171–15188
+    §62  AZ. SEPARADOR ANTES DEL PIE (Footer.tsx)                         15189–15245
+    §63  BA. TIENDA EN GALERÍA (app/tienda/GaleriaTienda.tsx)             15246–15376
+    §64  rk-vacio · Estado vacío con ilustración (VacioCaja.tsx)          15377–15696
+    §65  rk-hc · Hero «Todo lo que necesitas para crear mejor»            15697–16052
+    §66  rk-rol · Interruptor de rol en la barra superior (Navbar)        16053–16308
+    §67  rk-sp · Slider de portadas a todo el ancho (SliderPortadas.tsx)  16309–16522
+    §68  rk-qb · «¿Qué estás buscando?» (QueBuscas.tsx)                   16523–16895
+    §69  rk-cc · Catálogo por categoría del inicio (CatalogoCategorias.ts 16896–17216
+    §70  BC. DASHBOARD DEL ADMIN (app/admin/page.tsx)                     17217–20064
+    §71  BB. INICIO (encargo de la home)                                  20065–20893
+    §72  Inicio · vender más                                              20894–21771
+    §73  Explorar (tienda)                                                21772–22239
+    §74  Marco de app de la cuenta (PanelShell / PanelNav)                22240–22752
+    §75  Inicios con imágenes (rk-cx-*)                                   22753–24076
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
