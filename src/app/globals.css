@@ -22661,11 +22661,15 @@ body:has(.rk-galeria-modal) .rk-dock {
   color: rgb(var(--rk-muted));
 }
 
-/* «Explorar la tienda»: solo el icono en móvil */
+/* «Explorar la tienda»: solo el icono en móvil, redondo de 40 × 40
+   como los demás botones de la barra (rk-btn-compact sube a 44 de
+   alto con puntero táctil y lo dejaba ovalado) */
 @media (max-width: 639px) {
   .rk-app-explorar {
     width: 40px;
     min-width: 40px;
+    height: 40px;
+    min-height: 40px;
     padding: 0;
   }
 
