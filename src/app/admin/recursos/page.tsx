@@ -121,6 +121,11 @@ export default async function RecursosAdminPage({
       label: "Borradores",
       count: countFor("DRAFT"),
     },
+    {
+      value: "ARCHIVED",
+      label: "Archivados",
+      count: countFor("ARCHIVED"),
+    },
   ];
 
   /*

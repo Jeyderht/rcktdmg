@@ -5,6 +5,7 @@ import { redirect, notFound } from "next/navigation";
 import { ChevronLeft, ExternalLink } from "lucide-react";
 
 import ResourceActions from "../ResourceActions";
+import GestionRecurso from "../GestionRecurso";
 import { verifySessionToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { claseProporcion } from "@/lib/tipos-publicacion";
@@ -37,6 +38,7 @@ async function pesoDe(url: string | null): Promise<string> {
 }
 import { COLORES, TAG_PACK } from "@/lib/catalogo";
 import { claseInsigniaEstado } from "@/lib/estado-recurso";
+import { esTagProtegido } from "@/lib/tags";
 
 type Props = {
   params: Promise<{
@@ -90,6 +92,38 @@ export default async function AdminRecursoPage({ params }: Props) {
   if (!resource) {
     notFound();
   }
+
+  /*
+    GESTIÓN (publicados y archivados): datos del formulario y de la
+    confirmación de archivar. Solo cuentan los packs y colecciones
+    publicados, que son los que siguen vendiéndose.
+  */
+  const gestionable =
+    resource.status === "PUBLISHED" || resource.status === "ARCHIVED";
+
+  const [categoriasActivas, etiquetasRecurso, enPacks, enColecciones] =
+    gestionable
+      ? await Promise.all([
+          prisma.category.findMany({
+            where: { OR: [{ isActive: true }, { id: resource.categoryId }] },
+            orderBy: { name: "asc" },
+            select: { id: true, name: true },
+          }),
+          prisma.productTag.findMany({
+            where: { productId: resource.id },
+            select: { tag: { select: { name: true, slug: true } } },
+          }),
+          prisma.packItem.count({
+            where: { productId: resource.id, pack: { status: "PUBLISHED" } },
+          }),
+          prisma.commercialCollectionItem.count({
+            where: {
+              productId: resource.id,
+              collection: { status: "PUBLISHED" },
+            },
+          }),
+        ])
+      : [[], [], 0, 0];
 
   const colorEtiqueta =
     COLORES.find((c) => c.valor === resource.color)?.etiqueta ?? null;
@@ -436,7 +470,17 @@ export default async function AdminRecursoPage({ params }: Props) {
         </section>
 
         <section className="rk-fade-up mt-8">
-          <p className="rk-eyebrow">Archivos</p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="rk-eyebrow">Archivos</p>
+
+            {/* El archivo se reemplaza publicando una versión nueva. */}
+            <Link
+              href={`/creadores/productos/${resource.id}/versiones`}
+              className="text-[13px] font-medium underline underline-offset-4"
+            >
+              Reemplazar archivo (versiones)
+            </Link>
+          </div>
 
           <div className="rk-divider mt-3" />
 
@@ -466,6 +510,31 @@ export default async function AdminRecursoPage({ params }: Props) {
             ))}
           </div>
         </section>
+
+        {/* ========== GESTIÓN (publicados y archivados) ========== */}
+        {gestionable && (
+          <section className="rk-fade-up mt-8">
+            <p className="rk-eyebrow">Gestión</p>
+
+            <div className="rk-divider mt-3" />
+
+            <GestionRecurso
+              id={resource.id}
+              nombre={resource.name}
+              descripcion={resource.description}
+              precio={Number(resource.price).toFixed(2)}
+              categoryId={resource.categoryId}
+              categorias={categoriasActivas}
+              etiquetas={etiquetasRecurso
+                .map((t) => t.tag)
+                .filter((t) => !esTagProtegido(t.slug))
+                .map((t) => t.name)}
+              status={resource.status === "ARCHIVED" ? "ARCHIVED" : "PUBLISHED"}
+              enPacks={enPacks}
+              enColecciones={enColecciones}
+            />
+          </section>
+        )}
 
         {/* ========== MODERACIÓN ========== */}
         <section className="rk-fade-up mt-8">
