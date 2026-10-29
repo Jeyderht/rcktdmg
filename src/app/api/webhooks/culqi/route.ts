@@ -4,6 +4,8 @@ import { timingSafeEqual } from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import { fulfillPaidOrder } from "@/lib/orders";
 import { sincronizarLicenciasDePedido } from "@/lib/licencias";
+import { compararImporte } from "@/lib/importe-pago";
+import { notificarAdmins } from "@/lib/notificaciones";
 
 export const runtime = "nodejs";
 
@@ -127,6 +129,64 @@ export async function POST(request: Request) {
     const status = String(orderData?.status || "");
 
     if (status === "paid") {
+      const pedido = await prisma.order.findUnique({
+        where: { id: payment.orderId },
+        select: { status: true, total: true },
+      });
+
+      // Evento repetido: el pedido ya está pagado y no se toca.
+      if (!pedido || pedido.status === "PAID") {
+        return NextResponse.json(
+          { success: true, message: "Pedido ya procesado." },
+          { status: 200 }
+        );
+      }
+
+      /*
+        IMPORTE Y MONEDA
+
+        Solo se da por pagado si el evento trae el mismo importe
+        (en céntimos) y la misma moneda con que se creó la orden.
+        Si no, el pedido sigue sin pagar, se registra con los dos
+        importes y se avisa a la administración. Se responde 200
+        para que la pasarela no reintente sin fin un evento que no
+        va a cambiar.
+      */
+      const importe = compararImporte(orderData, pedido.total);
+
+      if (!importe.ok) {
+        console.warn("Webhook de pago: importe o moneda no coinciden.", {
+          orderId: payment.orderId,
+          transaccion: String(culqiOrderId),
+          motivo: importe.motivo,
+          esperadoCentimos: importe.esperadoCentimos,
+          recibidoCentimos: importe.recibidoCentimos,
+          monedaRecibida: importe.monedaRecibida,
+        });
+
+        const yaAvisado = await prisma.notification.findFirst({
+          where: { type: "SYSTEM", body: { contains: payment.orderId } },
+          select: { id: true },
+        });
+
+        if (!yaAvisado) {
+          const soles = (c: number | null) =>
+            c === null ? "un importe no válido" : `S/ ${(c / 100).toFixed(2)}`;
+
+          await notificarAdmins({
+            type: "SYSTEM",
+            title: "Pago con importe distinto al del pedido",
+            body: `Pedido ${payment.orderId}: se esperaban ${soles(importe.esperadoCentimos)} (PEN) y la pasarela confirmó ${soles(importe.recibidoCentimos)} (${importe.monedaRecibida ?? "sin moneda"}). No se marcó como pagado.`,
+            href: "/admin",
+          });
+        }
+
+        return NextResponse.json(
+          { success: false, error: "El importe no coincide con el pedido." },
+          { status: 200 }
+        );
+      }
+
       await prisma.payment.update({
         where: {
           id: payment.id,
