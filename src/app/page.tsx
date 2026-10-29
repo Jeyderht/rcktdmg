@@ -34,6 +34,7 @@ import {
   datosQueBuscas,
 } from "@/lib/home";
 import { portadasActivas } from "@/lib/portadas";
+import { visorActual } from "@/lib/visor";
 import { SITIO, absoluta, paginaPublica } from "@/lib/seo";
 import { IconoBuscar } from "@/components/iconos";
 import PlaceholderAnimado from "@/components/layout/PlaceholderAnimado";
@@ -115,6 +116,9 @@ export default async function Home() {
    * No hay cifras, productos, categorías ni creadores de
    * ejemplo: si algo no existe, su sección no se pinta.
    */
+  /* Quién mira: decide qué tarjetas van bloqueadas (vista-recurso.ts). */
+  const visor = await visorActual();
+
   const [
     creadoresHome,
     promos,
@@ -136,27 +140,32 @@ export default async function Home() {
     datosQueBuscas(),
 
     /* Catálogo por categoría: 4 categorías, hasta 8 por pestaña. */
-    datosCatalogoInicio(),
+    datosCatalogoInicio(visor),
   ]);
 
   /*
     Carrusel del hero: solo flyers de EVENTOS, los 7 más recientes
-    con imagen. Sin relleno: con 1 o 2 flyers se ven 1 o 2.
+    con imagen. Sin relleno: con 1 o 2 flyers se ven 1 o 2. Es un
+    escaparate, no una tarjeta: solo entran los de vista previa
+    libre, para todos, y un recurso solo para registrados no sale.
   */
-  const flyers: FlyerCarrusel[] = catalogo.eventos.recientes.slice(0, 7).flatMap((p) => {
-    const imagen = p.coverUrl || p.images[0]?.url;
+  const flyers: FlyerCarrusel[] = catalogo.eventos.recientes
+    .filter((p) => p.previewLibre)
+    .slice(0, 7)
+    .flatMap((p) => {
+      const imagen = p.coverUrl || p.images[0]?.url;
 
-    return imagen
-      ? [{
-          id: p.id,
-          slug: p.slug,
-          name: p.name,
-          price: Number(p.price),
-          imagen,
-          creador: p.creator.publicName || p.creator.name || "Creador",
-        }]
-      : [];
-  });
+      return imagen
+        ? [{
+            id: p.id,
+            slug: p.slug,
+            name: p.name,
+            price: Number(p.price),
+            imagen,
+            creador: p.creator.publicName || p.creator.name || "Creador",
+          }]
+        : [];
+    });
 
   /* «Populares ahora»: los tres primeros términos reales. */
   const populares = destacadosBusqueda.slice(0, 3);
@@ -394,7 +403,7 @@ export default async function Home() {
           pestañas Recientes / Populares / Packs. Eventos sale
           elegida en cada carga.
         */}
-        <CatalogoInicio datos={catalogo} />
+        <CatalogoInicio datos={catalogo} visor={visor} />
 
         <SeparadorSeccion />
 

@@ -31,6 +31,8 @@ type Product = {
   /** Con ella se elige el marco: 9:16 solo si es una story. */
   pieceType: TipoPieza | null;
   previewUrl: string | null;
+  /** false = «Solo registrados» (solo lo ve su creador aquí). */
+  previewLibre?: boolean;
   category: {
     name: string;
     /** Decide la proporción de la miniatura. */
@@ -357,6 +359,12 @@ export default function RecursosPage() {
                           >
                             {status.label}
                           </span>
+
+                          {product.previewLibre === false && (
+                            <span className="rk-badge rk-badge-neutral mt-1 ml-1">
+                              Solo registrados
+                            </span>
+                          )}
                         </div>
                       </div>
 

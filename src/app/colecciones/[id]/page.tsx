@@ -8,6 +8,7 @@ import Navbar from "@/components/layout/Navbar";
 import ProductCard from "@/components/tienda/ProductCard";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
+import { visorActual } from "@/lib/visor";
 import { noEncontrado, paginaPrivada } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -78,7 +79,10 @@ export default async function ColeccionPublicaPage({
 }: PageProps) {
   const { id } = await params;
 
-  const coleccion = await obtenerColeccion(id);
+  const [coleccion, visor] = await Promise.all([
+    obtenerColeccion(id),
+    visorActual(),
+  ]);
 
   if (!coleccion) {
     notFound();
@@ -143,7 +147,7 @@ export default async function ColeccionPublicaPage({
         ) : (
           <div className="rk-fade-up mt-8 rk-rejilla">
             {coleccion.items.map(({ product }) => (
-              <ProductCard key={product.id} product={aTarjeta(product)} />
+              <ProductCard key={product.id} product={aTarjeta(product, visor)} />
             ))}
           </div>
         )}

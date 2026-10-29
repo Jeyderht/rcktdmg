@@ -108,6 +108,8 @@ export async function GET(
         fileFormat: product.fileFormat,
         color: product.color,
         licenseType: product.licenseType,
+        // Vista previa libre o solo para registrados (vista-recurso.ts).
+        previewLibre: product.previewLibre,
         esPack: product.tags.some((fila) => fila.tag.slug === TAG_PACK),
         // Solo las descriptivas: `pack` se maneja aparte.
         tags: tagsVisibles(product.tags.map((fila) => fila.tag)).map(

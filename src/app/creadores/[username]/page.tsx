@@ -26,6 +26,7 @@ import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { CATEGORIA_EVENTOS } from "@/lib/home";
 import { estadoSeguimiento } from "@/lib/seguidores";
 import { getSession } from "@/lib/session";
+import { visorDe } from "@/lib/visor";
 import { noEncontrado, paginaPublica } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -522,7 +523,7 @@ export default async function CreatorPublicProfile({
                 {recursos.map((product) => (
                   <ProductCard
                     key={product.id}
-                    product={aTarjeta(product)}
+                    product={aTarjeta(product, visorDe(session))}
                   />
                 ))}
               </div>

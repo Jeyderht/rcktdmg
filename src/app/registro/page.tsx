@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { IconoUsuario } from "@/components/iconos";
 import Isotipo from "@/components/layout/Isotipo";
 import { CLAVE_BIENVENIDA } from "@/components/cuenta/BienvenidaCuenta";
+import { conDestino, destinoDeBusqueda } from "@/lib/redireccion";
 
 export default function RegistroPage() {
   const router = useRouter();
@@ -17,6 +18,17 @@ export default function RegistroPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [verPassword, setVerPassword] = useState(false);
+
+  /*
+    Página a la que volver tras crear la cuenta (?redirect=). Se
+    envía al servidor, que la vuelve a validar y la devuelve como
+    destino; sin ella, /mi-cuenta como siempre.
+  */
+  const [destino, setDestino] = useState<string | null>(null);
+
+  useEffect(() => {
+    setDestino(destinoDeBusqueda(window.location.search));
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,6 +46,7 @@ export default function RegistroPage() {
           name,
           email,
           password,
+          redirect: destinoDeBusqueda(window.location.search),
         }),
       });
 
@@ -85,7 +98,7 @@ export default function RegistroPage() {
 
         <div className="rk-auth-card rk-enter rk-enter-1">
           <nav className="rk-tabs rk-tabs-track" aria-label="Acceso">
-            <Link href="/login" className="rk-tab">
+            <Link href={conDestino("/login", destino)} className="rk-tab">
               Iniciar sesión
             </Link>
 

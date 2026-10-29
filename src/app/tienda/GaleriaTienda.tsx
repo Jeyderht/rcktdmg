@@ -4,9 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Lock, X } from "lucide-react";
 
 import FavoriteButton from "@/components/tienda/FavoriteButton";
+import ImagenDesbloqueada from "@/components/tienda/ImagenDesbloqueada";
 import ProductCard, { type ProductCardData } from "@/components/tienda/ProductCard";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 
@@ -70,17 +71,59 @@ export default function GaleriaTienda({
           const imagen = p.coverUrl || p.image?.url || null;
           const proporcion = proporcionDeRecurso(p.category?.slug, p.pieceType);
           const libre = Boolean(imagen) && !proporcion;
+          /*
+            Bloqueada (solo para registrados, sin sesión): no llega
+            imagen real. Miniatura desenfocada y candado; al tocarla
+            se abre la tarjeta bloqueada, con su botón de registro.
+            Sin medida natural, el marco 4:5 del catálogo.
+          */
+          const bloqueo = p.bloqueo ?? null;
 
           return (
             <li key={p.id} className="rk-galeria-celda">
               <button
                 type="button"
-                className={`rk-galeria-item${libre ? " rk-galeria-libre" : ""}`}
-                style={proporcion ? { aspectRatio: proporcion } : undefined}
+                className={`rk-galeria-item${libre && !p.desbloqueo ? " rk-galeria-libre" : ""}`}
+                style={
+                  proporcion || bloqueo || p.desbloqueo
+                    ? { aspectRatio: proporcion ?? "1080 / 1350" }
+                    : undefined
+                }
                 onClick={() => setAbierto(i)}
-                aria-label={`${p.name}: ver precio e información`}
+                aria-label={
+                  bloqueo
+                    ? `${p.name}: vista previa para miembros`
+                    : `${p.name}: ver precio e información`
+                }
               >
-                {imagen && libre ? (
+                {bloqueo ? (
+                  <>
+                    {bloqueo.miniatura && (
+                      <Image
+                        src={bloqueo.miniatura}
+                        alt=""
+                        aria-hidden
+                        fill
+                        unoptimized
+                        className="object-cover"
+                      />
+                    )}
+
+                    <span className="rk-glass-on-image absolute left-1/2 top-1/2 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full">
+                      <Lock size={14} aria-hidden />
+                    </span>
+                  </>
+                ) : imagen && p.desbloqueo ? (
+                  /* Solo para registrados, ya con sesión: entra desde la miniatura. */
+                  <ImagenDesbloqueada
+                    miniatura={p.desbloqueo.miniatura}
+                    src={imagen}
+                    alt={p.image?.alt || p.name}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                  />
+                ) : imagen && libre ? (
                   <Image
                     src={imagen}
                     alt={p.image?.alt || p.name}

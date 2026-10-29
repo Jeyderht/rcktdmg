@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { claseProporcion } from "@/lib/tipos-publicacion";
 import { requireRole } from "@/lib/session";
 import ResourceActions from "./ResourceActions";
+import { CasillaRecurso, ProveedorSeleccion } from "./SeleccionVistaPrevia";
 import { claseInsigniaEstado } from "@/lib/estado-recurso";
 
 export const metadata: Metadata = {
@@ -221,115 +222,128 @@ export default async function RecursosAdminPage({
           />
         </div>
       ) : (
-        <section className="rk-fade-up rk-enter-2 mt-5 space-y-3">
-          {visibleResources.map((resource) => {
-            const image =
-              resource.coverUrl || resource.images[0]?.url || null;
+        /*
+          Selección para la acción masiva de «vista previa libre»:
+          casillas en cada recurso y la barra con la acción.
+        */
+        <ProveedorSeleccion ids={visibleResources.map((r) => r.id)}>
+          <section className="rk-fade-up rk-enter-2 mt-5 space-y-3">
+            {visibleResources.map((resource) => {
+              const image =
+                resource.coverUrl || resource.images[0]?.url || null;
 
-            return (
-              <article
-                key={resource.id}
-                className={`rk-card p-4 sm:p-5 ${
-                  STATUS_EDGE[resource.status] || ""
-                }`}
-              >
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+              return (
+                <article
+                  key={resource.id}
+                  className={`rk-card p-4 sm:p-5 ${
+                    STATUS_EDGE[resource.status] || ""
+                  }`}
+                >
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+                    <CasillaRecurso id={resource.id} nombre={resource.name} />
 
-                  {/*
-                    El marco lo decide la pieza: 9:16 solo si
-                    es una story, 4:5 para el resto. La imagen
-                    sigue nítida y `cover` recorta, no estira.
-                  */}
-                  <div
-                    className={`rk-media ${claseProporcion(
-                      {
-                      categoriaSlug: resource.category.slug,
-                      pieceType: resource.pieceType,
-                    }
-                    )} relative w-20 shrink-0 overflow-hidden rounded-rk-sm sm:w-24`}
-                  >
-                    {image ? (
-                      <Image
-                        src={image}
-                        alt={resource.name}
-                        fill
-                        className="object-cover"
-                        sizes="96px"
-                      />
-                    ) : (
-                      <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
-                        RcktX
-                      </span>
-                    )}
-                  </div>
-
-                  {/* DATOS */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-[15px] font-semibold leading-snug">
-                        {resource.name}
-                      </h2>
-
-                      <span
-                        className={`rk-badge ${
-                          claseInsigniaEstado(resource.status)
-                        }`}
-                      >
-                        {STATUS_LABEL[resource.status]}
-                      </span>
-                    </div>
-
-                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-ink/60">
-                      {resource.description}
-                    </p>
-
-                    {/* Motivo real del rechazo. */}
-                    {resource.status === "REJECTED" &&
-                      resource.rejectionReason && (
-                        <p className="rk-upload-error mt-3">
-                          <span className="font-medium">
-                            Motivo del rechazo:
-                          </span>{" "}
-                          {resource.rejectionReason}
-                        </p>
-                      )}
-
-                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink/60">
-                      <span className="truncate">
-                        {resource.creator.name || "Sin nombre"}
-                        <span className="text-ink/60">
-                          {" · "}
-                          {resource.creator.email}
+                    {/*
+                      El marco lo decide la pieza: 9:16 solo si
+                      es una story, 4:5 para el resto. La imagen
+                      sigue nítida y `cover` recorta, no estira.
+                    */}
+                    <div
+                      className={`rk-media ${claseProporcion(
+                        {
+                        categoriaSlug: resource.category.slug,
+                        pieceType: resource.pieceType,
+                      }
+                      )} relative w-20 shrink-0 overflow-hidden rounded-rk-sm sm:w-24`}
+                    >
+                      {image ? (
+                        <Image
+                          src={image}
+                          alt={resource.name}
+                          fill
+                          className="object-cover"
+                          sizes="96px"
+                        />
+                      ) : (
+                        <span className="flex h-full items-center justify-center text-[9px] uppercase tracking-[0.2em] text-ink/45">
+                          RcktX
                         </span>
-                      </span>
+                      )}
+                    </div>
 
-                      <span>{resource.category.name}</span>
+                    {/* DATOS */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="text-[15px] font-semibold leading-snug">
+                          {resource.name}
+                        </h2>
 
-                      <span className="font-medium tabular-nums text-ink/60">
-                        S/ {Number(resource.price).toFixed(2)}
-                      </span>
+                        <span
+                          className={`rk-badge ${
+                            claseInsigniaEstado(resource.status)
+                          }`}
+                        >
+                          {STATUS_LABEL[resource.status]}
+                        </span>
 
-                      <span>
-                        {new Intl.DateTimeFormat("es-PE", {
-                          dateStyle: "medium",
-                        }).format(resource.createdAt)}
-                      </span>
+                        {!resource.previewLibre && (
+                          <span className="rk-badge rk-badge-neutral">
+                            Solo registrados
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-ink/60">
+                        {resource.description}
+                      </p>
+
+                      {/* Motivo real del rechazo. */}
+                      {resource.status === "REJECTED" &&
+                        resource.rejectionReason && (
+                          <p className="rk-upload-error mt-3">
+                            <span className="font-medium">
+                              Motivo del rechazo:
+                            </span>{" "}
+                            {resource.rejectionReason}
+                          </p>
+                        )}
+
+                      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink/60">
+                        <span className="truncate">
+                          {resource.creator.name || "Sin nombre"}
+                          <span className="text-ink/60">
+                            {" · "}
+                            {resource.creator.email}
+                          </span>
+                        </span>
+
+                        <span>{resource.category.name}</span>
+
+                        <span className="font-medium tabular-nums text-ink/60">
+                          S/ {Number(resource.price).toFixed(2)}
+                        </span>
+
+                        <span>
+                          {new Intl.DateTimeFormat("es-PE", {
+                            dateStyle: "medium",
+                          }).format(resource.createdAt)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* ACCIONES */}
+                    <div className="shrink-0 lg:pt-1">
+                      <ResourceActions
+                        resourceId={resource.id}
+                        resourceSlug={resource.slug}
+                        status={resource.status}
+                      />
                     </div>
                   </div>
-
-                  {/* ACCIONES */}
-                  <div className="shrink-0 lg:pt-1">
-                    <ResourceActions
-                      resourceId={resource.id}
-                      resourceSlug={resource.slug}
-                      status={resource.status}
-                    />
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </section>
+                </article>
+              );
+            })}
+          </section>
+        </ProveedorSeleccion>
       )}
     </main>
   );

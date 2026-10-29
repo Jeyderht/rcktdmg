@@ -1,4 +1,9 @@
 import type { Prisma } from "@prisma/client";
+import {
+  SELECCION_VISTA_PREVIA,
+  imagenesDeTarjeta,
+  type Visor,
+} from "@/lib/vista-recurso";
 
 /**
  * Filtros y orden del catálogo, en un solo sitio.
@@ -283,6 +288,8 @@ export function construirWhere(
 /** Campos que necesitan las tarjetas, sin traer de más. */
 export const SELECCION_TARJETA = {
   id: true,
+  /* Vista previa libre o solo para registrados (vista-recurso.ts). */
+  ...SELECCION_VISTA_PREVIA,
   name: true,
   slug: true,
   price: true,
@@ -322,15 +329,31 @@ type ProductoTarjeta = Prisma.ProductGetPayload<{
   select: typeof SELECCION_TARJETA;
 }>;
 
-/** Traduce una fila de Prisma a las props de ProductCard. */
-export function aTarjeta(producto: ProductoTarjeta) {
+/**
+ * Traduce una fila de Prisma a las props de ProductCard.
+ *
+ * El visor es obligatorio: decide si la tarjeta lleva la imagen
+ * real o va bloqueada (solo para registrados y sin sesión). Una
+ * tarjeta bloqueada no lleva ninguna URL real, solo la miniatura.
+ */
+export function aTarjeta(producto: ProductoTarjeta, visor: Visor) {
+  const imagenes = imagenesDeTarjeta(
+    producto,
+    producto.coverUrl,
+    producto.images[0] ?? null,
+    visor
+  );
+
   return {
     id: producto.id,
     name: producto.name,
     slug: producto.slug,
     price: Number(producto.price),
-    coverUrl: producto.coverUrl,
-    image: producto.images[0] ?? null,
+    coverUrl: imagenes.coverUrl,
+    image: imagenes.image,
+    bloqueo: imagenes.bloqueo,
+    desbloqueo: imagenes.desbloqueo,
+    soloRegistrados: imagenes.soloRegistrados,
     category: producto.category,
     pieceType: producto.pieceType,
     fileFormat: producto.fileFormat,

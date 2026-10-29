@@ -94,6 +94,7 @@
     §73  Explorar (tienda)                                                21772–22239
     §74  Marco de app de la cuenta (PanelShell / PanelNav)                22240–22752
     §75  Inicios con imágenes (rk-cx-*)                                   22753–24076
+    §76  Vista previa al subir (rk-vp-*)                                  24116–24335
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -20865,6 +20866,44 @@ html[data-theme] .rk-faq-icon::before {
   will-change: transform;
 }
 
+/*
+  DESBLOQUEO (vista previa para miembros, ImagenDesbloqueada.tsx).
+  La imagen real de un recurso solo para registrados, ya con sesión,
+  entra desde la miniatura desenfocada que tiene debajo: opacidad y
+  desenfoque en --rx-t-entrada (300 ms). La marca data-cargada la
+  pone el componente al cargar la imagen. Va después de las reglas
+  de .rk-frame img para que su transición no pise el acercamiento:
+  por eso repite el transform.
+*/
+img.rk-desbloqueo {
+  opacity: 0;
+  filter: blur(12px);
+  transition:
+    opacity var(--rx-t-entrada) var(--rx-curva),
+    filter var(--rx-t-entrada) var(--rx-curva),
+    transform var(--rx-t-entrada) var(--rx-curva);
+}
+
+img.rk-desbloqueo[data-cargada] {
+  opacity: 1;
+  filter: none;
+}
+
+/* Sin movimiento: el cambio es directo. */
+@media (prefers-reduced-motion: reduce) {
+  img.rk-desbloqueo {
+    transition: none;
+  }
+}
+
+/* Sin JavaScript no llega la marca de cargada: se ve directamente. */
+@media (scripting: none) {
+  img.rk-desbloqueo {
+    opacity: 1;
+    filter: none;
+  }
+}
+
 html,
 body {
   overflow-x: clip !important;
@@ -24126,6 +24165,227 @@ a.rk-cx-badge:focus-visible,
   .rk-cx-qr,
   .rk-cx-sel,
   a.rk-cx-badge {
+    transition: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   §76 · Vista previa al subir (rk-vp-*)
+   Elección «¿Quién puede ver la vista previa?» del formulario de
+   recurso nuevo (NuevoRecursoForm). Dos tarjetas con radio real,
+   en dos columnas también en móvil. Las miniaturas son solo CSS:
+   la imagen con el aro de la marca de agua, o desenfocada con el
+   candado. Pasado del artifact «Subir con vista previa»; solo
+   tokens.
+   ══════════════════════════════════════════════════════════ */
+.rk-vp {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rk-vp legend {
+  margin-bottom: 12px;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.rk-vp-opts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* el radio real cubre la tarjeta entera: se pulsa en cualquier punto */
+.rk-vp-o {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.rk-vp-o input {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.rk-vp-c {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding: 12px;
+  border: 1.5px solid rgb(var(--rk-ink) / 0.14);
+  border-radius: 20px;
+  background: rgb(var(--rk-surface));
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.rk-vp-o input:checked + .rk-vp-c {
+  border-color: rgb(var(--rk-ink));
+  box-shadow: 0 0 0 1px rgb(var(--rk-ink));
+}
+
+.rk-vp-o input:focus-visible + .rk-vp-c {
+  outline: 2px solid rgb(var(--rk-ink));
+  outline-offset: 3px;
+}
+
+/* miniatura: un recurso de muestra con la escala de la marca */
+.rk-vp-th {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  border-radius: 12px;
+  background: linear-gradient(
+    160deg,
+    rgb(var(--rk-marca-tinta)),
+    rgb(var(--rk-marca-centro)) 55%,
+    rgb(var(--rk-marca-calido))
+  );
+}
+
+.rk-vp-im {
+  position: absolute;
+  inset: 0;
+}
+
+.rk-vp-im::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    60% 50% at 50% 40%,
+    rgb(var(--pal-blanco) / 0.25),
+    transparent 70%
+  );
+}
+
+.rk-vp-im::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 38%;
+  bottom: 16%;
+  height: 9%;
+  border-radius: 99px;
+  background: rgb(var(--pal-blanco) / 0.45);
+}
+
+/* solo con cuenta: la misma imagen, desenfocada */
+.rk-vp-im[data-borrosa] {
+  inset: -10px;
+  filter: blur(9px);
+}
+
+/* el aro de la marca de agua, con el cohete dentro */
+.rk-vp-aro {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34%;
+  aspect-ratio: 1;
+  border: 1.5px solid rgb(var(--pal-blanco) / 0.6);
+  border-radius: 50%;
+  color: rgb(var(--pal-blanco) / 0.6);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.rk-vp-aro svg {
+  width: 48%;
+  height: 48%;
+}
+
+.rk-vp-lock {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgb(var(--pal-blanco) / 0.5);
+  border-radius: 50%;
+  color: rgb(var(--pal-blanco));
+  background: rgb(var(--pal-negro) / 0.35);
+}
+
+.rk-vp-t {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* indicador del radio (el real es invisible y cubre la tarjeta) */
+.rk-vp-dot {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgb(var(--rk-ink) / 0.35);
+  border-radius: 50%;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+
+.rk-vp-o input:checked + .rk-vp-c .rk-vp-dot {
+  border-color: rgb(var(--rk-ink));
+  background: rgb(var(--rk-ink));
+}
+
+.rk-vp-o input:checked + .rk-vp-c .rk-vp-dot::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(var(--rk-surface));
+}
+
+.rk-vp-p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgb(var(--rk-ink) / 0.66);
+}
+
+.rk-vp-tag {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 2px 8px;
+  border: 1px solid rgb(var(--rk-ink) / 0.25);
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rk-vp-n {
+  margin: 12px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgb(var(--rk-ink) / 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-vp-c,
+  .rk-vp-dot {
     transition: none;
   }
 }

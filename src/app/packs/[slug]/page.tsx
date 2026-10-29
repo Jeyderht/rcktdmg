@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/tienda/ProductCard";
 import AddPackToCartButton from "./AddPackToCartButton";
 import { obtenerPackPublico } from "@/lib/packs";
+import { visorActual } from "@/lib/visor";
 import { formatPrice } from "@/lib/pricing";
 import {
   absoluta,
@@ -65,7 +66,7 @@ export async function generateMetadata({
 export default async function PackPage({ params }: PackPageProps) {
   const { slug } = await params;
 
-  const pack = await obtenerPackPublico(slug);
+  const pack = await obtenerPackPublico(slug, await visorActual());
 
   if (!pack) {
     notFound();

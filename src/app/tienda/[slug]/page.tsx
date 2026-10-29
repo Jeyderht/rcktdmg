@@ -42,6 +42,9 @@ import {
 import PackCard from "@/components/tienda/PackCard";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 import { getSession } from "@/lib/session";
+import { visorDe } from "@/lib/visor";
+import { desbloqueoDe, imagenVisible } from "@/lib/vista-recurso";
+import FichaBloqueada from "@/components/tienda/FichaBloqueada";
 import { tieneProducto } from "@/lib/adquisiciones";
 import YaAdquirido from "@/components/tienda/YaAdquirido";
 
@@ -117,9 +120,17 @@ export async function generateMetadata({
       la galería. `imagenSocial` descarta cualquier referencia
       al almacén privado, así que el archivo que se vende no
       puede acabar en una etiqueta og:image.
+
+      Si el recurso es solo para registrados y lo pide alguien sin
+      sesión —un visitante, o el rastreador de una red o de
+      Google—, no hay imagen: la decide vista-recurso.ts, igual que
+      en la página. No existe una imagen genérica de marca.
     */
-    const imagen =
-        product.coverUrl ?? product.images[0]?.url ?? null;
+    const imagen = imagenVisible(
+        product,
+        product.coverUrl ?? product.images[0]?.url ?? null,
+        visorDe(await getSession()).haySesion
+    ).url;
 
     const descripcion = product.description
         .replace(/\s+/g, " ")
@@ -260,8 +271,25 @@ export default async function ProductPage({
      * sale hacia el navegador.
      */
     const session = await getSession();
+    const visor = visorDe(session);
 
-    const packsConEste = await packsQueIncluyen(product.id);
+    /*
+      VISTA PREVIA LIBRE O SOLO PARA REGISTRADOS
+
+      La única decisión sobre las imágenes de esta ficha. Si va
+      bloqueada (solo para registrados y sin sesión), `url` es
+      null y ni la galería, ni el visor Story, ni el carrito, ni
+      el JSON-LD reciben ninguna imagen real: solo la miniatura
+      desenfocada. Título, descripción, precio y creador se ven
+      igual.
+    */
+    const visible = imagenVisible(
+        product,
+        product.coverUrl ?? product.images[0]?.url ?? null,
+        visor.haySesion
+    );
+
+    const packsConEste = await packsQueIncluyen(product.id, visor);
 
     /*
       ¿Ya es suyo?
@@ -307,11 +335,11 @@ export default async function ProductPage({
                 categoriaNombre: product.category.name,
                 creadorNombre: creatorName,
             },
-            session?.userId ?? null
+            visor
         ),
         sugerenciasDeFicha(
             { ...referenciaReco, categoriaSlug: product.category.slug },
-            session?.userId ?? null
+            visor
         ),
     ]);
 
@@ -337,9 +365,8 @@ export default async function ProductPage({
       estrellas en los resultados de búsqueda transmiten una
       confianza que el dato no respalda.
     */
-    const imagenSchema = imagenSocial(
-        product.coverUrl ?? product.images[0]?.url ?? null
-    );
+    // Bloqueada: sin imagen en el JSON-LD (visible.url es null).
+    const imagenSchema = imagenSocial(visible.url);
 
     const productoSchema = {
         "@context": "https://schema.org",
@@ -451,42 +478,58 @@ export default async function ProductPage({
 
                     {/* ══════════ GALERÍA ══════════ */}
                     <div className="rk-fade-up w-full min-w-0">
-                        <ProductGallery
-                            /*
-                              9:16 solo para la story de evento;
-                              4:5 para el resto del catálogo. Lo
-                              decide la misma función que exige
-                              la medida al subir la portada.
-                            */
-                            proporcion={proporcionDeRecurso(
-                                product.category.slug,
-                                product.pieceType
-                            )}
-                            name={product.name}
-                            coverUrl={product.coverUrl}
-                            coverWidth={product.coverWidth}
-                            coverHeight={product.coverHeight}
-                            previewUrl={product.previewUrl}
-                            images={product.images}
-                            /*
-                              Datos del modo story. El creador
-                              solo se enlaza si tiene perfil
-                              público de verdad.
-                            */
-                            story={{
-                                id: product.id,
-                                slug: product.slug,
-                                price: Number(product.price),
-                                creador: {
-                                    nombre: creatorName,
-                                    username: creatorProfileUrl
-                                        ? product.creator.username
-                                        : null,
-                                    avatarUrl: product.creator.avatarUrl,
-                                    isVerified: product.creator.isVerified,
-                                },
-                            }}
-                        />
+                        {visible.bloqueada ? (
+                            <FichaBloqueada
+                                ficha={`/tienda/${product.slug}`}
+                                proporcion={proporcionDeRecurso(
+                                    product.category.slug,
+                                    product.pieceType
+                                )}
+                                bloqueo={{ miniatura: visible.miniatura }}
+                            />
+                        ) : (
+                            <ProductGallery
+                                /*
+                                  9:16 solo para la story de evento;
+                                  4:5 para el resto del catálogo. Lo
+                                  decide la misma función que exige
+                                  la medida al subir la portada.
+                                */
+                                proporcion={proporcionDeRecurso(
+                                    product.category.slug,
+                                    product.pieceType
+                                )}
+                                name={product.name}
+                                coverUrl={product.coverUrl}
+                                /*
+                                  Solo para registrados y ya con sesión:
+                                  la portada entra desde la miniatura.
+                                */
+                                desbloqueo={desbloqueoDe(product, visor.haySesion)}
+                                coverWidth={product.coverWidth}
+                                coverHeight={product.coverHeight}
+                                previewUrl={product.previewUrl}
+                                images={product.images}
+                                /*
+                                  Datos del modo story. El creador
+                                  solo se enlaza si tiene perfil
+                                  público de verdad.
+                                */
+                                story={{
+                                    id: product.id,
+                                    slug: product.slug,
+                                    price: Number(product.price),
+                                    creador: {
+                                        nombre: creatorName,
+                                        username: creatorProfileUrl
+                                            ? product.creator.username
+                                            : null,
+                                        avatarUrl: product.creator.avatarUrl,
+                                        isVerified: product.creator.isVerified,
+                                    },
+                                }}
+                            />
+                        )}
                     </div>
 
                     {/* ══════════ INFORMACIÓN ══════════ */}
@@ -608,10 +651,8 @@ export default async function ProductPage({
                                             name: product.name,
                                             price: Number(product.price),
                                             slug: product.slug,
-                                            coverUrl:
-                                                product.coverUrl ||
-                                                product.images[0]?.url ||
-                                                null,
+                                            // Ya filtrada: null si va bloqueada.
+                                            coverUrl: visible.url,
                                         }}
                                     />
                                 )}

@@ -74,7 +74,21 @@ export async function POST(req: NextRequest) {
       formato,
       imagenes,
       tipo,
+      previewLibre,
     } = body;
+
+    /*
+      QUIÉN VE LA VISTA PREVIA. Sin el campo, para todos (el valor
+      por defecto de la base). Si llega, solo vale un booleano. El
+      recurso es siempre del creador de la sesión, así que no hay
+      permiso extra que comprobar.
+    */
+    if (previewLibre !== undefined && typeof previewLibre !== "boolean") {
+      return NextResponse.json(
+        { error: "previewLibre debe ser true o false." },
+        { status: 400 }
+      );
+    }
 
     /*
       LA CATEGORÍA LA DECIDE EL TIPO, NO EL NAVEGADOR
@@ -253,6 +267,7 @@ export async function POST(req: NextRequest) {
         price: String(price),
         accessType: accessType || "BOTH",
         status: "DRAFT",
+        previewLibre: previewLibre ?? true,
         coverUrl: coverUrl || null,
         /*
           Tamaño real de la portada, leído de su cabecera. Nulo

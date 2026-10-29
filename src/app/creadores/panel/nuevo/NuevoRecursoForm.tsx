@@ -29,6 +29,8 @@ import {
   FileUp,
   ImageIcon,
   Info,
+  Lock,
+  Rocket,
   UploadCloud,
   X,
 } from "lucide-react";
@@ -92,6 +94,8 @@ export default function NuevoRecursoForm({
   const [portada, setPortada] = useState<EstadoImagen | null>(null);
   const [preview, setPreview] = useState<EstadoImagen | null>(null);
   const [galeria, setGaleria] = useState<EstadoImagen[]>([]);
+  /* Vista previa para todos (recomendado) o solo con cuenta. */
+  const [previewLibre, setPreviewLibre] = useState(true);
   const [fileUrl, setFileUrl] = useState("");
   const [fileName, setFileName] = useState("");
   const [uploadingFile, setUploadingFile] = useState(false);
@@ -205,6 +209,7 @@ export default function NuevoRecursoForm({
           formato: formato?.clave ?? null,
           /* Galería inicial, en el orden en que se subió. */
           imagenes: galeria.map((imagen) => imagen.url),
+          previewLibre,
         }),
       });
 
@@ -860,6 +865,50 @@ export default function NuevoRecursoForm({
 
           <div className="rk-divider mt-4" />
 
+          {/*
+            QUIÉN VE LA VISTA PREVIA. Radios reales que cubren cada
+            tarjeta; el punto es solo el indicador. Se cambia después
+            con el interruptor de «Editar recurso».
+          */}
+          <fieldset className="rk-vp mt-5">
+            <legend>¿Quién puede ver la vista previa?</legend>
+
+            <div className="rk-vp-opts">
+              <OpcionVistaPrevia
+                id="vp-todos"
+                titulo="Para todos"
+                texto="Cualquiera lo ve con marca de agua, sin registrarse. Atrae más compradores."
+                etiqueta="Recomendado"
+                elegida={previewLibre}
+                alElegir={() => setPreviewLibre(true)}
+              >
+                <span className="rk-vp-im" />
+                <span className="rk-vp-aro">
+                  <Rocket aria-hidden />
+                </span>
+              </OpcionVistaPrevia>
+
+              <OpcionVistaPrevia
+                id="vp-cuenta"
+                titulo="Solo con cuenta"
+                texto="Quien no tiene cuenta ve la imagen borrosa y un botón para registrarse gratis."
+                elegida={!previewLibre}
+                alElegir={() => setPreviewLibre(false)}
+              >
+                <span className="rk-vp-im" data-borrosa />
+                <span className="rk-vp-lock">
+                  <Lock size={14} aria-hidden />
+                </span>
+              </OpcionVistaPrevia>
+            </div>
+
+            <p className="rk-vp-n">
+              Con cualquiera de las dos, la versión limpia solo la ve
+              quien compra. Puedes cambiarlo después en «Editar
+              recurso».
+            </p>
+          </fieldset>
+
           {/* Comportamiento real del backend, no una promesa. */}
           <p className="mt-5 flex items-start gap-2.5 text-sm leading-6 text-ink/60">
             <Info size={16} className="mt-0.5 shrink-0 text-ink" />
@@ -905,5 +954,58 @@ export default function NuevoRecursoForm({
         </section>
       </form>
     </main>
+  );
+}
+
+/**
+ * Una tarjeta de «¿Quién puede ver la vista previa?». El radio
+ * cubre la tarjeta entera y toma su nombre del título; el texto
+ * queda como descripción. `children` es la miniatura (solo CSS).
+ */
+function OpcionVistaPrevia({
+  id,
+  titulo,
+  texto,
+  etiqueta,
+  elegida,
+  alElegir,
+  children,
+}: {
+  id: string;
+  titulo: string;
+  texto: string;
+  etiqueta?: string;
+  elegida: boolean;
+  alElegir: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="rk-vp-o">
+      <input
+        type="radio"
+        name="previewLibre"
+        checked={elegida}
+        onChange={alElegir}
+        aria-labelledby={`${id}-titulo`}
+        aria-describedby={`${id}-texto`}
+      />
+
+      <span className="rk-vp-c">
+        <span className="rk-vp-th" aria-hidden>
+          {children}
+        </span>
+
+        <span className="rk-vp-t">
+          <span id={`${id}-titulo`}>{titulo}</span>
+          <i className="rk-vp-dot" aria-hidden />
+        </span>
+
+        <span id={`${id}-texto`} className="rk-vp-p">
+          {texto}
+        </span>
+
+        {etiqueta && <span className="rk-vp-tag">{etiqueta}</span>}
+      </span>
+    </label>
   );
 }

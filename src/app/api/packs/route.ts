@@ -6,6 +6,7 @@ import {
   listarPacksDe,
   listarPacksPublicos,
 } from "@/lib/packs";
+import { visorActual } from "@/lib/visor";
 
 export const dynamic = "force-dynamic";
 
@@ -39,9 +40,10 @@ export async function GET(request: Request) {
       });
     }
 
-    // Listado público: solo publicados, sin sesión necesaria.
+    // Listado público: solo publicados, sin sesión necesaria. Sin
+    // sesión, los recursos solo para registrados van bloqueados.
     return NextResponse.json({
-      packs: await listarPacksPublicos(),
+      packs: await listarPacksPublicos(24, await visorActual()),
     });
   } catch (error) {
     console.error("GET /api/packs:", error);
