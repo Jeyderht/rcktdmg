@@ -2,15 +2,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import {
   ArrowRight,
-  BadgeCheck,
   Compass,
   CreditCard,
   Download,
-  FileImage,
-  Layers,
   ShieldCheck,
   ShoppingBag,
-  Wallet,
   Zap,
 } from "lucide-react";
 
@@ -19,12 +15,10 @@ import Footer from "@/components/layout/Footer";
 import SelectorBusqueda from "@/components/home/SelectorBusqueda";
 import CatalogoInicio from "@/components/home/CatalogoInicio";
 import CarruselFlyers, { type FlyerCarrusel } from "@/components/home/CarruselFlyers";
-import { formatPrice } from "@/lib/pricing";
 import PalabrasEscritas from "@/components/home/PalabrasEscritas";
 import SliderPortadas from "@/components/home/SliderPortadas";
 import CarruselCreadores from "@/components/home/CarruselCreadores";
 import Ecosistema from "@/components/home/Ecosistema";
-import MasDisenos from "@/components/home/MasDisenos";
 import CtaModelo from "@/components/home/CtaModelo";
 import SeparadorSeccion from "@/components/home/SeparadorSeccion";
 import PreguntasFrecuentes from "@/components/ui/PreguntasFrecuentes";
@@ -57,15 +51,20 @@ export const metadata: Metadata = {
   },
 };
 
-/* Los tres pasos reales para conseguir un recurso. */
-const PASOS = [
+/* Los tres pasos reales para conseguir un recurso. «Explora» va sin
+   descripción: el icono y el título bastan. */
+const PASOS: {
+  numero: string;
+  icono: typeof Compass;
+  tono: string;
+  titulo: string;
+  texto?: string;
+}[] = [
   {
     numero: "01",
     icono: Compass,
     tono: "rk-step-frio",
     titulo: "Explora",
-    texto:
-      "Busca por categoría, formato, color o precio hasta dar con lo que necesitas.",
   },
   {
     numero: "02",
@@ -82,30 +81,6 @@ const PASOS = [
     titulo: "Descarga",
     texto:
       "Tras el pago queda en tu cuenta, disponible para descargar cuando quieras.",
-  },
-];
-
-/* «Por qué comprar en RcktX»: lo que de verdad hace la tienda. */
-const MOTIVOS = [
-  {
-    icono: FileImage,
-    titulo: "Listos para editar",
-    texto: "Archivos en el formato de su ficha (PSD, AI o JPEG) para usar al instante.",
-  },
-  {
-    icono: Zap,
-    titulo: "Descarga al pagar",
-    texto: "Queda en tu cuenta y lo bajas cuando quieras, sin esperar a nadie.",
-  },
-  {
-    icono: Wallet,
-    titulo: "Paga en soles",
-    texto: "Yape, Plin o tarjeta. Sin cuentas en dólares ni conversiones.",
-  },
-  {
-    icono: BadgeCheck,
-    titulo: "Licencia incluida",
-    texto: "Cada recurso indica su licencia en la ficha y en Mi cuenta.",
   },
 ];
 
@@ -357,12 +332,6 @@ export default async function Home() {
                 {/* CARRUSEL DE FLYERS DE EVENTOS (sin flyers, no se pinta) */}
                 <CarruselFlyers flyers={flyers} />
 
-                {queBuscas.eventos.precioMinimo !== null && (
-                  <p className="rkp-fan-pie">
-                    Flyers editables desde <b>{formatPrice(queBuscas.eventos.precioMinimo)}</b> · se descargan al pagar
-                  </p>
-                )}
-
                 <ul className="rkp-confianza">
                   <li>
                     <Zap size={14} aria-hidden />
@@ -422,7 +391,7 @@ export default async function Home() {
 
                     <div className="rk-step-body">
                       <h3 className="rk-step-title">{paso.titulo}</h3>
-                      <p className="rk-step-text">{paso.texto}</p>
+                      {paso.texto && <p className="rk-step-text">{paso.texto}</p>}
                     </div>
                   </article>
                 );
@@ -430,6 +399,22 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
+        <SeparadorSeccion />
+
+        {/* ══════════ CTA (con la modelo), justo tras los pasos ══════════ */}
+        {/* Precio más bajo publicado: eventos + diseños generales
+            cubren todo el catálogo publicado. */}
+        <CtaModelo
+          precioDesde={
+            [queBuscas.eventos.precioMinimo, queBuscas.generales.precioMinimo]
+              .filter((p): p is number => p !== null)
+              .reduce<number | null>((min, p) => (min === null || p < min ? p : min), null)
+          }
+        />
+
+        {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
+        <Ecosistema />
 
         <SeparadorSeccion />
 
@@ -441,84 +426,11 @@ export default async function Home() {
         */}
         <CarruselCreadores creadores={creadoresHome} />
 
-        <SeparadorSeccion />
-
-        {/* ══════════ PACKS Y COLECCIONES ══════════ */}
-        <section>
-          <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8">
-            <div className="rkp-packs-caja">
-              <Layers size={28} aria-hidden />
-
-              <div>
-                <h2>Llévate más y paga menos</h2>
-                <p>
-                  Los packs y colecciones agrupan varios recursos a un precio menor que por separado.
-                </p>
-              </div>
-
-              <div className="rkp-packs-acciones">
-                <Link href="/packs" className="rk-btn rk-btn-ink">
-                  Ver packs
-                  <ArrowRight size={16} />
-                </Link>
-                <Link href="/colecciones-comerciales" className="rk-btn rk-btn-ghost">
-                  Ver colecciones
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <SeparadorSeccion />
-
-        {/* ══════════ POR QUÉ COMPRAR EN RCKTX ══════════ */}
-        <section className="rkp-porque">
-          <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 lg:px-8">
-            <h2 className="rk-title text-[1.75rem] sm:text-4xl">
-              Por qué comprar en RcktX
-            </h2>
-
-            <ul className="rkp-porque-lista">
-              {MOTIVOS.map((m) => {
-                const Icono = m.icono;
-
-                return (
-                  <li key={m.titulo} className="rk-card">
-                    <Icono size={22} aria-hidden />
-                    <h3>{m.titulo}</h3>
-                    <p>{m.texto}</p>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </section>
-
-        <SeparadorSeccion />
-
-        {/* ══════════ MÁS DISEÑOS PARA TU NEGOCIO ══════════ */}
-        <MasDisenos />
 
         <SeparadorSeccion />
 
         {/* ══════════ PREGUNTAS FRECUENTES ══════════ */}
         <PreguntasFrecuentes sinEtiquetas />
-
-        <SeparadorSeccion />
-
-        {/* ══════════ ECOSISTEMA CREATIVO ══════════ */}
-        <Ecosistema />
-
-        {/* ══════════ CTA FINAL (con la modelo) ══════════ */}
-        {/* Precio más bajo publicado: eventos + diseños generales
-            cubren todo el catálogo publicado. */}
-        <CtaModelo
-          precioDesde={
-            [queBuscas.eventos.precioMinimo, queBuscas.generales.precioMinimo]
-              .filter((p): p is number => p !== null)
-              .reduce<number | null>((min, p) => (min === null || p < min ? p : min), null)
-          }
-        />
       </main>
 
       <Footer />

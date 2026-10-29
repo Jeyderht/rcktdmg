@@ -60,11 +60,17 @@ export default function ProductCard({
   product,
   showFavorite = true,
   conAgregar = false,
+  soloImagen = false,
 }: {
   product: ProductCardData;
   showFavorite?: boolean;
   /** Botón compacto «Agregar» junto al formato (solo lo pide el inicio). */
   conAgregar?: boolean;
+  /**
+   * Solo la imagen, con el precio en una píldora sobre ella: sin
+   * nombre, creador ni «Agregar» (rejilla del catálogo del inicio).
+   */
+  soloImagen?: boolean;
 }) {
   // Si el recurso no tiene portada, se usa la primera
   // imagen de la galería.
@@ -137,8 +143,16 @@ export default function ProductCard({
             </div>
           )}
 
-          {/* CATEGORÍA: vidrio sobre la imagen, imagen nítida */}
-          {product.category && (
+          {/* PRECIO (solo imagen): píldora abajo a la izquierda, sobre el «Pack» si lo hay. */}
+          {soloImagen && (
+            <span className={`rk-glass-on-image pointer-events-none absolute left-2 rounded-full px-2 py-1 text-[10px] font-bold ${product.esPack ? "bottom-8" : "bottom-2"}`}>
+              {formatPrice(pricing.price)}
+            </span>
+          )}
+
+          {/* CATEGORÍA: vidrio sobre la imagen, imagen nítida (no en la
+              variante de solo imagen: ahí la pestaña ya dice la categoría) */}
+          {product.category && !soloImagen && (
             <span className="rk-glass-on-image pointer-events-none absolute left-2 top-2 max-w-[calc(100%-3.25rem)] truncate rounded-full px-2.5 py-1 text-[10px] font-medium">
               {product.category.name}
             </span>
@@ -172,7 +186,8 @@ export default function ProductCard({
         </div>
       )}
 
-      {/* INFORMACIÓN */}
+      {/* INFORMACIÓN (no va en la variante de solo imagen) */}
+      {!soloImagen && (
       <div className="px-2 pb-1.5 pt-3">
         <Link href={`/tienda/${product.slug}`}>
           <h3 className="rk-tarjeta-nombre">{product.name}</h3>
@@ -245,6 +260,7 @@ export default function ProductCard({
           )}
         </div>
       </div>
+      )}
     </article>
     </div>
   );

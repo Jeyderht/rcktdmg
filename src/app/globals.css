@@ -17169,6 +17169,18 @@ body:has(.rk-cargador) {
   text-align: center;
 }
 
+/* Recursos del catálogo del inicio: rejilla de 3 columnas, hasta 6
+   (solo imagen y precio). En escritorio no pasa de 48rem. */
+.rk-cc-rejilla {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 48rem;
+  margin: 16px auto 0;
+  padding: 0;
+  list-style: none;
+}
+
 /* Tarjetas: carrusel en móvil, rejilla de 4 desde 760 px */
 .rk-cc-tarjetas {
   display: flex;
@@ -21748,6 +21760,27 @@ html[data-theme] .rk-footer-marca::before {
    vacíos en móvil). Basta con uno. */
 .rk-inicio > section + section.rk-qb {
   padding-top: 0 !important;
+}
+
+/* Menos hueco entre las cifras de «¿Qué estás buscando?» y el riel
+   del catálogo: 8 px debajo de una y 16 px encima del otro (16 y 24
+   en escritorio), en lugar del ritmo de sección. */
+.rk-inicio > section.rk-qb {
+  padding-bottom: 8px !important;
+}
+
+.rk-inicio > section.rk-cc {
+  padding-top: 16px !important;
+}
+
+@media (min-width: 1024px) {
+  .rk-inicio > section.rk-qb {
+    padding-bottom: 16px !important;
+  }
+
+  .rk-inicio > section.rk-cc {
+    padding-top: 24px !important;
+  }
 }
 
 /* títulos de sección: mismo tamaño en todo el inicio */

@@ -35,10 +35,6 @@ export default function CtaModelo({
             className="rk-display mx-auto max-w-3xl !text-[clamp(2.1rem,6vw,3.6rem)]"
           />
 
-          <p className="mx-auto mt-4 max-w-md text-[15px] leading-7 text-ink/60">
-            Elige, paga en soles y descarga al instante.
-          </p>
-
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/tienda" className="rk-btn rk-btn-ink rk-btn-negro">
               Ir a la tienda

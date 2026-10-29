@@ -27,15 +27,18 @@ function Vacio() {
   );
 }
 
-/* Móvil: carrusel con scroll-snap. Desde 760 px: rejilla de 4. */
+/* Hasta 6 recursos en rejilla de 3 columnas: solo la imagen con su
+   precio; toda la tarjeta lleva a la ficha. */
+const TOPE_REJILLA = 6;
+
 function Recursos({ recursos }: { recursos: Recurso[] }) {
   if (recursos.length === 0) return <Vacio />;
 
   return (
-    <ul className="rk-cc-tarjetas">
-      {recursos.map((r) => (
-        <li key={r.id} className="rk-cc-tarjeta">
-          <ProductCard product={aTarjeta(r)} conAgregar />
+    <ul className="rk-cc-rejilla">
+      {recursos.slice(0, TOPE_REJILLA).map((r) => (
+        <li key={r.id}>
+          <ProductCard product={aTarjeta(r)} soloImagen />
         </li>
       ))}
     </ul>
@@ -92,6 +95,14 @@ function pestanasDe(grupo: {
  * los mismos que ya usaba la portada.
  */
 export default function CatalogoInicio({ datos }: { datos: Datos }) {
+  // Sin ningún recurso ni colección publicados, la sección no se pinta.
+  const hayDatos =
+    [datos.eventos, datos.general, datos.packs].some(
+      (g) => g.recientes.length > 0 || g.populares.length > 0
+    ) || datos.colecciones.length > 0;
+
+  if (!hayDatos) return null;
+
   const categorias: CategoriaInicio[] = [
     {
       clave: "eventos",

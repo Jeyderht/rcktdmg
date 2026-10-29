@@ -49,17 +49,10 @@ export default function Ecosistema() {
   return (
     <section>
       <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
-        <div className="rk-fade-up mx-auto max-w-2xl text-center">
-          <h2 className="rk-title text-[1.75rem] sm:text-4xl">
-            Ecosistema creativo RcktX
-          </h2>
+        {/* Solo el dibujo; el título queda para lectores de pantalla. */}
+        <h2 className="sr-only">Ecosistema creativo RcktX</h2>
 
-          <p className="mt-3 text-[15px] leading-7 text-ink/60">
-            Archivos listos para editar.
-          </p>
-        </div>
-
-        <div className="rk-fade-up rk-enter-1 rk-eco mt-8 sm:mt-10">
+        <div className="rk-fade-up rk-enter-1 rk-eco">
           {/* Fondo: puntos (con pulso del centro hacia afuera) y arcos. */}
           <div aria-hidden className="rk-eco-puntos" />
           <div aria-hidden className="rk-eco-pulso" />
