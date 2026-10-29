@@ -348,19 +348,9 @@ export default async function Store({ searchParams }: StoreProps) {
       <main className="rk-explorar mx-auto w-full max-w-7xl pb-16 pt-6 lg:pb-20 lg:pt-10">
 
         {/* ══════════ CABECERA ══════════ */}
-        {/* Compacta y sin halo decorativo. */}
-        <section className="rk-fade-up">
-          <p className="rk-kicker">RcktX Store</p>
-
-          <h1 className="rk-title mt-2 text-[1.75rem] sm:text-[2rem]">
-            Explora recursos digitales
-          </h1>
-
-          <p className="mt-3 max-w-xl text-[15px] leading-7 text-ink/60">
-            Plantillas y packs creados por diseñadores, listos
-            para descargar y usar en tus proyectos.
-          </p>
-        </section>
+        {/* Sin cabecera visible: las pestañas van justo bajo la barra.
+            El h1 queda para lectores de pantalla. */}
+        <h1 className="sr-only">Explora recursos digitales</h1>
 
         {/* ══════════ CATEGORÍAS ══════════ */}
         {categorias.length > 0 && (
