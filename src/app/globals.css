@@ -22192,6 +22192,12 @@ html[data-theme] .rk-footer-marca::before {
   margin-top: var(--rk-explorar-ritmo);
 }
 
+/* Sin cabecera visible (solo el h1 sr-only), lo primero que se ve va
+   pegado bajo la barra, con el mismo aire que el resto de páginas. */
+.rk-explorar > h1.sr-only + * {
+  margin-top: 0;
+}
+
 /* Filtros / Orden: separados del buscador (antes lo tocaban y la
    sombra del buscador, que va por encima, se comía su borde). */
 .rk-explorar .rk-filter-bar {
