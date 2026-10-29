@@ -14,7 +14,6 @@ import {
 export type OpcionQueBuscasVista = {
   clave: "eventos" | "generales";
   titulo: string;
-  texto: string;
   href: string;
   /** Portadas 9:16 (eventos) o 4:5 (diseños generales). */
   vertical: boolean;
@@ -178,8 +177,7 @@ export default function QueBuscas({ opciones }: { opciones: OpcionQueBuscasVista
           </span>
 
           <div className="rk-qb-texto">
-            <b>{opcion.titulo}</b>
-            <span aria-live="polite">{opcion.texto}</span>
+            <b aria-live="polite">{opcion.titulo}</b>
           </div>
 
           {total > 1 && (

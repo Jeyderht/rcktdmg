@@ -68,11 +68,6 @@ export default function CarruselCreadores({
             <h2 className="rk-title text-[2rem] sm:text-4xl">
               Creadores
             </h2>
-
-            <p className="mt-3 max-w-lg text-[15px] leading-7 text-ink/60">
-              Quienes publican en RcktX. Cada perfil reúne todo su
-              trabajo.
-            </p>
           </div>
 
           <div className="flex items-center gap-2">

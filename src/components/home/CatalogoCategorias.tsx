@@ -320,7 +320,8 @@ export default function CatalogoCategorias({ categorias }: { categorias: Categor
           </div>
 
           <div className="rk-cc-tarjetas-zona">
-            <p className="rk-cc-descripcion" aria-live="polite">
+            {/* La descripción ya no se ve; se lee al cambiar de categoría. */}
+            <p className="sr-only" aria-live="polite">
               {actual.descripcion}
             </p>
 

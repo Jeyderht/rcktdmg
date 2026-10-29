@@ -24,8 +24,6 @@ const OPCIONES = [
   {
     clave: "eventos",
     titulo: "Eventos",
-    texto:
-      "Flyers de fiestas, conciertos y fechas señaladas.",
     href: `/tienda?categoria=${CATEGORIA_EVENTOS}`,
     vertical: true,
     sufijo: "de eventos",
@@ -33,8 +31,6 @@ const OPCIONES = [
   {
     clave: "generales",
     titulo: "Diseños generales",
-    // La descripción de Social Media de los tipos de publicación.
-    texto: "Contenido para redes, sin atarse a un evento concreto.",
     href: `/tienda?categoria=${CATEGORIA_SOCIAL_MEDIA}`,
     vertical: false,
     sufijo: "de social media",
@@ -65,7 +61,6 @@ export default function SelectorBusqueda({
       opciones={OPCIONES.map((o) => ({
         clave: o.clave,
         titulo: o.titulo,
-        texto: o.texto,
         href: o.href,
         vertical: o.vertical,
         portadas: datos[o.clave].portadas,
