@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
-import ProductCard from "@/components/tienda/ProductCard";
+import GaleriaTienda from "@/app/tienda/GaleriaTienda";
 import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, aTarjeta } from "@/lib/catalogo";
 import { noEncontrado, paginaPrivada } from "@/lib/seo";
@@ -141,10 +141,9 @@ export default async function ColeccionPublicaPage({
             Esta colección todavía no tiene recursos publicados.
           </p>
         ) : (
-          <div className="rk-fade-up mt-8 rk-rejilla">
-            {coleccion.items.map(({ product }) => (
-              <ProductCard key={product.id} product={aTarjeta(product)} />
-            ))}
+          <div className="rk-fade-up mt-8">
+            {/* La misma galería que Explorar: solo portadas, cuadro rápido con flechas y «Ver recurso». */}
+            <GaleriaTienda productos={coleccion.items.map(({ product }) => aTarjeta(product))} />
           </div>
         )}
       </main>
