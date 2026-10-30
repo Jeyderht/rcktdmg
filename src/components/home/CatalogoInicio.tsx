@@ -10,7 +10,7 @@ import { aTarjeta } from "@/lib/catalogo";
 import type { ColeccionVista } from "@/lib/colecciones-comerciales-comun";
 import {
   CATEGORIA_EVENTOS,
-  CATEGORIA_GENERAL,
+  CATEGORIA_SOCIAL_MEDIA,
   type datosCatalogoInicio,
 } from "@/lib/home";
 
@@ -116,7 +116,9 @@ export default function CatalogoInicio({ datos }: { datos: Datos }) {
       clave: "general",
       nombre: "General",
       descripcion: "Piezas para comunicar con una marca detrás.",
-      href: `/tienda?categoria=${CATEGORIA_GENERAL}`,
+      // La tienda no tiene «todo menos Eventos»: su chip «General»
+      // lleva a Social Media, y este «Ver todo» también.
+      href: `/tienda?categoria=${CATEGORIA_SOCIAL_MEDIA}`,
       pestanas: pestanasDe(datos.general),
     },
     {
