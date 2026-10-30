@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import {
     BadgeCheck,
     ChevronRight,
@@ -51,7 +52,11 @@ type ProductPageProps = {
     params: Promise<{ slug: string }>;
 };
 
-async function getPublishedProduct(slug: string) {
+/*
+  Con cache(): generateMetadata y la página piden el mismo recurso
+  en la misma petición, y antes eran dos consultas idénticas.
+*/
+const getPublishedProduct = cache(async (slug: string) => {
     const product = await prisma.product.findUnique({
         where: {
             slug,
@@ -93,7 +98,7 @@ async function getPublishedProduct(slug: string) {
     }
 
     return product;
-}
+});
 
 export async function generateMetadata({
     params,
@@ -161,8 +166,19 @@ export default async function ProductPage({
      */
     const pricing = getPriceDisplay(Number(product.price));
 
-    // Ficha técnica: solo datos que existen de verdad.
-    const fileInfo = await getProductFileInfo(product.fileUrl);
+    /*
+      A LA VEZ, todo lo que solo depende del recurso: la ficha
+      técnica del archivo (una consulta al almacén), el historial
+      de versiones, la sesión y los packs que lo incluyen. Antes
+      iban uno detrás de otro y la ficha esperaba la suma.
+    */
+    const [fileInfo, versiones, session, packsConEste] = await Promise.all([
+        // Ficha técnica: solo datos que existen de verdad.
+        getProductFileInfo(product.fileUrl),
+        listarVersiones(product.id),
+        getSession(),
+        packsQueIncluyen(product.id),
+    ]);
 
     /*
      * Formato: primero el del archivo real; si no se pudo leer,
@@ -196,10 +212,9 @@ export default async function ProductPage({
 
       listarVersiones NO devuelve fileUrl: esa referencia
       apunta al almacén privado y no sale del servidor. Aquí
-      solo se pintan número, formato, fecha y cambios.
+      solo se pintan número, formato, fecha y cambios. Se piden
+      arriba, junto con la ficha técnica.
     */
-    const versiones = await listarVersiones(product.id);
-
     const versionActual = versiones.find((v) => v.isCurrent) ?? null;
 
     const specs = [
@@ -259,9 +274,6 @@ export default async function ProductPage({
      * La puntuación vive en src/lib/recomendaciones.ts y no
      * sale hacia el navegador.
      */
-    const session = await getSession();
-
-    const packsConEste = await packsQueIncluyen(product.id);
 
     /*
       ¿Ya es suyo?
@@ -269,9 +281,10 @@ export default async function ProductPage({
       Se consulta aquí, en el servidor, y no en el botón: el
       navegador no puede saberlo sin una llamada más, y la
       respuesta llegaría después de pintar un botón "Añadir al
-      carrito" que acto seguido tendría que desaparecer.
+      carrito" que acto seguido tendría que desaparecer. Va en
+      el mismo Promise.all que las recomendaciones: las tres
+      solo necesitan la sesión.
     */
-    const yaEsSuyo = await tieneProducto(session?.userId, product.id);
 
     /*
       LAS DOS LISTAS DE RECOMENDACIÓN, A LA VEZ
@@ -300,7 +313,7 @@ export default async function ProductPage({
         tagSlugs: product.tags.map((fila) => fila.tag.slug),
     };
 
-    const [bloques, sugerencias] = await Promise.all([
+    const [bloques, sugerencias, yaEsSuyo] = await Promise.all([
         paraProducto(
             {
                 ...referenciaReco,
@@ -313,6 +326,7 @@ export default async function ProductPage({
             { ...referenciaReco, categoriaSlug: product.category.slug },
             session?.userId ?? null
         ),
+        tieneProducto(session?.userId, product.id),
     ]);
 
 
