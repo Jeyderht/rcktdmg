@@ -17,7 +17,7 @@ import { prisma } from "@/lib/prisma";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import EmptyState from "@/components/ui/EmptyState";
-import ProductCard from "@/components/tienda/ProductCard";
+import GaleriaTienda from "@/app/tienda/GaleriaTienda";
 import Paginacion from "@/components/ui/Paginacion";
 import CompartirPerfil from "@/components/perfil/CompartirPerfil";
 import PestanasPerfil from "@/components/perfil/PestanasPerfil";
@@ -519,13 +519,9 @@ export default async function CreatorPublicProfile({
             </div>
           ) : (
             <>
-              <div className="mt-6 rk-rejilla">
-                {recursos.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={aTarjeta(product, visorDe(session))}
-                  />
-                ))}
+              {/* La misma galería que Explorar: solo portadas, cuadro rápido con flechas y «Ver recurso». */}
+              <div className="mt-6">
+                <GaleriaTienda productos={recursos.map((product) => aTarjeta(product, visorDe(session)))} />
               </div>
 
               <Paginacion

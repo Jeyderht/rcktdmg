@@ -6,7 +6,7 @@ import { BadgeCheck, ChevronRight, Library } from "lucide-react";
 
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import ProductCard from "@/components/tienda/ProductCard";
+import GaleriaTienda from "@/app/tienda/GaleriaTienda";
 import AnadirColeccionAlCarrito from "@/components/tienda/AnadirColeccionAlCarrito";
 import YaAdquirido from "@/components/tienda/YaAdquirido";
 import { getSession } from "@/lib/session";
@@ -327,21 +327,22 @@ export default async function ColeccionComercialPage({
             con su propia descarga y su propia licencia.
           </p>
 
-          <div className="mt-6 rk-rejilla">
-            {coleccion.productos.map((producto) => (
-              <ProductCard
-                key={producto.id}
-                product={{
-                  id: producto.id,
-                  name: producto.name,
-                  slug: producto.slug,
-                  price: producto.price,
-                  coverUrl: producto.coverUrl,
-                  image: producto.image,
-                  category: producto.category,
-                }}
-              />
-            ))}
+          {/* La misma galería que Explorar: solo portadas, cuadro rápido con flechas y «Ver recurso». */}
+          <div className="mt-6">
+            <GaleriaTienda
+              productos={coleccion.productos.map((producto) => ({
+                id: producto.id,
+                name: producto.name,
+                slug: producto.slug,
+                price: producto.price,
+                coverUrl: producto.coverUrl,
+                image: producto.image,
+                category: producto.category,
+                bloqueo: producto.bloqueo,
+                desbloqueo: producto.desbloqueo,
+                soloRegistrados: producto.soloRegistrados,
+              }))}
+            />
           </div>
         </section>
       </main>
