@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useDialogo } from "@/components/ui/Dialogos";
 import {
   ArrowRight,
   Check,
@@ -44,6 +45,7 @@ type Collection = {
   items: CollectionItem[];
 };
 export default function ColeccionesPage() {
+  const { confirmar } = useDialogo();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -135,9 +137,11 @@ export default function ColeccionesPage() {
   }
 
   async function deleteCollection(collectionId: string) {
-    const confirmed = window.confirm(
-      "¿Quieres eliminar esta colección?"
-    );
+    const confirmed = await confirmar({
+      titulo: "¿Eliminar esta colección?",
+      aceptar: "Eliminar",
+      peligro: true,
+    });
 
     if (!confirmed) return;
 

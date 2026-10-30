@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { useDialogo } from "@/components/ui/Dialogos";
+
 type UserActionsProps = {
   userId: string;
   role: "ADMIN" | "CREATOR" | "CLIENT";
@@ -32,6 +34,7 @@ export default function UserActions({
 
   const [pending, setPending] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const { confirmar } = useDialogo();
 
   if (role === "ADMIN") {
     return (
@@ -99,7 +102,14 @@ export default function UserActions({
   }
 
   async function runAction(item: Action) {
-    if (!window.confirm(item.confirm)) {
+    if (
+      !(await confirmar({
+        titulo: item.label,
+        mensaje: item.confirm,
+        aceptar: item.label,
+        peligro: item.tone === "danger",
+      }))
+    ) {
       return;
     }
 

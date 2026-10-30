@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { useDialogo } from "@/components/ui/Dialogos";
 import { Layers, Pencil, Plus } from "lucide-react";
 
 import { formatPrice } from "@/lib/pricing";
@@ -28,6 +29,7 @@ type ProductoPropio = {
  * esta lista es una comodidad, no la barrera.
  */
 export default function PacksManager() {
+  const { confirmar } = useDialogo();
   const [packs, setPacks] = useState<PackVista[]>([]);
   const [productos, setProductos] = useState<ProductoPropio[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -210,9 +212,13 @@ export default function PacksManager() {
   }
 
   async function eliminar(pack: PackVista) {
-    const confirmado = window.confirm(
-      `¿Eliminar el pack “${pack.name}”?\n\nSi ya se vendió alguna vez, se archivará en lugar de borrarse para no dejar compras sin origen.`
-    );
+    const confirmado = await confirmar({
+      titulo: `¿Eliminar el pack “${pack.name}”?`,
+      mensaje:
+        "Si ya se vendió alguna vez, se archivará en lugar de borrarse para no dejar compras sin origen.",
+      aceptar: "Eliminar",
+      peligro: true,
+    });
 
     if (!confirmado) return;
 

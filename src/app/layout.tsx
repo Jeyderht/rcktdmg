@@ -7,6 +7,7 @@ import {
   themeInitScript,
 } from "@/components/layout/ThemeProvider";
 import RevelarAlEntrar from "@/components/ui/RevelarAlEntrar";
+import { DialogosProvider } from "@/components/ui/Dialogos";
 import { SITIO, absoluta, urlBase } from "@/lib/seo";
 
 /*
@@ -122,7 +123,7 @@ export default function RootLayout({
 
       <body className={`${sora.variable} antialiased`}>
         <ThemeProvider>
-          {children}
+          <DialogosProvider>{children}</DialogosProvider>
 
           {/*
             Va después del contenido a propósito: cuando su

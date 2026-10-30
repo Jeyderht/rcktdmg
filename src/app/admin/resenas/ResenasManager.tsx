@@ -10,6 +10,7 @@ import {
   Star,
 } from "lucide-react";
 import { IconoBasura } from "@/components/iconos";
+import { useDialogo } from "@/components/ui/Dialogos";
 
 type ResenaAdmin = {
   id: string;
@@ -46,6 +47,7 @@ export default function ResenasManager() {
   const [filtro, setFiltro] = useState<string>("");
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const { confirmar, pedirTexto } = useDialogo();
 
   const cargar = useCallback(
     async (p: number, estado: string) => {
@@ -93,10 +95,12 @@ export default function ResenasManager() {
     let nota: string | null = null;
 
     if (estado === "HIDDEN") {
-      nota = window.prompt(
-        `¿Por qué se oculta esta valoración de ${resena.autor}?\n\nEl motivo queda registrado y NO se muestra en público.`,
-        ""
-      );
+      nota = await pedirTexto({
+        titulo: `¿Por qué se oculta la valoración de ${resena.autor}?`,
+        mensaje: "El motivo queda registrado y NO se muestra en público.",
+        etiqueta: "Motivo",
+        aceptar: "Ocultar",
+      });
 
       // Cancelar el diálogo cancela la acción entera.
       if (nota === null) return;
@@ -123,9 +127,12 @@ export default function ResenasManager() {
   }
 
   async function eliminar(resena: ResenaAdmin) {
-    const confirmado = window.confirm(
-      `¿Eliminar definitivamente la valoración de ${resena.autor} sobre “${resena.producto}”?\n\nNo se puede deshacer. Si solo quieres retirarla de la ficha, usa "Ocultar".`
-    );
+    const confirmado = await confirmar({
+      titulo: `¿Eliminar la valoración de ${resena.autor}?`,
+      mensaje: `Sobre “${resena.producto}”. No se puede deshacer. Si solo quieres retirarla de la ficha, usa "Ocultar".`,
+      aceptar: "Eliminar",
+      peligro: true,
+    });
 
     if (!confirmado) return;
 
