@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { getSession } from "@/lib/session";
 import { portadasActivas } from "@/lib/portadas";
 import { prisma } from "@/lib/prisma";
@@ -8,13 +10,18 @@ import InicioCliente, { type CategoriaCx } from "./InicioCliente";
 /**
  * /mi-cuenta.
  *
- * El cliente ve su inicio con imágenes (InicioCliente); creador y
- * administrador siguen viendo el resumen de siempre (CuentaResumen),
- * sin cambios. Aquí solo se elige cuál pintar y se le pasan, en
- * lectura, las portadas del slider del Inicio y las categorías.
+ * El cliente ve su inicio con imágenes (InicioCliente); el creador
+ * no se queda aquí: su inicio es /creadores/panel. El administrador
+ * sigue viendo el resumen de siempre (CuentaResumen). Aquí solo se
+ * elige cuál pintar y se le pasan, en lectura, las portadas del
+ * slider del Inicio y las categorías.
  */
 export default async function MiCuentaPage() {
   const session = await getSession();
+
+  if (session?.role === "CREATOR") {
+    redirect("/creadores/panel");
+  }
 
   if (session?.role !== "CLIENT") {
     return <CuentaResumen />;
