@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { useDialogo } from "@/components/ui/Dialogos";
+
 type Props = {
   resourceId: string;
   resourceSlug: string;
@@ -15,29 +17,29 @@ export default function ResourceActions({
   status,
 }: Props) {
   const [loading, setLoading] = useState(false);
+  const { confirmar, avisar, pedirTexto } = useDialogo();
 
   async function handleAction(action: "publicar" | "rechazar") {
     let rejectionReason = "";
 
     if (action === "rechazar") {
-      rejectionReason = window.prompt(
-        "Escribe el motivo del rechazo:"
-      )?.trim() || "";
+      rejectionReason =
+        (await pedirTexto({
+          titulo: "Rechazar recurso",
+          mensaje: "El creador verá este motivo.",
+          etiqueta: "Motivo del rechazo",
+          aceptar: "Rechazar",
+          peligro: true,
+          obligatorio: true,
+        })) || "";
 
-      if (!rejectionReason) {
-        alert("Debes indicar un motivo para rechazar el recurso.");
-        return;
-      }
-
-      const confirmed = window.confirm(
-        `¿Seguro que deseas rechazar este recurso?\n\nMotivo:\n${rejectionReason}`
-      );
-
-      if (!confirmed) return;
+      if (!rejectionReason) return;
     } else {
-      const confirmed = window.confirm(
-        "¿Seguro que deseas publicar este recurso?"
-      );
+      const confirmed = await confirmar({
+        titulo: "¿Publicar este recurso?",
+        mensaje: "Se verá en la tienda en cuanto lo publiques.",
+        aceptar: "Publicar",
+      });
 
       if (!confirmed) return;
     }
@@ -86,7 +88,7 @@ export default function ResourceActions({
         );
       }
 
-      alert(
+      await avisar(
         data.message ||
           (action === "publicar"
             ? "Recurso publicado correctamente."
@@ -97,11 +99,13 @@ export default function ResourceActions({
     } catch (error) {
       console.error(error);
 
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Ocurrió un error inesperado."
-      );
+      await avisar({
+        titulo: "No se pudo completar",
+        mensaje:
+          error instanceof Error
+            ? error.message
+            : "Ocurrió un error inesperado.",
+      });
     } finally {
       setLoading(false);
     }

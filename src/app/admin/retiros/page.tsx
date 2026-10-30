@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { RefreshCw, Wallet } from "lucide-react";
 
 import EmptyState from "@/components/ui/EmptyState";
+import { useDialogo } from "@/components/ui/Dialogos";
 import { formatPrice } from "@/lib/pricing";
 import { fechaNumerica } from "@/lib/formato";
 
@@ -124,6 +125,7 @@ export default function AdminRetirosPage() {
     null
   );
   const [error, setError] = useState("");
+  const { confirmar, pedirTexto } = useDialogo();
 
   async function loadWithdrawals() {
     try {
@@ -165,20 +167,20 @@ export default function AdminRetirosPage() {
     let note: string | undefined;
 
     if (action === "REJECT") {
-      const reason = window.prompt("Indica el motivo del rechazo:");
+      // El motivo es obligatorio: el diálogo no deja aceptar vacío.
+      const reason = await pedirTexto({
+        titulo: "Rechazar retiro",
+        etiqueta: "Motivo del rechazo",
+        aceptar: "Rechazar",
+        peligro: true,
+        obligatorio: true,
+      });
 
-      if (reason === null) {
+      if (!reason) {
         return;
       }
 
-      if (!reason.trim()) {
-        window.alert(
-          "Debes indicar un motivo para rechazar el retiro."
-        );
-        return;
-      }
-
-      note = reason.trim();
+      note = reason;
     }
 
     const messages = {
@@ -187,7 +189,19 @@ export default function AdminRetirosPage() {
       PAY: "¿Confirmas que este retiro ya fue pagado?",
     };
 
-    if (!window.confirm(messages[action])) {
+    const aceptar = {
+      APPROVE: "Aprobar",
+      REJECT: "Rechazar",
+      PAY: "Sí, está pagado",
+    };
+
+    if (
+      !(await confirmar({
+        titulo: messages[action],
+        aceptar: aceptar[action],
+        peligro: action === "REJECT",
+      }))
+    ) {
       return;
     }
 

@@ -3924,6 +3924,24 @@ table .rk-btn:hover:not(:disabled) {
   }
 }
 
+/*
+  Primario en claro al pasar, enfocar o presionar: conserva el color
+  de reposo (texto blanco, borde y brillo interior) y solo se oscurece
+  un poco. En móvil :hover se queda tras tocar, y las reglas de hover
+  de arriba le ponían texto oscuro y le quitaban el brillo.
+*/
+[data-theme="light"] .rk-btn-primary:hover:not(:disabled),
+[data-theme="light"] .rk-btn-primary:focus-visible:not(:disabled),
+[data-theme="light"] .rk-btn-primary:active:not(:disabled) {
+  --rk-pri-borde-alfa: 0.75;
+  --rk-pri-brillo: 0.55;
+  color: rgb(var(--pal-blanco));
+  box-shadow:
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
+    inset 0 0 12px rgb(255 255 255 / var(--rk-pri-brillo));
+  filter: brightness(0.94);
+}
+
 /* ── A3. ──────────────────────────────────────────────────────────── */
 /* ── 5b. LINE · cristal con blur + lengüeta detrás ────────────────
    Todo en la misma clase, sin envoltorio:
@@ -6952,9 +6970,12 @@ table .rk-btn:hover:not(:disabled) {
 }
 
 /* línea punteada, a la altura de las muescas */
+/* La línea va en el flujo y las muescas a --rk-rc-corte del borde de abajo:
+   con este margen su centro cae justo en el de las muescas (antes 5,5 px
+   más abajo). El alto total no cambia: -1,5 + 5,5 = 4 px, como antes. */
 .rk-receipt-cut {
   height: 0;
-  margin: 4px 0 0;
+  margin: -1.5px 0 5.5px;
   border: 0;
   border-top: 1.5px dashed rgb(var(--pal-claro-primario) / 0.25);
 }
@@ -11279,8 +11300,9 @@ table .rk-btn:hover:not(:disabled) {
   background: var(--rk-marca-degradado);
 }
 
+/* En claro, color sólido del sistema en lugar del degradado. */
 [data-theme="light"] .rk-steps-line li.is-done + li::before {
-  background: linear-gradient(90deg, rgb(var(--rk-iris-1)), rgb(var(--rk-iris-3)));
+  background: rgb(var(--rk-foreground));
 }
 
 .rk-steps-dot {
@@ -11312,6 +11334,11 @@ table .rk-btn:hover:not(:disabled) {
   border-color: transparent;
   background: var(--rk-marca-degradado);
   color: rgb(var(--rk-marca-tinta));
+}
+
+[data-theme="light"] .rk-steps-line li.is-done .rk-steps-dot {
+  background: rgb(var(--rk-foreground));
+  color: rgb(var(--rk-background));
 }
 
 .rk-steps-line li.is-current {
@@ -13578,15 +13605,14 @@ div.rk-upload-error > * + * {
   --rk-tone: var(--rk-iris-2);
 }
 
-/* resumen tipo pase: franja con los colores de marca, no azul */
+/* resumen tipo pase: en claro, la franja con los tokens claros (antes un
+   degradado oscuro de marca que oscurecía el resumen) */
 .rk-receipt {
   --rk-rc-tono: var(--pal-claro-recibo);
 }
 
 [data-theme="light"] .rk-receipt-strip {
-  background:
-    radial-gradient(70% 160% at 100% 50%, rgb(var(--rk-marca-calido) / 0.7), transparent 70%),
-    linear-gradient(90deg, rgb(var(--rk-marca-frio) / 0.75), rgb(var(--rk-marca-centro) / 0.9));
+  background: rgb(var(--rk-background));
 }
 
 /* botón de quitar usado solo (sin rk-icon-button): círculo de 40px */
@@ -19769,6 +19795,19 @@ body:has(.rk-cargador) {
       inset 0 1px 0 rgb(var(--pal-blanco)),
       inset 0 0 18px rgb(255 255 255 / var(--rk-pri-brillo));
   }
+}
+
+/* Lo mismo en el panel: al pasar, enfocar o presionar, el primario en
+   claro conserva su brillo de reposo y solo se oscurece un poco. */
+[data-theme="light"] .rk-dash .rk-btn-primary:hover:not(:disabled),
+[data-theme="light"] .rk-dash .rk-btn-primary:focus-visible:not(:disabled),
+[data-theme="light"] .rk-dash .rk-btn-primary:active:not(:disabled) {
+  --rk-pri-borde-alfa: 0.75;
+  --rk-pri-brillo: 0.55;
+  box-shadow:
+    inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
+    inset 0 0 12px rgb(255 255 255 / var(--rk-pri-brillo));
+  filter: brightness(0.94);
 }
 
 .rk-dash .rk-btn.rk-btn-line {
