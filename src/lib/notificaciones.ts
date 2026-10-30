@@ -24,6 +24,38 @@ const MAXIMO_POR_PAGINA = 25;
 export const LARGO_TITULO = 120;
 export const LARGO_CUERPO = 280;
 
+/*
+  CADUCIDAD EN LA CAMPANA
+
+  Una notificación deja de mostrarse cuando cumple estos días desde
+  que se creó: antes si ya se leyó, más tarde si sigue sin leer. No
+  se borra nada: solo se filtra en la consulta, y el contador usa el
+  mismo filtro que la lista.
+*/
+export const DIAS_VISIBLE_LEIDA = 7;
+export const DIAS_VISIBLE_NO_LEIDA = 30;
+
+const UN_DIA_MS = 24 * 60 * 60 * 1000;
+
+/** Las notificaciones de `userId` que aún se muestran. */
+function vigentes(userId: string) {
+  const ahora = Date.now();
+
+  return {
+    userId,
+    OR: [
+      {
+        readAt: null,
+        createdAt: { gte: new Date(ahora - DIAS_VISIBLE_NO_LEIDA * UN_DIA_MS) },
+      },
+      {
+        readAt: { not: null },
+        createdAt: { gte: new Date(ahora - DIAS_VISIBLE_LEIDA * UN_DIA_MS) },
+      },
+    ],
+  };
+}
+
 export type EntradaNotificacion = {
   userId: string;
   type: TipoNotificacion;
@@ -191,7 +223,7 @@ export async function obtenerNotificaciones(
       : 1;
 
   const [total, noLeidas] = await Promise.all([
-    prisma.notification.count({ where: { userId } }),
+    prisma.notification.count({ where: vigentes(userId) }),
     contarNoLeidas(userId),
   ]);
 
@@ -199,7 +231,7 @@ export async function obtenerNotificaciones(
   const pagina = Math.min(pedida, totalPaginas);
 
   const filas = await prisma.notification.findMany({
-    where: { userId },
+    where: vigentes(userId),
     /*
       El id cierra el orden: dos notificaciones creadas en el
       mismo milisegundo —un pedido avisa a comprador, creador
@@ -236,9 +268,14 @@ export async function obtenerNotificaciones(
   };
 }
 
+/** Sin leer y aún vigentes: lo que cuenta el número de la campana. */
 export function contarNoLeidas(userId: string): Promise<number> {
   return prisma.notification.count({
-    where: { userId, readAt: null },
+    where: {
+      userId,
+      readAt: null,
+      createdAt: { gte: new Date(Date.now() - DIAS_VISIBLE_NO_LEIDA * UN_DIA_MS) },
+    },
   });
 }
 
