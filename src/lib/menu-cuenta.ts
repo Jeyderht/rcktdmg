@@ -26,6 +26,8 @@ export type ItemMenu = {
    * No cambia rutas ni quién ve qué.
    */
   seccion?: string;
+  /** Solo para estos roles (sin el campo, para todos los del grupo). */
+  roles?: RolCuenta[];
 };
 
 export type GrupoMenu = {
@@ -48,6 +50,8 @@ export const GRUPOS_MENU: GrupoMenu[] = [
       { href: "/mi-cuenta/colecciones", label: "Colecciones", icono: "Library" },
       { href: "/mi-cuenta/favoritos", label: "Favoritos", icono: "Heart" },
       { href: "/mi-cuenta/siguiendo", label: "Siguiendo", icono: "Users" },
+      // El creador tiene su propio «Perfil» en el Creator Studio.
+      { href: "/mi-cuenta/perfil", label: "Perfil", icono: "UserRound", roles: ["CLIENT"] },
     ],
   },
   {
@@ -111,7 +115,10 @@ export const GRUPOS_MENU: GrupoMenu[] = [
 export function gruposParaRol(rol: string | null | undefined): GrupoMenu[] {
   const r = (rol === "ADMIN" || rol === "CREATOR" ? rol : "CLIENT") as RolCuenta;
 
-  return GRUPOS_MENU.filter((g) => g.roles.includes(r));
+  return GRUPOS_MENU.filter((g) => g.roles.includes(r)).map((g) => ({
+    ...g,
+    items: g.items.filter((i) => !i.roles || i.roles.includes(r)),
+  }));
 }
 
 /** Grupo al que pertenece una ruta, para el título de la cabecera móvil. */
