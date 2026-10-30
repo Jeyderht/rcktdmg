@@ -6,7 +6,7 @@ import { BadgeCheck, ChevronRight, Layers } from "lucide-react";
 
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import ProductCard from "@/components/tienda/ProductCard";
+import GaleriaTienda from "@/app/tienda/GaleriaTienda";
 import AddPackToCartButton from "./AddPackToCartButton";
 import { obtenerPackPublico } from "@/lib/packs";
 import { formatPrice } from "@/lib/pricing";
@@ -293,21 +293,19 @@ export default async function PackPage({ params }: PackPageProps) {
             con su propia descarga y su propia licencia.
           </p>
 
-          <div className="mt-6 rk-rejilla">
-            {pack.productos.map((producto) => (
-              <ProductCard
-                key={producto.id}
-                product={{
-                  id: producto.id,
-                  name: producto.name,
-                  slug: producto.slug,
-                  price: producto.price,
-                  coverUrl: producto.coverUrl,
-                  image: producto.image,
-                  category: producto.category,
-                }}
-              />
-            ))}
+          {/* La misma galería que Explorar: solo portadas, cuadro rápido con flechas y «Ver recurso». */}
+          <div className="mt-6">
+            <GaleriaTienda
+              productos={pack.productos.map((producto) => ({
+                id: producto.id,
+                name: producto.name,
+                slug: producto.slug,
+                price: producto.price,
+                coverUrl: producto.coverUrl,
+                image: producto.image,
+                category: producto.category,
+              }))}
+            />
           </div>
         </section>
       </main>
