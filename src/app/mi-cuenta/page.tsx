@@ -2,6 +2,8 @@ import { getSession } from "@/lib/session";
 import { portadasActivas } from "@/lib/portadas";
 import { prisma } from "@/lib/prisma";
 
+import PrimerAvatar from "@/components/cuenta/PrimerAvatar";
+
 import CuentaResumen from "./CuentaResumen";
 import InicioCliente, { type CategoriaCx } from "./InicioCliente";
 
@@ -20,24 +22,33 @@ export default async function MiCuentaPage() {
     return <CuentaResumen />;
   }
 
-  const [portadas, categorias] = await Promise.all([
+  const [portadas, categorias, usuario] = await Promise.all([
     portadasActivas(),
     categoriasPopulares(),
+    prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { avatarUrl: true },
+    }),
   ]);
 
   return (
-    <InicioCliente
-      portadas={portadas.map((p) => ({
-        id: p.id,
-        imagen: p.imageUrl,
-        titulo: p.title,
-        href: p.href,
-        detalle: [p.categoria, p.precio ? `S/ ${p.precio}` : null]
-          .filter(Boolean)
-          .join(" · "),
-      }))}
-      categorias={categorias}
-    />
+    <>
+      {/* Primer ingreso sin foto: propone avatar o foto propia. */}
+      {!usuario?.avatarUrl && <PrimerAvatar />}
+
+      <InicioCliente
+        portadas={portadas.map((p) => ({
+          id: p.id,
+          imagen: p.imageUrl,
+          titulo: p.title,
+          href: p.href,
+          detalle: [p.categoria, p.precio ? `S/ ${p.precio}` : null]
+            .filter(Boolean)
+            .join(" · "),
+        }))}
+        categorias={categorias}
+      />
+    </>
   );
 }
 
