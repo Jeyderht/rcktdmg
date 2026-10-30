@@ -9,6 +9,7 @@ import {
   esErrorDeConfirmacion,
 } from "@/lib/storage/confirmar-imagen";
 import { MAX_IMAGEN_PERFIL, TIPOS_IMAGEN_PERFIL } from "@/lib/subidas";
+import { MAX_FOTO_CLIENTE, tipoFotoPorFirma } from "@/lib/avatares";
 
 export const runtime = "nodejs";
 export async function POST(request: Request) {
@@ -40,7 +41,15 @@ export async function POST(request: Request) {
       );
     }
 
-    if (user.role !== "CREATOR" && user.role !== "ADMIN") {
+    /*
+      El cliente también puede subir su foto de perfil, pero solo
+      por la subida con formulario (abajo): el servidor recibe los
+      bytes y comprueba el tipo REAL y el tamaño (2 MB). La subida
+      directa al almacén sigue siendo solo de creadores y admin.
+    */
+    const esCliente = user.role === "CLIENT";
+
+    if (!esCliente && user.role !== "CREATOR" && user.role !== "ADMIN") {
       return NextResponse.json(
         {
           error:
@@ -57,6 +66,13 @@ export async function POST(request: Request) {
     */
     const esConfirmacion = (request.headers.get("content-type") || "")
       .includes("application/json");
+
+    if (esConfirmacion && esCliente) {
+      return NextResponse.json(
+        { error: "Sube la foto desde tu perfil." },
+        { status: 403 }
+      );
+    }
 
     if (esConfirmacion) {
       const cuerpo = await request.json();
@@ -111,6 +127,53 @@ export async function POST(request: Request) {
         { error: "La imagen está vacía." },
         { status: 400 }
       );
+    }
+
+    // CLIENTE: tipo por la firma de los bytes y máximo 2 MB; se guarda
+    // con el tipo detectado, nunca con el que declara el navegador.
+    if (esCliente) {
+      if (file.size > MAX_FOTO_CLIENTE) {
+        return NextResponse.json(
+          { error: "La foto no puede superar los 2 MB." },
+          { status: 400 }
+        );
+      }
+
+      const datos = Buffer.from(await file.arrayBuffer());
+      const tipoReal = tipoFotoPorFirma(datos);
+
+      if (!tipoReal) {
+        return NextResponse.json(
+          { error: "Formato no permitido. Usa JPG, PNG o WEBP." },
+          { status: 400 }
+        );
+      }
+
+      const guardadoCliente = await putPublic({
+        // Misma carpeta de avatares; el nombre lleva el id del usuario.
+        folder: "creator-avatars",
+        fileName: `${user.id}-${randomUUID()}.${TIPOS_IMAGEN_PERFIL[tipoReal]}`,
+        data: datos,
+        contentType: tipoReal,
+      });
+
+      const anteriorCliente = user.avatarUrl;
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { avatarUrl: guardadoCliente.url },
+      });
+
+      // Solo se olvidan fotos del almacén; los avatares de la casa no.
+      if (anteriorCliente && anteriorCliente !== guardadoCliente.url) {
+        await olvidarObjeto(anteriorCliente, "publico");
+      }
+
+      return NextResponse.json({
+        success: true,
+        avatarUrl: guardadoCliente.url,
+        size: datos.length,
+      });
     }
 
     const extension = TIPOS_IMAGEN_PERFIL[file.type];
