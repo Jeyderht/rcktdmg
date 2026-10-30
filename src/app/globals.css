@@ -14411,6 +14411,21 @@ div.rk-upload-error > * + * {
   color: rgb(var(--pal-oscuro-texto)) !important;
 }
 
+/*
+  Tarjetas de solo imagen (rejilla del inicio y Explorar): el mismo
+  vidrio, más tenue. Menos brillo blanco y la mitad de borde, que es
+  lo que hacía notar la píldora y el corazón; el velo baja poco porque
+  es lo que mantiene el precio legible (contraste mínimo medido sobre
+  las portadas: 4,8 en claro y 5,1 en oscuro).
+*/
+[data-theme] .rk-cc-rejilla .rk-glass-on-image:not(.text-danger),
+[data-theme] .rk-galeria .rk-glass-on-image:not(.text-danger) {
+  border-color: rgb(var(--pal-blanco) / 0.2);
+  background:
+    linear-gradient(rgb(var(--pal-blanco) / 0.04), rgb(var(--pal-blanco) / 0.04)),
+    rgb(var(--rk-background) / 0.36);
+}
+
 @media (hover: hover) and (pointer: fine) {
   button.rk-glass-on-image:hover,
   a.rk-glass-on-image:hover,
