@@ -260,7 +260,8 @@ const TOPE_CATALOGO = 8;
  * Datos del catálogo por categoría del inicio (Fix 9).
  *
  * Cuatro categorías: Eventos, General, Colecciones y Packs
- * (Corporativos no: es lo mismo que General). Cada una con sus
+ * (General es todo lo que no es Eventos: Corporativos, Social media,
+ * etc.). Cada una con sus
  * pestañas Recientes, Populares y Packs, con los MISMOS
  * criterios de la tienda (construirWhere + ordenPrisma): el
  * «Ver todo» lleva al listado que contiene exactamente esto.
@@ -277,7 +278,8 @@ export async function datosCatalogoInicio() {
     });
 
   const eventos = { categoria: CATEGORIA_EVENTOS };
-  const general = { categoria: CATEGORIA_GENERAL };
+  // «General»: todas las categorías menos Eventos, solo publicados.
+  const general = { sinCategoria: CATEGORIA_EVENTOS };
 
   const [
     eventosRecientes,
