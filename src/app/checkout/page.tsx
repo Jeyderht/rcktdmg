@@ -9,6 +9,7 @@ import Navbar from "@/components/layout/Navbar";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
+  leerCarrito,
 } from "@/components/hooks/useCartCount";
 import { IconoBolsaCompra } from "@/components/iconos";
 
@@ -49,19 +50,9 @@ export default function CheckoutPage() {
   const [yaEraSuyo, setYaEraSuyo] = useState(false);
 
   useEffect(() => {
-    let guardado: CartItem[] = [];
-
-    try {
-      const stored = localStorage.getItem(CART_STORAGE_KEY);
-
-      if (stored) {
-        const parsed = JSON.parse(stored);
-
-        if (Array.isArray(parsed)) guardado = parsed;
-      }
-    } catch {
-      guardado = [];
-    }
+    // Una licencia por recurso: leerCarrito deja cada cantidad en 1,
+    // y es esa cantidad la que se envía al crear el pedido.
+    const guardado = leerCarrito<CartItem>();
 
     setCart(guardado);
     setLoaded(true);

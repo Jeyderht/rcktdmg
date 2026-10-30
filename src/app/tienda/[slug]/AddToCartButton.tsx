@@ -1,11 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import {
-  CART_STORAGE_KEY,
-  CART_UPDATED_EVENT,
+  anadirAlCarrito,
+  useEnCarrito,
 } from "@/components/hooks/useCartCount";
 import { IconoBolsaCompra } from "@/components/iconos";
 
@@ -23,8 +24,16 @@ type Props = {
   };
 };
 
+/**
+ * «Agregar al carrito» de la ficha.
+ *
+ * Una licencia por recurso: usa anadirAlCarrito, que no suma otra
+ * unidad si ya está. Si ya está en el carrito, el botón dice «En el
+ * carrito» y lleva a él.
+ */
 export default function AddToCartButton({ product }: Props) {
   const [added, setAdded] = useState(false);
+  const enCarrito = useEnCarrito(product.id);
 
   useEffect(() => {
     if (!added) return;
@@ -35,63 +44,45 @@ export default function AddToCartButton({ product }: Props) {
   }, [added]);
 
   function addToCart() {
-    try {
-      const stored = localStorage.getItem(CART_STORAGE_KEY);
+    const cambio = anadirAlCarrito({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      slug: product.slug,
+      coverUrl: product.coverUrl,
+      pieceType: product.pieceType ?? null,
+      categorySlug: product.categorySlug ?? null,
+    });
 
-      const cart = stored ? JSON.parse(stored) : [];
+    if (cambio) setAdded(true);
+  }
 
-      const list = Array.isArray(cart) ? cart : [];
+  if (added) {
+    return (
+      <button type="button" className="rk-btn rk-btn-added w-full">
+        <Check size={17} />
+        Agregado al carrito
+      </button>
+    );
+  }
 
-      const existing = list.find(
-        (item: { id: string }) => item.id === product.id
-      );
-
-      if (existing) {
-        existing.quantity += 1;
-      } else {
-        list.push({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          slug: product.slug,
-          coverUrl: product.coverUrl,
-          pieceType: product.pieceType ?? null,
-          categorySlug: product.categorySlug ?? null,
-          quantity: 1,
-        });
-      }
-
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(list));
-
-      window.dispatchEvent(new Event(CART_UPDATED_EVENT));
-
-      setAdded(true);
-    } catch (error) {
-      console.error("No se pudo actualizar el carrito:", error);
-    }
+  if (enCarrito) {
+    return (
+      <Link href="/carrito" className="rk-btn rk-btn-added w-full">
+        <Check size={17} />
+        En el carrito
+      </Link>
+    );
   }
 
   return (
     <button
       type="button"
       onClick={addToCart}
-      className={`rk-btn w-full ${
-        added
-          ? "rk-btn-added"
-          : "rk-btn-primary rk-btn-cta"
-      }`}
+      className="rk-btn rk-btn-primary rk-btn-cta w-full"
     >
-      {added ? (
-        <>
-          <Check size={17} />
-          Agregado al carrito
-        </>
-      ) : (
-        <>
-          <IconoBolsaCompra size={17} />
-          Agregar al carrito
-        </>
-      )}
+      <IconoBolsaCompra size={17} />
+      Agregar al carrito
     </button>
   );
 }
