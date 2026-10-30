@@ -1091,11 +1091,13 @@ input[type="search"]::-webkit-search-results-decoration {
     box-shadow: var(--rk-shadow-sm);
   }
 
-  .rk-btn-ink:hover:not(:disabled) {
-    background: rgb(var(--rk-background));
-    color: rgb(var(--rk-foreground));
-    border-color: rgb(var(--rk-foreground));
-    box-shadow: var(--rk-shadow);
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn-ink:hover:not(:disabled) {
+      background: rgb(var(--rk-background));
+      color: rgb(var(--rk-foreground));
+      border-color: rgb(var(--rk-foreground));
+      box-shadow: var(--rk-shadow);
+    }
   }
 
   /* Paper: papel sobre tinta. Para fondos oscuros. */
@@ -1106,11 +1108,13 @@ input[type="search"]::-webkit-search-results-decoration {
     box-shadow: var(--rk-shadow-sm);
   }
 
-  .rk-btn-paper:hover:not(:disabled) {
-    background: rgb(var(--rk-foreground));
-    color: rgb(var(--rk-background));
-    border-color: rgb(var(--rk-foreground));
-    box-shadow: var(--rk-shadow);
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn-paper:hover:not(:disabled) {
+      background: rgb(var(--rk-foreground));
+      color: rgb(var(--rk-background));
+      border-color: rgb(var(--rk-foreground));
+      box-shadow: var(--rk-shadow);
+    }
   }
 
   /* Line: solo contorno. La opción más discreta. */
@@ -1120,10 +1124,12 @@ input[type="search"]::-webkit-search-results-decoration {
     border-color: rgb(var(--rk-foreground) / 0.18);
   }
 
-  .rk-btn-line:hover:not(:disabled) {
-    background: rgb(var(--rk-foreground));
-    color: rgb(var(--rk-background));
-    border-color: rgb(var(--rk-foreground));
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn-line:hover:not(:disabled) {
+      background: rgb(var(--rk-foreground));
+      color: rgb(var(--rk-background));
+      border-color: rgb(var(--rk-foreground));
+    }
   }
 
   /*
@@ -1139,11 +1145,13 @@ input[type="search"]::-webkit-search-results-decoration {
     box-shadow: var(--rk-shadow-sm);
   }
 
-  .rk-btn-primary:hover:not(:disabled) {
-    background: rgb(var(--rk-background));
-    color: rgb(var(--rk-foreground));
-    border-color: rgb(var(--rk-foreground));
-    box-shadow: var(--rk-shadow);
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn-primary:hover:not(:disabled) {
+      background: rgb(var(--rk-background));
+      color: rgb(var(--rk-foreground));
+      border-color: rgb(var(--rk-foreground));
+      box-shadow: var(--rk-shadow);
+    }
   }
 
   /* Etiqueta editorial de las secciones nuevas. */
@@ -1312,11 +1320,13 @@ input[type="search"]::-webkit-search-results-decoration {
     box-shadow: var(--rk-shadow-sm);
   }
 
-  .rk-btn-secondary:hover:not(:disabled) {
-    background: transparent;
-    color: rgb(var(--rk-primary));
-    border-color: rgb(var(--rk-primary));
-    box-shadow: var(--rk-shadow);
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn-secondary:hover:not(:disabled) {
+      background: transparent;
+      color: rgb(var(--rk-primary));
+      border-color: rgb(var(--rk-primary));
+      box-shadow: var(--rk-shadow);
+    }
   }
 
   /* Ghost: sin fondo, solo texto. */
@@ -1325,9 +1335,11 @@ input[type="search"]::-webkit-search-results-decoration {
     color: rgb(var(--rk-muted) / 0.8);
   }
 
-  .rk-btn-ghost:hover:not(:disabled) {
-    background: rgb(var(--rk-foreground) / 0.06);
-    color: rgb(var(--rk-foreground));
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn-ghost:hover:not(:disabled) {
+      background: rgb(var(--rk-foreground) / 0.06);
+      color: rgb(var(--rk-foreground));
+    }
   }
 
   /* Glass: sobre imágenes y fondos con textura. */
@@ -1342,10 +1354,12 @@ input[type="search"]::-webkit-search-results-decoration {
     box-shadow: var(--rk-shadow-sm);
   }
 
-  .rk-btn-glass:hover:not(:disabled) {
-    background: rgb(var(--rk-surface));
-    border-color: var(--rk-border-strong);
-    box-shadow: var(--rk-shadow);
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn-glass:hover:not(:disabled) {
+      background: rgb(var(--rk-surface));
+      border-color: var(--rk-border-strong);
+      box-shadow: var(--rk-shadow);
+    }
   }
 
   .rk-btn-danger {
@@ -1354,9 +1368,11 @@ input[type="search"]::-webkit-search-results-decoration {
     color: rgb(var(--rk-danger));
   }
 
-  .rk-btn-danger:hover:not(:disabled) {
-    background: rgb(var(--rk-danger));
-    color: rgb(var(--pal-oscuro-texto));
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn-danger:hover:not(:disabled) {
+      background: rgb(var(--rk-danger));
+      color: rgb(var(--pal-oscuro-texto));
+    }
   }
 
   .rk-btn-success {
@@ -1365,9 +1381,11 @@ input[type="search"]::-webkit-search-results-decoration {
     box-shadow: var(--rk-shadow-sm);
   }
 
-  .rk-btn-success:hover:not(:disabled) {
-    box-shadow: var(--rk-shadow);
-    opacity: 0.92;
+  @media (hover: hover) and (pointer: fine) {
+    .rk-btn-success:hover:not(:disabled) {
+      box-shadow: var(--rk-shadow);
+      opacity: 0.92;
+    }
   }
 
   /* ========== CAMPOS ========== */
@@ -1455,9 +1473,11 @@ input[type="search"]::-webkit-search-results-decoration {
       border-color 200ms var(--rk-ease-soft);
   }
 
-  .rk-chip:hover {
-    color: rgb(var(--rk-foreground));
-    border-color: var(--rk-border-strong);
+  @media (hover: hover) and (pointer: fine) {
+    .rk-chip:hover {
+      color: rgb(var(--rk-foreground));
+      border-color: var(--rk-border-strong);
+    }
   }
 
   .rk-chip:active {
@@ -1507,10 +1527,12 @@ input[type="search"]::-webkit-search-results-decoration {
     color: rgb(var(--rk-background));
   }
 
-  .rk-chip-active:hover {
-    background: rgb(var(--rk-foreground) / 0.82);
-    border-color: rgb(var(--rk-foreground));
-    color: rgb(var(--rk-background));
+  @media (hover: hover) and (pointer: fine) {
+    .rk-chip-active:hover {
+      background: rgb(var(--rk-foreground) / 0.82);
+      border-color: rgb(var(--rk-foreground));
+      color: rgb(var(--rk-background));
+    }
   }
 
   /* ========== BADGES ========== */
@@ -2414,14 +2436,16 @@ h6 {
   );
 }
 
-.rk-btn-ink:hover:not(:disabled),
-.rk-btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgb(var(--pal-blanco)) 0%, rgb(var(--pal-claro-fondo-2)) 48%, rgb(var(--pal-blanco)) 100%);
-  color: rgb(var(--pal-claro-texto));
-  filter: brightness(1.04);
-  box-shadow:
-    inset 0 1px 0 rgb(var(--pal-blanco)),
-    0 6px 20px rgb(var(--pal-blanco) / 0.1);
+@media (hover: hover) and (pointer: fine) {
+  .rk-btn-ink:hover:not(:disabled),
+  .rk-btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgb(var(--pal-blanco)) 0%, rgb(var(--pal-claro-fondo-2)) 48%, rgb(var(--pal-blanco)) 100%);
+    color: rgb(var(--pal-claro-texto));
+    filter: brightness(1.04);
+    box-shadow:
+      inset 0 1px 0 rgb(var(--pal-blanco)),
+      0 6px 20px rgb(var(--pal-blanco) / 0.1);
+  }
 }
 
 /*
@@ -2469,23 +2493,27 @@ h6 {
   border-color: var(--rx-borde);
 }
 
-.rk-btn-line:hover:not(:disabled),
-.rk-btn-glass:hover:not(:disabled),
-.rk-btn-secondary:hover:not(:disabled),
-.rk-btn-paper:hover:not(:disabled),
-.rk-btn-ghost:hover:not(:disabled) {
-  border-color: rgb(var(--pal-blanco) / 0.34);
-  background: rgb(var(--pal-blanco) / 0.06);
-  color: var(--rx-texto);
+@media (hover: hover) and (pointer: fine) {
+  .rk-btn-line:hover:not(:disabled),
+  .rk-btn-glass:hover:not(:disabled),
+  .rk-btn-secondary:hover:not(:disabled),
+  .rk-btn-paper:hover:not(:disabled),
+  .rk-btn-ghost:hover:not(:disabled) {
+    border-color: rgb(var(--pal-blanco) / 0.34);
+    background: rgb(var(--pal-blanco) / 0.06);
+    color: var(--rx-texto);
+  }
 }
 
-[data-theme="light"] .rk-btn-line:hover:not(:disabled),
-[data-theme="light"] .rk-btn-glass:hover:not(:disabled),
-[data-theme="light"] .rk-btn-secondary:hover:not(:disabled),
-[data-theme="light"] .rk-btn-paper:hover:not(:disabled),
-[data-theme="light"] .rk-btn-ghost:hover:not(:disabled) {
-  border-color: rgb(var(--pal-negro) / 0.2);
-  background: rgb(var(--pal-blanco) / 0.65);
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="light"] .rk-btn-line:hover:not(:disabled),
+  [data-theme="light"] .rk-btn-glass:hover:not(:disabled),
+  [data-theme="light"] .rk-btn-secondary:hover:not(:disabled),
+  [data-theme="light"] .rk-btn-paper:hover:not(:disabled),
+  [data-theme="light"] .rk-btn-ghost:hover:not(:disabled) {
+    border-color: rgb(var(--pal-negro) / 0.2);
+    background: rgb(var(--pal-blanco) / 0.65);
+  }
 }
 
 /* ────────── LENGÜETA Y HALO ────────── */
@@ -2660,20 +2688,22 @@ h6 {
   lengüeta —anclada a su borde— lo seguiría, y el conjunto daría
   un salto en lugar de responder.
 */
-.rk-btn-line:hover:not(:disabled),
-.rk-btn-glass:hover:not(:disabled),
-.rk-btn-secondary:hover:not(:disabled),
-.rk-btn-paper:hover:not(:disabled) {
-  border-color: rgb(var(--pal-blanco) / 0.34);
-  background:
-    radial-gradient(
-      50% 100% at 50% 100%,
-      var(--rx-halo-btn-1) 0%,
-      var(--rx-halo-btn-2) 45%,
-      transparent 100%
-    ),
-    var(--rx-vidrio-2);
-  transform: none;
+@media (hover: hover) and (pointer: fine) {
+  .rk-btn-line:hover:not(:disabled),
+  .rk-btn-glass:hover:not(:disabled),
+  .rk-btn-secondary:hover:not(:disabled),
+  .rk-btn-paper:hover:not(:disabled) {
+    border-color: rgb(var(--pal-blanco) / 0.34);
+    background:
+      radial-gradient(
+        50% 100% at 50% 100%,
+        var(--rx-halo-btn-1) 0%,
+        var(--rx-halo-btn-2) 45%,
+        transparent 100%
+      ),
+      var(--rx-vidrio-2);
+    transform: none;
+  }
 }
 
 [data-theme="light"] .rk-btn-line:hover:not(:disabled),
@@ -2772,12 +2802,14 @@ h6 {
   transition: left 0.7s var(--rx-curva);
 }
 
-.rk-btn-cta:hover:not(:disabled) {
-  transform: translateY(-1px);
-  filter: brightness(1.045);
-  box-shadow:
-    inset 0 1px 0 rgb(var(--pal-blanco)),
-    0 7px 22px rgb(var(--pal-blanco) / 0.1);
+@media (hover: hover) and (pointer: fine) {
+  .rk-btn-cta:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.045);
+    box-shadow:
+      inset 0 1px 0 rgb(var(--pal-blanco)),
+      0 7px 22px rgb(var(--pal-blanco) / 0.1);
+  }
 }
 
 .rk-btn-cta:hover:not(:disabled)::after {
@@ -3875,11 +3907,13 @@ table .rk-btn:hover:not(:disabled) {
     inset 0 0 12px rgb(255 255 255 / var(--rk-pri-brillo));
 }
 
-.rk-btn-primary:hover:not(:disabled) {
-  background: var(--rk-pri-fondo);
-  color: rgb(var(--pal-claro-texto));
-  border-color: transparent;
-  filter: none;
+@media (hover: hover) and (pointer: fine) {
+  .rk-btn-primary:hover:not(:disabled) {
+    background: var(--rk-pri-fondo);
+    color: rgb(var(--pal-claro-texto));
+    border-color: transparent;
+    filter: none;
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -3926,9 +3960,10 @@ table .rk-btn:hover:not(:disabled) {
 
 /*
   Primario en claro al pasar, enfocar o presionar: conserva el color
-  de reposo (texto blanco, borde y brillo interior) y solo se oscurece
-  un poco. En móvil :hover se queda tras tocar, y las reglas de hover
-  de arriba le ponían texto oscuro y le quitaban el brillo.
+  de reposo (texto blanco, borde y brillo interior). En móvil :hover
+  se queda tras tocar, y las reglas de hover de arriba le ponían texto
+  oscuro y le quitaban el brillo. El oscurecido al presionar es el de
+  todos los botones (final del archivo).
 */
 [data-theme="light"] .rk-btn-primary:hover:not(:disabled),
 [data-theme="light"] .rk-btn-primary:focus-visible:not(:disabled),
@@ -3939,7 +3974,6 @@ table .rk-btn:hover:not(:disabled) {
   box-shadow:
     inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
     inset 0 0 12px rgb(255 255 255 / var(--rk-pri-brillo));
-  filter: brightness(0.94);
 }
 
 /* ── A3. ──────────────────────────────────────────────────────────── */
@@ -4007,16 +4041,20 @@ table .rk-btn:hover:not(:disabled) {
   --rk-sec-glass: rgb(var(--pal-blanco) / 0.55);
 }
 
-.rk-btn.rk-btn-line:hover:not(:disabled) {
-  --rk-sec-glass: rgb(var(--pal-blanco) / 0.08);
-  border-color: rgb(var(--pal-blanco) / 0.34);
-  color: var(--rx-texto);
-  transform: none;
+@media (hover: hover) and (pointer: fine) {
+  .rk-btn.rk-btn-line:hover:not(:disabled) {
+    --rk-sec-glass: rgb(var(--pal-blanco) / 0.08);
+    border-color: rgb(var(--pal-blanco) / 0.34);
+    color: var(--rx-texto);
+    transform: none;
+  }
 }
 
-[data-theme="light"] .rk-btn.rk-btn-line:hover:not(:disabled) {
-  --rk-sec-glass: rgb(var(--pal-blanco) / 0.75);
-  border-color: rgb(var(--pal-negro) / 0.2);
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="light"] .rk-btn.rk-btn-line:hover:not(:disabled) {
+    --rk-sec-glass: rgb(var(--pal-blanco) / 0.75);
+    border-color: rgb(var(--pal-negro) / 0.2);
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -4095,18 +4133,20 @@ table .rk-btn:hover:not(:disabled) {
     0 0 0 1px rgb(var(--pal-claro-sombra) / 0.05);
 }
 
-.rk-btn.rk-btn-secondary:hover:not(:disabled),
-.rk-btn.rk-btn-glass:hover:not(:disabled),
-[data-theme="light"] .rk-btn.rk-btn-secondary:hover:not(:disabled),
-[data-theme="light"] .rk-btn.rk-btn-glass:hover:not(:disabled) {
-  background:
-    linear-gradient(
-      145deg,
-      rgb(255 255 255 / calc(var(--rk-vid-alfa) * 1.6)),
-      rgb(255 255 255 / calc(var(--rk-vid-alfa) * 0.4)) 58%,
-      rgb(255 255 255 / var(--rk-vid-alfa))
-    );
-  color: var(--rx-texto);
+@media (hover: hover) and (pointer: fine) {
+  .rk-btn.rk-btn-secondary:hover:not(:disabled),
+  .rk-btn.rk-btn-glass:hover:not(:disabled),
+  [data-theme="light"] .rk-btn.rk-btn-secondary:hover:not(:disabled),
+  [data-theme="light"] .rk-btn.rk-btn-glass:hover:not(:disabled) {
+    background:
+      linear-gradient(
+        145deg,
+        rgb(255 255 255 / calc(var(--rk-vid-alfa) * 1.6)),
+        rgb(255 255 255 / calc(var(--rk-vid-alfa) * 0.4)) 58%,
+        rgb(255 255 255 / var(--rk-vid-alfa))
+      );
+    color: var(--rx-texto);
+  }
 }
 
 [data-theme="light"] .rk-btn.rk-btn-secondary,
@@ -19798,7 +19838,7 @@ body:has(.rk-cargador) {
 }
 
 /* Lo mismo en el panel: al pasar, enfocar o presionar, el primario en
-   claro conserva su brillo de reposo y solo se oscurece un poco. */
+   claro conserva su brillo de reposo. */
 [data-theme="light"] .rk-dash .rk-btn-primary:hover:not(:disabled),
 [data-theme="light"] .rk-dash .rk-btn-primary:focus-visible:not(:disabled),
 [data-theme="light"] .rk-dash .rk-btn-primary:active:not(:disabled) {
@@ -19807,7 +19847,6 @@ body:has(.rk-cargador) {
   box-shadow:
     inset 0 1px 0 rgb(var(--pal-blanco) / 0.9),
     inset 0 0 12px rgb(255 255 255 / var(--rk-pri-brillo));
-  filter: brightness(0.94);
 }
 
 .rk-dash .rk-btn.rk-btn-line {
@@ -24016,8 +24055,10 @@ a.rk-cx-badge::after {
   transform: translate(-50%, -50%);
 }
 
-a.rk-cx-badge:hover {
-  opacity: 0.85;
+@media (hover: hover) and (pointer: fine) {
+  a.rk-cx-badge:hover {
+    opacity: 0.85;
+  }
 }
 
 a.rk-cx-badge:focus-visible,
@@ -24205,5 +24246,32 @@ a.rk-cx-badge:focus-visible,
   .rk-cx-sel,
   a.rk-cx-badge {
     transition: none;
+  }
+}
+
+/* ═══ Botones en claro al presionar: un solo comportamiento ═════════════════
+   Todas las variantes bajan un 6 % de brillo mientras se presionan, sin
+   cambiar el color del texto ni el del fondo. En táctil es lo único que
+   pasa: los efectos de :hover van dentro de @media (hover: hover), así
+   que no se quedan pegados tras tocar. En oscuro no se toca nada. */
+[data-theme="light"] :is(.rk-btn:not(.rk-btn-line), .rk-icon-button, .rk-stepper-btn, .rk-topbar-btn, .rk-chip, .rk-segment-option, .rk-seguir-redondo):active:not(:disabled),
+[data-theme="light"] .rk-dash :is(.rk-btn:not(.rk-btn-line), .rk-icon-button, .rk-chip, .rk-segment-option):active:not(:disabled) {
+  filter: brightness(0.94);
+}
+
+/* Line: su cristal (::before) y su lengüeta (::after) van detrás del
+   botón con z-index negativo. Un filter o un transform en el botón los
+   sacaría al frente y la lengüeta asomaría al tocar; por eso el botón,
+   transparente en reposo, toma un velo del 6 % (lo mismo que el brillo
+   de los demás) y, en táctil, no encoge al presionar. */
+[data-theme="light"] .rk-btn.rk-btn-line:active:not(:disabled),
+[data-theme="light"] .rk-dash .rk-btn.rk-btn-line:active:not(:disabled) {
+  background-color: rgb(var(--pal-negro) / 0.06);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .rk-btn.rk-btn-line:active:not(:disabled),
+  .rk-dash .rk-btn.rk-btn-line:active:not(:disabled) {
+    transform: none;
   }
 }
