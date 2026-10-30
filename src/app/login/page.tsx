@@ -53,10 +53,14 @@ export default function LoginPage() {
 
       // Solo rutas internas: evita redirecciones abiertas
       // del tipo //dominio-externo.com
+      // El creador nunca vuelve a «Mi cuenta»: su inicio es el panel.
+      const aMiCuenta = /^\/mi-cuenta\/?(\?|#|$)/.test(redirectTo ?? "");
+
       if (
         redirectTo &&
         redirectTo.startsWith("/") &&
-        !redirectTo.startsWith("//")
+        !redirectTo.startsWith("//") &&
+        !(role === "CREATOR" && aMiCuenta)
       ) {
         window.location.href = redirectTo;
         return;

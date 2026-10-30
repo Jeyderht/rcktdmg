@@ -47,8 +47,13 @@ export async function middleware(request: NextRequest) {
   // Un usuario con sesión activa no necesita login ni registro.
   if (pathname === "/login" || pathname === "/registro") {
     if (session) {
-      // El admin con sesión va a su panel; el resto, al inicio.
-      const destino = session.role === "ADMIN" ? "/admin" : "/";
+      // El admin y el creador con sesión van a su panel; el resto, al inicio.
+      const destino =
+        session.role === "ADMIN"
+          ? "/admin"
+          : session.role === "CREATOR"
+            ? "/creadores/panel"
+            : "/";
       return NextResponse.redirect(new URL(destino, request.url));
     }
 
@@ -100,6 +105,14 @@ export async function middleware(request: NextRequest) {
   ) {
     if (!session) {
       return redirectToLogin(request);
+    }
+
+    // El inicio del creador es su panel, no el resumen de «Mi cuenta».
+    if (
+      session.role === "CREATOR" &&
+      (pathname === "/mi-cuenta" || pathname === "/mi-cuenta/")
+    ) {
+      return NextResponse.redirect(new URL("/creadores/panel", request.url));
     }
 
     return NextResponse.next();
