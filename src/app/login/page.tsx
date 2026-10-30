@@ -62,7 +62,10 @@ export default function LoginPage() {
       // válida (src/lib/redireccion.ts: nada de //, /, esquemas…).
       const vuelta = destinoDeBusqueda(window.location.search);
 
-      if (vuelta) {
+      // El creador nunca vuelve a «Mi cuenta»: su inicio es el panel.
+      const aMiCuenta = /^\/mi-cuenta\/?(\?|#|$)/.test(vuelta ?? "");
+
+      if (vuelta && !(role === "CREATOR" && aMiCuenta)) {
         window.location.href = vuelta;
         return;
       }
