@@ -16,7 +16,10 @@ import {
 import PreviewProtegido from "@/components/tienda/PreviewProtegido";
 import { ASPECTO_STORY } from "@/lib/home";
 import { useSwipe } from "@/components/hooks/useSwipe";
-import { anadirAlCarrito } from "@/components/hooks/useCartCount";
+import {
+  anadirAlCarrito,
+  useEnCarrito,
+} from "@/components/hooks/useCartCount";
 import { IconoBolsaCompra } from "@/components/iconos";
 import { BotonFavoritoStory } from "@/components/tienda/BotonFavoritoStory";
 
@@ -399,6 +402,8 @@ function BotonCarrito({
   imagen: string | null;
 }) {
   const [anadido, setAnadido] = useState(false);
+  // Una licencia por recurso: si ya está, no se vuelve a sumar.
+  const enCarrito = useEnCarrito(producto.id, "PRODUCT");
 
   useEffect(() => {
     if (!anadido) return;
@@ -409,7 +414,9 @@ function BotonCarrito({
   }, [anadido]);
 
   function anadir() {
-    anadirAlCarrito({
+    if (enCarrito) return;
+
+    const cambio = anadirAlCarrito({
       id: producto.id,
       kind: "PRODUCT",
       name: producto.name,
@@ -418,19 +425,21 @@ function BotonCarrito({
       coverUrl: imagen,
     });
 
-    setAnadido(true);
+    if (cambio) setAnadido(true);
   }
+
+  const hecho = anadido || enCarrito;
 
   return (
     <button
       type="button"
       onClick={anadir}
-      aria-label={anadido ? "Agregado al carrito" : "Añadir al carrito"}
+      aria-label={anadido ? "Agregado al carrito" : enCarrito ? "En el carrito" : "Añadir al carrito"}
       className={`rk-story-btn rk-story-cta rk-press h-12 w-12 shrink-0 ${
-        anadido ? "is-done" : ""
+        hecho ? "is-done" : ""
       }`}
     >
-      {anadido ? (
+      {hecho ? (
         <Check size={18} aria-hidden />
       ) : (
         <IconoBolsaCompra size={18} aria-hidden />
