@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useDialogo } from "@/components/ui/Dialogos";
 import {
   CheckCircle2,
   History,
@@ -32,6 +33,7 @@ export default function VersionesManager({
   productId: string;
   productName: string;
 }) {
+  const { confirmar } = useDialogo();
   const [versiones, setVersiones] = useState<VersionVista[]>([]);
   const [sinVersionar, setSinVersionar] = useState(false);
   const [cargando, setCargando] = useState(true);
@@ -185,9 +187,12 @@ export default function VersionesManager({
   }
 
   async function hacerActual(v: VersionVista) {
-    const confirmado = window.confirm(
-      `¿Volver a ${mostrarVersion(v.version)} como versión vigente?\n\nSerá la que descarguen los compradores a partir de ahora. Las demás versiones se conservan.`
-    );
+    const confirmado = await confirmar({
+      titulo: `¿Volver a ${mostrarVersion(v.version)} como versión vigente?`,
+      mensaje:
+        "Será la que descarguen los compradores a partir de ahora. Las demás versiones se conservan.",
+      aceptar: "Hacer vigente",
+    });
 
     if (!confirmado) return;
 

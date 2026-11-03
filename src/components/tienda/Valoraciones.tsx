@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
+import { useDialogo } from "@/components/ui/Dialogos";
 import {
   ChevronLeft,
   ChevronRight,
@@ -130,6 +131,7 @@ export default function Valoraciones({
   productId: string;
   productSlug: string;
 }) {
+  const { confirmar } = useDialogo();
   const [datos, setDatos] = useState<Datos | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -216,9 +218,12 @@ export default function Valoraciones({
 
   async function borrar() {
     if (
-      !window.confirm(
-        "¿Eliminar tu valoración? Esta acción no se puede deshacer."
-      )
+      !(await confirmar({
+        titulo: "¿Eliminar tu valoración?",
+        mensaje: "Esta acción no se puede deshacer.",
+        aceptar: "Eliminar",
+        peligro: true,
+      }))
     ) {
       return;
     }

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { useDialogo } from "@/components/ui/Dialogos";
 import { FolderOpen, Globe, Lock } from "lucide-react";
 
 import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
@@ -36,6 +37,7 @@ type Collection = {
 };
 
 export default function CollectionDetailPage() {
+    const { confirmar, avisar } = useDialogo();
     const params = useParams();
     const collectionId = String(params.id);
 
@@ -88,9 +90,11 @@ export default function CollectionDetailPage() {
     }, [loadCollection]);
 
     async function removeProduct(productId: string) {
-        const confirmed = window.confirm(
-            "¿Quieres eliminar este producto de la colección?"
-        );
+        const confirmed = await confirmar({
+            titulo: "¿Quitar este recurso de la colección?",
+            aceptar: "Quitar",
+            peligro: true,
+        });
 
         if (!confirmed) return;
 
@@ -129,11 +133,13 @@ export default function CollectionDetailPage() {
                     : current
             );
         } catch (err) {
-            alert(
-                err instanceof Error
-                    ? err.message
-                    : "No se pudo eliminar el producto."
-            );
+            await avisar({
+                titulo: "No se pudo quitar",
+                mensaje:
+                    err instanceof Error
+                        ? err.message
+                        : "No se pudo eliminar el producto.",
+            });
         } finally {
             setRemovingId(null);
         }
@@ -177,11 +183,13 @@ export default function CollectionDetailPage() {
                 current ? { ...current, isPublic: siguiente } : current
             );
         } catch (err) {
-            alert(
-                err instanceof Error
-                    ? err.message
-                    : "No se pudo cambiar la visibilidad."
-            );
+            await avisar({
+                titulo: "No se pudo cambiar la visibilidad",
+                mensaje:
+                    err instanceof Error
+                        ? err.message
+                        : "No se pudo cambiar la visibilidad.",
+            });
         } finally {
             setCambiandoVisibilidad(false);
         }

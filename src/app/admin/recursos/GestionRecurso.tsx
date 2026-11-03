@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import TagsInput from "@/components/creador/TagsInput";
+import { useDialogo } from "@/components/ui/Dialogos";
 
 type Props = {
   id: string;
@@ -34,6 +35,7 @@ function plural(n: number, uno: string, varios: string) {
  */
 export default function GestionRecurso(props: Props) {
   const router = useRouter();
+  const { confirmar } = useDialogo();
 
   const [nombre, setNombre] = useState(props.nombre);
   const [descripcion, setDescripcion] = useState(props.descripcion);
@@ -80,23 +82,28 @@ export default function GestionRecurso(props: Props) {
     void enviar({ name: nombre, description: descripcion, price: precio, categoryId, tags: etiquetas });
   }
 
-  function archivar() {
+  async function archivar() {
     const enOtros =
       props.enPacks + props.enColecciones > 0
         ? `Está en ${plural(props.enPacks, "pack publicado", "packs publicados")} y ${plural(props.enColecciones, "colección publicada", "colecciones publicadas")}: seguirán vendiéndose con los demás recursos, sin este.`
         : "No está en ningún pack ni colección publicados.";
 
-    const ok = window.confirm(
-      `¿Archivar «${props.nombre}»?\n\nDejará de verse en la tienda, el buscador, el inicio y el sitemap. Quien ya lo compró lo seguirá descargando.\n\n${enOtros}\n\nPodrás restaurarlo después.`
-    );
+    const ok = await confirmar({
+      titulo: `¿Archivar «${props.nombre}»?`,
+      mensaje: `Dejará de verse en la tienda, el buscador, el inicio y el sitemap. Quien ya lo compró lo seguirá descargando.\n\n${enOtros}\n\nPodrás restaurarlo después.`,
+      aceptar: "Archivar",
+      peligro: true,
+    });
 
     if (ok) void enviar({ status: "ARCHIVED" });
   }
 
-  function restaurar() {
-    const ok = window.confirm(
-      `¿Restaurar «${props.nombre}»?\n\nVolverá a estar publicado y a verse en la tienda.`
-    );
+  async function restaurar() {
+    const ok = await confirmar({
+      titulo: `¿Restaurar «${props.nombre}»?`,
+      mensaje: "Volverá a estar publicado y a verse en la tienda.",
+      aceptar: "Restaurar",
+    });
 
     if (ok) void enviar({ status: "PUBLISHED" });
   }

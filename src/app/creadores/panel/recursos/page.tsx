@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useDialogo } from "@/components/ui/Dialogos";
 import { ExternalLink, Package, Plus, Send } from "lucide-react";
 
 import {
@@ -82,6 +83,7 @@ const accessLabels: Record<Product["accessType"], string> = {
   BOTH: "Compra + planes",
 };
 export default function RecursosPage() {
+  const { confirmar, avisar } = useDialogo();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -128,9 +130,10 @@ export default function RecursosPage() {
 
   // Misma llamada y mismas confirmaciones que antes.
   async function enviarARevision(productId: string) {
-    const confirmed = window.confirm(
-      "¿Deseas enviar este recurso a revisión?"
-    );
+    const confirmed = await confirmar({
+      titulo: "¿Enviar este recurso a revisión?",
+      aceptar: "Enviar a revisión",
+    });
 
     if (!confirmed) return;
 
@@ -161,11 +164,13 @@ export default function RecursosPage() {
     } catch (error) {
       console.error("ERROR ENVIANDO A REVISIÓN:", error);
 
-      alert(
-        error instanceof Error
-          ? error.message
-          : "No se pudo enviar el recurso a revisión."
-      );
+      await avisar({
+        titulo: "No se pudo enviar a revisión",
+        mensaje:
+          error instanceof Error
+            ? error.message
+            : "No se pudo enviar el recurso a revisión.",
+      });
     } finally {
       setSendingId(null);
     }

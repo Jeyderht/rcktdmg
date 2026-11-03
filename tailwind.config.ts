@@ -9,6 +9,10 @@ const config: Config = {
   darkMode: ["selector", '[data-theme="dark"]'],
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
 
+  // hover: solo con ratón. En táctil el :hover se queda pegado tras
+  // tocar y dejaba oscurecidos los botones con hover:bg-* o hover:opacity-*.
+  future: { hoverOnlyWhenSupported: true },
+
   /*
    * El Design System debe estar SIEMPRE disponible, aunque
    * una utilidad todavía no se use en ningún componente:

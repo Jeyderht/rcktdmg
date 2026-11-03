@@ -9,6 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { IconoBasura, IconoBuscar } from "@/components/iconos";
+import { useDialogo } from "@/components/ui/Dialogos";
 
 type TagAdmin = {
   id: string;
@@ -32,6 +33,7 @@ export default function TagsManager() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [aviso, setAviso] = useState("");
+  const { confirmar } = useDialogo();
 
   const [busqueda, setBusqueda] = useState("");
   const [nueva, setNueva] = useState("");
@@ -167,11 +169,14 @@ export default function TagsManager() {
       return;
     }
 
-    const confirmado = window.confirm(
-      `“${tag.name}” está en ${datos.recursos} ${
+    const confirmado = await confirmar({
+      titulo: `¿Eliminar la etiqueta “${tag.name}”?`,
+      mensaje: `Está en ${datos.recursos} ${
         datos.recursos === 1 ? "recurso" : "recursos"
-      }. Si la eliminas, se quitará de todos ellos. Esta acción no se puede deshacer.\n\n¿Continuar?`
-    );
+      }. Si la eliminas, se quitará de todos ellos. Esta acción no se puede deshacer.`,
+      aceptar: "Eliminar",
+      peligro: true,
+    });
 
     if (!confirmado) return;
 

@@ -5,6 +5,7 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
+import { useDialogo } from "@/components/ui/Dialogos";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -37,6 +38,7 @@ type ProductImage = {
 };
 
 export default function EditarImagenesPage() {
+  const { confirmar } = useDialogo();
   const params = useParams();
   const router = useRouter();
 
@@ -314,9 +316,11 @@ export default function EditarImagenesPage() {
   async function handleDeleteImage(
     imageId: string
   ) {
-    const confirmed = window.confirm(
-      "¿Quieres eliminar esta imagen?"
-    );
+    const confirmed = await confirmar({
+      titulo: "¿Eliminar esta imagen?",
+      aceptar: "Eliminar",
+      peligro: true,
+    });
 
     if (!confirmed) return;
 
