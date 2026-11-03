@@ -363,28 +363,32 @@ async function traerCandidatos(
     se completa con el resto. Son dos consultas acotadas, no
     una por candidato, y evita que con un catálogo grande el
     tope de POOL deje fuera justo los más parecidos.
+
+    Las dos van a la vez: «otros» ya no espera a saber cuántos
+    «mismos» hay, y se recorta después. El resultado es el mismo
+    (mismo orden, mismo tope) con un viaje a la base de datos
+    menos en la cadena.
   */
   if (preferirCategoria) {
-    const mismos = await prisma.product.findMany({
-      where: { ...where, categoryId: preferirCategoria },
-      orderBy: { createdAt: "desc" },
-      take: POOL,
-      select: SELECCION_CANDIDATO,
-    });
+    const [mismos, otros] = await Promise.all([
+      prisma.product.findMany({
+        where: { ...where, categoryId: preferirCategoria },
+        orderBy: { createdAt: "desc" },
+        take: POOL,
+        select: SELECCION_CANDIDATO,
+      }),
+      prisma.product.findMany({
+        where: {
+          ...where,
+          categoryId: { not: preferirCategoria },
+        },
+        orderBy: { createdAt: "desc" },
+        take: POOL,
+        select: SELECCION_CANDIDATO,
+      }),
+    ]);
 
-    if (mismos.length >= POOL) return mismos;
-
-    const otros = await prisma.product.findMany({
-      where: {
-        ...where,
-        categoryId: { not: preferirCategoria },
-      },
-      orderBy: { createdAt: "desc" },
-      take: POOL - mismos.length,
-      select: SELECCION_CANDIDATO,
-    });
-
-    return [...mismos, ...otros];
+    return [...mismos, ...otros].slice(0, POOL);
   }
 
   return prisma.product.findMany({

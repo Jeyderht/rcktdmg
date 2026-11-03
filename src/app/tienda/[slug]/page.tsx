@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import {
     BadgeCheck,
     ChevronRight,
@@ -51,40 +52,56 @@ type ProductPageProps = {
     params: Promise<{ slug: string }>;
 };
 
-async function getPublishedProduct(slug: string) {
-    const product = await prisma.product.findUnique({
-        where: {
-            slug,
-        },
-        include: {
-            category: true,
-            creator: {
-                select: {
-                    id: true,
-                    name: true,
-                    publicName: true,
-                    username: true,
-                    avatarUrl: true,
-                    isVerified: true,
-                    creatorStatus: true,
-                },
-            },
-            images: {
-                orderBy: {
-                    sortOrder: "asc",
-                },
-            },
+/*
+  Prisma pide las relaciones de un `include` una detrás de otra
+  (recurso → categoría → creador → imágenes → etiquetas), y en
+  producción cada una es un viaje a la base de datos. Imágenes y
+  etiquetas se piden aparte, a la vez que el recurso, por el mismo
+  slug: la cadena pasa de cinco consultas a tres y el resultado
+  tiene la misma forma.
 
-            /*
-              Todas las etiquetas: la de pack decide el
-              distintivo, y las descriptivas se enseñan como
-              enlaces al catálogo.
-            */
-            tags: {
-                select: { tag: { select: { name: true, slug: true } } },
+  `cache` hace que generateMetadata y la página compartan una sola
+  lectura por petición.
+*/
+const getPublishedProduct = cache(async (slug: string) => {
+    const [product, images, tags] = await Promise.all([
+        prisma.product.findUnique({
+            where: {
+                slug,
             },
-        },
-    });
+            include: {
+                category: true,
+                creator: {
+                    select: {
+                        id: true,
+                        name: true,
+                        publicName: true,
+                        username: true,
+                        avatarUrl: true,
+                        isVerified: true,
+                        creatorStatus: true,
+                    },
+                },
+            },
+        }),
+
+        prisma.productImage.findMany({
+            where: { product: { slug } },
+            orderBy: {
+                sortOrder: "asc",
+            },
+        }),
+
+        /*
+          Todas las etiquetas: la de pack decide el
+          distintivo, y las descriptivas se enseñan como
+          enlaces al catálogo.
+        */
+        prisma.productTag.findMany({
+            where: { product: { slug } },
+            select: { tag: { select: { name: true, slug: true } } },
+        }),
+    ]);
 
     // Los recursos DRAFT, PENDING_REVIEW, REJECTED y
     // ARCHIVED nunca son visibles públicamente.
@@ -92,8 +109,8 @@ async function getPublishedProduct(slug: string) {
         return null;
     }
 
-    return product;
-}
+    return { ...product, images, tags };
+});
 
 export async function generateMetadata({
     params,
@@ -161,8 +178,90 @@ export default async function ProductPage({
      */
     const pricing = getPriceDisplay(Number(product.price));
 
-    // Ficha técnica: solo datos que existen de verdad.
-    const fileInfo = await getProductFileInfo(product.fileUrl);
+    /*
+      TODO LO QUE SOLO DEPENDE DEL RECURSO, A LA VEZ
+
+      Ficha técnica, versiones, packs, si ya es suyo y las dos
+      listas de recomendación no dependen unas de otras: van en un
+      solo Promise.all. En producción cada consulta cuesta un viaje
+      a la base de datos, así que encadenarlas sumaba sus tiempos;
+      en paralelo, la ficha tarda lo que la más lenta.
+
+      La sesión solo lee la cookie (sin base de datos) y va antes
+      porque dos de ellas la necesitan.
+    */
+    const session = await getSession();
+
+    const referenciaReco = {
+        id: product.id,
+        categoryId: product.categoryId,
+        creatorId: product.creatorId,
+        fileFormat: product.fileFormat,
+        color: product.color,
+        price: Number(product.price),
+        tagSlugs: product.tags.map((fila) => fila.tag.slug),
+    };
+
+    const [
+        fileInfo,
+        versiones,
+        packsConEste,
+        yaEsSuyo,
+        [bloques, sugerencias],
+    ] = await Promise.all([
+        // Ficha técnica: solo datos que existen de verdad.
+        getProductFileInfo(product.fileUrl),
+
+        /*
+          Historial de versiones.
+
+          listarVersiones NO devuelve fileUrl: esa referencia
+          apunta al almacén privado y no sale del servidor. Aquí
+          solo se pintan número, formato, fecha y cambios.
+        */
+        listarVersiones(product.id),
+
+        packsQueIncluyen(product.id),
+
+        /*
+          ¿Ya es suyo?
+
+          Se consulta aquí, en el servidor, y no en el botón: el
+          navegador no puede saberlo sin una llamada más, y la
+          respuesta llegaría después de pintar un botón "Añadir al
+          carrito" que acto seguido tendría que desaparecer.
+        */
+        tieneProducto(session?.userId, product.id),
+
+        /*
+          LAS DOS LISTAS DE RECOMENDACIÓN
+
+          `paraProducto` alimenta los bloques del pie —"Más de este
+          creador", "Más de esta categoría"— y `sugerenciasDeFicha`
+          la tira animada que va junto a la zona de compra.
+
+          Son listas distintas a propósito. Arriba interesa el
+          parecido con lo que se está viendo, sin agrupar por señal;
+          abajo, la señal concreta que da título a cada bloque. Con
+          un catálogo pequeño algún recurso puede aparecer en las
+          dos, y eso es preferible a dejar la tira medio vacía por
+          reservarle solo lo que ningún bloque haya usado.
+        */
+        Promise.all([
+            paraProducto(
+                {
+                    ...referenciaReco,
+                    categoriaNombre: product.category.name,
+                    creadorNombre: creatorName,
+                },
+                session?.userId ?? null
+            ),
+            sugerenciasDeFicha(
+                { ...referenciaReco, categoriaSlug: product.category.slug },
+                session?.userId ?? null
+            ),
+        ]),
+    ]);
 
     /*
      * Formato: primero el del archivo real; si no se pudo leer,
@@ -190,15 +289,6 @@ export default async function ProductPage({
         PLAN: "Incluido en planes",
         BOTH: "Compra individual o plan",
     };
-
-    /*
-      Historial de versiones.
-
-      listarVersiones NO devuelve fileUrl: esa referencia
-      apunta al almacén privado y no sale del servidor. Aquí
-      solo se pintan número, formato, fecha y cambios.
-    */
-    const versiones = await listarVersiones(product.id);
 
     const versionActual = versiones.find((v) => v.isCurrent) ?? null;
 
@@ -257,63 +347,9 @@ export default async function ProductPage({
      * prometer una personalización que aquí no existe.
      *
      * La puntuación vive en src/lib/recomendaciones.ts y no
-     * sale hacia el navegador.
+     * sale hacia el navegador. Se piden más arriba, en el mismo
+     * Promise.all que el resto.
      */
-    const session = await getSession();
-
-    const packsConEste = await packsQueIncluyen(product.id);
-
-    /*
-      ¿Ya es suyo?
-
-      Se consulta aquí, en el servidor, y no en el botón: el
-      navegador no puede saberlo sin una llamada más, y la
-      respuesta llegaría después de pintar un botón "Añadir al
-      carrito" que acto seguido tendría que desaparecer.
-    */
-    const yaEsSuyo = await tieneProducto(session?.userId, product.id);
-
-    /*
-      LAS DOS LISTAS DE RECOMENDACIÓN, A LA VEZ
-
-      `paraProducto` alimenta los bloques del pie —"Más de este
-      creador", "Más de esta categoría"— y `sugerenciasDeFicha`
-      la tira animada que va junto a la zona de compra.
-
-      Van en paralelo porque no dependen una de otra: el tiempo
-      de respuesta es el de la más lenta, no la suma.
-
-      Son listas distintas a propósito. Arriba interesa el
-      parecido con lo que se está viendo, sin agrupar por señal;
-      abajo, la señal concreta que da título a cada bloque. Con
-      un catálogo pequeño algún recurso puede aparecer en las
-      dos, y eso es preferible a dejar la tira medio vacía por
-      reservarle solo lo que ningún bloque haya usado.
-    */
-    const referenciaReco = {
-        id: product.id,
-        categoryId: product.categoryId,
-        creatorId: product.creatorId,
-        fileFormat: product.fileFormat,
-        color: product.color,
-        price: Number(product.price),
-        tagSlugs: product.tags.map((fila) => fila.tag.slug),
-    };
-
-    const [bloques, sugerencias] = await Promise.all([
-        paraProducto(
-            {
-                ...referenciaReco,
-                categoriaNombre: product.category.name,
-                creadorNombre: creatorName,
-            },
-            session?.userId ?? null
-        ),
-        sugerenciasDeFicha(
-            { ...referenciaReco, categoriaSlug: product.category.slug },
-            session?.userId ?? null
-        ),
-    ]);
 
 
     // El perfil público solo existe si el creador tiene
