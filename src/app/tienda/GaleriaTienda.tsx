@@ -157,8 +157,16 @@ export default function GaleriaTienda({
                 </button>
               )}
 
+              {/*
+                Precarga completa: con el cuadro abierto, lo más
+                probable es tocar «Ver recurso». La ficha es
+                dinámica y, sin esto, solo se precarga hasta el
+                cargador; así llega ya hecha. Es una sola ficha
+                (la que se está viendo), no la rejilla entera.
+              */}
               <Link
                 href={`/tienda/${actual.slug}`}
+                prefetch
                 className="rk-btn rk-btn-primary flex-1"
               >
                 Ver recurso
