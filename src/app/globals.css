@@ -95,6 +95,7 @@
     §74  Marco de app de la cuenta (PanelShell / PanelNav)                22240–22752
     §75  Inicios con imágenes (rk-cx-*)                                   22753–24076
     §76  Vista previa al subir (rk-vp-*)                                  24116–24335
+    §77  Recurso bloqueado sin sesión (rk-bloqueo-*)                      24628–24651
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -24622,4 +24623,29 @@ a.rk-cx-badge:focus-visible,
   .rk-vp-dot {
     transition: none;
   }
+}
+
+/* ══════════════════════════════════════════════════════════
+   §77 · Recurso bloqueado sin sesión (FondoBloqueado.tsx)
+   Fondo del marco de un recurso «solo para registrados» que mira
+   un visitante: tarjeta, galería de Explorar, ficha y punto de
+   partida del desbloqueo.
+   · .rk-bloqueo-mini: la miniatura de 32 px que el servidor ya
+     desenfocó, estirada en bloques. No lleva filtro CSS: no hay
+     nada debajo que proteger, la imagen real no se envía.
+   · .rk-bloqueo-fondo: sin miniatura todavía, un degradado neutro
+     con manchas suaves, en los tokens del tema (nunca negro liso).
+   ══════════════════════════════════════════════════════════ */
+.rk-bloqueo-mini {
+  image-rendering: pixelated;
+}
+
+.rk-bloqueo-fondo {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(55% 40% at 28% 26%, rgb(var(--rk-ink) / 0.22), transparent 72%),
+    radial-gradient(60% 45% at 76% 62%, rgb(var(--rk-ink) / 0.3), transparent 72%),
+    radial-gradient(70% 40% at 40% 96%, rgb(var(--rk-ink) / 0.18), transparent 75%),
+    linear-gradient(160deg, rgb(var(--rk-surface-elevated)), rgb(var(--rk-surface)));
 }

@@ -116,7 +116,7 @@ export function imagenVisible(
 */
 const TOPE_MINIATURA = 4096;
 
-function esMiniaturaValida(valor: string | null): valor is string {
+export function esMiniaturaValida(valor: string | null): valor is string {
   return (
     typeof valor === "string" &&
     valor.length <= TOPE_MINIATURA &&

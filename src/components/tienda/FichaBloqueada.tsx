@@ -1,4 +1,4 @@
-import Image from "next/image";
+import FondoBloqueado from "@/components/tienda/FondoBloqueado";
 import Link from "next/link";
 import { Lock } from "lucide-react";
 
@@ -12,8 +12,8 @@ import type { BloqueoTarjeta } from "@/lib/vista-recurso";
  * Ocupa el mismo sitio y con el mismo marco que ProductGallery
  * (misma caja y misma proporción), así que la página no salta entre
  * un estado y otro. No hay imagen real: el servidor no la envía. Se
- * ve la miniatura desenfocada o, sin ella, el fondo neutro del
- * marco; encima, el candado, el aviso y los dos accesos, que
+ * ve la miniatura desenfocada o, sin ella, un degradado neutro
+ * (FondoBloqueado); encima, el candado, el aviso y los dos accesos, que
  * vuelven a esta ficha al terminar.
  */
 export default function FichaBloqueada({
@@ -32,16 +32,7 @@ export default function FichaBloqueada({
         className="rk-media relative overflow-hidden rounded-rk-lg"
         style={{ aspectRatio: proporcion ?? "1080 / 1350" }}
       >
-        {bloqueo.miniatura && (
-          <Image
-            src={bloqueo.miniatura}
-            alt=""
-            aria-hidden
-            fill
-            unoptimized
-            className="object-cover"
-          />
-        )}
+        <FondoBloqueado miniatura={bloqueo.miniatura} />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center">
           <p className="rk-glass-on-image inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-medium">

@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
+import { asegurarMiniaturasBloqueadas } from "@/lib/miniatura-bloqueada";
 import type { SessionData } from "@/lib/session";
 import {
   autorizarCambio,
@@ -52,6 +53,17 @@ export async function cambiarVistaPrevia(
     where: { id: { in: encontrados.map((r) => r.id) } },
     data: { previewLibre: peticion.previewLibre },
   });
+
+  /*
+    Al pasar a «Solo registrados», los que aún no tengan miniatura
+    la reciben ahora, antes de invalidar las páginas: así el primer
+    visitante ya ve la portada desenfocada y no el fondo neutro. Al
+    volver a «libre» no se borra: no se enseña, y sirve si se bloquea
+    de nuevo.
+  */
+  if (!peticion.previewLibre) {
+    await asegurarMiniaturasBloqueadas(encontrados.map((r) => r.id));
+  }
 
   // Todas las páginas donde puede aparecer el recurso.
   for (const r of encontrados) {

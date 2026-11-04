@@ -8,6 +8,7 @@ import { ArrowUpRight, ChevronLeft, ChevronRight, Lock, X } from "lucide-react";
 
 import FavoriteButton from "@/components/tienda/FavoriteButton";
 import ImagenDesbloqueada from "@/components/tienda/ImagenDesbloqueada";
+import FondoBloqueado from "@/components/tienda/FondoBloqueado";
 import ProductCard, { type ProductCardData } from "@/components/tienda/ProductCard";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 
@@ -98,16 +99,7 @@ export default function GaleriaTienda({
               >
                 {bloqueo ? (
                   <>
-                    {bloqueo.miniatura && (
-                      <Image
-                        src={bloqueo.miniatura}
-                        alt=""
-                        aria-hidden
-                        fill
-                        unoptimized
-                        className="object-cover"
-                      />
-                    )}
+                    <FondoBloqueado miniatura={bloqueo.miniatura} />
 
                     <span className="rk-glass-on-image absolute left-1/2 top-1/2 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full">
                       <Lock size={14} aria-hidden />

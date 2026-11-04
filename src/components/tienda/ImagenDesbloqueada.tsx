@@ -3,6 +3,8 @@
 import Image, { type ImageProps } from "next/image";
 import { useState } from "react";
 
+import FondoBloqueado from "@/components/tienda/FondoBloqueado";
+
 /**
  * Imagen real de un recurso solo para registrados, ya con sesión.
  *
@@ -25,23 +27,14 @@ export default function ImagenDesbloqueada({
   className = "",
   ...props
 }: ImageProps & {
-  /** Data URI desenfocado; sin él, la imagen aparece sobre el fondo del marco. */
+  /** Data URI desenfocado; sin él, la imagen aparece sobre el degradado neutro. */
   miniatura: string | null;
 }) {
   const [cargada, setCargada] = useState(false);
 
   return (
     <>
-      {miniatura && (
-        <Image
-          src={miniatura}
-          alt=""
-          aria-hidden
-          fill
-          unoptimized
-          className="object-cover"
-        />
-      )}
+      <FondoBloqueado miniatura={miniatura} />
 
       <Image
         {...props}

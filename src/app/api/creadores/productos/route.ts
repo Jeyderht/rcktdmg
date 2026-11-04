@@ -9,6 +9,7 @@ import {
   formatoDesdeUrl,
 } from "@/lib/producto-metadata";
 import { sincronizarTagsProducto } from "@/lib/tags";
+import { asegurarMiniaturasBloqueadas } from "@/lib/miniatura-bloqueada";
 import { esTipoLicencia } from "@/lib/licencias-comun";
 import { MAXIMO_IMAGENES_GALERIA } from "@/lib/requisitos-contenido";
 import {
@@ -345,6 +346,15 @@ export async function POST(req: NextRequest) {
       los dos sentidos.
     */
     await sincronizarTagsProducto(product.id, tags);
+
+    /*
+      Solo para registrados desde el principio: su miniatura
+      desenfocada se genera ya, después de la galería (sin portada,
+      sale de la primera imagen). No lanza: sin ella, fondo neutro.
+    */
+    if (product.previewLibre === false) {
+      await asegurarMiniaturasBloqueadas([product.id]);
+    }
 
     return NextResponse.json(
       {

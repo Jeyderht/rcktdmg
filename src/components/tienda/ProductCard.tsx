@@ -12,6 +12,7 @@ import { getPriceDisplay, formatPrice } from "@/lib/pricing";
 import { conDestino } from "@/lib/redireccion";
 import type { BloqueoTarjeta, Desbloqueo } from "@/lib/vista-recurso";
 import ImagenDesbloqueada from "@/components/tienda/ImagenDesbloqueada";
+import FondoBloqueado from "@/components/tienda/FondoBloqueado";
 import { ArrowUpRight, Lock } from "lucide-react";
 
 export type ProductCardData = {
@@ -96,9 +97,14 @@ export default function ProductCard({
   /*
     Bloqueada: solo para registrados y vista sin sesión. No hay
     imagen real (el servidor no la envía): la miniatura
-    desenfocada o, sin ella, el fondo neutro del marco. Entonces
-    el marco no enlaza a la ficha; el botón lleva al registro y
-    vuelve a ella.
+    desenfocada o, sin ella, un degradado neutro (FondoBloqueado).
+    Entonces el marco no enlaza a la ficha; el botón lleva al
+    registro y vuelve a ella.
+
+    Salvo en la variante de solo imagen (rejilla de 3 del inicio):
+    ahí el aviso y el botón no caben, así que solo va el candado y
+    el marco enlaza a la ficha, que ya enseña el aviso completo con
+    sus dos accesos. Enlazar no expone ninguna imagen.
   */
   const bloqueo = product.bloqueo ?? null;
   const ficha = `/tienda/${product.slug}`;
@@ -118,7 +124,11 @@ export default function ProductCard({
       <article className="rk-tarjeta group relative">
 
       {/* CONTENIDO VISUAL 9:16 (sin enlace si va bloqueada) */}
-      <MarcoEnlazado href={ficha} label={product.name} enlazar={!bloqueo}>
+      <MarcoEnlazado
+        href={ficha}
+        label={bloqueo ? `${product.name}: vista previa para miembros` : product.name}
+        enlazar={!bloqueo || soloImagen}
+      >
         {/*
           EL MARCO LO DECIDE EL RECURSO, no una proporción
           fija. Antes todas las tarjetas eran 9:16, así que una
@@ -146,16 +156,7 @@ export default function ProductCard({
         >
           {bloqueo ? (
             <>
-              {bloqueo.miniatura && (
-                <Image
-                  src={bloqueo.miniatura}
-                  alt=""
-                  aria-hidden
-                  fill
-                  unoptimized
-                  className="object-cover"
-                />
-              )}
+              <FondoBloqueado miniatura={bloqueo.miniatura} />
 
               {/*
                 AVISO: candado, texto y registro (vuelve a la ficha). Es
@@ -163,19 +164,25 @@ export default function ProductCard({
                 span.rk-glass-on-image (categoría, pack) y este aviso
                 tiene que verse también ahí.
               */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-3 text-center">
-                <p className="rk-glass-on-image inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium">
-                  <Lock size={12} aria-hidden />
-                  Vista previa para miembros
-                </p>
+              {soloImagen ? (
+                <span className="rk-glass-on-image pointer-events-none absolute left-1/2 top-1/2 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full">
+                  <Lock size={14} aria-hidden />
+                </span>
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-3 text-center">
+                  <p className="rk-glass-on-image inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium">
+                    <Lock size={12} aria-hidden />
+                    Vista previa para miembros
+                  </p>
 
-                <Link
-                  href={conDestino("/registro", ficha)}
-                  className="rk-btn rk-btn-primary rk-btn-compact"
-                >
-                  Regístrate gratis
-                </Link>
-              </div>
+                  <Link
+                    href={conDestino("/registro", ficha)}
+                    className="rk-btn rk-btn-primary rk-btn-compact"
+                  >
+                    Regístrate gratis
+                  </Link>
+                </div>
+              )}
             </>
           ) : image && product.desbloqueo ? (
             <ImagenDesbloqueada

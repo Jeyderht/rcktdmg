@@ -7,6 +7,7 @@ import {
   revisarMedidas,
 } from "@/lib/tipos-publicacion";
 import { olvidarObjeto } from "@/lib/storage";
+import { asegurarMiniaturasBloqueadas } from "@/lib/miniatura-bloqueada";
 import {
   aplicarEtiquetaPack,
   colorValido,
@@ -264,9 +265,16 @@ export async function PATCH(
           coverUrl: nuevaPortada,
           coverWidth: medidas?.width ?? null,
           coverHeight: medidas?.height ?? null,
+          // La miniatura bloqueada era de la portada anterior.
+          ...(anterior !== nuevaPortada ? { miniaturaBloqueada: null } : {}),
         },
         select: { id: true, coverUrl: true, coverWidth: true, coverHeight: true },
       });
+
+      // Solo para registrados: miniatura de la portada nueva.
+      if (!product.previewLibre) {
+        await asegurarMiniaturasBloqueadas([product.id]);
+      }
 
       /* La portada vieja deja de estar referenciada. */
       if (anterior && anterior !== nuevaPortada) {
@@ -450,6 +458,10 @@ export async function PATCH(
               coverHeight: medidaPortada?.height ?? null,
             }
           : {}),
+        // Portada distinta: la miniatura bloqueada ya no le corresponde.
+        ...(coverUrl !== undefined && (coverUrl || null) !== product.coverUrl
+          ? { miniaturaBloqueada: null }
+          : {}),
         previewUrl:
           previewUrl !== undefined
             ? previewUrl || null
@@ -487,6 +499,15 @@ export async function PATCH(
     */
     if (Array.isArray(tags)) {
       await sincronizarTagsProducto(product.id, tags);
+    }
+
+    /*
+      Solo para registrados: si no tiene miniatura desenfocada (nunca
+      la tuvo o acaba de cambiar la portada), se genera ahora. No
+      lanza: sin ella se enseña el fondo neutro.
+    */
+    if (!updatedProduct.previewLibre) {
+      await asegurarMiniaturasBloqueadas([product.id]);
     }
 
     /*
