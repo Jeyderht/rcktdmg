@@ -595,15 +595,22 @@ export async function packsPorIds(
   return filas.map((fila) => aVista(fila, visor));
 }
 
+/**
+ * Un pack por id, con los recursos filtrados para `visor`.
+ * Obligatorio a propósito: la ruta GET es pública para packs
+ * publicados y un visitante no debe recibir la imagen real de
+ * los recursos «solo para registrados» que contiene.
+ */
 export async function obtenerPack(
-  packId: string
+  packId: string,
+  visor: Visor
 ): Promise<PackVista | null> {
   const fila = await prisma.pack.findUnique({
     where: { id: packId },
     select: SELECCION,
   });
 
-  return fila ? aVista(fila, VISOR_CON_SESION) : null;
+  return fila ? aVista(fila, visor) : null;
 }
 
 /* ══════════════ COMPRA ══════════════ */

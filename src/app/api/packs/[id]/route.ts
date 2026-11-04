@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { getSession } from "@/lib/session";
+import { visorDe } from "@/lib/visor";
+import { VISOR_CON_SESION } from "@/lib/vista-recurso";
 import {
   actualizarPack,
   borrarPack,
@@ -34,7 +36,9 @@ export async function GET(_req: Request, contexto: Contexto) {
   try {
     const { id } = await contexto.params;
 
-    const pack = await obtenerPack(id);
+    // Sin sesión, los recursos solo para registrados van sin imagen real.
+    const session = await getSession();
+    const pack = await obtenerPack(id, visorDe(session));
 
     if (!pack) {
       return NextResponse.json(
@@ -44,8 +48,6 @@ export async function GET(_req: Request, contexto: Contexto) {
     }
 
     if (pack.status !== "PUBLISHED") {
-      const session = await getSession();
-
       const { permitido } = session
         ? await packEditablePor(id, session.userId, session.role)
         : { permitido: false };
@@ -123,7 +125,8 @@ export async function PATCH(request: Request, contexto: Contexto) {
     return NextResponse.json({
       success: true,
       slug: resultado.slug,
-      pack: await obtenerPack(id),
+      // PATCH solo llega con sesión de su creador o de un ADMIN.
+      pack: await obtenerPack(id, VISOR_CON_SESION),
     });
   } catch (error) {
     console.error("PATCH /api/packs/[id]:", error);
