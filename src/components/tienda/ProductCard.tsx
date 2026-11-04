@@ -207,9 +207,10 @@ export default function ProductCard({
             </div>
           )}
 
-          {/* PRECIO (solo imagen): píldora abajo a la izquierda, sobre el «Pack» si lo hay. */}
+          {/* PRECIO (solo imagen): píldora abajo a la izquierda, sobre la
+              fila de distintivos («Pack», «Solo registrados») si la hay. */}
           {soloImagen && (
-            <span className={`rk-glass-on-image pointer-events-none absolute left-2 rounded-full px-2 py-1 text-[10px] font-bold ${product.esPack ? "bottom-8" : "bottom-2"}`}>
+            <span className={`rk-glass-on-image pointer-events-none absolute left-2 rounded-full px-2 py-1 text-[10px] font-bold ${product.esPack || product.soloRegistrados ? "bottom-8" : "bottom-2"}`}>
               {formatPrice(pricing.price)}
             </span>
           )}
