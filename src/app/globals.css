@@ -24630,7 +24630,7 @@ a.rk-cx-badge:focus-visible,
    Fondo del marco de un recurso «solo para registrados» que mira
    un visitante: tarjeta, galería de Explorar, ficha y punto de
    partida del desbloqueo.
-   · .rk-bloqueo-mini: la miniatura de 32 px que el servidor ya
+   · .rk-bloqueo-mini: la miniatura de 16 px que el servidor ya
      desenfocó, estirada en bloques. No lleva filtro CSS: no hay
      nada debajo que proteger, la imagen real no se envía.
    · .rk-bloqueo-fondo: sin miniatura todavía, un degradado neutro

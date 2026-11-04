@@ -9,10 +9,12 @@
  *
  * POR QUÉ NO SE PUEDE RECUPERAR LA PORTADA
  *
- * La imagen se reduce a 32 px de ancho y después se desenfoca con
- * un radio de varios píxeles de esa misma imagen diminuta. Lo que
- * queda son unas manchas de color: unos pocos cientos de bytes en
- * los que ya no existe la información de la portada. No es un
+ * La imagen se reduce a 16 px de ancho y después se desenfoca con
+ * sigma 5 sobre esa misma imagen diminuta: casi un tercio de su
+ * ancho. En las tarjetas (98-114 px) equivale a un radio de unos
+ * 30-36 px. Solo quedan manchas de color, sin texto legible ni figuras:
+ * unos pocos cientos de bytes en los que ya no existe la información
+ * de la portada. No es un
  * desenfoque CSS sobre la imagen real (ese se quita con las
  * herramientas del navegador): los píxeles reales nunca salen del
  * servidor. En pantalla se estira con `image-rendering: pixelated`
@@ -37,14 +39,14 @@ import sharp from "sharp";
 
 import { prisma } from "@/lib/prisma";
 import { HOST_BLOB_PUBLICO } from "@/lib/storage/blob";
-import { esMiniaturaValida } from "@/lib/vista-recurso";
+import { PREFIJO_MINIATURA, esMiniaturaValida } from "@/lib/vista-recurso";
 
 /** Ancho de la miniatura, en píxeles. */
-const ANCHO = 32;
+const ANCHO = 16;
 /** Tope de alto, por si una portada fuese muy alargada. */
-const ALTO_MAXIMO = 64;
+const ALTO_MAXIMO = 32;
 /** Desenfoque (sigma) aplicado sobre la imagen ya reducida. */
-const DESENFOQUE = 3;
+const DESENFOQUE = 5;
 /** Portadas más pesadas que esto no se procesan. */
 const TOPE_BYTES = 25 * 1024 * 1024;
 const TIEMPO_MAXIMO_MS = 10_000;
@@ -115,7 +117,7 @@ export async function miniaturaDesdeBytes(
         .webp({ quality: calidad, effort: 6 })
         .toBuffer();
 
-      const uri = `data:image/webp;base64,${salida.toString("base64")}`;
+      const uri = `${PREFIJO_MINIATURA}${salida.toString("base64")}`;
 
       // La misma comprobación que se hace antes de enviarla.
       if (esMiniaturaValida(uri)) return uri;
@@ -143,11 +145,12 @@ const EN_PARALELO = 4;
 
 /**
  * Para cada recurso indicado que sea «solo para registrados» y no
- * tenga miniatura, la genera desde su portada (o, sin portada, desde
- * su primera imagen, igual que la ficha) y la guarda.
+ * tenga una miniatura vigente (vacía o de un desenfoque anterior),
+ * la genera desde su portada (o, sin portada, desde su primera
+ * imagen, igual que la ficha) y la guarda.
  *
- * Solo escribe `miniaturaBloqueada`, y solo si sigue vacía y el
- * recurso sigue bloqueado en el momento de guardar. Devuelve cuántas
+ * Solo escribe `miniaturaBloqueada`, y solo si no ha cambiado desde
+ * que se leyó y el recurso sigue bloqueado. Devuelve cuántas
  * se generaron. No lanza: un recurso que falla se queda con el fondo
  * neutro y no afecta a los demás.
  */
@@ -156,11 +159,12 @@ export async function asegurarMiniaturasBloqueadas(
 ): Promise<number> {
   if (ids.length === 0) return 0;
 
-  const pendientes = await prisma.product.findMany({
-    where: { id: { in: ids }, previewLibre: false, miniaturaBloqueada: null },
+  const bloqueados = await prisma.product.findMany({
+    where: { id: { in: ids }, previewLibre: false },
     select: {
       id: true,
       coverUrl: true,
+      miniaturaBloqueada: true,
       images: {
         orderBy: { sortOrder: "asc" },
         take: 1,
@@ -168,6 +172,10 @@ export async function asegurarMiniaturasBloqueadas(
       },
     },
   });
+
+  const pendientes = bloqueados.filter(
+    (r) => !esMiniaturaValida(r.miniaturaBloqueada)
+  );
 
   let generadas = 0;
 
@@ -186,7 +194,7 @@ export async function asegurarMiniaturasBloqueadas(
             where: {
               id: recurso.id,
               previewLibre: false,
-              miniaturaBloqueada: null,
+              miniaturaBloqueada: recurso.miniaturaBloqueada,
             },
             data: { miniaturaBloqueada: miniatura },
           });

@@ -14,7 +14,7 @@ import {
   generarMiniaturaBloqueada,
   miniaturaDesdeBytes,
 } from "./miniatura-bloqueada";
-import { esMiniaturaValida } from "./vista-recurso";
+import { PREFIJO_MINIATURA, esMiniaturaValida } from "./vista-recurso";
 
 /** Una «portada» 1080 × 1920 llena de detalle fino: tablero de 4 px. */
 async function portadaConDetalle(): Promise<Buffer> {
@@ -34,6 +34,22 @@ async function portadaConDetalle(): Promise<Buffer> {
     .toBuffer();
 }
 
+/** Póster 1080 × 1920: fondo oscuro, título enorme y una silueta. */
+function portadaConTitulo(titulo: string): Promise<Buffer> {
+  const [uno, dos, tres] = titulo.split(" ");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920">
+    <rect width="1080" height="1920" fill="#1a1030"/>
+    <circle cx="540" cy="1250" r="170" fill="#e8c9a0"/>
+    <rect x="340" y="1420" width="400" height="500" rx="120" fill="#e8c9a0"/>
+    <g font-family="Arial Black, Arial, sans-serif" font-size="200" font-weight="900" fill="#fff" text-anchor="middle">
+      <text x="540" y="300">${uno ?? ""}</text>
+      <text x="540" y="520">${dos ?? ""}</text>
+      <text x="540" y="740">${tres ?? ""}</text>
+    </g></svg>`;
+
+  return sharp(Buffer.from(svg)).png().toBuffer();
+}
+
 function bytesDe(uri: string): Buffer {
   return Buffer.from(uri.split(",")[1], "base64");
 }
@@ -43,17 +59,17 @@ describe("miniaturaDesdeBytes", () => {
     const uri = await miniaturaDesdeBytes(await portadaConDetalle());
 
     assert.ok(uri);
-    assert.match(uri, /^data:image\/webp;base64,/);
+    assert.ok(uri.startsWith(PREFIJO_MINIATURA));
     assert.ok(esMiniaturaValida(uri), "pasa la validación de vista-recurso");
     assert.ok(uri.length <= 4096, `ocupa ${uri.length} caracteres`);
   });
 
-  it("mide 32 px de ancho y conserva la proporción", async () => {
+  it("mide 16 px de ancho y conserva la proporción", async () => {
     const uri = await miniaturaDesdeBytes(await portadaConDetalle());
     const meta = await sharp(bytesDe(uri!)).metadata();
 
-    assert.equal(meta.width, 32);
-    assert.ok(meta.height! >= 50 && meta.height! <= 64, `alto ${meta.height}`);
+    assert.equal(meta.width, 16);
+    assert.ok(meta.height! >= 20 && meta.height! <= 32, `alto ${meta.height}`);
   });
 
   it("no conserva el detalle de la portada", async () => {
@@ -70,6 +86,61 @@ describe("miniaturaDesdeBytes", () => {
       maxSalto = Math.max(maxSalto, Math.abs(data[i] - data[i - 1]));
     }
     assert.ok(maxSalto < 24, `salto máximo entre vecinos: ${maxSalto}`);
+  });
+
+  it("con un título grande y una figura, solo quedan manchas de color", async () => {
+    const uri = await miniaturaDesdeBytes(
+      await portadaConTitulo("NOCHE DE PECADO")
+    );
+
+    const { data, info } = await sharp(bytesDe(uri!))
+      .greyscale()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+
+    const ancho = info.width;
+    const alto = info.height;
+
+    /*
+      Las líneas del título no se separan: en la banda superior, el
+      brillo por filas no baja entre una línea y la siguiente. Con el
+      desenfoque anterior (32 px, sigma 3) esta medida daba 28.
+    */
+    const filas: number[] = [];
+    for (let y = 0; y < Math.floor(alto * 0.42); y++) {
+      let suma = 0;
+      for (let x = 0; x < ancho; x++) suma += data[y * ancho + x];
+      filas.push(suma / ancho);
+    }
+
+    let valle = 0;
+    for (let i = 1; i < filas.length - 1; i++) {
+      const izquierda = Math.max(...filas.slice(0, i));
+      const derecha = Math.max(...filas.slice(i + 1));
+      valle = Math.max(valle, Math.min(izquierda, derecha) - filas[i]);
+    }
+    assert.ok(valle < 3, `valle entre líneas del título: ${valle}`);
+
+    /*
+      Sin contornos: ni letras ni silueta. Con el desenfoque anterior
+      el borde más fuerte era de 59 sobre 255.
+    */
+    let borde = 0;
+    for (let y = 0; y < alto; y++) {
+      for (let x = 1; x < ancho; x++) {
+        borde = Math.max(
+          borde,
+          Math.abs(data[y * ancho + x] - data[y * ancho + x - 1])
+        );
+      }
+    }
+    assert.ok(borde < 24, `borde horizontal máximo: ${borde}`);
+  });
+
+  it("las miniaturas del desenfoque anterior ya no son válidas", () => {
+    assert.equal(esMiniaturaValida("data:image/webp;base64,AAAA"), false);
+    assert.equal(esMiniaturaValida(`${PREFIJO_MINIATURA}AAAA`), true);
+    assert.equal(esMiniaturaValida("https://ejemplo.com/a.jpg"), false);
   });
 
   it("con bytes que no son imagen devuelve null", async () => {

@@ -116,11 +116,21 @@ export function imagenVisible(
 */
 const TOPE_MINIATURA = 4096;
 
+/*
+  Cabecera de la miniatura vigente. El parámetro `v` es la versión
+  del desenfoque (miniatura-bloqueada.ts): si el desenfoque se
+  refuerza, se sube, y las guardadas con uno más suave dejan de
+  enviarse al momento, sin tocar la base. Mientras no se regeneren,
+  el visitante ve el degradado neutro.
+*/
+export const PREFIJO_MINIATURA = "data:image/webp;v=2;base64,";
+
 export function esMiniaturaValida(valor: string | null): valor is string {
   return (
     typeof valor === "string" &&
     valor.length <= TOPE_MINIATURA &&
-    /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(valor)
+    valor.startsWith(PREFIJO_MINIATURA) &&
+    /^[A-Za-z0-9+/=]+$/.test(valor.slice(PREFIJO_MINIATURA.length))
   );
 }
 

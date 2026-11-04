@@ -4,7 +4,7 @@ import Image from "next/image";
  * Fondo de un recurso «solo para registrados» visto sin sesión (y el
  * punto de partida de su desbloqueo ya con sesión).
  *
- * - Con miniatura: la portada reducida a 32 px y desenfocada en el
+ * - Con miniatura: la portada reducida a 16 px y desenfocada en el
  *   servidor (miniatura-bloqueada.ts), estirada con
  *   `image-rendering: pixelated` (.rk-bloqueo-mini). Es un data URI
  *   de unos cientos de bytes; la imagen real no viaja.
