@@ -84,7 +84,8 @@ async function leerDePublicLocal(ruta: string): Promise<Buffer | null> {
   return datos.length > TOPE_BYTES ? null : datos;
 }
 
-async function leerPortada(ref: string): Promise<Buffer | null> {
+/** Bytes de una imagen pública (Blob o public/), o null. También para los scripts. */
+export async function leerPortada(ref: string): Promise<Buffer | null> {
   try {
     if (ref.startsWith("/")) return await leerDePublicLocal(ref);
     return await leerDeBlobPublico(new URL(ref));

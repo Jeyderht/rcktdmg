@@ -46,6 +46,7 @@ import { getSession } from "@/lib/session";
 import { visorDe } from "@/lib/visor";
 import { desbloqueoDe, imagenVisible } from "@/lib/vista-recurso";
 import FichaBloqueada from "@/components/tienda/FichaBloqueada";
+import { puedeVerVersionLimpia, urlVersionLimpia } from "@/lib/imagen-limpia";
 import { tieneProducto } from "@/lib/adquisiciones";
 import YaAdquirido from "@/components/tienda/YaAdquirido";
 
@@ -236,6 +237,7 @@ export default async function ProductPage({
         versiones,
         packsConEste,
         yaEsSuyo,
+        versionLimpia,
         [bloques, sugerencias],
     ] = await Promise.all([
         // Ficha técnica: solo datos que existen de verdad.
@@ -261,6 +263,18 @@ export default async function ProductPage({
           carrito" que acto seguido tendría que desaparecer.
         */
         tieneProducto(session?.userId, product.id),
+
+        /*
+          VERSIÓN LIMPIA (sin marca de agua), solo en esta ficha.
+
+          Quien lo compró —mismo criterio que la descarga—, el creador
+          dueño y la administración ven el original del almacén privado
+          en la galería y en el visor Story. Para el resto, la copia
+          con marca de siempre. og:image, JSON-LD, carrito y tarjetas
+          siguen usando la copia pública. La ruta vuelve a comprobar el
+          permiso en cada imagen.
+        */
+        puedeVerVersionLimpia(session, product),
 
         /*
           LAS DOS LISTAS DE RECOMENDACIÓN
@@ -291,6 +305,9 @@ export default async function ProductPage({
             ),
         ]),
     ]);
+
+    const imagenDeGaleria = (url: string | null) =>
+        versionLimpia && url ? urlVersionLimpia(product.id, url) ?? url : url;
 
     /*
      * Formato: primero el del archivo real; si no se pudo leer,
@@ -537,7 +554,7 @@ export default async function ProductPage({
                                     product.pieceType
                                 )}
                                 name={product.name}
-                                coverUrl={product.coverUrl}
+                                coverUrl={imagenDeGaleria(product.coverUrl)}
                                 /*
                                   Solo para registrados y ya con sesión:
                                   la portada entra desde la miniatura.
@@ -545,8 +562,11 @@ export default async function ProductPage({
                                 desbloqueo={desbloqueoDe(product, visor.haySesion)}
                                 coverWidth={product.coverWidth}
                                 coverHeight={product.coverHeight}
-                                previewUrl={product.previewUrl}
-                                images={product.images}
+                                previewUrl={imagenDeGaleria(product.previewUrl)}
+                                images={product.images.map((imagen) => ({
+                                    ...imagen,
+                                    url: imagenDeGaleria(imagen.url) ?? imagen.url,
+                                }))}
                                 /*
                                   Datos del modo story. El creador
                                   solo se enlaza si tiene perfil

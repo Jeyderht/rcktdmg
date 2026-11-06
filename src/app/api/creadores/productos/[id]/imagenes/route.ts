@@ -1,8 +1,14 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { olvidarObjeto } from "@/lib/storage";
-import { dimensionesDesdeUrl } from "@/lib/dimensiones";
+import {
+  MENSAJE_IMAGEN_NO_ACEPTADA,
+  esCopiaConMarca,
+  imagenDeRecursoAceptable,
+  olvidarImagenDeRecurso,
+} from "@/lib/storage/imagenes-recurso";
+import { dimensionesDeImagenDeRecurso } from "@/lib/dimensiones-recurso";
+import { asegurarMiniaturasBloqueadas } from "@/lib/miniatura-bloqueada";
 import { verifySessionToken } from "@/lib/auth";
 
 type RouteContext = {
@@ -174,6 +180,14 @@ export async function POST(
       );
     }
 
+    // Solo copias con marca de agua: nunca una URL externa ni un original.
+    if (!esCopiaConMarca(url)) {
+      return NextResponse.json(
+        { error: MENSAJE_IMAGEN_NO_ACEPTADA },
+        { status: 400 }
+      );
+    }
+
     const existingCount = await prisma.productImage.count({
       where: {
         productId: product.id,
@@ -201,7 +215,7 @@ export async function POST(
       porque de estos números depende qué recursos entran en la
       sección de Corporativos.
     */
-    const medida = await dimensionesDesdeUrl(url);
+    const medida = await dimensionesDeImagenDeRecurso(url);
 
     const image = await prisma.productImage.create({
       data: {
@@ -374,6 +388,21 @@ export async function PATCH(
       );
     }
 
+    /*
+      Igual que en la edición del recurso: solo copias con marca, o la
+      que ya tenía. Sin esto, esta ruta era la puerta para poner como
+      portada una URL sin marca.
+    */
+    if (
+      !imagenDeRecursoAceptable(coverUrl, product.coverUrl) ||
+      !imagenDeRecursoAceptable(previewUrl, product.previewUrl)
+    ) {
+      return NextResponse.json(
+        { error: MENSAJE_IMAGEN_NO_ACEPTADA },
+        { status: 400 }
+      );
+    }
+
     const updatedProduct =
       await prisma.product.update({
         where: {
@@ -389,8 +418,18 @@ export async function PATCH(
             previewUrl !== undefined
               ? previewUrl || null
               : product.previewUrl,
+
+          // La miniatura bloqueada era de la portada anterior.
+          ...(coverUrl !== undefined && (coverUrl || null) !== product.coverUrl
+            ? { miniaturaBloqueada: null }
+            : {}),
         },
       });
+
+    // Solo para registrados: miniatura de la portada nueva. No lanza.
+    if (!updatedProduct.previewLibre) {
+      await asegurarMiniaturasBloqueadas([product.id]);
+    }
 
     return NextResponse.json({
       success: true,
@@ -484,7 +523,7 @@ export async function DELETE(
       objeto inexistente. La imagen ya se comprobó que
       pertenece a este producto.
     */
-    await olvidarObjeto(image.url, "publico");
+    await olvidarImagenDeRecurso(image.url);
 
     return NextResponse.json({
       success: true,

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { dimensionesDesdeUrl } from "@/lib/dimensiones";
+import { dimensionesDeImagenDeRecurso } from "@/lib/dimensiones-recurso";
 import {
   medidaExigidaPara,
   revisarMedidas,
@@ -74,7 +74,7 @@ export async function revisarPortadaDelRecurso(
       : null;
 
   if (!reales) {
-    const leidas = await dimensionesDesdeUrl(producto.coverUrl);
+    const leidas = await dimensionesDeImagenDeRecurso(producto.coverUrl);
 
     if (leidas) {
       reales = { ancho: leidas.width, alto: leidas.height };

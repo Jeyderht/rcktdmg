@@ -108,6 +108,7 @@ export type ImagenSubida = {
 /** Endpoint que confirma y, si procede, guarda la URL. */
 const ENDPOINT_POR_TIPO: Record<TipoImagen, string> = {
   "product-image": "/api/uploads/product-image",
+  "resource-image": "/api/uploads/resource-image",
   "creator-avatar": "/api/uploads/creator-avatar",
   "creator-cover": "/api/uploads/creator-cover",
 };
@@ -115,6 +116,7 @@ const ENDPOINT_POR_TIPO: Record<TipoImagen, string> = {
 /** Campo en el que cada endpoint devuelve la URL. */
 const CAMPO_RESPUESTA: Record<TipoImagen, string> = {
   "product-image": "imageUrl",
+  "resource-image": "imageUrl",
   "creator-avatar": "avatarUrl",
   "creator-cover": "coverUrl",
 };
@@ -258,26 +260,46 @@ export async function subirImagen(
     );
   }
 
-  if (regla.conPrefijoDeUsuario && !userId) {
+  /*
+    Si quien llama no pasa el id (las imágenes de recurso se
+    suben desde varios formularios), se pregunta a la sesión. No
+    es una garantía: el servidor vuelve a comprobar que la ruta
+    lleva el id de la sesión antes de firmar y al confirmar.
+  */
+  let propietario = userId;
+
+  if (regla.conPrefijoDeUsuario && !propietario) {
+    const yo = await fetch("/api/auth/me")
+      .then((r) => r.json())
+      .catch(() => null);
+
+    propietario = typeof yo?.user?.id === "string" ? yo.user.id : undefined;
+  }
+
+  if (regla.conPrefijoDeUsuario && !propietario) {
     throw new Error("No se pudo identificar tu cuenta.");
   }
 
   const nombre = regla.conPrefijoDeUsuario
-    ? `${userId}-${crypto.randomUUID()}.${extension}`
+    ? `${propietario}-${crypto.randomUUID()}.${extension}`
     : `${crypto.randomUUID()}.${extension}`;
 
   const blob = await upload(`${regla.folder}/${nombre}`, file, {
-    access: "public",
+    access: regla.privada ? "private" : "public",
     handleUploadUrl: "/api/uploads/imagenes/client-token",
     contentType: file.type,
   });
 
   // Confirmación en el servidor: comprueba el objeto y guarda
-  // la URL. Hasta aquí no se ha tocado la base de datos.
+  // la URL. Hasta aquí no se ha tocado la base de datos. Una
+  // subida privada no tiene URL pública: viaja su ruta, y el
+  // servidor devuelve la de la copia con marca de agua.
   const response = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ blobUrl: blob.url }),
+    body: JSON.stringify(
+      regla.privada ? { ruta: blob.pathname } : { blobUrl: blob.url }
+    ),
   });
 
   const data = await response.json();
