@@ -70,6 +70,8 @@ export async function GET() {
         pieceType: true,
         rejectionReason: true,
         previewUrl: true,
+        /* Para la etiqueta «Solo registrados» de su panel. */
+        previewLibre: true,
         createdAt: true,
         category: {
           select: {
@@ -99,6 +101,7 @@ export async function GET() {
       pieceType: product.pieceType,
       rejectionReason: product.rejectionReason,
       previewUrl: product.previewUrl,
+      previewLibre: product.previewLibre,
       category: product.category
         ? {
           name: product.category.name,

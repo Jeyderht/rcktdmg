@@ -470,6 +470,26 @@ model Product {
   sliderWidth  Int?
   sliderHeight Int?
 
+  /**
+   * Vista previa libre: true si cualquiera, sin sesión, puede ver
+   * sus imágenes. false = «solo para registrados»: el visitante sin
+   * sesión solo recibe `miniaturaBloqueada`, nunca la imagen real.
+   * TRUE por defecto a propósito: al añadir el campo, ningún
+   * recurso que ya existía queda bloqueado. Lo deciden el creador
+   * (en los suyos) y la administración. La decisión de qué se
+   * enseña vive en src/lib/vista-recurso.ts, nunca en el cliente.
+   */
+  previewLibre Boolean @default(true)
+
+  /**
+   * Miniatura MUY pequeña y ya desenfocada de la portada, como data
+   * URI (unos cientos de bytes). Es lo único que ve un visitante de
+   * un recurso solo para registrados: no tiene URL ni archivo en el
+   * almacén. Se genera en el servidor al guardar la portada; nula
+   * mientras no exista (entonces se enseña un fondo neutro).
+   */
+  miniaturaBloqueada String?
+
   /// Color dominante declarado por el creador. Null si no lo indicó.
   color           String?
   createdAt       DateTime @default(now())

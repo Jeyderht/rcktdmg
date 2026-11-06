@@ -1,5 +1,8 @@
 import Image from "next/image";
 
+import ImagenDesbloqueada from "@/components/tienda/ImagenDesbloqueada";
+import type { Desbloqueo } from "@/lib/vista-recurso";
+
 /**
  * Imagen pública con marca de agua.
  *
@@ -39,6 +42,7 @@ export default function PreviewProtegido({
   contener = false,
   className = "",
   esquina = "abajo-derecha",
+  desbloqueo = null,
 }: {
   src: string;
   alt: string;
@@ -48,6 +52,11 @@ export default function PreviewProtegido({
   contener?: boolean;
   className?: string;
   esquina?: "abajo-derecha" | "abajo-izquierda" | "arriba-derecha";
+  /**
+   * Solo para registrados, ya con sesión: la imagen entra con la
+   * transición de desbloqueo desde la miniatura (ImagenDesbloqueada).
+   */
+  desbloqueo?: Desbloqueo | null;
 }) {
   const posicion = {
     "abajo-derecha": "bottom-2 right-2",
@@ -72,14 +81,26 @@ export default function PreviewProtegido({
         camino que funcione y otro que no según qué datos haya
         en la base.
       */}
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        priority={priority}
-        sizes={sizes}
-        className={`${contener ? "object-contain" : "object-cover"} ${className}`}
-      />
+      {desbloqueo ? (
+        <ImagenDesbloqueada
+          miniatura={desbloqueo.miniatura}
+          src={src}
+          alt={alt}
+          fill
+          priority={priority}
+          sizes={sizes}
+          className={`${contener ? "object-contain" : "object-cover"} ${className}`}
+        />
+      ) : (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          priority={priority}
+          sizes={sizes}
+          className={`${contener ? "object-contain" : "object-cover"} ${className}`}
+        />
+      )}
 
       {/*
         La marca va en un span aparte y no dentro de la imagen:

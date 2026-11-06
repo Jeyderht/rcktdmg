@@ -7,6 +7,7 @@ import ColeccionCard from "@/components/tienda/ColeccionCard";
 import ProductCard from "@/components/tienda/ProductCard";
 import EmptyState from "@/components/ui/EmptyState";
 import { aTarjeta } from "@/lib/catalogo";
+import type { Visor } from "@/lib/vista-recurso";
 import type { ColeccionVista } from "@/lib/colecciones-comerciales-comun";
 import {
   CATEGORIA_EVENTOS,
@@ -31,14 +32,14 @@ function Vacio() {
    precio; toda la tarjeta lleva a la ficha. */
 const TOPE_REJILLA = 6;
 
-function Recursos({ recursos }: { recursos: Recurso[] }) {
+function Recursos({ recursos, visor }: { recursos: Recurso[]; visor: Visor }) {
   if (recursos.length === 0) return <Vacio />;
 
   return (
     <ul className="rk-cc-rejilla">
       {recursos.slice(0, TOPE_REJILLA).map((r) => (
         <li key={r.id}>
-          <ProductCard product={aTarjeta(r)} soloImagen />
+          <ProductCard product={aTarjeta(r, visor)} soloImagen />
         </li>
       ))}
     </ul>
@@ -63,27 +64,30 @@ function Colecciones({ colecciones }: { colecciones: ColeccionVista[] }) {
  * Pestañas de una categoría de recursos: Recientes siempre (con
  * su estado vacío); Populares y Packs solo si tienen recursos.
  */
-function pestanasDe(grupo: {
-  recientes: Recurso[];
-  populares: Recurso[];
-  packs?: Recurso[];
-}): CategoriaInicio["pestanas"] {
+function pestanasDe(
+  grupo: {
+    recientes: Recurso[];
+    populares: Recurso[];
+    packs?: Recurso[];
+  },
+  visor: Visor
+): CategoriaInicio["pestanas"] {
   return [
     {
       clave: "recientes" as const,
       nombre: "Recientes",
-      contenido: <Recursos recursos={grupo.recientes} />,
+      contenido: <Recursos recursos={grupo.recientes} visor={visor} />,
     },
     grupo.populares.length > 0 && {
       clave: "populares" as const,
       nombre: "Populares",
-      contenido: <Recursos recursos={grupo.populares} />,
+      contenido: <Recursos recursos={grupo.populares} visor={visor} />,
     },
     grupo.packs &&
       grupo.packs.length > 0 && {
         clave: "packs" as const,
         nombre: "Packs",
-        contenido: <Recursos recursos={grupo.packs} />,
+        contenido: <Recursos recursos={grupo.packs} visor={visor} />,
       },
   ].filter((p) => p !== false && p !== undefined);
 }
@@ -94,7 +98,14 @@ function pestanasDe(grupo: {
  * de cliente, que solo decide cuál se ve. Textos de descripción,
  * los mismos que ya usaba la portada.
  */
-export default function CatalogoInicio({ datos }: { datos: Datos }) {
+export default function CatalogoInicio({
+  datos,
+  visor,
+}: {
+  datos: Datos;
+  /** Quién mira: decide qué tarjetas van bloqueadas (vista-recurso.ts). */
+  visor: Visor;
+}) {
   // Sin ningún recurso ni colección publicados, la sección no se pinta.
   const hayDatos =
     [datos.eventos, datos.general, datos.packs].some(
@@ -110,14 +121,14 @@ export default function CatalogoInicio({ datos }: { datos: Datos }) {
       descripcion:
         "Flyers de fiestas, conciertos y fechas señaladas. Listos para publicar.",
       href: `/tienda?categoria=${CATEGORIA_EVENTOS}`,
-      pestanas: pestanasDe(datos.eventos),
+      pestanas: pestanasDe(datos.eventos, visor),
     },
     {
       clave: "general",
       nombre: "General",
       descripcion: "Piezas para comunicar con una marca detrás.",
       href: `/tienda?categoria=${CATEGORIA_GENERAL}`,
-      pestanas: pestanasDe(datos.general),
+      pestanas: pestanasDe(datos.general, visor),
     },
     {
       clave: "colecciones",
@@ -138,7 +149,7 @@ export default function CatalogoInicio({ datos }: { datos: Datos }) {
       nombre: "Packs",
       descripcion: "Varios recursos agrupados, más baratos que por separado.",
       href: "/tienda?pack=true",
-      pestanas: pestanasDe(datos.packs),
+      pestanas: pestanasDe(datos.packs, visor),
     },
   ];
 

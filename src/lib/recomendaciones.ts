@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { SELECCION_TARJETA, TAG_PACK, aTarjeta } from "@/lib/catalogo";
 import { packsPorIds, type PackVista } from "@/lib/packs";
 import { tipoPorClave } from "@/lib/tipos-publicacion";
+import type { Visor } from "@/lib/vista-recurso";
 import type {
   BloqueRecomendaciones,
   Recomendacion,
@@ -399,20 +400,27 @@ async function traerCandidatos(
   });
 }
 
-/** Convierte un candidato en las props de ProductCard. */
-function aTarjetaDesdeCandidato(c: Candidato): Recomendacion {
-  return aTarjeta({
-    ...c,
-    //  sigue saliendo solo de la etiqueta estructural.
-    tags: c.tags.filter((t) => t.tag.slug === TAG_PACK),
-  });
+/**
+ * Convierte un candidato en las props de ProductCard. El visor
+ * decide si va bloqueada (solo para registrados y sin sesión).
+ */
+function aTarjetaDesdeCandidato(c: Candidato, visor: Visor): Recomendacion {
+  return aTarjeta(
+    {
+      ...c,
+      //  sigue saliendo solo de la etiqueta estructural.
+      tags: c.tags.filter((t) => t.tag.slug === TAG_PACK),
+    },
+    visor
+  );
 }
 
 function ordenar(
   candidatos: Candidato[],
   referencia: Referencia | null,
   usuario: SenalesUsuario,
-  cuantos: number
+  cuantos: number,
+  visor: Visor
 ): Recomendacion[] {
   const precioMaximo = candidatos.reduce(
     (max, c) => Math.max(max, Number(c.price)),
@@ -428,7 +436,7 @@ function ordenar(
     }))
     .sort((a, b) => b.puntos - a.puntos)
     .slice(0, cuantos)
-    .map((x) => aTarjetaDesdeCandidato(x.candidato));
+    .map((x) => aTarjetaDesdeCandidato(x.candidato, visor));
 }
 
 /* ══════════════ PUNTOS DE ENTRADA ══════════════ */
@@ -454,11 +462,12 @@ export async function paraProducto(
     categoriaNombre: string;
     creadorNombre: string;
   },
-  userId: string | null,
+  /** Quién mira: sus señales y si las tarjetas van bloqueadas. */
+  visor: Visor,
   porBloque = 5
 ): Promise<BloqueRecomendaciones[]> {
   const [usuario, candidatos] = await Promise.all([
-    senalesDe(userId),
+    senalesDe(visor.userId),
     traerCandidatos([producto.id], producto.categoryId),
   ]);
 
@@ -484,7 +493,7 @@ export async function paraProducto(
   ) {
     const libres = pool.filter((c) => !usados.has(c.id));
 
-    const elegidos = ordenar(libres, referencia, usuario, porBloque);
+    const elegidos = ordenar(libres, referencia, usuario, porBloque, visor);
 
     if (elegidos.length === 0) return;
 
@@ -563,11 +572,12 @@ export async function sugerenciasDeFicha(
     price: number;
     tagSlugs: string[];
   },
-  userId: string | null,
+  /** Quién mira: sus señales y si las tarjetas van bloqueadas. */
+  visor: Visor,
   cuantos = 10
 ): Promise<Recomendacion[]> {
   const [usuario, candidatos] = await Promise.all([
-    senalesDe(userId),
+    senalesDe(visor.userId),
     traerCandidatos(
       [producto.id],
       producto.categoryId,
@@ -585,7 +595,7 @@ export async function sugerenciasDeFicha(
     tagSlugs: producto.tagSlugs,
   };
 
-  return ordenar(candidatos, referencia, usuario, cuantos);
+  return ordenar(candidatos, referencia, usuario, cuantos, visor);
 }
 
 /**
@@ -598,14 +608,15 @@ export async function sugerenciasDeFicha(
  * existe.
  */
 export async function paraUsuario(
-  userId: string | null,
+  /** Quién mira: sus señales y si las tarjetas van bloqueadas. */
+  visor: Visor,
   cuantos = 5
 ): Promise<BloqueRecomendaciones | null> {
-  const usuario = await senalesDe(userId);
+  const usuario = await senalesDe(visor.userId);
 
   const candidatos = await traerCandidatos([]);
 
-  const productos = ordenar(candidatos, null, usuario, cuantos);
+  const productos = ordenar(candidatos, null, usuario, cuantos, visor);
 
   if (productos.length === 0) return null;
 
@@ -635,7 +646,9 @@ export async function paraUsuario(
  * y se pintan con PackCard. Si no hay ninguno, no hay sección.
  */
 export async function packsQueIncluyen(
-  productId: string
+  productId: string,
+  /** Quién mira: decide si los recursos de cada pack van bloqueados. */
+  visor: Visor
 ): Promise<PackVista[]> {
   const filas = await prisma.packItem.findMany({
     where: { productId, pack: { status: "PUBLISHED" } },
@@ -646,5 +659,5 @@ export async function packsQueIncluyen(
   if (filas.length === 0) return [];
 
   // Una consulta para todos, no una por pack.
-  return packsPorIds(filas.map((f) => f.packId));
+  return packsPorIds(filas.map((f) => f.packId), visor);
 }

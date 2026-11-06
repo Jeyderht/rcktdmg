@@ -7,6 +7,7 @@ import {
   type FiltrosCatalogo,
 } from "@/lib/catalogo";
 import { listarColeccionesPublicas } from "@/lib/colecciones-comerciales";
+import { VISOR_ANONIMO, type Visor } from "@/lib/vista-recurso";
 import { prisma } from "@/lib/prisma";
 import { ALTO_VERTICAL, ANCHO_VERTICAL } from "@/lib/dimensiones";
 
@@ -204,6 +205,8 @@ export async function datosQueBuscas(): Promise<{
           AND: [
             where,
             { OR: [{ coverUrl: { not: null } }, { images: { some: {} } }] },
+            // Escaparate, no tarjeta: solo recursos de vista previa libre.
+            { previewLibre: true },
           ],
         },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -267,7 +270,10 @@ const TOPE_CATALOGO = 8;
  * Las colecciones solo tienen orden por fecha. Solo lectura;
  * hasta 8 por pestaña.
  */
-export async function datosCatalogoInicio() {
+export async function datosCatalogoInicio(
+  /** Quién mira: decide qué recursos de las colecciones van bloqueados. */
+  visor: Visor = VISOR_ANONIMO
+) {
   const recursos = (filtros: FiltrosCatalogo, orden: "recientes" | "populares") =>
     prisma.product.findMany({
       where: construirWhere(filtros),
@@ -298,7 +304,7 @@ export async function datosCatalogoInicio() {
     recursos({ ...general, soloPacks: true }, "recientes"),
     recursos({ soloPacks: true }, "recientes"),
     recursos({ soloPacks: true }, "populares"),
-    listarColeccionesPublicas(TOPE_CATALOGO),
+    listarColeccionesPublicas(TOPE_CATALOGO, visor),
   ]);
 
   return {

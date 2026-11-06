@@ -9,6 +9,7 @@ import {
   formatoDesdeUrl,
 } from "@/lib/producto-metadata";
 import { sincronizarTagsProducto } from "@/lib/tags";
+import { asegurarMiniaturasBloqueadas } from "@/lib/miniatura-bloqueada";
 import { esTipoLicencia } from "@/lib/licencias-comun";
 import { MAXIMO_IMAGENES_GALERIA } from "@/lib/requisitos-contenido";
 import {
@@ -74,7 +75,21 @@ export async function POST(req: NextRequest) {
       formato,
       imagenes,
       tipo,
+      previewLibre,
     } = body;
+
+    /*
+      QUIÉN VE LA VISTA PREVIA. Sin el campo, para todos (el valor
+      por defecto de la base). Si llega, solo vale un booleano. El
+      recurso es siempre del creador de la sesión, así que no hay
+      permiso extra que comprobar.
+    */
+    if (previewLibre !== undefined && typeof previewLibre !== "boolean") {
+      return NextResponse.json(
+        { error: "previewLibre debe ser true o false." },
+        { status: 400 }
+      );
+    }
 
     /*
       LA CATEGORÍA LA DECIDE EL TIPO, NO EL NAVEGADOR
@@ -253,6 +268,7 @@ export async function POST(req: NextRequest) {
         price: String(price),
         accessType: accessType || "BOTH",
         status: "DRAFT",
+        previewLibre: previewLibre ?? true,
         coverUrl: coverUrl || null,
         /*
           Tamaño real de la portada, leído de su cabecera. Nulo
@@ -330,6 +346,15 @@ export async function POST(req: NextRequest) {
       los dos sentidos.
     */
     await sincronizarTagsProducto(product.id, tags);
+
+    /*
+      Solo para registrados desde el principio: su miniatura
+      desenfocada se genera ya, después de la galería (sin portada,
+      sale de la primera imagen). No lanza: sin ella, fondo neutro.
+    */
+    if (product.previewLibre === false) {
+      await asegurarMiniaturasBloqueadas([product.id]);
+    }
 
     return NextResponse.json(
       {

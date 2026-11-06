@@ -1,9 +1,10 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import Isotipo from "@/components/layout/Isotipo";
+import { conDestino, destinoDeBusqueda } from "@/lib/redireccion";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,6 +12,18 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [verPassword, setVerPassword] = useState(false);
+
+  /*
+    Página a la que volver (?redirect=), ya validada. Se lee al
+    montar y no en el render: la página es estática y no conoce la
+    URL en el servidor. Sirve para que la pestaña «Crear cuenta»
+    también la conserve.
+  */
+  const [destino, setDestino] = useState<string | null>(null);
+
+  useEffect(() => {
+    setDestino(destinoDeBusqueda(window.location.search));
+  }, []);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,20 +58,12 @@ export default function LoginPage() {
         return;
       }
 
-      // Si el usuario llegó desde una página protegida,
-      // lo devolvemos a esa página.
-      const redirectTo = new URLSearchParams(
-        window.location.search
-      ).get("redirect");
+      // Vuelve a la página de la que llegó, si es una ruta interna
+      // válida (src/lib/redireccion.ts: nada de //, /, esquemas…).
+      const vuelta = destinoDeBusqueda(window.location.search);
 
-      // Solo rutas internas: evita redirecciones abiertas
-      // del tipo //dominio-externo.com
-      if (
-        redirectTo &&
-        redirectTo.startsWith("/") &&
-        !redirectTo.startsWith("//")
-      ) {
-        window.location.href = redirectTo;
+      if (vuelta) {
+        window.location.href = vuelta;
         return;
       }
 
@@ -99,7 +104,7 @@ export default function LoginPage() {
               Iniciar sesión
             </Link>
 
-            <Link href="/registro" className="rk-tab">
+            <Link href={conDestino("/registro", destino)} className="rk-tab">
               Crear cuenta
             </Link>
           </nav>
