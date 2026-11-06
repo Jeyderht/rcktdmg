@@ -4,9 +4,11 @@ import { prisma } from "@/lib/prisma";
 import {
   MENSAJE_IMAGEN_NO_ACEPTADA,
   esCopiaConMarca,
+  imagenDeRecursoAceptable,
   olvidarImagenDeRecurso,
 } from "@/lib/storage/imagenes-recurso";
 import { dimensionesDeImagenDeRecurso } from "@/lib/dimensiones-recurso";
+import { asegurarMiniaturasBloqueadas } from "@/lib/miniatura-bloqueada";
 import { verifySessionToken } from "@/lib/auth";
 
 type RouteContext = {
@@ -386,6 +388,21 @@ export async function PATCH(
       );
     }
 
+    /*
+      Igual que en la edición del recurso: solo copias con marca, o la
+      que ya tenía. Sin esto, esta ruta era la puerta para poner como
+      portada una URL sin marca.
+    */
+    if (
+      !imagenDeRecursoAceptable(coverUrl, product.coverUrl) ||
+      !imagenDeRecursoAceptable(previewUrl, product.previewUrl)
+    ) {
+      return NextResponse.json(
+        { error: MENSAJE_IMAGEN_NO_ACEPTADA },
+        { status: 400 }
+      );
+    }
+
     const updatedProduct =
       await prisma.product.update({
         where: {
@@ -401,8 +418,18 @@ export async function PATCH(
             previewUrl !== undefined
               ? previewUrl || null
               : product.previewUrl,
+
+          // La miniatura bloqueada era de la portada anterior.
+          ...(coverUrl !== undefined && (coverUrl || null) !== product.coverUrl
+            ? { miniaturaBloqueada: null }
+            : {}),
         },
       });
+
+    // Solo para registrados: miniatura de la portada nueva. No lanza.
+    if (!updatedProduct.previewLibre) {
+      await asegurarMiniaturasBloqueadas([product.id]);
+    }
 
     return NextResponse.json({
       success: true,
