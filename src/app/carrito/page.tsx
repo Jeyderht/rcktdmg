@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Minus, Plus } from "lucide-react";
 
 import VacioCaja from "@/components/ui/VacioCaja";
 import Footer from "@/components/layout/Footer";
@@ -11,6 +10,7 @@ import Navbar from "@/components/layout/Navbar";
 import {
     CART_STORAGE_KEY,
     CART_UPDATED_EVENT,
+    leerCarrito,
 } from "@/components/hooks/useCartCount";
 import { IconoBasura, IconoBolsa } from "@/components/iconos";
 
@@ -62,18 +62,10 @@ export default function Cart() {
     const [cart, setCart] = useState<CartItem[]>([]);
     const [loaded, setLoaded] = useState(false);
 
+    // Una licencia por recurso: leerCarrito deja cada cantidad en 1.
     function loadCart() {
-        try {
-            const stored = localStorage.getItem(CART_STORAGE_KEY);
-
-            const parsed = stored ? JSON.parse(stored) : [];
-
-            setCart(Array.isArray(parsed) ? parsed : []);
-        } catch {
-            setCart([]);
-        } finally {
-            setLoaded(true);
-        }
+        setCart(leerCarrito<CartItem>());
+        setLoaded(true);
     }
 
     useEffect(() => {
@@ -95,28 +87,6 @@ export default function Cart() {
         );
 
         window.dispatchEvent(new Event(CART_UPDATED_EVENT));
-    }
-
-    function increase(id: string) {
-        saveCart(
-            cart.map((item) =>
-                item.id === id
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
-            )
-        );
-    }
-
-    function decrease(id: string) {
-        saveCart(
-            cart
-                .map((item) =>
-                    item.id === id
-                        ? { ...item, quantity: item.quantity - 1 }
-                        : item
-                )
-                .filter((item) => item.quantity > 0)
-        );
     }
 
     function remove(id: string) {
@@ -247,39 +217,9 @@ export default function Cart() {
                                             S/ {item.price.toFixed(2)} c/u
                                         </p>
 
+                                        {/* Una licencia por recurso: sin selector de cantidad. */}
                                         <div className="rk-cart-foot">
-                                            <div
-                                                className="rk-stepper rk-stepper-sm"
-                                                role="group"
-                                                aria-label="Cantidad"
-                                            >
-                                                <button
-                                                    type="button"
-                                                    onClick={() => decrease(item.id)}
-                                                    aria-label="Reducir cantidad"
-                                                    className="rk-stepper-btn"
-                                                >
-                                                    <Minus />
-                                                </button>
-
-                                                <output
-                                                    className="rk-stepper-value"
-                                                    aria-live="polite"
-                                                >
-                                                    {item.quantity}
-                                                </output>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={() => increase(item.id)}
-                                                    aria-label="Aumentar cantidad"
-                                                    className="rk-stepper-btn"
-                                                >
-                                                    <Plus />
-                                                </button>
-                                            </div>
-
-                                            <p className="rk-cart-total">
+                                            <p className="rk-cart-total !ml-auto">
                                                 <span className="rk-card-currency">S/</span>
                                                 {(item.price * item.quantity).toFixed(2)}
                                             </p>

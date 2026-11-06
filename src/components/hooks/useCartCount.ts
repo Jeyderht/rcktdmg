@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 type StoredCartItem = {
   id?: string;
+  kind?: string;
   quantity?: number;
 };
 
@@ -36,6 +37,73 @@ export type ArticuloCarrito = {
   categorySlug?: string | null;
 };
 
+/** ¿`item` es el mismo artículo que (`id`, `kind`)? */
+function esElMismo(item: StoredCartItem, id: string, kind?: ArticuloCarrito["kind"]) {
+  const esConjunto = kind === "PACK" || kind === "COLLECTION";
+
+  return esConjunto
+    ? item.id === id && item.kind === kind
+    : // Un recurso suelto no lleva `kind`, o lleva "PRODUCT".
+      item.id === id && item.kind !== "PACK" && item.kind !== "COLLECTION";
+}
+
+/**
+ * El carrito guardado, con UNA unidad por artículo.
+ *
+ * Cada recurso se vende una sola vez por compra (una licencia):
+ * si el navegador trae una cantidad mayor de antes, se normaliza a
+ * 1 y se reescribe, para que el carrito, el contador y el pago
+ * vean lo mismo.
+ */
+export function leerCarrito<T extends StoredCartItem>(): T[] {
+  try {
+    const guardado = localStorage.getItem(CART_STORAGE_KEY);
+    const leido = guardado ? JSON.parse(guardado) : [];
+    const lista: T[] = Array.isArray(leido) ? leido : [];
+
+    if (lista.some((item) => item?.quantity !== 1)) {
+      const normalizada = lista.map((item) => ({ ...item, quantity: 1 }));
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(normalizada));
+      return normalizada;
+    }
+
+    return lista;
+  } catch {
+    return [];
+  }
+}
+
+/** ¿Está ya este artículo en el carrito? */
+export function estaEnCarrito(id: string, kind?: ArticuloCarrito["kind"]): boolean {
+  return leerCarrito().some((item) => esElMismo(item, id, kind));
+}
+
+/**
+ * Si el artículo está en el carrito, y al día con el evento
+ * `rcktdmg-cart-updated` y con otras pestañas (`storage`).
+ */
+export function useEnCarrito(id: string, kind?: ArticuloCarrito["kind"]): boolean {
+  const [dentro, setDentro] = useState(false);
+
+  useEffect(() => {
+    function sync() {
+      setDentro(estaEnCarrito(id, kind));
+    }
+
+    sync();
+
+    window.addEventListener(CART_UPDATED_EVENT, sync);
+    window.addEventListener("storage", sync);
+
+    return () => {
+      window.removeEventListener(CART_UPDATED_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, [id, kind]);
+
+  return dentro;
+}
+
 /**
  * Añade un artículo al carrito de siempre.
  *
@@ -45,44 +113,21 @@ export type ArticuloCarrito = {
  * de corporativos y las stories—, y cada copia era una ocasión
  * de que una se desviara de las demás.
  *
- * Respeta el comportamiento que ya tenía cada tipo:
- *
- *   · Un RECURSO suelto repetido suma cantidad, como hace el
- *     botón de la ficha desde siempre.
- *   · Un PACK o una COLECCIÓN repetidos no hacen nada: volver
- *     a comprarlos no da nada nuevo, porque las licencias son
- *     por recurso.
+ * Cada artículo va UNA vez: un recurso, un pack o una colección
+ * que ya está en el carrito no se vuelve a sumar (las licencias
+ * son por recurso y comprarlo dos veces no da nada nuevo).
  *
  * Devuelve true si el carrito cambió.
  */
 export function anadirAlCarrito(articulo: ArticuloCarrito): boolean {
   try {
-    const guardado = localStorage.getItem(CART_STORAGE_KEY);
+    const lista = leerCarrito<ArticuloCarrito & { quantity: number }>();
 
-    const leido = guardado ? JSON.parse(guardado) : [];
-
-    const lista: (ArticuloCarrito & { quantity: number })[] =
-      Array.isArray(leido) ? leido : [];
-
-    const esConjunto =
-      articulo.kind === "PACK" || articulo.kind === "COLLECTION";
-
-    const existente = lista.find((item) =>
-      esConjunto
-        ? item.id === articulo.id && item.kind === articulo.kind
-        : // Un recurso suelto no lleva `kind`, o lleva "PRODUCT".
-          item.id === articulo.id &&
-          item.kind !== "PACK" &&
-          item.kind !== "COLLECTION"
-    );
-
-    if (existente) {
-      if (esConjunto) return false;
-
-      existente.quantity += 1;
-    } else {
-      lista.push({ ...articulo, quantity: 1 });
+    if (lista.some((item) => esElMismo(item, articulo.id, articulo.kind))) {
+      return false;
     }
+
+    lista.push({ ...articulo, quantity: 1 });
 
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(lista));
 
@@ -102,33 +147,12 @@ function readCartCount() {
     return 0;
   }
 
-  try {
-    const stored = localStorage.getItem(CART_STORAGE_KEY);
-
-    if (!stored) {
-      return 0;
-    }
-
-    const parsed = JSON.parse(stored);
-
-    if (!Array.isArray(parsed)) {
-      return 0;
-    }
-
-    return parsed.reduce((total: number, item: StoredCartItem) => {
-      const quantity = Number(item?.quantity);
-
-      return total + (Number.isFinite(quantity) && quantity > 0
-        ? quantity
-        : 1);
-    }, 0);
-  } catch {
-    return 0;
-  }
+  // Una unidad por artículo: el número es el de artículos.
+  return leerCarrito().length;
 }
 
 /**
- * Número de unidades en el carrito local (`rcktdmg_cart`).
+ * Número de artículos en el carrito local (`rcktdmg_cart`).
  *
  * Se mantiene sincronizado con el evento `rcktdmg-cart-updated`
  * que disparan los botones de carrito, y con `storage` para
