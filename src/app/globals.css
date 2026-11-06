@@ -95,7 +95,7 @@
     §74  Marco de app de la cuenta (PanelShell / PanelNav)                22540–23056
     §75  Inicios con imágenes (rk-cx-*)                                   23057–24421
     §76  Vista previa al subir (rk-vp-*)                                  24422–24642
-    §77  Recurso bloqueado sin sesión (rk-bloqueo-*)                      24643–24667
+    §77  Recurso bloqueado sin sesión (rk-bloqueo-*)                      24643–24821
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -24646,13 +24646,167 @@ a.rk-cx-badge:focus-visible,
    un visitante: tarjeta, galería de Explorar, ficha y punto de
    partida del desbloqueo.
    · .rk-bloqueo-mini: la miniatura de 16 px que el servidor ya
-     desenfocó, estirada en bloques. No lleva filtro CSS: no hay
-     nada debajo que proteger, la imagen real no se envía.
+     desenfocó, ampliada en suave. El filtro CSS solo quita el rastro
+     de la ampliación: la imagen real no se envía, no hay nada debajo
+     que proteger. La escala evita el borde claro que deja el filtro.
+   · .rk-bloqueo-aviso (AvisoBloqueo.tsx): velo, candado, texto y
+     botón. Solo el botón recibe clics. Compacto por defecto y
+     completo desde 150 px de ancho de la tarjeta.
    · .rk-bloqueo-fondo: sin miniatura todavía, un degradado neutro
      con manchas suaves, en los tokens del tema (nunca negro liso).
    ══════════════════════════════════════════════════════════ */
-.rk-bloqueo-mini {
-  image-rendering: pixelated;
+img.rk-bloqueo-mini {
+  filter: blur(5px);
+  /* !important: las reglas de acercamiento de .rk-frame img y de la galería. */
+  transform: scale(1.16) !important;
+}
+
+.rk-bloqueo-aviso {
+  /* Filas de píldoras al pie (precio, pack) que el aviso no debe tapar. */
+  --rk-bloqueo-pie: 0px;
+  position: absolute;
+  inset: 0;
+  /* Sin z-index: el precio y «Pack» van después y quedan sobre el velo. */
+  container: rk-bloqueo / size;
+  /*
+    El velo pesa más en el centro: ahí va el texto, en blanco. Varias
+    paradas y una elipse que acaba fuera de la tarjeta: con menos, se
+    ve un anillo donde cambia la pendiente.
+  */
+  background: radial-gradient(
+    ellipse 120% 85% at 50% 50%,
+    rgb(var(--pal-negro) / 0.62),
+    rgb(var(--pal-negro) / 0.61) 25%,
+    rgb(var(--pal-negro) / 0.52) 45%,
+    rgb(var(--pal-negro) / 0.4) 65%,
+    rgb(var(--pal-negro) / 0.34) 85%
+  );
+  pointer-events: none;
+}
+
+/* La celda de la galería no recorta: el velo copia el redondeo de su botón. */
+.rk-galeria-celda > .rk-bloqueo-aviso {
+  border-radius: 14px;
+}
+
+.rk-explorar .rk-galeria-celda > .rk-bloqueo-aviso {
+  border-radius: 12px;
+}
+
+/* Sobre el velo, precio y «Pack» siempre en blanco, también en claro. */
+.rk-bloqueo-aviso ~ .rk-glass-on-image,
+.rk-bloqueo-aviso ~ span .rk-glass-on-image {
+  color: rgb(var(--pal-blanco));
+}
+
+.rk-bloqueo-aviso[data-filas-abajo="1"] {
+  --rk-bloqueo-pie: 30px;
+}
+
+.rk-bloqueo-aviso[data-filas-abajo="2"] {
+  --rk-bloqueo-pie: 54px;
+}
+
+/* Compacta: 3 columnas en un móvil. */
+.rk-bloqueo-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  padding: 6px 5px calc(6px + var(--rk-bloqueo-pie));
+  text-align: center;
+}
+
+.rk-bloqueo-candado {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+}
+
+.rk-bloqueo-candado svg {
+  width: 11px;
+  height: 11px;
+}
+
+.rk-bloqueo-texto {
+  margin: 0;
+  max-width: 100%;
+  color: rgb(var(--pal-blanco));
+  font-size: 8.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  text-shadow: 0 1px 2px rgb(var(--pal-negro) / 0.45);
+}
+
+.rk-btn.rk-bloqueo-boton {
+  flex: none;
+  max-width: 100%;
+  min-height: 26px;
+  padding: 3px 6px;
+  font-size: 9px;
+  line-height: 1.15;
+  white-space: nowrap;
+  pointer-events: auto;
+}
+
+/*
+  Sin sitio para todo, el texto cede y el botón no. Lo que cabe depende
+  de las filas de píldoras: 90 px sin ellas, 120 con una y 144 con dos.
+*/
+@container rk-bloqueo (max-height: 89px) {
+  .rk-bloqueo-texto {
+    display: none;
+  }
+}
+
+@container rk-bloqueo (max-height: 119px) {
+  [data-filas-abajo="1"] .rk-bloqueo-texto {
+    display: none;
+  }
+}
+
+@container rk-bloqueo (max-height: 143px) {
+  [data-filas-abajo="2"] .rk-bloqueo-texto {
+    display: none;
+  }
+}
+
+/* Completa: desde 150 px de ancho. */
+@container rk-bloqueo (min-width: 150px) {
+  .rk-bloqueo-contenido {
+    gap: 8px;
+    padding: 12px 10px calc(12px + var(--rk-bloqueo-pie));
+  }
+
+  .rk-bloqueo-candado {
+    width: 36px;
+    height: 36px;
+  }
+
+  .rk-bloqueo-candado svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .rk-bloqueo-texto {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+
+  .rk-btn.rk-bloqueo-boton {
+    min-height: 36px;
+    padding: 6px 14px;
+    font-size: 12px;
+  }
 }
 
 .rk-bloqueo-fondo {
