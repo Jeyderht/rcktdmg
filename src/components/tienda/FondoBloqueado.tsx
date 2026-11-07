@@ -5,9 +5,10 @@ import Image from "next/image";
  * punto de partida de su desbloqueo ya con sesión).
  *
  * - Con miniatura: la portada reducida a 16 px y desenfocada en el
- *   servidor (miniatura-bloqueada.ts), estirada con
- *   `image-rendering: pixelated` (.rk-bloqueo-mini). Es un data URI
- *   de unos cientos de bytes; la imagen real no viaja.
+ *   servidor (miniatura-bloqueada.ts), ampliada en suave y con un
+ *   desenfoque CSS ligero (.rk-bloqueo-mini): manchas de color
+ *   continuas. Es un data URI de unos cientos de bytes; la imagen
+ *   real no viaja.
  * - Sin miniatura (todavía no se generó): un degradado neutro con
  *   aspecto de desenfoque (.rk-bloqueo-fondo), en los tokens del
  *   tema. Nunca un recuadro vacío.

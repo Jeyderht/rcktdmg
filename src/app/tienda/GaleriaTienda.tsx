@@ -4,11 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowUpRight, ChevronLeft, ChevronRight, Lock, X } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 import FavoriteButton from "@/components/tienda/FavoriteButton";
 import ImagenDesbloqueada from "@/components/tienda/ImagenDesbloqueada";
 import FondoBloqueado from "@/components/tienda/FondoBloqueado";
+import AvisoBloqueo from "@/components/tienda/AvisoBloqueo";
 import ProductCard, { type ProductCardData } from "@/components/tienda/ProductCard";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 
@@ -74,9 +75,10 @@ export default function GaleriaTienda({
           const libre = Boolean(imagen) && !proporcion;
           /*
             Bloqueada (solo para registrados, sin sesión): no llega
-            imagen real. Miniatura desenfocada y candado; al tocarla
-            se abre la tarjeta bloqueada, con su botón de registro.
-            Sin medida natural, el marco 4:5 del catálogo.
+            imagen real. Miniatura desenfocada y, encima, el aviso con
+            su botón de registro; al tocar el resto de la celda se abre
+            la tarjeta bloqueada. Sin medida natural, el marco 4:5 del
+            catálogo.
           */
           const bloqueo = p.bloqueo ?? null;
 
@@ -98,13 +100,7 @@ export default function GaleriaTienda({
                 }
               >
                 {bloqueo ? (
-                  <>
-                    <FondoBloqueado miniatura={bloqueo.miniatura} />
-
-                    <span className="rk-glass-on-image absolute left-1/2 top-1/2 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full">
-                      <Lock size={14} aria-hidden />
-                    </span>
-                  </>
+                  <FondoBloqueado miniatura={bloqueo.miniatura} />
                 ) : imagen && p.desbloqueo ? (
                   /* Solo para registrados, ya con sesión: entra desde la miniatura. */
                   <ImagenDesbloqueada
@@ -136,6 +132,9 @@ export default function GaleriaTienda({
                   <span className="rk-galeria-vacio">RcktX</span>
                 )}
               </button>
+
+              {/* Fuera del botón de la celda: lleva dentro un enlace. */}
+              {bloqueo && <AvisoBloqueo ficha={`/tienda/${p.slug}`} />}
 
               {/* Guardar sin abrir la tarjeta: va fuera del botón. */}
               <span className="rk-galeria-guardar">

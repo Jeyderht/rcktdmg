@@ -17,8 +17,8 @@
  * de la portada. No es un
  * desenfoque CSS sobre la imagen real (ese se quita con las
  * herramientas del navegador): los píxeles reales nunca salen del
- * servidor. En pantalla se estira con `image-rendering: pixelated`
- * (.rk-bloqueo-mini), de ahí el aspecto pixelado.
+ * servidor. En pantalla se amplía en suave con un desenfoque CSS
+ * ligero (.rk-bloqueo-mini), de ahí las manchas continuas.
  *
  * DE DÓNDE SE LEE LA PORTADA
  *
