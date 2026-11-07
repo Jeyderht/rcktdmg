@@ -64,12 +64,12 @@ describe("miniaturaDesdeBytes", () => {
     assert.ok(uri.length <= 4096, `ocupa ${uri.length} caracteres`);
   });
 
-  it("mide 16 px de ancho y conserva la proporción", async () => {
+  it("mide 24 px de ancho y conserva la proporción", async () => {
     const uri = await miniaturaDesdeBytes(await portadaConDetalle());
     const meta = await sharp(bytesDe(uri!)).metadata();
 
-    assert.equal(meta.width, 16);
-    assert.ok(meta.height! >= 20 && meta.height! <= 32, `alto ${meta.height}`);
+    assert.equal(meta.width, 24);
+    assert.ok(meta.height! >= 30 && meta.height! <= 48, `alto ${meta.height}`);
   });
 
   it("no conserva el detalle de la portada", async () => {
@@ -139,6 +139,7 @@ describe("miniaturaDesdeBytes", () => {
 
   it("las miniaturas del desenfoque anterior ya no son válidas", () => {
     assert.equal(esMiniaturaValida("data:image/webp;base64,AAAA"), false);
+    assert.equal(esMiniaturaValida("data:image/webp;v=2;base64,AAAA"), false);
     assert.equal(esMiniaturaValida(`${PREFIJO_MINIATURA}AAAA`), true);
     assert.equal(esMiniaturaValida("https://ejemplo.com/a.jpg"), false);
   });

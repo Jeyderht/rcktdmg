@@ -9,12 +9,15 @@
  *
  * POR QUÉ NO SE PUEDE RECUPERAR LA PORTADA
  *
- * La imagen se reduce a 16 px de ancho y después se desenfoca con
- * sigma 5 sobre esa misma imagen diminuta: casi un tercio de su
+ * La imagen se reduce a 24 px de ancho y después se desenfoca con
+ * sigma 4,5 sobre esa misma imagen diminuta: casi un quinto de su
  * ancho. En las tarjetas (98-114 px) equivale a un radio de unos
- * 30-36 px. Solo quedan manchas de color, sin texto legible ni figuras:
- * unos pocos cientos de bytes en los que ya no existe la información
- * de la portada. No es un
+ * 18-21 px. Quedan los colores y las zonas claras y oscuras, sin texto
+ * legible ni figuras: unos pocos cientos de bytes en los que ya no
+ * existe la información de la portada. Se midió sobre 19 portadas
+ * reales: ni OCR ni un detector de rostros encuentran nada, tampoco
+ * realzando la miniatura o invirtiendo el desenfoque (con 32 px y
+ * sigma 4 sí reaparecían las bandas del título y la silueta). No es un
  * desenfoque CSS sobre la imagen real (ese se quita con las
  * herramientas del navegador): los píxeles reales nunca salen del
  * servidor. En pantalla se amplía en suave con un desenfoque CSS
@@ -42,11 +45,18 @@ import { HOST_BLOB_PUBLICO } from "@/lib/storage/blob";
 import { PREFIJO_MINIATURA, esMiniaturaValida } from "@/lib/vista-recurso";
 
 /** Ancho de la miniatura, en píxeles. */
-const ANCHO = 16;
+const ANCHO = 24;
 /** Tope de alto, por si una portada fuese muy alargada. */
-const ALTO_MAXIMO = 32;
+const ALTO_MAXIMO = 48;
 /** Desenfoque (sigma) aplicado sobre la imagen ya reducida. */
-const DESENFOQUE = 5;
+const DESENFOQUE = 4.5;
+/**
+ * Calidad webp. Alta a propósito: con menos, la compresión añade
+ * bloques y borrones grises que no son de la portada. Las demás solo
+ * se usan si la primera no cabe en el tope (nunca ha pasado: ~360
+ * caracteres frente a 4096).
+ */
+const CALIDADES = [90, 75, 60];
 /** Portadas más pesadas que esto no se procesan. */
 const TOPE_BYTES = 25 * 1024 * 1024;
 const TIEMPO_MAXIMO_MS = 10_000;
@@ -104,7 +114,7 @@ export async function miniaturaDesdeBytes(
   datos: Buffer
 ): Promise<string | null> {
   try {
-    for (const calidad of [45, 30, 20]) {
+    for (const calidad of CALIDADES) {
       const salida = await sharp(datos, { limitInputPixels: 40_000_000 })
         .rotate()
         .flatten({ background: "#808080" })
