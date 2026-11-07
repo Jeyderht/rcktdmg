@@ -123,7 +123,7 @@ const TOPE_MINIATURA = 4096;
   enviarse al momento, sin tocar la base. Mientras no se regeneren,
   el visitante ve el degradado neutro.
 */
-export const PREFIJO_MINIATURA = "data:image/webp;v=2;base64,";
+export const PREFIJO_MINIATURA = "data:image/webp;v=3;base64,";
 
 export function esMiniaturaValida(valor: string | null): valor is string {
   return (
