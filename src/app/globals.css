@@ -95,7 +95,7 @@
     §74  Marco de app de la cuenta (PanelShell / PanelNav)                22540–23056
     §75  Inicios con imágenes (rk-cx-*)                                   23057–24421
     §76  Vista previa al subir (rk-vp-*)                                  24422–24642
-    §77  Recurso bloqueado sin sesión (rk-bloqueo-*)                      24643–24821
+    §77  Recurso bloqueado sin sesión (rk-bloqueo-*)                      24643–24843
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -24645,20 +24645,30 @@ a.rk-cx-badge:focus-visible,
    Fondo del marco de un recurso «solo para registrados» que mira
    un visitante: tarjeta, galería de Explorar, ficha y punto de
    partida del desbloqueo.
-   · .rk-bloqueo-mini: la miniatura de 16 px que el servidor ya
-     desenfocó, ampliada en suave. El filtro CSS solo quita el rastro
-     de la ampliación: la imagen real no se envía, no hay nada debajo
-     que proteger. La escala evita el borde claro que deja el filtro.
+   · .rk-bloqueo-mini: la miniatura que el servidor ya desenfocó,
+     ampliada en suave. El filtro CSS solo quita el rastro de la
+     ampliación y realza el color: la imagen real no se envía, no hay
+     nada debajo que proteger. Su radio va en cqw (lo da
+     .rk-bloqueo-marco): con píxeles fijos, en una tarjeta grande se
+     ve la rejilla de la miniatura. La escala evita el borde claro que
+     deja el filtro.
    · .rk-bloqueo-aviso (AvisoBloqueo.tsx): velo, candado, texto y
      botón. Solo el botón recibe clics. Compacto por defecto y
      completo desde 150 px de ancho de la tarjeta.
    · .rk-bloqueo-fondo: sin miniatura todavía, un degradado neutro
      con manchas suaves, en los tokens del tema (nunca negro liso).
    ══════════════════════════════════════════════════════════ */
+.rk-bloqueo-marco {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+}
+
 img.rk-bloqueo-mini {
-  filter: blur(5px);
+  filter: blur(4cqw) saturate(1.3) brightness(1.12);
   /* !important: las reglas de acercamiento de .rk-frame img y de la galería. */
-  transform: scale(1.16) !important;
+  transform: scale(1.2) !important;
 }
 
 .rk-bloqueo-aviso {
@@ -24669,17 +24679,18 @@ img.rk-bloqueo-mini {
   /* Sin z-index: el precio y «Pack» van después y quedan sobre el velo. */
   container: rk-bloqueo / size;
   /*
-    El velo pesa más en el centro: ahí va el texto, en blanco. Varias
+    Velo ligero: tiene que dejar ver los colores de la portada. Lo que
+    separa el texto del fondo es su sombra, no más oscuridad. Varias
     paradas y una elipse que acaba fuera de la tarjeta: con menos, se
     ve un anillo donde cambia la pendiente.
   */
   background: radial-gradient(
     ellipse 120% 85% at 50% 50%,
-    rgb(var(--pal-negro) / 0.62),
-    rgb(var(--pal-negro) / 0.61) 25%,
-    rgb(var(--pal-negro) / 0.52) 45%,
-    rgb(var(--pal-negro) / 0.4) 65%,
-    rgb(var(--pal-negro) / 0.34) 85%
+    rgb(var(--pal-negro) / 0.22),
+    rgb(var(--pal-negro) / 0.21) 25%,
+    rgb(var(--pal-negro) / 0.18) 45%,
+    rgb(var(--pal-negro) / 0.14) 65%,
+    rgb(var(--pal-negro) / 0.12) 85%
   );
   pointer-events: none;
 }
@@ -24693,9 +24704,16 @@ img.rk-bloqueo-mini {
   border-radius: 12px;
 }
 
-/* Sobre el velo, precio y «Pack» siempre en blanco, también en claro. */
+/*
+  El velo es ligero y la portada puede ser muy clara: lo que va encima
+  (candado, precio, «Pack», guardar) lleva vidrio oscuro y va en blanco,
+  en los dos temas.
+*/
+.rk-glass-on-image.rk-bloqueo-candado,
 .rk-bloqueo-aviso ~ .rk-glass-on-image,
 .rk-bloqueo-aviso ~ span .rk-glass-on-image {
+  border-color: rgb(var(--pal-blanco) / 0.22);
+  background: rgb(var(--pal-oscuro-fondo) / 0.42);
   color: rgb(var(--pal-blanco));
 }
 
@@ -24743,7 +24761,11 @@ img.rk-bloqueo-mini {
   letter-spacing: 0.03em;
   text-transform: uppercase;
   text-wrap: balance;
-  text-shadow: 0 1px 2px rgb(var(--pal-negro) / 0.45);
+  text-shadow:
+    0 1px 2px rgb(var(--pal-negro) / 0.9),
+    0 0 3px rgb(var(--pal-negro) / 0.8),
+    0 0 7px rgb(var(--pal-negro) / 0.75),
+    0 0 16px rgb(var(--pal-negro) / 0.6);
 }
 
 .rk-btn.rk-bloqueo-boton {

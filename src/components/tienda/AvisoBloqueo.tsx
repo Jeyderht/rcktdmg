@@ -5,7 +5,7 @@ import { conDestino } from "@/lib/redireccion";
 
 /**
  * Aviso de una tarjeta bloqueada: candado, «Vista previa para
- * miembros» y «Regístrate gratis», sobre la miniatura oscurecida.
+ * miembros» y «Regístrate gratis», sobre la miniatura.
  *
  * Es una capa aparte que no recibe clics salvo en su botón
  * (pointer-events, §77), así que el resto de la tarjeta se comporta
