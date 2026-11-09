@@ -95,7 +95,7 @@
     §74  Marco de app de la cuenta (PanelShell / PanelNav)                22540–23056
     §75  Inicios con imágenes (rk-cx-*)                                   23057–24421
     §76  Vista previa al subir (rk-vp-*)                                  24422–24642
-    §77  Recurso bloqueado sin sesión (rk-bloqueo-*)                      24643–24843
+    §77  Recurso bloqueado sin sesión (rk-bloqueo-*)                      24643–24850
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -24679,19 +24679,12 @@ img.rk-bloqueo-mini {
   /* Sin z-index: el precio y «Pack» van después y quedan sobre el velo. */
   container: rk-bloqueo / size;
   /*
-    Velo ligero: tiene que dejar ver los colores de la portada. Lo que
-    separa el texto del fondo es su sombra, no más oscuridad. Varias
-    paradas y una elipse que acaba fuera de la tarjeta: con menos, se
-    ve un anillo donde cambia la pendiente.
+    Velo parejo: deja ver los colores de la portada. No basta para
+    leer texto blanco sobre una portada clara (haría falta ~0,5), así
+    que lo que lleva texto o icono va sobre su propio vidrio oscuro.
+    Sin sombras en nada de lo que va encima.
   */
-  background: radial-gradient(
-    ellipse 120% 85% at 50% 50%,
-    rgb(var(--pal-negro) / 0.22),
-    rgb(var(--pal-negro) / 0.21) 25%,
-    rgb(var(--pal-negro) / 0.18) 45%,
-    rgb(var(--pal-negro) / 0.14) 65%,
-    rgb(var(--pal-negro) / 0.12) 85%
-  );
+  background: rgb(var(--pal-negro) / 0.32);
   pointer-events: none;
 }
 
@@ -24705,16 +24698,30 @@ img.rk-bloqueo-mini {
 }
 
 /*
-  El velo es ligero y la portada puede ser muy clara: lo que va encima
-  (candado, precio, «Pack», guardar) lleva vidrio oscuro y va en blanco,
-  en los dos temas.
+  Lo que va encima del velo (aviso, candado, precio, «Pack», guardar)
+  lleva vidrio oscuro y va en blanco, en los dos temas y sin sombras:
+  con 0,5 sobre el velo, el blanco pasa de 4,5:1 hasta sobre una
+  portada blanca. [data-theme] y :not(.text-danger) suben la
+  especificidad por encima del vidrio claro de §56 (tema claro y
+  rejillas de solo imagen), que si no la pisaba.
 */
-.rk-glass-on-image.rk-bloqueo-candado,
-.rk-bloqueo-aviso ~ .rk-glass-on-image,
-.rk-bloqueo-aviso ~ span .rk-glass-on-image {
-  border-color: rgb(var(--pal-blanco) / 0.22);
-  background: rgb(var(--pal-oscuro-fondo) / 0.42);
+[data-theme] .rk-bloqueo-texto,
+[data-theme] .rk-glass-on-image.rk-bloqueo-candado:not(.text-danger),
+[data-theme] .rk-bloqueo-aviso ~ .rk-glass-on-image:not(.text-danger),
+[data-theme] .rk-bloqueo-aviso ~ span .rk-glass-on-image:not(.text-danger),
+[data-theme] .rk-tarjeta:has(.rk-bloqueo-aviso) button.rk-glass-on-image:not(.text-danger) {
+  border: 1px solid rgb(var(--pal-blanco) / 0.22);
+  background: rgb(var(--pal-oscuro-fondo) / 0.5);
   color: rgb(var(--pal-blanco));
+  text-shadow: none;
+  box-shadow: none;
+}
+
+/* El botón, sin brillo interior ni sombra en ningún estado (un enlace
+   siempre es :link o :visited). El foco se marca con outline. */
+[data-theme] .rk-bloqueo-aviso .rk-btn.rk-bloqueo-boton:is(:link, :visited, :hover, :focus-visible, :active) {
+  box-shadow: none;
+  text-shadow: none;
 }
 
 .rk-bloqueo-aviso[data-filas-abajo="1"] {
@@ -24761,11 +24768,9 @@ img.rk-bloqueo-mini {
   letter-spacing: 0.03em;
   text-transform: uppercase;
   text-wrap: balance;
-  text-shadow:
-    0 1px 2px rgb(var(--pal-negro) / 0.9),
-    0 0 3px rgb(var(--pal-negro) / 0.8),
-    0 0 7px rgb(var(--pal-negro) / 0.75),
-    0 0 16px rgb(var(--pal-negro) / 0.6);
+  /* Pastilla de vidrio oscuro (fondo y borde, arriba): sin sombra. */
+  padding: 3px 6px;
+  border-radius: 8px;
 }
 
 .rk-btn.rk-bloqueo-boton {
@@ -24820,6 +24825,8 @@ img.rk-bloqueo-mini {
 
   .rk-bloqueo-texto {
     display: block;
+    padding: 5px 10px;
+    border-radius: 10px;
     font-size: 11px;
     letter-spacing: 0.06em;
   }
