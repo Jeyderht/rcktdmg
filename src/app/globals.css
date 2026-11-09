@@ -95,7 +95,7 @@
     §74  Marco de app de la cuenta (PanelShell / PanelNav)                22540–23056
     §75  Inicios con imágenes (rk-cx-*)                                   23057–24421
     §76  Vista previa al subir (rk-vp-*)                                  24422–24642
-    §77  Recurso bloqueado sin sesión (rk-bloqueo-*)                      24643–24850
+    §77  Recurso bloqueado sin sesión (rk-bloqueo-*)                      24643–24855
 
    Lo que no tiene banner propio dentro de una sección está explicado
    en el comentario de su regla. Avisos «No tocar la forma»: lengüetas
@@ -24768,8 +24768,13 @@ img.rk-bloqueo-mini {
   letter-spacing: 0.03em;
   text-transform: uppercase;
   text-wrap: balance;
-  /* Pastilla de vidrio oscuro (fondo y borde, arriba): sin sombra. */
-  padding: 3px 6px;
+  /*
+    Pastilla de vidrio oscuro (fondo y borde, arriba): sin sombra.
+    Margen lateral justo: en la tarjeta de solo imagen del inicio
+    (89 px útiles a 390 px) «PARA MIEMBROS» ocupa ~79 px; con 6 px
+    por lado pasaba a tres líneas.
+  */
+  padding: 3px;
   border-radius: 8px;
 }
 
