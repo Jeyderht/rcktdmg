@@ -99,20 +99,39 @@ export async function GET(
       select: { status: true, revokedReason: true },
     });
 
-    // Regularización segura de compras antiguas: la función solo
-    // emite licencias si el pedido realmente figura como PAID,
-    // y usa una clave única por línea para evitar duplicados.
+    // La reparación automática solo corresponde a líneas que
+    // realmente formen parte de este pedido y tengan pago validado.
     if (!licenciaDelPedido) {
-      await otorgarLicenciasDePedido(download.orderId);
-      licenciaDelPedido = await prisma.license.findFirst({
+      const linea = await prisma.orderItem.findFirst({
         where: {
           orderId: download.orderId,
           productId: download.productId,
-          userId: session.userId,
         },
-        orderBy: { grantedAt: "desc" },
-        select: { status: true, revokedReason: true },
+        select: { id: true },
       });
+
+      const pago = await prisma.payment.findUnique({
+        where: { orderId: download.orderId },
+        select: { provider: true, status: true, amount: true },
+      });
+
+      const pagoValido =
+        pago?.status === "APPROVED" &&
+        pago.amount.equals(download.order.total) &&
+        (pago.provider !== "TEST" || process.env.NODE_ENV === "development");
+
+      if (linea && pagoValido) {
+        await otorgarLicenciasDePedido(download.orderId);
+        licenciaDelPedido = await prisma.license.findFirst({
+          where: {
+            orderId: download.orderId,
+            productId: download.productId,
+            userId: session.userId,
+          },
+          orderBy: { grantedAt: "desc" },
+          select: { status: true, revokedReason: true },
+        });
+      }
     }
 
     // Una descarga nueva no puede depender solo de la marca PAID:
