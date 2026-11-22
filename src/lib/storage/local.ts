@@ -55,7 +55,8 @@ export function nombreDeArchivoLocal(ref: string): string | null {
     !fileName ||
     fileName.includes("..") ||
     fileName.includes("/") ||
-    fileName.includes("\\")
+    fileName.includes("\\") ||
+    /[\x00-\x1f\x7f]/.test(fileName)
   ) {
     return null;
   }
