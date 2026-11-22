@@ -146,6 +146,16 @@ export async function POST(request: Request) {
     // La condición provider=TEST se comprueba en la propia BD.
     const transactionId = `TEST-${order.id}-${Date.now()}`;
     const payment = await prisma.$transaction(async (tx) => {
+      // Comprobar nuevamente el estado dentro de la transacción.
+      // No aprobar una orden cancelada durante la solicitud.
+      const pendiente = await tx.order.findFirst({
+        where: { id: order.id, userId: session.userId, status: "PENDING" },
+        select: { id: true },
+      });
+      if (!pendiente) {
+        throw new Error("ORDER_NOT_PENDING");
+      }
+
       const existente = await tx.payment.findUnique({
         where: { orderId: order.id },
         select: { id: true, provider: true },
@@ -196,6 +206,7 @@ export async function POST(request: Request) {
     if (
       error instanceof Error &&
       (error.message === "PAYMENT_PROVIDER_CONFLICT" ||
+        error.message === "ORDER_NOT_PENDING" ||
         ("code" in error && error.code === "P2002"))
     ) {
       return NextResponse.json(
