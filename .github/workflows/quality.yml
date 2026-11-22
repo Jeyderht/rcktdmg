@@ -20,6 +20,7 @@ jobs:
     env:
       NEXT_TELEMETRY_DISABLED: "1"
       RCKTX_CI_TEST_DB: "1"
+      AUTH_SECRET: "rcktx-ci-only-not-for-production-6f6c3f06f8d74869bda0ed4b"
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/rcktx_ci?schema=public
     services:
       postgres:
