@@ -19,6 +19,21 @@ jobs:
     timeout-minutes: 15
     env:
       NEXT_TELEMETRY_DISABLED: "1"
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/rcktx_ci?schema=public
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rcktx_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d rcktx_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,8 +46,14 @@ jobs:
         run: npm ci
       - name: Generate Prisma client
         run: npx prisma generate
+      - name: Apply migrations to isolated PostgreSQL
+        run: npx prisma migrate deploy
+      - name: Seed test fixtures
+        run: npm run db:seed
       - name: Unit tests
         run: npm test
+      - name: PostgreSQL integration tests
+        run: npm run test:db
       - name: TypeScript validation
         run: npx tsc --noEmit
       - name: ESLint
