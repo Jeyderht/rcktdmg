@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { fulfillPaidOrder } from "@/lib/orders";
+import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
 
 export async function POST(request: Request) {
   try {
@@ -59,7 +60,7 @@ export async function POST(request: Request) {
         id: true,
         total: true,
         status: true,
-        payment: { select: { provider: true, status: true } },
+        payment: { select: { provider: true, status: true, amount: true } },
       },
     });
 
@@ -71,6 +72,15 @@ export async function POST(request: Request) {
     }
 
     if (order.status === "PAID") {
+      // No declarar éxito si un registro antiguo fue marcado PAID
+      // sin un pago aprobado y coincidente.
+      if (!pagoAprobadoParaPedido(order.payment, order.total)) {
+        return NextResponse.json(
+          { error: "El pedido no tiene un pago aprobado válido." },
+          { status: 409 }
+        );
+      }
+
       return NextResponse.json({
         success: true,
         alreadyPaid: true,
