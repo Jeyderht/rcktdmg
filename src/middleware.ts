@@ -56,6 +56,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
+    // Resuelve la ruta anterior antes de iniciar el render del panel.
+    if (pathname === "/admin/solicitudes") {
+      return NextResponse.redirect(new URL("/admin/creadores", request.url), 308);
+    }
+
     return NextResponse.next();
   }
 
