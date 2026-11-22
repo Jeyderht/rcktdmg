@@ -5,6 +5,7 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getPrivate, esReferenciaBlob, esRutaPrivadaLocal } from "@/lib/storage";
 import { nombreDeArchivoLocal } from "@/lib/storage/local";
+import { disposicionDescarga } from "@/lib/descarga-cabeceras";
 import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
 import { importesDePedidoValidos } from "@/lib/importes-pedido";
 import { otorgarLicenciasDePedido } from "@/lib/licencias";
@@ -133,7 +134,7 @@ export async function GET(_request: Request, contexto: Contexto) {
             conoce hasta terminar, y anunciar uno equivocado
             rompe la descarga.
           */
-          "Content-Disposition": `attachment; filename="${nombreZip}"`,
+          "Content-Disposition": disposicionDescarga(nombreZip),
 
           "Cache-Control": "private, no-store",
         },
@@ -191,7 +192,7 @@ export async function GET(_request: Request, contexto: Contexto) {
           TIPOS[path.extname(nombre).toLowerCase()] ||
           "application/octet-stream",
 
-        "Content-Disposition": `attachment; filename="${nombre}"`,
+        "Content-Disposition": disposicionDescarga(nombre),
 
         "Cache-Control": "private, no-store",
       },
