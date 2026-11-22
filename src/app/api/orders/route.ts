@@ -45,9 +45,20 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "El cuerpo de la solicitud debe ser JSON válido." },
+        { status: 400 }
+      );
+    }
 
-    const items = body.items as OrderItemInput[];
+    const items =
+      body && typeof body === "object" && "items" in body
+        ? body.items
+        : undefined;
 
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
@@ -66,13 +77,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const cleanItems = items
-      .map((item) => ({
-        productId: item.productId ? String(item.productId) : "",
-        packId: item.packId ? String(item.packId) : "",
-        collectionId: item.collectionId ? String(item.collectionId) : "",
-        quantity: Number(item.quantity),
-      }))
+    const cleanItems = (items as unknown[])
+      .map((raw) => {
+        const item = raw && typeof raw === "object"
+          ? raw as Record<string, unknown>
+          : {};
+        return {
+          productId: typeof item.productId === "string" ? item.productId.trim() : "",
+          packId: typeof item.packId === "string" ? item.packId.trim() : "",
+          collectionId: typeof item.collectionId === "string" ? item.collectionId.trim() : "",
+          quantity: item.quantity,
+        };
+      })
       .filter((item) => {
         /*
           Una línea es de UNA cosa: un recurso suelto, un pack
@@ -85,7 +101,6 @@ export async function POST(request: Request) {
 
         return (
           cuantos === 1 &&
-          Number.isInteger(item.quantity) &&
           item.quantity === 1
         );
       });
@@ -317,6 +332,23 @@ export async function POST(request: Request) {
 
       orderItems.push(
         componer(product.id, product.price, item.quantity, null)
+      );
+    }
+
+    // Los packs y las colecciones pueden incluir el mismo recurso.
+    // No cobrar dos veces ni generar licencias duplicadas tras expandir.
+    const recursosExpandidos = orderItems.map((item) => item.productId);
+    if (new Set(recursosExpandidos).size !== recursosExpandidos.length) {
+      return NextResponse.json(
+        { error: "El carrito incluye recursos repetidos entre productos, packs o colecciones." },
+        { status: 409 }
+      );
+    }
+
+    if (orderItems.length === 0) {
+      return NextResponse.json(
+        { error: "No hay recursos disponibles para comprar." },
+        { status: 400 }
       );
     }
 
