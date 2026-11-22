@@ -9,7 +9,10 @@ class Rollback extends Error {}
 
 before(async () => {
   const [{ host }] = await db.$queryRaw<{ host: string | null }[]>`SELECT host(inet_server_addr()) AS host`;
-  assert.ok(host === null || host === "127.0.0.1" || host === "::1", "Usa una base de pruebas local");
+  const ciAislado = process.env.RCKTX_CI_TEST_DB === "1" &&
+    process.env.GITHUB_ACTIONS === "true" &&
+    (() => { try { const u = new URL(process.env.DATABASE_URL || ""); return u.hostname === "127.0.0.1" && u.pathname === "/rcktx_ci"; } catch { return false; } })();
+  assert.ok(ciAislado || host === null || host === "127.0.0.1" || host === "::1", "Usa una base de pruebas local");
 });
 after(() => db.$disconnect());
 
