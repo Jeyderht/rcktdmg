@@ -21,6 +21,8 @@ function ConfirmationContent() {
   const [loading, setLoading] = useState(false);
   const [paid, setPaid] = useState(false);
   const [error, setError] = useState("");
+  const [demoMethod, setDemoMethod] = useState<"CARD" | "YAPE" | "PAGOEFECTIVO">("CARD");
+  const [demoComplete, setDemoComplete] = useState(false);
 
   async function simulatePayment() {
     if (!orderId) {
@@ -159,28 +161,55 @@ function ConfirmationContent() {
             </div>
           )}
 
-          {/*
-            Sin pasarela conectada se dice lo que de verdad ocurre:
-            el pedido queda pendiente.
-          */}
+          {/* Vista previa de medios de pago. Nunca cambia el estado del pedido. */}
           {!paid && orderId && !EN_DESARROLLO && (
-            <div className="rk-done-note">
+            <section className="rk-done-note" aria-label="Simulador de métodos de pago">
               <p className="rk-done-note-title">
                 <Clock aria-hidden />
-                Pendiente de pago
+                Checkout de demostración
               </p>
-
-              <p>
-                Tu pedido está guardado con este número. Todavía no hay
-                una pasarela de pago conectada, así que el cobro se
-                gestiona aparte; en cuanto se registre, tus descargas se
-                habilitan solas.
+              <p className="mb-4">
+                Elige cómo pagarías en RcktX. Esta vista no procesa dinero,
+                no aprueba pedidos y no habilita descargas.
               </p>
-
-              <Link href="/mi-cuenta/compras" className="rk-btn rk-btn-line">
-                Ver mis pedidos
+              <div className="grid gap-2" role="group" aria-label="Método de pago simulado">
+                {([
+                  ["CARD", "Tarjeta de crédito o débito"],
+                  ["YAPE", "Yape"],
+                  ["PAGOEFECTIVO", "PagoEfectivo"],
+                ] as const).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-pressed={demoMethod === value}
+                    onClick={() => {
+                      setDemoMethod(value);
+                      setDemoComplete(false);
+                    }}
+                    className={`rk-btn ${demoMethod === value ? "rk-btn-primary" : "rk-btn-line"}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="rk-btn rk-btn-buy mt-4 w-full"
+                onClick={() => setDemoComplete(true)}
+              >
+                Simular experiencia de pago
+              </button>
+              {demoComplete && (
+                <p role="status" className="mt-3 text-sm">
+                  Simulación completada. Tu pedido sigue pendiente; no se
+                  realizó ningún cobro. Al conectar Mercado Pago, este paso
+                  utilizará su confirmación oficial.
+                </p>
+              )}
+              <Link href="/mi-cuenta/compras" className="rk-btn rk-btn-line mt-3">
+                Ver mis pedidos pendientes
               </Link>
-            </div>
+            </section>
           )}
 
           {paid && (
