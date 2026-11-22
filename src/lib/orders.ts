@@ -59,6 +59,7 @@ export async function fulfillPaidOrder(orderId: string) {
       },
       include: {
         items: true,
+        payment: true,
       },
     });
 
@@ -70,6 +71,26 @@ export async function fulfillPaidOrder(orderId: string) {
     // webhook tardío o un reintento de pago.
     if (order.status !== "PENDING" && order.status !== "PAID") {
       throw new Error(`No se puede acreditar un pedido en estado ${order.status}`);
+    }
+
+    // No confiar en una llamada a esta función como prueba de cobro.
+    // El pago debe estar aprobado y coincidir exactamente con el pedido.
+    if (
+      !order.payment ||
+      order.payment.status !== "APPROVED" ||
+      !order.payment.amount.equals(order.total)
+    ) {
+      throw new Error(`El pedido ${orderId} no tiene un pago aprobado por el importe correcto`);
+    }
+
+    // El proveedor de pruebas jamás puede acreditar pedidos fuera
+    // del servidor de desarrollo, ni siquiera si alguien insertó
+    // manualmente un registro de pago TEST en la base de datos.
+    if (
+      order.payment.provider === "TEST" &&
+      process.env.NODE_ENV !== "development"
+    ) {
+      throw new Error("Los pagos TEST no pueden habilitar pedidos fuera de desarrollo");
     }
 
     // Ganancias del creador y comisión de la plataforma.
