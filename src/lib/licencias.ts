@@ -147,14 +147,10 @@ export async function sincronizarLicenciasDePedido(
     if (!pedido) return;
 
     if (pedido.status === "PAID") {
+      // Crear únicamente licencias faltantes. Nunca reactivar una
+      // licencia revocada: puede haber sido retirada por abuso,
+      // una decisión administrativa o un reembolso previo.
       await otorgarLicenciasDePedido(orderId);
-
-      // Un pedido que vuelve a estar pagado recupera lo suyo.
-      await prisma.license.updateMany({
-        where: { orderId, status: "REVOKED" },
-        data: { status: "ACTIVE", revokedAt: null, revokedReason: null },
-      });
-
       return;
     }
 
