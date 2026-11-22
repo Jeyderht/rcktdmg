@@ -134,46 +134,29 @@ export async function fulfillPaidOrder(orderId: string) {
       throw new Error(`El pedido ${orderId} cambió de estado durante la acreditación`);
     }
 
-    // Descargas: una por producto, sin duplicar si el
-    // webhook llega más de una vez.
-    for (const item of order.items) {
-      const existingDownload = await tx.download.findUnique({
-        where: {
-          userId_productId_orderId: {
-            userId: order.userId,
-            productId: item.productId,
-            orderId: order.id,
-          },
-        },
+    // Insertar descargas de forma idempotente. El índice único
+    // (usuario, producto, pedido) y skipDuplicates protegen
+    // también frente a webhooks que llegan simultáneamente.
+    // Nunca modificar una descarga existente: podría estar revocada.
+    const descargas = await Promise.all(order.items.map(async (item) => {
+      const vigente = await tx.productVersion.findFirst({
+        where: { productId: item.productId, isCurrent: true },
+        select: { id: true },
       });
+      return {
+        userId: order.userId,
+        productId: item.productId,
+        orderId: order.id,
+        status: "ACTIVE" as const,
+        downloadCount: 0,
+        versionId: vigente?.id ?? null,
+      };
+    }));
 
-      if (!existingDownload) {
-        /*
-          Se anota qué versión estaba vigente al comprar.
-
-          Es un dato histórico, no lo que se entrega: la
-          descarga sirve siempre la versión vigente. Sirve
-          para poder decir "compraste la 1.0, ahora hay una
-          2.0". Un recurso sin versiones deja esto en null,
-          igual que las 18 descargas anteriores a esta etapa.
-        */
-        const vigente = await tx.productVersion.findFirst({
-          where: { productId: item.productId, isCurrent: true },
-          select: { id: true },
-        });
-
-        await tx.download.create({
-          data: {
-            userId: order.userId,
-            productId: item.productId,
-            orderId: order.id,
-            status: "ACTIVE",
-            downloadCount: 0,
-            versionId: vigente?.id ?? null,
-          },
-        });
-      }
-    }
+    await tx.download.createMany({
+      data: descargas,
+      skipDuplicates: true,
+    });
 
     return { order: updatedOrder, yaEstabaPagado };
   });
