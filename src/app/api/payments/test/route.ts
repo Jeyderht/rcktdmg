@@ -26,8 +26,21 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
-    const orderId = String(body.orderId || "");
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "El cuerpo de la solicitud debe ser JSON válido." },
+        { status: 400 }
+      );
+    }
+
+    const orderId =
+      body && typeof body === "object" && "orderId" in body &&
+      typeof body.orderId === "string"
+        ? body.orderId.trim()
+        : "";
 
     if (!orderId) {
       return NextResponse.json(
@@ -46,6 +59,7 @@ export async function POST(request: Request) {
         id: true,
         total: true,
         status: true,
+        payment: { select: { provider: true, status: true } },
       },
     });
 
@@ -69,6 +83,15 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Este pedido ya no está pendiente." },
         { status: 400 }
+      );
+    }
+
+    // Nunca reemplazar una transacción de una pasarela real con
+    // una transacción de prueba, aunque se esté ejecutando localmente.
+    if (order.payment && order.payment.provider !== "TEST") {
+      return NextResponse.json(
+        { error: "Este pedido pertenece a otra pasarela de pago." },
+        { status: 409 }
       );
     }
 
