@@ -189,8 +189,8 @@ export async function prepararZipDeColeccion(
  * Arma el ZIP y lo devuelve como cuerpo de respuesta.
  *
  * Las piezas se añaden EN ORDEN y de una en una: se lee la
- * siguiente solo cuando la anterior ya está escrita, así que
- * en memoria nunca hay más de un archivo. El límite de arriba
+ * fuente por streaming, respetando la presión de salida para
+ * no cargar toda la colección en memoria. El límite de arriba
  * garantiza además que el total es razonable.
  *
  * Si una pieza falla a mitad, el ZIP se aborta en vez de
@@ -219,18 +219,18 @@ export function comprimirColeccion(
           throw new Error(`Archivo no disponible: ${pieza.nombre}`);
         }
 
-        const contenido =
-          objeto.body instanceof ReadableStream
-            ? Buffer.from(
-                await new Response(objeto.body).arrayBuffer()
-              )
-            : objeto.body;
+        // Stream each source into the ZIP rather than buffering the entire
+        // collection in serverless memory. yazl respects output backpressure.
+        const contenido = objeto.body instanceof ReadableStream
+          ? Readable.fromWeb(objeto.body as import("node:stream/web").ReadableStream)
+          : Readable.from([objeto.body]);
 
-        zip.addBuffer(contenido, nombreDeEntrada(
-          pieza.orden,
-          pieza.nombre,
-          pieza.formato
-        ));
+        contenido.on("error", error => salida.destroy(error));
+        zip.addReadStream(
+          contenido,
+          nombreDeEntrada(pieza.orden, pieza.nombre, pieza.formato),
+          { size: pieza.bytes }
+        );
       }
 
       zip.end();
