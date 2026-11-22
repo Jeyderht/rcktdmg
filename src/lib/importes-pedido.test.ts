@@ -35,3 +35,25 @@ for (const cantidad of [0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number
 test("rechaza precios negativos", () => {
   assert.equal(importesDePedidoValidos([{ price: d("-1"), quantity: 1 }], d("-1"), d("0"), d("-1")), false);
 });
+
+test("no redondea ni tolera diferencias de un céntimo", () => {
+  const lineasCentimos = [
+    { price: d("0.10"), quantity: 1 },
+    { price: d("0.20"), quantity: 1 },
+  ];
+  assert.equal(importesDePedidoValidos(lineasCentimos, d("0.30"), d("0"), d("0.30")), true);
+  assert.equal(importesDePedidoValidos(lineasCentimos, d("0.30"), d("0"), d("0.29")), false);
+});
+
+test("rechaza descuentos superiores al subtotal", () => {
+  assert.equal(importesDePedidoValidos(lineas, d("49.90"), d("49.91"), d("-0.01")), false);
+});
+
+test("acepta descuento total de un pedido legítimo", () => {
+  assert.equal(importesDePedidoValidos(lineas, d("49.90"), d("49.90"), d("0")), true);
+});
+
+test("rechaza líneas alteradas después del pago", () => {
+  const alteradas = [{ price: d("19.91"), quantity: 1 }, { price: d("15.00"), quantity: 2 }];
+  assert.equal(importesDePedidoValidos(alteradas, d("49.90"), d("0"), d("49.90")), false);
+});
