@@ -66,6 +66,12 @@ export async function fulfillPaidOrder(orderId: string) {
       throw new Error(`Pedido no encontrado: ${orderId}`);
     }
 
+    // Nunca reactivar pedidos cancelados o reembolsados por un
+    // webhook tardío o un reintento de pago.
+    if (order.status !== "PENDING" && order.status !== "PAID") {
+      throw new Error(`No se puede acreditar un pedido en estado ${order.status}`);
+    }
+
     // Ganancias del creador y comisión de la plataforma.
     for (const item of order.items) {
       const { platformFee, creatorAmount } =
