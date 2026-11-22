@@ -76,6 +76,15 @@ export async function POST(request: Request) {
     }
 
     if (order.status === "PAID") {
+      // Esta ruta solo puede confirmar pagos de prueba. No
+      // presentar una transacción de otra pasarela como simulada.
+      if (order.payment?.provider !== "TEST") {
+        return NextResponse.json(
+          { error: "Este pedido pertenece a otra pasarela de pago." },
+          { status: 409 }
+        );
+      }
+
       // No declarar éxito si un registro antiguo fue marcado PAID
       // sin un pago aprobado y coincidente.
       if (!pagoAprobadoParaPedido(order.payment, order.total)) {
