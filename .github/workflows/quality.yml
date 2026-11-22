@@ -37,3 +37,7 @@ jobs:
         run: npx tsc --noEmit
       - name: ESLint
         run: npm run lint
+      - name: Production build
+        run: npm run build
+      - name: Dependency security audit
+        run: npm audit --audit-level=high
