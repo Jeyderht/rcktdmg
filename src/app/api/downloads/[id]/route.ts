@@ -9,6 +9,7 @@ import { versionVigente } from "@/lib/versiones";
 import { disposicionDescarga } from "@/lib/descarga-cabeceras";
 import { otorgarLicenciasDePedido } from "@/lib/licencias";
 import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
+import { importesDePedidoValidos } from "@/lib/importes-pedido";
 
 export const runtime = "nodejs";
 
@@ -104,6 +105,29 @@ export async function GET(
     if (!pagoAprobadoParaPedido(pago, download.order.total)) {
       return NextResponse.json(
         { error: "No existe un pago aprobado válido para esta descarga." },
+        { status: 403 }
+      );
+    }
+
+    // La integridad del pedido debe mantenerse incluso si fue
+    // modificado después de acreditarse. No entregar archivos
+    // cuando sus líneas no coinciden con el total cobrado.
+    const lineas = await prisma.orderItem.findMany({
+      where: { orderId: download.orderId },
+      select: { productId: true, price: true, quantity: true },
+    });
+
+    if (
+      !importesDePedidoValidos(
+        lineas,
+        download.order.subtotal,
+        download.order.discount,
+        download.order.total
+      ) ||
+      !lineas.some((linea) => linea.productId === download.productId)
+    ) {
+      return NextResponse.json(
+        { error: "El pedido no supera la validación de integridad." },
         { status: 403 }
       );
     }
