@@ -1,4 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
+import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
 const secret = process.env.AUTH_SECRET;
@@ -30,13 +31,20 @@ export async function createSessionToken(user: SessionUser) {
 }
 
 export async function verifySessionToken(token: string) {
+  let userId: unknown;
   try {
-    const { payload } = await jwtVerify(token, secretKey);
-
-    return payload;
+    const { payload } = await jwtVerify(token, secretKey, { algorithms: ["HS256"] });
+    userId = payload.userId;
   } catch {
     return null;
   }
+
+  if (typeof userId !== "string") return null;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true, email: true, role: true },
+  });
+  return user ? { userId, ...user } : null;
 }
 
 export async function createSession(user: SessionUser) {

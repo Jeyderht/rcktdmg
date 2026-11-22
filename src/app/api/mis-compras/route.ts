@@ -75,6 +75,8 @@ export async function GET() {
                         name: item.product.name,
                         slug: item.product.slug,
                         coverUrl: item.product.coverUrl,
+                        pieceType: item.product.pieceType,
+                        category: item.product.category,
                         price: Number(item.product.price),
                     },
                 })),

@@ -110,11 +110,11 @@ export default function FiltrosMoviles({
 
   function aplicar() {
     setModo(null);
-    router.push(urlTienda(actuales, pendientes));
+    router.push(urlTienda({ ...pendientes, page: undefined }));
   }
 
   function limpiar() {
-    setPendientes({ q: actuales.q });
+    setPendientes({ q: actuales.q, categoria: actuales.categoria });
   }
 
   const activos = [

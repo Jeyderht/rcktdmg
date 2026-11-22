@@ -50,6 +50,7 @@ async function getCreatorFinancialData(userId: string) {
             },
             order: {
                 status: "PAID",
+                payment: { is: { status: "APPROVED", provider: { not: "TEST" } } },
             },
         },
         _sum: {

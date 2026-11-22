@@ -5,7 +5,7 @@ import {
   crearNotificaciones,
   notificarAdmins,
 } from "@/lib/notificaciones";
-import { otorgarLicenciasDePedido } from "@/lib/licencias";
+import { codigoDeLicencia, condicionesDe } from "@/lib/licencias";
 import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
 import { importesDePedidoValidos } from "@/lib/importes-pedido";
 
@@ -43,140 +43,131 @@ export function calculateLineAmounts(
  * resultado sea siempre el mismo.
  */
 export async function fulfillPaidOrder(orderId: string) {
-  /*
-    Las notificaciones se emiten DESPUÉS de la transacción y
-    solo si el pedido acaba de pasar a pagado.
+  const result = await prisma.$transaction(tx => acreditarPedido(tx, orderId));
+  if (!result.yaEstabaPagado) await avisarPedidoPagado(orderId);
+  return result.order;
+}
 
-    Fuera de la transacción porque un fallo al avisar no debe
-    deshacer un cobro ya confirmado; y solo en la transición
-    porque esta función es idempotente a propósito: la llaman
-    el pago de prueba y el webhook de la pasarela, que puede
-    reintentar. Sin esa condición, cada reintento repetiría
-    los avisos de una compra que ya estaba avisada.
-  */
-  const resultado = await prisma.$transaction(async (tx) => {
-    const order = await tx.order.findUnique({
-      where: {
-        id: orderId,
-      },
-      include: {
-        items: true,
-        payment: true,
-      },
-    });
-
-    if (!order) {
-      throw new Error(`Pedido no encontrado: ${orderId}`);
-    }
-
-    // Nunca reactivar pedidos cancelados o reembolsados por un
-    // webhook tardío o un reintento de pago.
-    if (order.status !== "PENDING" && order.status !== "PAID") {
-      throw new Error(`No se puede acreditar un pedido en estado ${order.status}`);
-    }
-
-    // No confiar en una llamada a esta función como prueba de cobro.
-    // El pago debe estar aprobado y coincidir exactamente con el pedido.
-    if (!pagoAprobadoParaPedido(order.payment, order.total)) {
-      throw new Error(`El pedido ${orderId} no tiene un pago aprobado por el importe correcto`);
-    }
-
-    if (order.items.length === 0) {
-      throw new Error(`El pedido ${orderId} no contiene recursos`);
-    }
-
-    // Verificar la integridad del pedido antes de emitir descargas:
-    // el total acreditado debe corresponder a sus líneas menos
-    // el descuento registrado. Nunca confiar solo en Payment.amount.
-    if (!importesDePedidoValidos(
-      order.items,
-      order.subtotal,
-      order.discount,
-      order.total
-    )) {
-      throw new Error(`El pedido ${orderId} tiene importes o cantidades inconsistentes`);
-    }
-
-    // Ganancias del creador y comisión de la plataforma.
-    for (const item of order.items) {
-      const { platformFee, creatorAmount } =
-        calculateLineAmounts(item.price, item.quantity);
-
-      await tx.orderItem.update({
-        where: {
-          id: item.id,
-        },
-        data: {
-          commissionRate: PLATFORM_COMMISSION_RATE,
-          platformFee,
-          creatorAmount,
-        },
-      });
-    }
-
-    // Solo una ejecución puede reclamar la transición PENDING -> PAID.
-    // Si llegan dos webhooks a la vez, únicamente la primera
-    // genera notificaciones de nueva compra.
-    const transicion = order.status === "PENDING"
-      ? await tx.order.updateMany({
-          where: { id: order.id, status: "PENDING" },
-          data: { status: "PAID" },
-        })
-      : { count: 0 };
-
-    const yaEstabaPagado = transicion.count === 0;
-    const updatedOrder = await tx.order.findUniqueOrThrow({
-      where: { id: order.id },
-      include: { items: true },
-    });
-
-    if (updatedOrder.status !== "PAID") {
-      throw new Error(`El pedido ${orderId} cambió de estado durante la acreditación`);
-    }
-
-    // Insertar descargas de forma idempotente. El índice único
-    // (usuario, producto, pedido) y skipDuplicates protegen
-    // también frente a webhooks que llegan simultáneamente.
-    // Nunca modificar una descarga existente: podría estar revocada.
-    const descargas = await Promise.all(order.items.map(async (item) => {
-      const vigente = await tx.productVersion.findFirst({
-        where: { productId: item.productId, isCurrent: true },
-        select: { id: true },
-      });
-      return {
-        userId: order.userId,
-        productId: item.productId,
-        orderId: order.id,
-        status: "ACTIVE" as const,
-        downloadCount: 0,
-        versionId: vigente?.id ?? null,
-      };
-    }));
-
-    await tx.download.createMany({
-      data: descargas,
-      skipDuplicates: true,
-    });
-
-    return { order: updatedOrder, yaEstabaPagado };
+export async function acreditarPedido(tx: Prisma.TransactionClient, orderId: string) {
+  const order = await tx.order.findUnique({
+    where: {
+      id: orderId,
+    },
+    include: {
+      items: { include: { product: { select: { licenseType: true } } } },
+      payment: true,
+    },
   });
 
-  /*
-    Las licencias se otorgan SIEMPRE, no solo en la
-    transición, y a propósito: es idempotente por el índice
-    único sobre orderItemId, así que un reintento no duplica
-    nada. A cambio, un pedido que quedó pagado antes de que
-    existieran las licencias las recibe la próxima vez que
-    pase por aquí, en lugar de quedarse sin ellas para
-    siempre.
-  */
-  await otorgarLicenciasDePedido(resultado.order.id);
-
-  if (!resultado.yaEstabaPagado) {
-    await avisarPedidoPagado(resultado.order.id);
+  if (!order) {
+    throw new Error(`Pedido no encontrado: ${orderId}`);
   }
 
-  return resultado.order;
+  // Nunca reactivar pedidos cancelados o reembolsados por un
+  // webhook tardío o un reintento de pago.
+  if (order.status !== "PENDING" && order.status !== "PAID") {
+    throw new Error(`No se puede acreditar un pedido en estado ${order.status}`);
+  }
+
+  // No confiar en una llamada a esta función como prueba de cobro.
+  // El pago debe estar aprobado y coincidir exactamente con el pedido.
+  if (!pagoAprobadoParaPedido(order.payment, order.total)) {
+    throw new Error(`El pedido ${orderId} no tiene un pago aprobado por el importe correcto`);
+  }
+
+  if (order.items.length === 0) {
+    throw new Error(`El pedido ${orderId} no contiene recursos`);
+  }
+
+  // Verificar la integridad del pedido antes de emitir descargas:
+  // el total acreditado debe corresponder a sus líneas menos
+  // el descuento registrado. Nunca confiar solo en Payment.amount.
+  if (!importesDePedidoValidos(
+    order.items,
+    order.subtotal,
+    order.discount,
+    order.total
+  )) {
+    throw new Error(`El pedido ${orderId} tiene importes o cantidades inconsistentes`);
+  }
+
+  // Ganancias del creador y comisión de la plataforma.
+  for (const item of order.items) {
+    const { platformFee, creatorAmount } =
+      calculateLineAmounts(item.price, item.quantity);
+
+    if (order.status === "PAID" || (item.commissionRate.equals(PLATFORM_COMMISSION_RATE) &&
+        item.platformFee.equals(platformFee) && item.creatorAmount.equals(creatorAmount))) continue;
+
+    await tx.orderItem.update({
+      where: {
+        id: item.id,
+      },
+      data: {
+        commissionRate: PLATFORM_COMMISSION_RATE,
+        platformFee,
+        creatorAmount,
+      },
+    });
+  }
+
+  // Solo una ejecución puede reclamar la transición PENDING -> PAID.
+  // Si llegan dos webhooks a la vez, únicamente la primera
+  // genera notificaciones de nueva compra.
+  const transicion = order.status === "PENDING"
+    ? await tx.order.updateMany({
+        where: { id: order.id, status: "PENDING" },
+        data: { status: "PAID" },
+      })
+    : { count: 0 };
+
+  const yaEstabaPagado = transicion.count === 0;
+  const updatedOrder = await tx.order.findUniqueOrThrow({
+    where: { id: order.id },
+    include: { items: true },
+  });
+
+  if (updatedOrder.status !== "PAID") {
+    throw new Error(`El pedido ${orderId} cambió de estado durante la acreditación`);
+  }
+
+  // Insertar descargas de forma idempotente. El índice único
+  // (usuario, producto, pedido) y skipDuplicates protegen
+  // también frente a webhooks que llegan simultáneamente.
+  // Nunca modificar una descarga existente: podría estar revocada.
+  const versiones = await tx.productVersion.findMany({
+    where: { productId: { in: order.items.map(item => item.productId) }, isCurrent: true },
+    select: { id: true, productId: true },
+  });
+  const vigente = new Map(versiones.map(version => [version.productId, version.id]));
+  const descargas = order.items.map(item => ({
+    userId: order.userId,
+    productId: item.productId,
+    orderId,
+    status: "ACTIVE" as const,
+    downloadCount: 0,
+    versionId: vigente.get(item.productId) ?? null,
+  }));
+
+  await tx.download.createMany({
+    data: descargas,
+    skipDuplicates: true,
+  });
+
+  await tx.license.createMany({
+    data: order.items.map(item => ({
+      orderItemId: item.id,
+      orderId,
+      productId: item.productId,
+      userId: order.userId,
+      code: codigoDeLicencia(item.id),
+      type: item.product.licenseType,
+      terms: condicionesDe(item.product.licenseType),
+    })),
+    skipDuplicates: true,
+  });
+
+  return { order: updatedOrder, yaEstabaPagado };
 }
 
 /**
@@ -189,7 +180,7 @@ export async function fulfillPaidOrder(orderId: string) {
  * quedarse sin avisar es mucho menos grave que romper la
  * respuesta de una pasarela de pago, que reintentaría.
  */
-async function avisarPedidoPagado(orderId: string) {
+export async function avisarPedidoPagado(orderId: string) {
   try {
     const pedido = await prisma.order.findUnique({
       where: { id: orderId },

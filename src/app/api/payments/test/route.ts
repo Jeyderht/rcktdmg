@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
-import { fulfillPaidOrder } from "@/lib/orders";
+import { acreditarPedido, avisarPedidoPagado } from "@/lib/orders";
 import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
 import { importesDePedidoValidos } from "@/lib/importes-pedido";
 
@@ -51,170 +51,54 @@ export async function POST(request: Request) {
       );
     }
 
-    // El pedido debe pertenecer al usuario autenticado.
-    const order = await prisma.order.findFirst({
-      where: {
-        id: orderId,
-        userId: session.userId,
-      },
-      select: {
-        id: true,
-        total: true,
-        subtotal: true,
-        discount: true,
-        items: { select: { price: true, quantity: true } },
-        status: true,
-        payment: { select: { provider: true, status: true, amount: true } },
-      },
-    });
-
-    if (!order) {
-      return NextResponse.json(
-        { error: "Pedido no encontrado." },
-        { status: 404 }
-      );
-    }
-
-    if (order.status === "PAID") {
-      // Esta ruta solo puede confirmar pagos de prueba. No
-      // presentar una transacción de otra pasarela como simulada.
-      if (order.payment?.provider !== "TEST") {
-        return NextResponse.json(
-          { error: "Este pedido pertenece a otra pasarela de pago." },
-          { status: 409 }
-        );
-      }
-
-      // No declarar éxito si un registro antiguo fue marcado PAID
-      // sin un pago aprobado y coincidente.
-      if (
-        !pagoAprobadoParaPedido(order.payment, order.total) ||
-        !importesDePedidoValidos(
-          order.items,
-          order.subtotal,
-          order.discount,
-          order.total
-        )
-      ) {
-        return NextResponse.json(
-          { error: "El pedido no tiene un pago aprobado válido o sus importes son inconsistentes." },
-          { status: 409 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        alreadyPaid: true,
-        orderId: order.id,
-        status: "PAID",
+    const result = await prisma.$transaction(async tx => {
+      // Serializa los pagos del comprador, incluso entre dos pedidos distintos.
+      await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${session.userId} FOR UPDATE`;
+      const order = await tx.order.findFirst({
+        where: { id: orderId, userId: session.userId },
+        include: { items: true, payment: true },
       });
-    }
-
-    if (order.status !== "PENDING") {
-      return NextResponse.json(
-        { error: "Este pedido ya no está pendiente." },
-        { status: 400 }
-      );
-    }
-
-    // Nunca reemplazar una transacción de una pasarela real con
-    // una transacción de prueba, aunque se esté ejecutando localmente.
-    if (order.payment && order.payment.provider !== "TEST") {
-      return NextResponse.json(
-        { error: "Este pedido pertenece a otra pasarela de pago." },
-        { status: 409 }
-      );
-    }
-
-    // Comprobar el pedido ANTES de marcar un pago de prueba
-    // como aprobado. Un pedido corrupto no debe dejar un
-    // registro APPROVED aunque luego falle su acreditación.
-    if (!importesDePedidoValidos(
-      order.items,
-      order.subtotal,
-      order.discount,
-      order.total
-    )) {
-      return NextResponse.json(
-        { error: "El pedido contiene importes inconsistentes." },
-        { status: 409 }
-      );
-    }
-
-    // Nunca sobrescribir un pago real aunque otra solicitud lo
-    // haya registrado entre la lectura del pedido y esta escritura.
-    // La condición provider=TEST se comprueba en la propia BD.
-    const transactionId = `TEST-${order.id}-${Date.now()}`;
-    const payment = await prisma.$transaction(async (tx) => {
-      // Comprobar nuevamente el estado dentro de la transacción.
-      // No aprobar una orden cancelada durante la solicitud.
-      const pendiente = await tx.order.findFirst({
-        where: { id: order.id, userId: session.userId, status: "PENDING" },
-        select: { id: true },
-      });
-      if (!pendiente) {
-        throw new Error("ORDER_NOT_PENDING");
+      if (!order) return { error: "Pedido no encontrado.", status: 404 } as const;
+      if (order.payment && order.payment.provider !== "TEST") {
+        return { error: "Este pedido pertenece a otra pasarela.", status: 409 } as const;
       }
-
-      const existente = await tx.payment.findUnique({
-        where: { orderId: order.id },
-        select: { id: true, provider: true },
-      });
-
-      if (existente) {
-        if (existente.provider !== "TEST") {
-          throw new Error("PAYMENT_PROVIDER_CONFLICT");
+      if (!importesDePedidoValidos(order.items, order.subtotal, order.discount, order.total)) {
+        return { error: "Los importes del pedido son inconsistentes.", status: 409 } as const;
+      }
+      if (order.status === "PAID") {
+        if (!pagoAprobadoParaPedido(order.payment, order.total)) {
+          return { error: "El pedido no tiene un pago aprobado válido.", status: 409 } as const;
         }
-        const actualizado = await tx.payment.updateMany({
-          where: { id: existente.id, orderId: order.id, provider: "TEST" },
-          data: {
-            transactionId,
-            amount: order.total,
-            status: "APPROVED",
-          },
-        });
-        if (actualizado.count !== 1) {
-          throw new Error("PAYMENT_PROVIDER_CONFLICT");
-        }
-        return { id: existente.id };
+        await acreditarPedido(tx, orderId);
+        return { alreadyPaid: true, paymentId: order.payment?.id } as const;
       }
-
-      // Si otra pasarela inserta primero, el índice único de
-      // orderId rechaza la creación; nunca se reemplaza su pago.
-      return tx.payment.create({
-        data: {
-          orderId: order.id,
-          provider: "TEST",
-          transactionId,
-          amount: order.total,
-          status: "APPROVED",
+      if (order.status !== "PENDING") {
+        return { error: "El pedido ya no está pendiente.", status: 409 } as const;
+      }
+      const owned = await tx.orderItem.findFirst({
+        where: {
+          productId: { in: order.items.map(item => item.productId) },
+          order: { userId: session.userId, status: "PAID" },
         },
         select: { id: true },
       });
-    });
+      if (owned) return { error: "Ya tienes un recurso de este pedido en tu biblioteca.", status: 409 } as const;
 
-    // Order -> PAID, ganancias del creador y descargas.
-    const paidOrder = await fulfillPaidOrder(order.id);
+      const data = { transactionId: `TEST-${orderId}`, amount: order.total, status: "APPROVED" as const };
+      const payment = order.payment
+        ? await tx.payment.update({ where: { id: order.payment.id, provider: "TEST" }, data })
+        : await tx.payment.create({ data: { ...data, provider: "TEST", orderId } });
+      await acreditarPedido(tx, orderId);
+      return { alreadyPaid: false, paymentId: payment.id } as const;
+    }, { timeout: 30000 });
 
-    return NextResponse.json({
-      success: true,
-      orderId: paidOrder.id,
-      paymentId: payment.id,
-      status: "PAID",
-    });
+    if (result.error) return NextResponse.json({ error: result.error }, { status: result.status });
+    if (!result.alreadyPaid) await avisarPedidoPagado(orderId);
+    return NextResponse.json({ success: true, orderId, status: "PAID", ...result });
   } catch (error) {
-    if (
-      error instanceof Error &&
-      (error.message === "PAYMENT_PROVIDER_CONFLICT" ||
-        error.message === "ORDER_NOT_PENDING" ||
-        ("code" in error && error.code === "P2002"))
-    ) {
-      return NextResponse.json(
-        { error: "El pedido ya tiene un pago registrado por otra solicitud." },
-        { status: 409 }
-      );
+    if (error instanceof Error && "code" in error && ["P2002", "P2025"].includes(String(error.code))) {
+      return NextResponse.json({ error: "Otra solicitud modificó este pedido. Actualiza la página." }, { status: 409 });
     }
-
     console.error("Error en pago de prueba:", error);
 
     return NextResponse.json(

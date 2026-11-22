@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { paginaPrivada } from "@/lib/seo";
 
+import { redirect } from "next/navigation";
+import { requireRole } from "@/lib/session";
 import PanelShell from "@/components/panel/PanelShell";
 
 /*
@@ -16,10 +18,11 @@ export const metadata: Metadata = paginaPrivada("Administración");
  * PanelShell (columna con el menú y barra superior propia, sin
  * el Navbar ni el pie del sitio); en móvil, cajón lateral.
  */
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (!(await requireRole(["ADMIN"]))) redirect("/");
   return <PanelShell titulo="Administración">{children}</PanelShell>;
 }

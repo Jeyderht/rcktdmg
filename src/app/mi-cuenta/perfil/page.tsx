@@ -4,6 +4,7 @@ import AccountPageHeader from "@/components/cuenta/AccountPageHeader";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 
+import EditarNombre from "./EditarNombre";
 import CambiarFoto from "./CambiarFoto";
 
 /**
@@ -37,11 +38,9 @@ export default async function PerfilClientePage() {
 
         <div className="rk-divider mt-5" />
 
-        <dl className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div className="min-w-0">
-            <dt className="text-xs text-ink/60">Nombre</dt>
-            <dd className="mt-1.5 truncate text-sm font-medium">{usuario.name || "Sin nombre"}</dd>
-          </div>
+        <EditarNombre nombre={usuario.name ?? ""} />
+
+        <dl className="mt-5">
           <div className="min-w-0">
             <dt className="text-xs text-ink/60">Correo</dt>
             <dd className="mt-1.5 truncate text-sm font-medium">{usuario.email}</dd>

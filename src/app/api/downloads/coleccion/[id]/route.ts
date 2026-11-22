@@ -5,7 +5,9 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getPrivate, esReferenciaBlob, esRutaPrivadaLocal } from "@/lib/storage";
 import { nombreDeArchivoLocal } from "@/lib/storage/local";
-import { tieneColeccion } from "@/lib/adquisiciones";
+import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
+import { importesDePedidoValidos } from "@/lib/importes-pedido";
+import { otorgarLicenciasDePedido } from "@/lib/licencias";
 import {
   comprimirColeccion,
   prepararZipDeColeccion,
@@ -48,7 +50,7 @@ export async function GET(_request: Request, contexto: Contexto) {
 
     const coleccion = await prisma.commercialCollection.findUnique({
       where: { id },
-      select: { id: true, name: true, zipUrl: true },
+      select: { id: true, name: true, zipUrl: true, items: { select: { productId: true }, orderBy: { sortOrder: "asc" } } },
     });
 
     if (!coleccion) {
@@ -58,15 +60,37 @@ export async function GET(_request: Request, contexto: Contexto) {
       );
     }
 
-    // La compra, y solo la compra, da derecho al archivo.
-    const suya = await tieneColeccion(session.userId, coleccion.id);
-
-    if (!suya) {
-      return NextResponse.json(
-        { error: "No has adquirido esta colección." },
-        { status: 403 }
-      );
+    const userId = session.userId;
+    const pedido = await prisma.order.findFirst({
+      where: { userId, status: "PAID", items: { some: { commercialCollectionId: id } } },
+      orderBy: { createdAt: "desc" },
+      include: {
+        payment: true,
+        items: { include: { product: { select: { name: true, fileUrl: true, fileFormat: true } } } },
+        downloads: { where: { userId, status: "ACTIVE" }, select: { productId: true } },
+      },
+    });
+    if (!pedido || !pagoAprobadoParaPedido(pedido.payment, pedido.total)
+      || !importesDePedidoValidos(pedido.items, pedido.subtotal, pedido.discount, pedido.total)) {
+      return NextResponse.json({ error: "Se requiere una compra válida de esta colección." }, { status: 403 });
     }
+    const lineas = pedido.items.filter(item => item.commercialCollectionId === id);
+    const descargas = new Set(pedido.downloads.map(item => item.productId));
+    const licencias = () => prisma.license.findMany({
+      where: { orderId: pedido.id, userId, orderItemId: { in: lineas.map(item => item.id) } },
+      select: { orderItemId: true, productId: true, status: true },
+    });
+    let emitidas = await licencias();
+    if (emitidas.length < lineas.length) {
+      await otorgarLicenciasDePedido(pedido.id);
+      emitidas = await licencias();
+    }
+    const activas = new Map(emitidas.filter(item => item.status === "ACTIVE").map(item => [item.orderItemId, item.productId]));
+    if (!lineas.every(item => descargas.has(item.productId) && activas.get(item.id) === item.productId)) {
+      return NextResponse.json({ error: "La colección incluye una descarga o licencia inactiva." }, { status: 403 });
+    }
+    const ordenActual = new Map(coleccion.items.map((item, index) => [item.productId, index]));
+    const mismoContenido = ordenActual.size === lineas.length && lineas.every(item => ordenActual.has(item.productId));
 
     /*
       SIN ZIP PROPIO: se arma uno con los recursos incluidos.
@@ -79,8 +103,9 @@ export async function GET(_request: Request, contexto: Contexto) {
       responde con el motivo en vez de empezar un archivo que
       quedaría cortado.
     */
-    if (!coleccion.zipUrl) {
-      const preparado = await prepararZipDeColeccion(coleccion.id);
+    if (!coleccion.zipUrl || !mismoContenido) {
+      lineas.sort((a, b) => (ordenActual.get(a.productId) ?? Infinity) - (ordenActual.get(b.productId) ?? Infinity));
+      const preparado = await prepararZipDeColeccion(lineas);
 
       if (!preparado.ok) {
         return NextResponse.json(

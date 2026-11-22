@@ -11,6 +11,7 @@ import ImagenDesbloqueada from "@/components/tienda/ImagenDesbloqueada";
 import FondoBloqueado from "@/components/tienda/FondoBloqueado";
 import AvisoBloqueo from "@/components/tienda/AvisoBloqueo";
 import ProductCard, { type ProductCardData } from "@/components/tienda/ProductCard";
+import { useFocoModal } from "@/lib/foco-modal";
 import { proporcionDeRecurso } from "@/lib/tipos-publicacion";
 
 /**
@@ -38,6 +39,7 @@ export default function GaleriaTienda({
   const total = productos.length;
 
   const cerrar = useCallback(() => setAbierto(null), []);
+  const panel = useFocoModal(abierto !== null, cerrar);
   const mover = useCallback(
     (paso: number) =>
       setAbierto((i) => (i === null ? i : (i + paso + total) % total)),
@@ -49,7 +51,6 @@ export default function GaleriaTienda({
     if (abierto === null) return;
 
     const alTeclear = (e: KeyboardEvent) => {
-      if (e.key === "Escape") cerrar();
       if (e.key === "ArrowRight") mover(1);
       if (e.key === "ArrowLeft") mover(-1);
     };
@@ -62,7 +63,7 @@ export default function GaleriaTienda({
       document.body.style.overflow = overflowAntes;
       window.removeEventListener("keydown", alTeclear);
     };
-  }, [abierto, cerrar, mover]);
+  }, [abierto, mover]);
 
   const actual = abierto === null ? null : productos[abierto];
 
@@ -167,7 +168,7 @@ export default function GaleriaTienda({
             onClick={cerrar}
           />
 
-          <div className="rk-galeria-hoja">
+          <div ref={panel} tabIndex={-1} className="rk-galeria-hoja">
             <button
               type="button"
               className="rk-press rk-glass-on-image rk-galeria-cerrar"

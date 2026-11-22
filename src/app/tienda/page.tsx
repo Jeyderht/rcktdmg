@@ -253,7 +253,7 @@ export default async function Store({ searchParams }: StoreProps) {
     }));
 
   /*
-    SIEMPRE HAY UNA CATEGORÍA ACTIVA (no existe «Todos»).
+    La búsqueda y las etiquetas sin categoría explícita recorren toda la tienda.
     Orden de los chips: Eventos, General y después el resto por
     nombre. Activa: la de la URL si existe y tiene recursos; si
     no (sin categoría, «todos», un slug viejo o una categoría
@@ -270,7 +270,7 @@ export default async function Store({ searchParams }: StoreProps) {
 
   const activeCategory =
     categorias.find((c) => c.slug === categorySlug && conRecursos(c)) ??
-    categorias.find(conRecursos) ??
+    (parametros.q || parametros.tag ? null : categorias.find(conRecursos)) ??
     null;
 
   /* Los parámetros con los que se consulta y se construyen los
@@ -464,7 +464,7 @@ export default async function Store({ searchParams }: StoreProps) {
                 frasesAnimadas={destacadosBusqueda.map((d) => d.etiqueta)}
                 className="rk-explorar-buscador"
                 ocultos={{
-                  categoria: parametrosActivos.categoria,
+                  categoria: parametros.categoria,
                   tag: parametros.tag,
                   formato: parametros.formato,
                   color: parametros.color,

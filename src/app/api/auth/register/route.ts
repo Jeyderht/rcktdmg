@@ -8,15 +8,10 @@ import { destinoInterno } from "@/lib/redireccion";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-
-    const name = String(body.name || "").trim();
-
-    const email = String(body.email || "")
-      .toLowerCase()
-      .trim();
-
-    const password = String(body.password || "");
+    const body = await request.json().catch(() => null);
+    const name = typeof body?.name === "string" ? body.name.trim() : "";
+    const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+    const password = typeof body?.password === "string" ? body.password : "";
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -29,6 +24,12 @@ export async function POST(request: Request) {
       );
     }
 
+    if (name.length > 100 || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "Revisa tu nombre y correo electrónico." }, { status: 400 });
+    }
+    if (bcrypt.truncates(password)) {
+      return NextResponse.json({ error: "La contraseña supera el máximo de 72 bytes." }, { status: 400 });
+    }
     if (password.length < 8) {
       return NextResponse.json(
         {
@@ -103,6 +104,9 @@ export async function POST(request: Request) {
       }
     );
   } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "P2002") {
+      return NextResponse.json({ error: "Este correo ya está registrado." }, { status: 409 });
+    }
     console.error(error);
 
     return NextResponse.json(

@@ -1,7 +1,6 @@
 import { Readable } from "node:stream";
 import yazl from "yazl";
 
-import { prisma } from "@/lib/prisma";
 import { getPrivate } from "@/lib/storage";
 
 /**
@@ -100,17 +99,8 @@ export function nombreDeEntrada(
  * se dice cuál, porque el creador puede arreglarlo.
  */
 export async function prepararZipDeColeccion(
-  collectionId: string
+  items: { product: { name: string; fileUrl: string | null; fileFormat: string | null } }[]
 ): Promise<PreparacionZip> {
-  const items = await prisma.commercialCollectionItem.findMany({
-    where: { collectionId },
-    orderBy: { sortOrder: "asc" },
-    select: {
-      sortOrder: true,
-      product: { select: { name: true, fileUrl: true, fileFormat: true } },
-    },
-  });
-
   if (items.length === 0) {
     return {
       ok: false,

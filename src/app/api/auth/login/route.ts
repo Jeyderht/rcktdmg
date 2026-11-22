@@ -5,11 +5,11 @@ import { createSessionToken } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
 
-    const { email, password } = body;
+    const { email, password } = body ?? {};
 
-    if (!email || !password) {
+    if (typeof email !== "string" || !email.trim() || typeof password !== "string" || !password) {
       return NextResponse.json(
         { error: "Correo y contraseña son obligatorios." },
         { status: 400 }

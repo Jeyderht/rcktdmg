@@ -287,13 +287,14 @@ export async function POST(request: Request) {
     });
 
     if (yaComprados.length > 0) {
+      const comprados = new Set(yaComprados.map(item => item.productId));
       return NextResponse.json(
         {
           error: "Algunos recursos del carrito ya están en tu biblioteca.",
           yaAdquiridos: {
             productos: [...new Set(yaComprados.map((item) => item.productId))],
-            packs: [],
-            colecciones: [],
+            packs: [...new Set(orderItems.filter(item => item.packId && comprados.has(item.productId)).map(item => item.packId))],
+            colecciones: [...new Set(orderItems.filter(item => item.commercialCollectionId && comprados.has(item.productId)).map(item => item.commercialCollectionId))],
           },
         },
         { status: 409 }

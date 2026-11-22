@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { paginaPrivada } from "@/lib/seo";
 
+import { redirect } from "next/navigation";
+import { requireRole } from "@/lib/session";
 import PanelShell from "@/components/panel/PanelShell";
 
 /*
@@ -10,10 +12,11 @@ import PanelShell from "@/components/panel/PanelShell";
 */
 export const metadata: Metadata = paginaPrivada("Creator Studio");
 
-export default function CreatorPanelLayout({
+export default async function CreatorPanelLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (!(await requireRole(["CREATOR", "ADMIN"]))) redirect("/");
   return <PanelShell titulo="Creator Studio">{children}</PanelShell>;
 }

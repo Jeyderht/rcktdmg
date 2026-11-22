@@ -299,7 +299,13 @@ export default function MisComprasPage() {
                                     ))}
                                 </ul>
 
-                                {/* PAGO REAL, SOLO SI EXISTE */}
+                                {order.status === "PENDING" && (
+                                    <Link href={`/checkout/confirmacion?order=${encodeURIComponent(order.id)}`}
+                                        className="rk-btn rk-btn-primary mt-4">
+                                        Continuar al pago
+                                    </Link>
+                                )}
+
                                 {order.payment && (
                                     <p className="rk-row-card-meta rk-row-card-foot">
                                         Pago: {order.payment.provider} · Estado:{" "}

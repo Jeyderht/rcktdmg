@@ -59,14 +59,34 @@ export function leerCarrito<T extends StoredCartItem>(): T[] {
   try {
     const guardado = localStorage.getItem(CART_STORAGE_KEY);
     const leido = guardado ? JSON.parse(guardado) : [];
-    const lista: T[] = Array.isArray(leido) ? leido : [];
-
-    if (lista.some((item) => item?.quantity !== 1)) {
-      const normalizada = lista.map((item) => ({ ...item, quantity: 1 }));
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(normalizada));
-      return normalizada;
+    if (!Array.isArray(leido)) return [];
+    const lista: T[] = [];
+    const vistos = new Set<string>();
+    let reparado = false;
+    for (const item of leido) {
+      if (!item || typeof item.id !== "string" || !item.id || typeof item.name !== "string" ||
+          typeof item.slug !== "string" || !item.slug ||
+          !(typeof item.price === "number" || (typeof item.price === "string" && item.price.trim()))) {
+        reparado = true;
+        continue;
+      }
+      const price = Number(item.price);
+      const clave = `${item.kind ?? "PRODUCT"}:${item.id}`;
+      if (!Number.isFinite(price) || price < 0 || vistos.has(clave)) {
+        reparado = true;
+        continue;
+      }
+      vistos.add(clave);
+      reparado ||= item.quantity !== 1 || item.price !== price;
+      lista.push({ ...item, price, quantity: 1 });
     }
-
+    if (reparado) {
+      try {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(lista));
+      } catch {
+        // Se puede seguir usando la copia normalizada en memoria.
+      }
+    }
     return lista;
   } catch {
     return [];

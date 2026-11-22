@@ -1,3 +1,4 @@
+import { repartirPrecio } from "@/lib/repartir-precio";
 import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
@@ -943,34 +944,12 @@ export async function expandirColeccion(
 
   const total = new Prisma.Decimal(coleccion.price);
 
-  const suma = productos.reduce(
-    (t, p) => t.add(p.price),
-    new Prisma.Decimal(0)
-  );
-
-  const lineas: LineaDeColeccion[] = [];
-
-  let repartido = new Prisma.Decimal(0);
-
-  productos.forEach((producto, indice) => {
-    const ultima = indice === productos.length - 1;
-
-    const parte = ultima
-      ? // La última se lleva lo que falte: el redondeo nunca
-        // puede hacer que las líneas sumen distinto del total.
-        total.sub(repartido)
-      : suma.isZero()
-        ? total.div(productos.length).toDecimalPlaces(2)
-        : total.mul(producto.price).div(suma).toDecimalPlaces(2);
-
-    repartido = repartido.add(parte);
-
-    lineas.push({
-      productId: producto.id,
-      price: parte,
-      collectionId: coleccion.id,
-    });
-  });
+  const partes = repartirPrecio(total, productos);
+  const lineas: LineaDeColeccion[] = productos.map((producto, indice) => ({
+    productId: producto.id,
+    price: partes[indice],
+    collectionId: coleccion.id,
+  }));
 
   return { ok: true, lineas, total };
 }

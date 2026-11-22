@@ -88,6 +88,9 @@ export async function GET() {
         },
         select: {
           commercialCollectionId: true,
+          price: true,
+          quantity: true,
+          orderId: true,
           order: { select: { createdAt: true } },
           collection: {
             select: {
@@ -95,7 +98,6 @@ export async function GET() {
               name: true,
               slug: true,
               coverUrl: true,
-              price: true,
               zipUrl: true,
               _count: { select: { items: true } },
               /*
@@ -110,6 +112,13 @@ export async function GET() {
         orderBy: { createdAt: "desc" },
       }),
     ]);
+
+    const importes = new Map<string, number>();
+    for (const linea of lineas) {
+      const clave = `${linea.orderId}:${linea.commercialCollectionId}`;
+      const centimos = linea.price.mul(linea.quantity).mul(100).toNumber();
+      importes.set(clave, (importes.get(clave) ?? 0) + centimos);
+    }
 
     /* Una colección por compra, aunque haya aportado diez líneas. */
     const vistas = new Set<string>();
@@ -129,7 +138,7 @@ export async function GET() {
         name: linea.collection!.name,
         slug: linea.collection!.slug,
         coverUrl: linea.collection!.coverUrl,
-        precioPagado: Number(linea.collection!.price),
+        precioPagado: (importes.get(`${linea.orderId}:${linea.commercialCollectionId}`) ?? 0) / 100,
         recursos: linea.collection!._count.items,
         /*
           Si hay descarga de la colección entera, y de dónde

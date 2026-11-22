@@ -1,27 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { jwtVerify } from "jose";
-
-const secret = process.env.AUTH_SECRET;
-
-if (!secret) {
-  throw new Error("AUTH_SECRET no está configurado.");
-}
-
-const secretKey = new TextEncoder().encode(secret);
+import { verifySessionToken } from "@/lib/auth";
 
 async function getSession(request: NextRequest) {
   const token = request.cookies.get("rcktdmg_session")?.value;
-
-  if (!token) {
-    return null;
-  }
-
-  try {
-    const { payload } = await jwtVerify(token, secretKey);
-    return payload;
-  } catch {
-    return null;
-  }
+  return token ? verifySessionToken(token) : null;
 }
 
 /**
@@ -122,6 +104,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  runtime: "nodejs",
   matcher: [
     "/admin/:path*",
     "/creadores/panel/:path*",
