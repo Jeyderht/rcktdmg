@@ -84,6 +84,26 @@ export async function fulfillPaidOrder(orderId: string) {
       throw new Error(`El pedido ${orderId} no contiene recursos`);
     }
 
+    // Verificar la integridad del pedido antes de emitir descargas:
+    // el total acreditado debe corresponder a sus líneas menos
+    // el descuento registrado. Nunca confiar solo en Payment.amount.
+    const subtotalCalculado = order.items.reduce(
+      (total, item) => total.add(item.price.mul(item.quantity)),
+      new Prisma.Decimal(0)
+    );
+    const cantidadesValidas = order.items.every(
+      (item) => Number.isInteger(item.quantity) && item.quantity > 0 && item.price.gte(0)
+    );
+    if (
+      !cantidadesValidas ||
+      order.discount.lt(0) ||
+      !subtotalCalculado.equals(order.subtotal) ||
+      !subtotalCalculado.sub(order.discount).equals(order.total) ||
+      order.total.lt(0)
+    ) {
+      throw new Error(`El pedido ${orderId} tiene importes o cantidades inconsistentes`);
+    }
+
     // Ganancias del creador y comisión de la plataforma.
     for (const item of order.items) {
       const { platformFee, creatorAmount } =
