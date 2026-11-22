@@ -93,6 +93,10 @@ export async function fulfillPaidOrder(orderId: string) {
       throw new Error("Los pagos TEST no pueden habilitar pedidos fuera de desarrollo");
     }
 
+    if (order.items.length === 0) {
+      throw new Error(`El pedido ${orderId} no contiene recursos`);
+    }
+
     // Ganancias del creador y comisión de la plataforma.
     for (const item of order.items) {
       const { platformFee, creatorAmount } =
