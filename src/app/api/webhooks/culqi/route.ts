@@ -4,6 +4,7 @@ import { timingSafeEqual } from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import { fulfillPaidOrder } from "@/lib/orders";
 import { sincronizarLicenciasDePedido } from "@/lib/licencias";
+import { pagosRealesHabilitados } from "@/lib/pagos-reales";
 
 export const runtime = "nodejs";
 
@@ -35,6 +36,9 @@ function firmaValida(recibida: string, esperada: string) {
  * toca ningún pedido.
  */
 export async function POST(request: Request) {
+  if (!pagosRealesHabilitados()) {
+    return NextResponse.json({ error: "Los cobros reales están deshabilitados en este entorno." }, { status: 503 });
+  }
   try {
     /*
       Este webhook es el único camino por el que un pedido

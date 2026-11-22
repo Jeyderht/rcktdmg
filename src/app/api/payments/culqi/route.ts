@@ -2,8 +2,12 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
+import { pagosRealesHabilitados } from "@/lib/pagos-reales";
 
 export async function POST(request: Request) {
+  if (!pagosRealesHabilitados()) {
+    return NextResponse.json({ error: "Los cobros reales están deshabilitados en este entorno." }, { status: 503 });
+  }
   try {
     const cookieStore = await cookies();
 

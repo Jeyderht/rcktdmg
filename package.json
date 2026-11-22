@@ -8,7 +8,7 @@
     "start": "next start",
     "postinstall": "prisma generate",
     "lint": "eslint .",
-    "test": "node --import tsx --test src/lib/redireccion.test.ts src/lib/vista-previa-permisos.test.ts src/lib/miniatura-bloqueada.test.ts src/lib/relleno-marca-agua.test.ts src/lib/descarga-cabeceras.test.ts src/lib/storage/local.test.ts src/lib/pago-validado.test.ts src/lib/validar-carrito.test.ts src/lib/importes-pedido.test.ts src/lib/repartir-precio.test.ts",
+    "test": "node --import tsx --test src/lib/redireccion.test.ts src/lib/vista-previa-permisos.test.ts src/lib/miniatura-bloqueada.test.ts src/lib/relleno-marca-agua.test.ts src/lib/descarga-cabeceras.test.ts src/lib/storage/local.test.ts src/lib/pagos-reales.test.ts src/lib/pago-validado.test.ts src/lib/validar-carrito.test.ts src/lib/importes-pedido.test.ts src/lib/repartir-precio.test.ts",
     "test:db": "node --import tsx --test --test-concurrency=1 --experimental-test-module-mocks src/app/api/creadores/productos/route.test.ts src/lib/acreditar-pedido.integration.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
