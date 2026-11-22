@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import { expandirPack } from "@/lib/packs";
 import { expandirColeccion } from "@/lib/colecciones-comerciales";
 import { yaAdquiridos } from "@/lib/adquisiciones";
+import { validarCarrito } from "@/lib/validar-carrito";
 
 const CREATOR_COMMISSION_RATE = new Prisma.Decimal("20.00");
 
@@ -41,88 +42,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const items =
-      body && typeof body === "object" && "items" in body
-        ? body.items
-        : undefined;
-
-    if (!Array.isArray(items) || items.length === 0) {
+    const validacion = validarCarrito(body);
+    if (!validacion.ok) {
       return NextResponse.json(
-        { error: "El carrito está vacío." },
-        { status: 400 }
+        { error: validacion.error },
+        { status: validacion.status }
       );
     }
-
-    // Los recursos digitales se adquieren una sola vez por pedido.
-    // Limitar el tamaño también evita carritos abusivos y expansiones
-    // innecesarias de packs/colecciones.
-    if (items.length > 50) {
-      return NextResponse.json(
-        { error: "El carrito supera el máximo de 50 artículos." },
-        { status: 400 }
-      );
-    }
-
-    const cleanItems = (items as unknown[])
-      .map((raw) => {
-        const item = raw && typeof raw === "object"
-          ? raw as Record<string, unknown>
-          : {};
-        return {
-          productId: typeof item.productId === "string" ? item.productId.trim() : "",
-          packId: typeof item.packId === "string" ? item.packId.trim() : "",
-          collectionId: typeof item.collectionId === "string" ? item.collectionId.trim() : "",
-          quantity: item.quantity,
-        };
-      })
-      .filter((item) => {
-        /*
-          Una línea es de UNA cosa: un recurso suelto, un pack
-          o una colección. Nunca de dos, nunca de ninguna.
-        */
-        const cuantos =
-          Number(Boolean(item.productId)) +
-          Number(Boolean(item.packId)) +
-          Number(Boolean(item.collectionId));
-
-        return (
-          cuantos === 1 &&
-          item.quantity === 1
-        );
-      });
-
-    // No aceptar carritos parcialmente inválidos: nunca crear un
-    // pedido cobrando menos artículos de los que envió el cliente.
-    if (cleanItems.length !== items.length) {
-      return NextResponse.json(
-        { error: "El carrito contiene artículos o cantidades inválidas." },
-        { status: 400 }
-      );
-    }
-
-    if (cleanItems.length === 0) {
-      return NextResponse.json(
-        { error: "Los productos enviados no son válidos." },
-        { status: 400 }
-      );
-    }
-
-    // Evitar dos líneas para el mismo recurso, pack o colección.
-    // Un pedido duplicado podría generar dos licencias y cobrar dos veces.
-    const claves = cleanItems.map((item) =>
-      item.productId
-        ? `product:${item.productId}`
-        : item.packId
-          ? `pack:${item.packId}`
-          : `collection:${item.collectionId}`
-    );
-
-    if (new Set(claves).size !== claves.length) {
-      return NextResponse.json(
-        { error: "El carrito contiene artículos duplicados." },
-        { status: 400 }
-      );
-    }
+    const cleanItems = validacion.items;
 
     /*
       NADA SE COMPRA DOS VECES.
