@@ -19,6 +19,7 @@ jobs:
     timeout-minutes: 15
     env:
       NEXT_TELEMETRY_DISABLED: "1"
+      RCKTX_CI_TEST_DB: "1"
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/rcktx_ci?schema=public
     services:
       postgres:
