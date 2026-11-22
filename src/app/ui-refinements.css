@@ -1,0 +1,57 @@
+/* RcktX · refinamientos transversales de interfaz.
+   Se carga después del sistema existente y reutiliza sus tokens de tema.
+   No cambia la paleta ni el comportamiento de los componentes. */
+
+:where(button, a, input, select, textarea, [role="button"]):focus-visible {
+  outline: 2px solid rgb(var(--rk-foreground) / .8);
+  outline-offset: 3px;
+}
+
+:where(button, a, [role="button"]):not([aria-disabled="true"]):not(:disabled) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(button, input, select, textarea) {
+  font: inherit;
+}
+
+:where(input, textarea, select):disabled,
+:where(button):disabled {
+  cursor: not-allowed;
+}
+
+:where(img, video) {
+  max-width: 100%;
+}
+
+:where(.rk-card, .rk-buy, .rk-cart-item, .rk-receipt) {
+  min-width: 0;
+}
+
+:where(.rk-card, .rk-buy, .rk-cart-item, .rk-receipt) :where(h1, h2, h3, p) {
+  overflow-wrap: break-word;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(.rk-card, .rk-cart-item) {
+    transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease;
+  }
+}
+
+@media (max-width: 640px) {
+  :where(input, select, textarea) {
+    font-size: max(16px, 1em);
+  }
+  :where(.rk-buy, .rk-cart-item, .rk-receipt) {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.rk-card, .rk-buy, .rk-cart-item, .rk-receipt) {
+    scroll-behavior: auto;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
