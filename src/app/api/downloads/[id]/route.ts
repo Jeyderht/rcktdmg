@@ -86,7 +86,7 @@ export async function GET(
       La licencia debe pertenecer al pedido de ESTA descarga.
       Una licencia revocada de otra compra del mismo recurso no
       puede bloquear una compra distinta que sigue pagada.
-      Los pedidos históricos sin licencia conservan su acceso.
+      Los pedidos sin licencia deben regularizarse antes de descargar.
     */
     const licenciaDelPedido = await prisma.license.findFirst({
       where: {
@@ -97,6 +97,17 @@ export async function GET(
       orderBy: { grantedAt: "desc" },
       select: { status: true, revokedReason: true },
     });
+
+    // Una descarga nueva no puede depender solo de la marca PAID:
+    // debe tener una licencia activa vinculada al mismo pedido.
+    // Si una compra histórica no tiene licencia, se recupera
+    // desde el pedido pagado antes de intentar descargar.
+    if (!licenciaDelPedido) {
+      return NextResponse.json(
+        { error: "No se encontró una licencia válida para esta descarga. Contacta con soporte." },
+        { status: 403 }
+      );
+    }
 
     if (licenciaDelPedido?.status === "REVOKED") {
       return NextResponse.json(
