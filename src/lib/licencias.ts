@@ -69,6 +69,8 @@ export async function otorgarLicenciasDePedido(
         id: true,
         userId: true,
         status: true,
+        total: true,
+        payment: { select: { status: true, amount: true, provider: true } },
         items: {
           select: {
             id: true,
@@ -82,6 +84,18 @@ export async function otorgarLicenciasDePedido(
 
     // Solo un pedido pagado otorga licencias.
     if (!pedido || pedido.status !== "PAID") return 0;
+
+    // Ni las reparaciones ni los reintentos pueden crear licencias
+    // sin una transacción aprobada por el importe exacto.
+    if (
+      !pedido.payment ||
+      pedido.payment.status !== "APPROVED" ||
+      !pedido.payment.amount.equals(pedido.total) ||
+      (pedido.payment.provider === "TEST" &&
+        process.env.NODE_ENV !== "development")
+    ) {
+      return 0;
+    }
 
     const resultado = await prisma.license.createMany({
       data: pedido.items.map((item) => {
