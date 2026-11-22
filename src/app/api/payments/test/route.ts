@@ -87,9 +87,17 @@ export async function POST(request: Request) {
 
       // No declarar éxito si un registro antiguo fue marcado PAID
       // sin un pago aprobado y coincidente.
-      if (!pagoAprobadoParaPedido(order.payment, order.total)) {
+      if (
+        !pagoAprobadoParaPedido(order.payment, order.total) ||
+        !importesDePedidoValidos(
+          order.items,
+          order.subtotal,
+          order.discount,
+          order.total
+        )
+      ) {
         return NextResponse.json(
-          { error: "El pedido no tiene un pago aprobado válido." },
+          { error: "El pedido no tiene un pago aprobado válido o sus importes son inconsistentes." },
           { status: 409 }
         );
       }
