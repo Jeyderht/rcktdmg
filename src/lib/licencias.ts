@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 
 import { prisma } from "@/lib/prisma";
 import { crearNotificacion } from "@/lib/notificaciones";
+import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
 import {
   condicionesDe,
   type LicenciaVista,
@@ -87,13 +88,7 @@ export async function otorgarLicenciasDePedido(
 
     // Ni las reparaciones ni los reintentos pueden crear licencias
     // sin una transacción aprobada por el importe exacto.
-    if (
-      !pedido.payment ||
-      pedido.payment.status !== "APPROVED" ||
-      !pedido.payment.amount.equals(pedido.total) ||
-      (pedido.payment.provider === "TEST" &&
-        process.env.NODE_ENV !== "development")
-    ) {
+    if (!pagoAprobadoParaPedido(pedido.payment, pedido.total)) {
       return 0;
     }
 
