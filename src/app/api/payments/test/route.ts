@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { fulfillPaidOrder } from "@/lib/orders";
 import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
+import { importesDePedidoValidos } from "@/lib/importes-pedido";
 
 export async function POST(request: Request) {
   try {
@@ -59,6 +60,9 @@ export async function POST(request: Request) {
       select: {
         id: true,
         total: true,
+        subtotal: true,
+        discount: true,
+        items: { select: { price: true, quantity: true } },
         status: true,
         payment: { select: { provider: true, status: true, amount: true } },
       },
@@ -101,6 +105,21 @@ export async function POST(request: Request) {
     if (order.payment && order.payment.provider !== "TEST") {
       return NextResponse.json(
         { error: "Este pedido pertenece a otra pasarela de pago." },
+        { status: 409 }
+      );
+    }
+
+    // Comprobar el pedido ANTES de marcar un pago de prueba
+    // como aprobado. Un pedido corrupto no debe dejar un
+    // registro APPROVED aunque luego falle su acreditación.
+    if (!importesDePedidoValidos(
+      order.items,
+      order.subtotal,
+      order.discount,
+      order.total
+    )) {
+      return NextResponse.json(
+        { error: "El pedido contiene importes inconsistentes." },
         { status: 409 }
       );
     }
