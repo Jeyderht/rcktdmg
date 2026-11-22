@@ -8,6 +8,7 @@ import { nombreDeArchivoLocal } from "@/lib/storage/local";
 import { versionVigente } from "@/lib/versiones";
 import { disposicionDescarga } from "@/lib/descarga-cabeceras";
 import { otorgarLicenciasDePedido } from "@/lib/licencias";
+import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
 
 export const runtime = "nodejs";
 
@@ -124,10 +125,7 @@ export async function GET(
         select: { provider: true, status: true, amount: true },
       });
 
-      const pagoValido =
-        pago?.status === "APPROVED" &&
-        pago.amount.equals(download.order.total) &&
-        (pago.provider !== "TEST" || process.env.NODE_ENV === "development");
+      const pagoValido = pagoAprobadoParaPedido(pago, download.order.total);
 
       if (linea && pagoValido) {
         await otorgarLicenciasDePedido(download.orderId);
