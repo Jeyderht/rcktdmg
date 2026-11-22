@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import { crearNotificacion } from "@/lib/notificaciones";
 import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
+import { importesDePedidoValidos } from "@/lib/importes-pedido";
 import {
   condicionesDe,
   type LicenciaVista,
@@ -71,11 +72,15 @@ export async function otorgarLicenciasDePedido(
         userId: true,
         status: true,
         total: true,
+        subtotal: true,
+        discount: true,
         payment: { select: { status: true, amount: true, provider: true } },
         items: {
           select: {
             id: true,
             productId: true,
+            price: true,
+            quantity: true,
             // El tipo se copia del recurso EN ESTE MOMENTO.
             product: { select: { licenseType: true } },
           },
@@ -89,6 +94,18 @@ export async function otorgarLicenciasDePedido(
     // Ni las reparaciones ni los reintentos pueden crear licencias
     // sin una transacción aprobada por el importe exacto.
     if (!pagoAprobadoParaPedido(pedido.payment, pedido.total)) {
+      return 0;
+    }
+
+    // Una orden marcada PAID no basta: verificar también que sus
+    // líneas y descuentos coincidan con el total acreditado.
+    // Evita emitir licencias desde datos históricos inconsistentes.
+    if (!importesDePedidoValidos(
+      pedido.items,
+      pedido.subtotal,
+      pedido.discount,
+      pedido.total
+    )) {
       return 0;
     }
 
