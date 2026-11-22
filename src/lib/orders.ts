@@ -6,6 +6,7 @@ import {
   notificarAdmins,
 } from "@/lib/notificaciones";
 import { otorgarLicenciasDePedido } from "@/lib/licencias";
+import { pagoAprobadoParaPedido } from "@/lib/pago-validado";
 
 /**
  * Comisión de la plataforma sobre cada venta (%).
@@ -75,22 +76,8 @@ export async function fulfillPaidOrder(orderId: string) {
 
     // No confiar en una llamada a esta función como prueba de cobro.
     // El pago debe estar aprobado y coincidir exactamente con el pedido.
-    if (
-      !order.payment ||
-      order.payment.status !== "APPROVED" ||
-      !order.payment.amount.equals(order.total)
-    ) {
+    if (!pagoAprobadoParaPedido(order.payment, order.total)) {
       throw new Error(`El pedido ${orderId} no tiene un pago aprobado por el importe correcto`);
-    }
-
-    // El proveedor de pruebas jamás puede acreditar pedidos fuera
-    // del servidor de desarrollo, ni siquiera si alguien insertó
-    // manualmente un registro de pago TEST en la base de datos.
-    if (
-      order.payment.provider === "TEST" &&
-      process.env.NODE_ENV !== "development"
-    ) {
-      throw new Error("Los pagos TEST no pueden habilitar pedidos fuera de desarrollo");
     }
 
     if (order.items.length === 0) {
