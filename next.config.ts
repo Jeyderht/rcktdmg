@@ -3,6 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
 
+  async redirects() {
+    return [{ source: "/admin/solicitudes", destination: "/admin/creadores", permanent: true }];
+  },
+
   /**
    * Las respuestas de la API no se indexan.
    *
