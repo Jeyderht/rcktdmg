@@ -141,23 +141,46 @@ export async function POST(request: Request) {
       );
     }
 
-    const payment = await prisma.payment.upsert({
-      where: {
-        orderId: order.id,
-      },
-      update: {
-        provider: "TEST",
-        transactionId: `TEST-${order.id}-${Date.now()}`,
-        amount: order.total,
-        status: "APPROVED",
-      },
-      create: {
-        orderId: order.id,
-        provider: "TEST",
-        transactionId: `TEST-${order.id}-${Date.now()}`,
-        amount: order.total,
-        status: "APPROVED",
-      },
+    // Nunca sobrescribir un pago real aunque otra solicitud lo
+    // haya registrado entre la lectura del pedido y esta escritura.
+    // La condición provider=TEST se comprueba en la propia BD.
+    const transactionId = `TEST-${order.id}-${Date.now()}`;
+    const payment = await prisma.$transaction(async (tx) => {
+      const existente = await tx.payment.findUnique({
+        where: { orderId: order.id },
+        select: { id: true, provider: true },
+      });
+
+      if (existente) {
+        if (existente.provider !== "TEST") {
+          throw new Error("PAYMENT_PROVIDER_CONFLICT");
+        }
+        const actualizado = await tx.payment.updateMany({
+          where: { id: existente.id, orderId: order.id, provider: "TEST" },
+          data: {
+            transactionId,
+            amount: order.total,
+            status: "APPROVED",
+          },
+        });
+        if (actualizado.count !== 1) {
+          throw new Error("PAYMENT_PROVIDER_CONFLICT");
+        }
+        return { id: existente.id };
+      }
+
+      // Si otra pasarela inserta primero, el índice único de
+      // orderId rechaza la creación; nunca se reemplaza su pago.
+      return tx.payment.create({
+        data: {
+          orderId: order.id,
+          provider: "TEST",
+          transactionId,
+          amount: order.total,
+          status: "APPROVED",
+        },
+        select: { id: true },
+      });
     });
 
     // Order -> PAID, ganancias del creador y descargas.
@@ -170,6 +193,17 @@ export async function POST(request: Request) {
       status: "PAID",
     });
   } catch (error) {
+    if (
+      error instanceof Error &&
+      (error.message === "PAYMENT_PROVIDER_CONFLICT" ||
+        ("code" in error && error.code === "P2002"))
+    ) {
+      return NextResponse.json(
+        { error: "El pedido ya tiene un pago registrado por otra solicitud." },
+        { status: 409 }
+      );
+    }
+
     console.error("Error en pago de prueba:", error);
 
     return NextResponse.json(
