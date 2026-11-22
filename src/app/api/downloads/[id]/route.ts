@@ -69,6 +69,15 @@ export async function GET(
       );
     }
 
+    // La descarga y su pedido deben pertenecer al mismo comprador.
+    // No basta con confiar en el userId de la fila Download.
+    if (download.order.userId !== session.userId) {
+      return NextResponse.json(
+        { error: "Descarga no encontrada." },
+        { status: 404 }
+      );
+    }
+
     if (download.status !== "ACTIVE") {
       return NextResponse.json(
         { error: "Esta descarga no está disponible." },
