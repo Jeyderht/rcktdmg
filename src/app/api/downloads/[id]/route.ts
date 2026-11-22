@@ -7,6 +7,7 @@ import { getPrivate, esReferenciaBlob, esRutaPrivadaLocal } from "@/lib/storage"
 import { nombreDeArchivoLocal } from "@/lib/storage/local";
 import { versionVigente } from "@/lib/versiones";
 import { disposicionDescarga } from "@/lib/descarga-cabeceras";
+import { otorgarLicenciasDePedido } from "@/lib/licencias";
 
 export const runtime = "nodejs";
 
@@ -88,7 +89,7 @@ export async function GET(
       puede bloquear una compra distinta que sigue pagada.
       Los pedidos sin licencia deben regularizarse antes de descargar.
     */
-    const licenciaDelPedido = await prisma.license.findFirst({
+    let licenciaDelPedido = await prisma.license.findFirst({
       where: {
         orderId: download.orderId,
         productId: download.productId,
@@ -98,10 +99,25 @@ export async function GET(
       select: { status: true, revokedReason: true },
     });
 
+    // Regularización segura de compras antiguas: la función solo
+    // emite licencias si el pedido realmente figura como PAID,
+    // y usa una clave única por línea para evitar duplicados.
+    if (!licenciaDelPedido) {
+      await otorgarLicenciasDePedido(download.orderId);
+      licenciaDelPedido = await prisma.license.findFirst({
+        where: {
+          orderId: download.orderId,
+          productId: download.productId,
+          userId: session.userId,
+        },
+        orderBy: { grantedAt: "desc" },
+        select: { status: true, revokedReason: true },
+      });
+    }
+
     // Una descarga nueva no puede depender solo de la marca PAID:
     // debe tener una licencia activa vinculada al mismo pedido.
-    // Si una compra histórica no tiene licencia, se recupera
-    // desde el pedido pagado antes de intentar descargar.
+    // Las compras históricas se regularizan de forma controlada.
     if (!licenciaDelPedido) {
       return NextResponse.json(
         { error: "No se encontró una licencia válida para esta descarga. Contacta con soporte." },
