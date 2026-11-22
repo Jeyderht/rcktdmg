@@ -489,7 +489,7 @@ export default async function ProductPage({
                 }}
             />
 
-            <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-5 sm:px-5 lg:pb-20 lg:pt-8">
+            <main className="rk-product-page mx-auto w-full max-w-6xl px-5 pb-16 pt-6 sm:px-8 lg:px-10 lg:pb-24 lg:pt-9">
 
                 {/* ══════════ BREADCRUMBS ══════════ */}
                 <nav
@@ -528,7 +528,7 @@ export default async function ProductPage({
                     columna ancha lo volvería desproporcionadamente
                     alto en escritorio.
                 */}
-                <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,23rem)_minmax(0,1fr)] lg:gap-10">
+                <div className="grid min-w-0 items-start gap-8 lg:grid-cols-[minmax(0,23rem)_minmax(0,1fr)] lg:gap-12">
 
                     {/* ══════════ GALERÍA ══════════ */}
                     <div className="rk-fade-up w-full min-w-0">
@@ -657,7 +657,7 @@ export default async function ProductPage({
                         </div>
 
                         {/* ── PRECIO Y COMPRA ── */}
-                        <div className="rk-buy mt-6">
+                        <div className="rk-buy mt-7">
                             <div className="rk-buy-top">
                                 <div className="min-w-0">
                                     {pricing.hasPromotion ? (
