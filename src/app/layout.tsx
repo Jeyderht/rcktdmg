@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Sora } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 import {
@@ -10,20 +10,9 @@ import RevelarAlEntrar from "@/components/ui/RevelarAlEntrar";
 import { DialogosProvider } from "@/components/ui/Dialogos";
 import { SITIO, absoluta, urlBase } from "@/lib/seo";
 
-/*
-  Sora, y solo Sora.
-
-  La referencia acaba imponiéndola en toda la interfaz —títulos
-  y cuerpo— en su última capa de estilos. Mantener dos familias
-  obligaba a decidir en cada componente cuál tocaba, y esa
-  decisión se equivocaba sola con el tiempo.
-
-  Tres pesos: 400 para el cuerpo, 500 para controles y 600 para
-  los títulos. Ni uno más; cada peso es una descarga.
-*/
-const sora = Sora({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const sora = localFont({
+  src: "../../node_modules/@fontsource-variable/sora/files/sora-latin-wght-normal.woff2",
+  weight: "100 800",
   variable: "--font-sora",
   display: "swap",
 });
@@ -110,7 +99,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         {/*
           Aplica el tema guardado antes del primer pintado
