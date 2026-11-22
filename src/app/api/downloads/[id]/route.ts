@@ -275,17 +275,19 @@ export async function GET(
     }
 
 
-    // Registrar descarga
-    await prisma.download.update({
-      where: {
-        id: download.id,
-      },
-      data: {
-        downloadCount: {
-          increment: 1,
-        },
-      },
+    // Registrar solo si sigue activa al terminar de recuperar
+    // el archivo. Una revocación concurrente impide entregarlo.
+    const registro = await prisma.download.updateMany({
+      where: { id: download.id, userId: session.userId, status: "ACTIVE" },
+      data: { downloadCount: { increment: 1 } },
     });
+
+    if (registro.count !== 1) {
+      return NextResponse.json(
+        { error: "Esta descarga ya no está disponible." },
+        { status: 403 }
+      );
+    }
 
     const extension = path
       .extname(filename)
