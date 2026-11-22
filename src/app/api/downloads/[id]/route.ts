@@ -6,6 +6,7 @@ import { verifySessionToken } from "@/lib/auth";
 import { getPrivate, esReferenciaBlob, esRutaPrivadaLocal } from "@/lib/storage";
 import { nombreDeArchivoLocal } from "@/lib/storage/local";
 import { versionVigente } from "@/lib/versiones";
+import { disposicionDescarga } from "@/lib/descarga-cabeceras";
 
 export const runtime = "nodejs";
 
@@ -241,12 +242,6 @@ export async function GET(
       ".fig": "application/octet-stream",
     };
 
-    // Evita caracteres de control y comillas en las cabeceras HTTP.
-    // Conserva nombres Unicode con el parámetro RFC 5987.
-    const nombreSeguro = filename.replace(/[\r\n\x00-\x1f\x7f"\\/]/g, "_");
-    const nombreAscii = nombreSeguro.replace(/[^\x20-\x7e]/g, "_");
-    const disposicion = `attachment; filename="${nombreAscii}"; filename*=UTF-8''${encodeURIComponent(nombreSeguro)}`;
-
     return new NextResponse(objeto.body as BodyInit, {
       status: 200,
       headers: {
@@ -254,7 +249,7 @@ export async function GET(
           contentTypes[extension] ||
           "application/octet-stream",
 
-        "Content-Disposition": disposicion,
+        "Content-Disposition": disposicionDescarga(filename),
 
         "Cache-Control": "private, no-store",
       },
