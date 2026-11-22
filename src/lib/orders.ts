@@ -114,23 +114,25 @@ export async function fulfillPaidOrder(orderId: string) {
       });
     }
 
-    // ¿Este pedido acaba de pasar a pagado, o ya lo estaba?
-    const yaEstabaPagado = order.status === "PAID";
+    // Solo una ejecución puede reclamar la transición PENDING -> PAID.
+    // Si llegan dos webhooks a la vez, únicamente la primera
+    // genera notificaciones de nueva compra.
+    const transicion = order.status === "PENDING"
+      ? await tx.order.updateMany({
+          where: { id: order.id, status: "PENDING" },
+          data: { status: "PAID" },
+        })
+      : { count: 0 };
 
-    const updatedOrder =
-      yaEstabaPagado
-        ? order
-        : await tx.order.update({
-            where: {
-              id: order.id,
-            },
-            data: {
-              status: "PAID",
-            },
-            include: {
-              items: true,
-            },
-          });
+    const yaEstabaPagado = transicion.count === 0;
+    const updatedOrder = await tx.order.findUniqueOrThrow({
+      where: { id: order.id },
+      include: { items: true },
+    });
+
+    if (updatedOrder.status !== "PAID") {
+      throw new Error(`El pedido ${orderId} cambió de estado durante la acreditación`);
+    }
 
     // Descargas: una por producto, sin duplicar si el
     // webhook llega más de una vez.
