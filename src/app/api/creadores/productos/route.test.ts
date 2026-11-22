@@ -148,8 +148,11 @@ describe("POST /api/creadores/productos · previewLibre", () => {
     /* Nunca contra una base que no sea la de esta máquina. */
     const [{ host }] = await real.$queryRaw<{ host: string | null }[]>`
       SELECT host(inet_server_addr()) AS host`;
+    const ciAislado = process.env.RCKTX_CI_TEST_DB === "1" &&
+      process.env.GITHUB_ACTIONS === "true" &&
+      (() => { try { const u = new URL(process.env.DATABASE_URL || ""); return u.hostname === "127.0.0.1" && u.pathname === "/rcktx_ci"; } catch { return false; } })();
     assert.ok(
-      host === null || host === "127.0.0.1" || host === "::1",
+      ciAislado || host === null || host === "127.0.0.1" || host === "::1",
       `la prueba solo corre contra la base local (servidor: ${host})`
     );
 
