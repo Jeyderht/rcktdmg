@@ -93,6 +93,21 @@ export async function GET(
       );
     }
 
+    // Una marca PAID no es suficiente si el pago fue revertido,
+    // alterado o nunca llegó a aprobarse. Verificar la transacción
+    // antes de servir el archivo, incluso para licencias antiguas.
+    const pago = await prisma.payment.findUnique({
+      where: { orderId: download.orderId },
+      select: { provider: true, status: true, amount: true },
+    });
+
+    if (!pagoAprobadoParaPedido(pago, download.order.total)) {
+      return NextResponse.json(
+        { error: "No existe un pago aprobado válido para esta descarga." },
+        { status: 403 }
+      );
+    }
+
     /*
       La licencia debe pertenecer al pedido de ESTA descarga.
       Una licencia revocada de otra compra del mismo recurso no
@@ -120,14 +135,7 @@ export async function GET(
         select: { id: true },
       });
 
-      const pago = await prisma.payment.findUnique({
-        where: { orderId: download.orderId },
-        select: { provider: true, status: true, amount: true },
-      });
-
-      const pagoValido = pagoAprobadoParaPedido(pago, download.order.total);
-
-      if (linea && pagoValido) {
+      if (linea) {
         await otorgarLicenciasDePedido(download.orderId);
         licenciaDelPedido = await prisma.license.findFirst({
           where: {
