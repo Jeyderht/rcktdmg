@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
 import { getPrivate, esReferenciaBlob, esRutaPrivadaLocal } from "@/lib/storage";
 import { nombreDeArchivoLocal } from "@/lib/storage/local";
-import { licenciaRetirada } from "@/lib/licencias";
 import { versionVigente } from "@/lib/versiones";
 
 export const runtime = "nodejs";
@@ -83,29 +82,26 @@ export async function GET(
     }
 
     /*
-      LICENCIA
-
-      Cuarta comprobación, añadida sobre las tres anteriores:
-      ninguna se ha tocado, así que lo que se podía descargar
-      antes se sigue pudiendo descargar.
-
-      Solo BLOQUEA si existe una licencia y está retirada. Si
-      no hay ninguna, se deja pasar: las descargas anteriores a
-      esta etapa no tienen licencia y negárselas rompería
-      compras ya pagadas. El relleno de licencias históricas
-      cierra ese hueco; hasta entonces, el permiso lo siguen
-      dando el pedido pagado y la descarga activa.
+      La licencia debe pertenecer al pedido de ESTA descarga.
+      Una licencia revocada de otra compra del mismo recurso no
+      puede bloquear una compra distinta que sigue pagada.
+      Los pedidos históricos sin licencia conservan su acceso.
     */
-    const retirada = await licenciaRetirada(
-      session.userId,
-      download.productId
-    );
+    const licenciaDelPedido = await prisma.license.findFirst({
+      where: {
+        orderId: download.orderId,
+        productId: download.productId,
+        userId: session.userId,
+      },
+      orderBy: { grantedAt: "desc" },
+      select: { status: true, revokedReason: true },
+    });
 
-    if (retirada) {
+    if (licenciaDelPedido?.status === "REVOKED") {
       return NextResponse.json(
         {
           error:
-            retirada.revokedReason ||
+            licenciaDelPedido.revokedReason ||
             "Tu licencia sobre este recurso ya no está vigente.",
         },
         { status: 403 }
