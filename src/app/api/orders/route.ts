@@ -56,6 +56,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // Los recursos digitales se adquieren una sola vez por pedido.
+    // Limitar el tamaño también evita carritos abusivos y expansiones
+    // innecesarias de packs/colecciones.
+    if (items.length > 50) {
+      return NextResponse.json(
+        { error: "El carrito supera el máximo de 50 artículos." },
+        { status: 400 }
+      );
+    }
+
     const cleanItems = items
       .map((item) => ({
         productId: item.productId ? String(item.productId) : "",
@@ -76,7 +86,7 @@ export async function POST(request: Request) {
         return (
           cuantos === 1 &&
           Number.isInteger(item.quantity) &&
-          item.quantity > 0
+          item.quantity === 1
         );
       });
 
@@ -92,6 +102,23 @@ export async function POST(request: Request) {
     if (cleanItems.length === 0) {
       return NextResponse.json(
         { error: "Los productos enviados no son válidos." },
+        { status: 400 }
+      );
+    }
+
+    // Evitar dos líneas para el mismo recurso, pack o colección.
+    // Un pedido duplicado podría generar dos licencias y cobrar dos veces.
+    const claves = cleanItems.map((item) =>
+      item.productId
+        ? `product:${item.productId}`
+        : item.packId
+          ? `pack:${item.packId}`
+          : `collection:${item.collectionId}`
+    );
+
+    if (new Set(claves).size !== claves.length) {
+      return NextResponse.json(
+        { error: "El carrito contiene artículos duplicados." },
         { status: 400 }
       );
     }
