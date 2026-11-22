@@ -7,20 +7,6 @@ import { expandirPack } from "@/lib/packs";
 import { expandirColeccion } from "@/lib/colecciones-comerciales";
 import { yaAdquiridos } from "@/lib/adquisiciones";
 
-/**
- * Una línea del carrito.
- *
- * Lleva "productId" o "packId", nunca los dos. Los carritos
- * que ya están guardados en el navegador solo traen
- * "productId", y siguen funcionando igual.
- */
-type OrderItemInput = {
-  productId?: string;
-  packId?: string;
-  collectionId?: string;
-  quantity: number;
-};
-
 const CREATOR_COMMISSION_RATE = new Prisma.Decimal("20.00");
 
 export async function POST(request: Request) {
@@ -332,6 +318,16 @@ export async function POST(request: Request) {
 
       orderItems.push(
         componer(product.id, product.price, item.quantity, null)
+      );
+    }
+
+    // Un carrito pequeño puede expandirse a cientos de archivos.
+    // Mantener un límite también evita transacciones enormes y
+    // solicitudes abusivas al combinar packs y colecciones.
+    if (orderItems.length > 200) {
+      return NextResponse.json(
+        { error: "El pedido supera el máximo de 200 recursos digitales." },
+        { status: 400 }
       );
     }
 
