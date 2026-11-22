@@ -3,7 +3,11 @@
  * charge customers merely because a provider secret happens to be configured.
  * Enabling real charges requires an explicit, separate launch decision.
  */
-export function pagosRealesHabilitados(env: NodeJS.ProcessEnv = process.env): boolean {
+type EntornoPagos = Partial<Pick<NodeJS.ProcessEnv,
+  "NODE_ENV" | "RCKTX_ENABLE_REAL_PAYMENTS" | "CULQI_SECRET_KEY" | "CULQI_WEBHOOK_SECRET"
+>>;
+
+export function pagosRealesHabilitados(env: EntornoPagos = process.env): boolean {
   return env.NODE_ENV === "production" &&
     env.RCKTX_ENABLE_REAL_PAYMENTS === "true" &&
     Boolean(env.CULQI_SECRET_KEY?.trim()) &&
