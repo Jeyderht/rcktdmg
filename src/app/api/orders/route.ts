@@ -352,6 +352,31 @@ export async function POST(request: Request) {
       );
     }
 
+    // Un pack o una colección puede contener recursos que el usuario
+    // ya compró por separado. Verificar los IDs expandidos, no solo
+    // los IDs originales del carrito, antes de cobrar.
+    const yaComprados = await prisma.orderItem.findMany({
+      where: {
+        productId: { in: recursosExpandidos },
+        order: { userId: session.userId, status: "PAID" },
+      },
+      select: { productId: true },
+    });
+
+    if (yaComprados.length > 0) {
+      return NextResponse.json(
+        {
+          error: "Algunos recursos del carrito ya están en tu biblioteca.",
+          yaAdquiridos: {
+            productos: [...new Set(yaComprados.map((item) => item.productId))],
+            packs: [],
+            colecciones: [],
+          },
+        },
+        { status: 409 }
+      );
+    }
+
     const order = await prisma.order.create({
       data: {
         userId: session.userId,
