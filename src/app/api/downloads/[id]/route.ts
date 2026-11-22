@@ -144,12 +144,12 @@ export async function GET(
       );
     }
 
-    if (licenciaDelPedido?.status === "REVOKED") {
+    if (licenciaDelPedido.status !== "ACTIVE") {
       return NextResponse.json(
         {
           error:
             licenciaDelPedido.revokedReason ||
-            "Tu licencia sobre este recurso ya no está vigente.",
+            "Tu licencia sobre este recurso no está activa.",
         },
         { status: 403 }
       );
