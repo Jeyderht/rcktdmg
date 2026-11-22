@@ -80,6 +80,15 @@ export async function POST(request: Request) {
         );
       });
 
+    // No aceptar carritos parcialmente inválidos: nunca crear un
+    // pedido cobrando menos artículos de los que envió el cliente.
+    if (cleanItems.length !== items.length) {
+      return NextResponse.json(
+        { error: "El carrito contiene artículos o cantidades inválidas." },
+        { status: 400 }
+      );
+    }
+
     if (cleanItems.length === 0) {
       return NextResponse.json(
         { error: "Los productos enviados no son válidos." },
