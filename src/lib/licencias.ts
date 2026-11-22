@@ -183,7 +183,7 @@ export async function sincronizarLicenciasDePedido(
 
       if (afectadas.length === 0) return;
 
-      await prisma.license.updateMany({
+      const revocacion = await prisma.license.updateMany({
         where: { orderId, status: "ACTIVE" },
         data: {
           status: "REVOKED",
@@ -191,6 +191,10 @@ export async function sincronizarLicenciasDePedido(
           revokedReason: motivo,
         },
       });
+
+      // Dos procesos de cancelación pueden leer las mismas
+      // licencias activas. Solo el que revocó filas notifica.
+      if (revocacion.count === 0) return;
 
       /*
         Se avisa una vez por pedido, no una por licencia: tres
